@@ -240,6 +240,26 @@ def memory_status(ctx):
     return _memory_store(ctx).status()
 
 
+def memory_cross_resolution(ctx, limit: int = 1000):
+    """Compare all ten linguistic resolutions and merge deterministic feedback hyperedges."""
+    if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 1000:
+        raise ValueError("limit must be between 1 and 1000")
+    from .cross_resolution import analyze_cross_resolution, feedback_records
+    store = _memory_store(ctx)
+    rows = store.query(limit=limit)
+    analysis = analyze_cross_resolution(rows)
+    records = feedback_records(analysis)
+    merge = store.merge(records) if records else {"accepted": 0, "duplicates": 0}
+    reorganization = store.reorganize() if records else None
+    return {
+        "analysis": analysis,
+        "derived_hyperedges": len(records),
+        "merge": merge,
+        "reorganization": reorganization,
+        "memory": store.status(),
+    }
+
+
 
 def memory_merge(ctx, records: list):
     """Idempotently union peer discovery events into this local memory ledger."""
