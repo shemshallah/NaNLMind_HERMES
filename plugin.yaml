@@ -23,3 +23,12 @@ config_schema:
     type: str
     default: ~/.local/share/nanlmind-hermes
     description: Per-installation local universe, corpus, run logs and manifests.
+
+  universe_heads:
+    type: int
+    default: 256
+    description: Active palindromic head count; the current native topology defines 256 heads.
+  universe_layers:
+    type: int
+    default: 7
+    description: Number of logical memory projection layers (L0-L6).
