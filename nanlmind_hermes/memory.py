@@ -13,7 +13,12 @@ import uuid
 from pathlib import Path
 from typing import Any, Iterable
 
-SCHEMA = "nanlm-hermes-memory/2"\nRESOLUTION_INDEX = {\n    "bit": 0, "nibble": 1, "byte": 2, "phonetic": 3, "morpheme": 4,\n    "lexical": 5, "word_completion": 6, "sentence": 7,\n    "paragraph": 8, "narrative": 9,\n}
+SCHEMA = "nanlm-hermes-memory/2"
+RESOLUTION_INDEX = {
+    "bit": 0, "nibble": 1, "byte": 2, "phonetic": 3, "morpheme": 4,
+    "lexical": 5, "word_completion": 6, "sentence": 7,
+    "paragraph": 8, "narrative": 9,
+}
 VALID_KINDS = {"entity", "relation", "operator", "equation", "constraint", "observation", "hypothesis", "counterexample"}
 VALID_POLARITIES = {"supports", "refutes", "neutral"}
 
