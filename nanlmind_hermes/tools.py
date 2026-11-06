@@ -198,3 +198,11 @@ def memory_query(ctx, subject: str = None, head: int = None, layer: int = None, 
 def memory_status(ctx):
     """Report durable additive memory separately from native model checkpoints."""
     return _memory_store(ctx).status()
+
+
+
+def memory_merge(ctx, records: list):
+    """Idempotently union peer discovery events into this local memory ledger."""
+    if not isinstance(records, list) or not 1 <= len(records) <= 1000:
+        raise ValueError("records must contain 1..1000 merge entries")
+    return _memory_store(ctx).merge(records)
