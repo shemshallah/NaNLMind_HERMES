@@ -40,7 +40,7 @@ class HermesMathTrainTests(unittest.TestCase):
             lines = ["penguin can fly.", "penguin cannot fly."]
             lines.extend(f"neutral corpus filler record {i} " + ("context " * 8) for i in range(30))
             corpus = root / "corpus.n16txt"
-            corpus.write_text("N16TXT/1\\n" + "\\n".join(lines) + "\\n", encoding="utf-8")
+            corpus.write_text("N16TXT/1\n" + "\n".join(lines) + "\n", encoding="utf-8")
             ctx = FakeContext({
                 "state_dir": str(root / "state"),
                 "runner_command": [sys.executable, str(fake)],
