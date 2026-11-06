@@ -1,44 +1,31 @@
 # NANNET_API_HERMES credential protocol (v1)
 
-This is the per-installation authorization layer for NaNLMind Hermes. It is separate from Hermes provider credentials and GitHub credentials.
+The protocol separates Hermes provider credentials, GitHub credentials, and one NANNET installation identity per local universe. Never derive encryption keys from provider or GitHub credentials.
 
-## Credential domains
+## Installation identity
 
-1. **Hermes provider credential** belongs to the Hermes host/provider adapter. NaNLMind Hermes does not read, copy, wrap, or encrypt it.
-2. **GitHub credential** belongs to the user's GitHub integration or narrowly scoped PAT. It is not a universe credential and is never put in a token.
-3. **NANNET installation identity** is one Ed25519 keypair and UUID per local installation/universe. The private key is encrypted at rest with HKDF-SHA256 + AES-256-GCM using an independent 256-bit NANNET_MASTER_KEY.
-4. **NANNET_API_HERMES token** is a short-lived Ed25519-signed bearer authorization issued by a separate trusted pairing authority. Claims bind issuer, audience, installation ID, scopes, issue/not-before/expiry times, and a unique token ID.
+Provision an independent random 256-bit base64url NANNET_MASTER_KEY through the host OS secret store. nanlm_auth_init creates an Ed25519 installation keypair and encrypts its private key with HKDF-SHA256 + AES-256-GCM. The master key is never returned or stored beside the identity.
 
-Never derive the encryption key from a provider API key, GitHub PAT, or bearer token. Do not store those credentials in corpus files, prompts, logs, universe state, or snapshots.
+## One-time pairing authority
 
-## Installation setup
+`PairingAuthority` persists its Ed25519 issuer key encrypted in SQLite under a separate authority master key. An administrator creates a one-time pairing code with an explicit scope allowlist. The code is hashed at rest, expires in 60–3600 seconds, and is consumed transactionally. Pairing binds the installation UUID to its public key and issues a signed token for 30–86400 seconds.
 
-Generate a fresh independent master key with generate_master_key() and place it in the host OS secret store or a protected environment variable named NANNET_MASTER_KEY. Decode it to bytes before calling create_installation. Do not commit it, print it in CI, or store it beside the encrypted identity. The plugin refuses to overwrite an existing installation identity.
+Allowed scopes: corpus:write, training:execute, universe:read, snapshot:read, snapshot:write, universe:register, installation:admin.
 
-The first implementation deliberately exposes cryptographic primitives and persistent replay/revocation storage, not a pretend hosted service. A pairing authority must authenticate a one-time pairing code out of band, verify the installation public key, issue a scoped token, and retain its signing key outside the installation. The authority's public key is pinned by each client.
+## Pairing HTTP endpoint
 
-## Token scopes
+The optional stdlib HTTP service exposes POST /v1/pair. It must be deployed behind HTTPS; plain HTTP is accepted only for loopback development. The client pins NANNET_ISSUER_PUBLIC_KEY before trusting the returned token. The token is saved encrypted under the installation master key.
 
-- corpus:write
-- training:execute
-- universe:read
-- snapshot:read
-- snapshot:write
-- universe:register
-- installation:admin
+For subsequent API requests, send the bearer token and Ed25519 request signature over method, exact path, timestamp, nonce, and SHA-256 body digest. The API must verify token signature, issuer, audience, expiry, scope, installation key, and five-minute clock skew, then atomically consume the nonce. Token revocation is persisted by TokenRegistry.
 
-Tokens are Ed25519 signed, audience-restricted, and expire in 30 seconds to 24 hours (recommended lifetime: 15 minutes). The client signs each request over method, path, timestamp, nonce, and SHA-256 body digest. The server must enforce a five-minute clock-skew window and atomically consume each (installation_id, nonce) pair. TokenRegistry provides SQLite-backed nonce uniqueness and token revocation persistence.
+Payload encryption uses AES-256-GCM with HKDF-SHA256 domain separation and authenticated associated data containing protocol version, installation ID, and object type.
 
-## Payload protection
+## Demo flow
 
-Snapshot/corpus payload encryption uses AES-256-GCM with a per-envelope random salt and nonce and HKDF-SHA256 domain separation. Supply stable associated data (protocol version, installation ID, and object type). Changing ciphertext or associated data fails closed.
+1. Administrator starts the pairing service with NANNET_AUTHORITY_MASTER_KEY.
+2. Administrator creates a short-lived pairing code restricted to demo scopes.
+3. Installation creates its own NANNET_MASTER_KEY and identity.
+4. Installation pairs over HTTPS and verifies the issuer against its pinned public key.
+5. The demo uses the issued token, then revokes it and demonstrates rejection.
 
-## Demo flow and limitations
-
-1. Create one local installation identity and keep its master key outside the repository and state directory.
-2. Pair its public key with the demo authority using a one-time code.
-3. Receive a short-lived token scoped only to the actions needed by the demo.
-4. Sign requests with the installation key; verify token, scope, signature, timestamp, and replay status server-side.
-5. Revoke the token and demonstrate rejection.
-
-There is not yet a deployed pairing/authentication server or remote NANNET API. Until one is deployed and its issuer public key is pinned, do not describe local token creation as remote authentication. This repository provides tested client and authority-side primitives for that next service.
+The local authority, one-time code store, token issuer, HTTP pairing endpoint, and client pairing handler are implemented as source components. A public hosted deployment, TLS certificate/operations, and authenticated training/snapshot API endpoints remain deployment/integration work; do not claim a live hosted NANNET service until those pieces are deployed and tested.
