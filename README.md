@@ -11,22 +11,26 @@ Build the core repository and configure Hermes runner_command as an argv array c
     ["/absolute/path/to/NaNLMind/build/nanlm-universal"]
 
 Available tools:
-- nanlm_status — local universe, runner configuration and last run.
+- nanlm_status — local universe, runner configuration, native run and durable memory status.
 - nanlm_generate_corpus — produce a content-addressed N16TXT/1 corpus.
 - nanlm_train — invoke the native bootstrap CORPUS EPOCHS CHUNKS trainer with a monotonic deadline and exclusive local training lock.
 - nanlm_evaluate — run topology-byte, Kneser-Ney order-2 and Context2 evaluations against the same plain-text corpus.
+- nanlm_memory_ingest — append typed mathematical discoveries with source digest, polarity, confidence and provenance.
+- nanlm_memory_query — inspect the active head/layer projection.
+- nanlm_memory_reorganize — rebuild deterministic projections without mutating the discovery ledger.
 - nanlm_auth_init, nanlm_auth_pair, nanlm_auth_status, nanlm_auth_revoke — manage the local NANNET installation identity.
 
 N16TXT/1 is validated and its framing header is removed before native CLI use. Native bootstrap requires at least 1,000 UTF-8 bytes; byte and baseline evaluations require at least 100 bytes. The harness never pads or duplicates a small corpus.
 
-## Current native persistence boundary
+## What persists
 
-The native bootstrap command currently trains Context2Model in process memory and reports held-out BPC/top-1 metrics, but it does not serialize learned parameters. Hermes saves the corpus digest, command, configuration, stdout log and run manifest. It explicitly reports checkpoint_present=false and resume_supported=false. These artifacts are not model weights and cannot resume a partially completed run. Native Context2Model serialization remains a core-repository milestone.
+Hermes now has an additive mathematical-memory ledger in `nanlmind_hermes/memory.py`. It stores content-addressed discovery events and typed graph edges in a local SQLite WAL database. Repeated event delivery is idempotent; contradictory hypotheses remain distinct; head/layer projections can be deterministically rebuilt. The event ledger is persistent memory, not conventional neural weights.
 
-## NANNET identity
+The current native bootstrap command still trains Context2Model in process memory and does not serialize its learned parameters. Hermes therefore reports native checkpoint absence honestly. The new memory interface accepts structured discoveries; automatic extraction from native training is not claimed until the core runner emits a stable structured trace/discovery stream.
 
-Provision an independent random 256-bit base64url NANNET_MASTER_KEY in the host secret store. Provision NANNET_AUTH_URL and the pinned NANNET_ISSUER_PUBLIC_KEY for the trusted authority. The installation private key is encrypted at rest with HKDF-SHA256 + AES-256-GCM. Pair using a one-time guest pairing code from the authority operator. After nanlm_auth_init, give the operator only the non-secret installation UUID. The operator computes the exact per-installation issuer pin with nannet-authority public-key --role guest --identity INSTALLATION_UUID and returns that public key over a trusted channel. Set it as NANNET_ISSUER_PUBLIC_KEY before pairing; do not use the legacy global public key for a newly paired identity.
+The core topology defines **256** palindromic heads. Hermes defaults to all 256 and allows an explicit configured head count; it does not silently reinterpret the topology as 255.
 
-When authority mode is configured, corpus generation, training and evaluation fail closed unless the stored token has the required scope and the authority confirms it online. Paired installation requests to /v1/authorize and /v1/revoke are Ed25519-signed over method, exact path, timestamp, nonce and body digest; the authority consumes each nonce once. The authority master key never leaves the authority host.
-
-See docs/NANNET_API_HERMES.md and docs/TRAINING_DURATIONS.md.
+See:
+- docs/NANNET_API_HERMES.md
+- docs/TRAINING_DURATIONS.md
+- docs/HERMES_UNIVERSE_MEMORY.md
