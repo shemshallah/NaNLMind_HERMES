@@ -79,7 +79,7 @@ class NativeHarnessTests(unittest.TestCase):
             "with tp.open('w', encoding='utf-8') as out:\n"
             " for h in range(256):\n"
             "  event = {'schema':'nanlm-hermes-discovery/1','kind':'hypothesis',"
-            "'subject':'head-'+str(h),'head':h,'layer':0,'source_digest':digest,"
+            "'subject':'head-'+str(h),'head':h,'layer':0,'source_digest':digest,'hyperedge_id':h+1,'hyperedge_label':h,"
             "'expression':{'op':'truth_table','head':h},'confidence':0.5,"
             "'polarity':'neutral','evidence':{'test_samples':10},'provenance':{}}\n"
             "  out.write(json.dumps(event)+'\\n')\n"
