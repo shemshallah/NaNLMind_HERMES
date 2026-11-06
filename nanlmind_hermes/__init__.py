@@ -60,6 +60,12 @@ def register(ctx):
 
     def handle_chat(params, **kwargs):
         _require_scope("universe:read")
+        try:
+            learning_enabled = ctx.get_config("chat_learning", default=True)
+        except Exception:
+            learning_enabled = True
+        if learning_enabled:
+            _require_scope("training:execute")
         return tools.chat(ctx, params["message"], params.get("session_id", "default"),
                           params.get("system_prompt"), params.get("temperature", 0.7),
                           params.get("max_tokens", 2048))
@@ -174,6 +180,10 @@ def register(ctx):
         return tools.math_train(ctx, params["corpus_path"], params.get("epochs", 3),
                                 params.get("max_samples_per_head", 4096))
 
+    def handle_relation_train(params, **kwargs):
+        _require_scope("training:execute")
+        return tools.structured_relation_train(ctx, params["records"])
+
     def handle_evaluate(params, **kwargs):
         _require_scope("universe:read")
         return tools.evaluate(ctx, params["corpus_path"])
@@ -273,6 +283,14 @@ def register(ctx):
          {"corpus_path": {"type": "string"}, "epochs": {"type": "integer", "minimum": 1, "maximum": 100, "default": 3},
           "max_samples_per_head": {"type": "integer", "minimum": 1, "maximum": 100000, "default": 4096}},
          ["corpus_path"], handle_math_train),
+
+        ("nanlm_structured_relation_train", "Train the shared native heads from schema-bound relation records across L0-L9. Train rows mutate state; test rows are held out. Every accepted event updates mirror-pair cells and a provenance-bound hyperedge.",
+         {"records": {"type": "array", "minItems": 2, "maxItems": 10000,
+                      "items": {"type": "object",
+                                "properties": {"split": {"type": "string", "enum": ["train", "test"]},
+                                               "source_digest": {"type": "string", "pattern": "^[0-9a-fA-F]{64}$"},
+                                               "item": {"type": "object"}}}}},
+         ["records"], handle_relation_train),
         ("nanlm_evaluate", "Run native topology-byte, Kneser-Ney and Context2 controls locally on the same corpus.",
          {"corpus_path": {"type": "string"}}, ["corpus_path"], handle_evaluate),
         ("nanlm_memory_ingest", "Append structured mathematical discoveries to the durable additive universe memory.",
