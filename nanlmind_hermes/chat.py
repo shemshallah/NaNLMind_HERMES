@@ -88,8 +88,8 @@ def _surface_measurements(user_text: str, assistant_text: str,
         nibble_counts[byte & 0x0F] += 1
     tokens = re.findall(r"[^\\W_]+(?:['’][^\\W_]+)*", combined.casefold(), flags=re.UNICODE)
     frequencies = Counter(tokens)
-    sentences = [part for part in re.split(r"(?<=[.!?])\\s+", combined) if part.strip()]
-    paragraphs = [part for part in re.split(r"\\n\\s*\\n", combined) if part.strip()]
+    sentences = [part for part in re.split(r"(?<=[.!?])\s+", combined) if part.strip()]
+    paragraphs = [part for part in re.split(r"\n\s*\n", combined) if part.strip()]
 
     measurements = [
         ("bit", "bit-profile", {
