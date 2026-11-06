@@ -10,3 +10,9 @@ local/
 state/
 *.n16txt
 *.jsonl
+*.key
+*.pem
+installation.json
+auth.sqlite
+*.sqlite-wal
+*.sqlite-shm
