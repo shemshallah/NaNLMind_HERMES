@@ -178,7 +178,7 @@ def _memory_store(ctx):
     from .memory import MemoryStore
     _, _, universe = _paths(ctx)
     heads = 256  # Native topology has exactly 256 palindromic heads.
-    layers = int(_setting(ctx, "universe_layers", 10))
+    layers = max(10, int(_setting(ctx, "universe_layers", 10)))
     return MemoryStore(universe / "mathematical_memory.sqlite3", heads=heads, layers=layers)
 
 
