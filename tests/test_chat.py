@@ -48,7 +48,9 @@ class HermesChatTests(unittest.TestCase):
             self.assertEqual(result["reflection"]["memory_merge"]["accepted"], 1)
             history = chat_history(ctx, "demo")
             self.assertEqual([x["role"] for x in history["messages"]], ["user", "assistant"])
-            self.assertEqual(status(ctx)["mathematical_memory"]["events"], 1)
+            self.assertEqual(result["surface_measurements"]["records"], 6)
+            self.assertEqual(result["surface_measurements"]["memory_merge"]["accepted"], 6)
+            self.assertEqual(status(ctx)["mathematical_memory"]["events"], 7)
             self.assertEqual(len(ctx.llm.calls), 2)
 
     def test_reflection_uses_bounded_prior_conversation_context(self):
@@ -66,6 +68,30 @@ class HermesChatTests(unittest.TestCase):
             self.assertIn("penguin cannot fly", prompt["prior_context"][0]["content"])
             self.assertIn("fictional flying penguin", prompt["user_text"])
             self.assertLessEqual(len(prompt["prior_context"][0]["content"]), 4000)
+
+    def test_chat_measures_exact_bit_nibble_byte_and_text_resolutions(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            ctx = FakeContext(Path(tmp))
+            result = chat(ctx, "A A river.\n\nThe river flows.", session_id="measure")
+            self.assertEqual(result["surface_measurements"]["resolutions"],
+                             ["bit", "nibble", "byte", "lexical", "sentence", "paragraph"])
+            from nanlmind_hermes.tools import _memory_store
+            store = _memory_store(ctx)
+            for subject, expected_layer in (
+                ("surface:bit-profile:", 0),
+                ("surface:nibble-profile:", 0),
+                ("surface:byte-profile:", 0),
+                ("surface:orthographic-profile:", 3),
+                ("surface:sentence-profile:", 5),
+                ("surface:paragraph-profile:", 6),
+            ):
+                rows = store.query(subject=subject + result["source_sha256"][:20])
+                self.assertEqual(len(rows), 1, subject)
+                self.assertEqual(rows[0]["layer"], expected_layer, subject)
+            bit = store.query(subject="surface:bit-profile:" + result["source_sha256"][:20])[0]
+            self.assertEqual(bit["expression"]["op"], "utf8_bit_profile")
+            self.assertEqual(bit["expression"]["bit_length"],
+                             bit["expression"]["zero_bits"] + bit["expression"]["one_bits"])
 
     def test_chat_survives_optional_reflection_failure(self):
         with tempfile.TemporaryDirectory() as tmp:
