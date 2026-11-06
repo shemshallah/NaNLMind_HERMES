@@ -81,11 +81,11 @@ class HermesChatTests(unittest.TestCase):
             store = _memory_store(ctx)
             for subject, expected_layer in (
                 ("surface:bit-profile:", 0),
-                ("surface:nibble-profile:", 0),
-                ("surface:byte-profile:", 0),
-                ("surface:orthographic-profile:", 3),
-                ("surface:sentence-profile:", 5),
-                ("surface:paragraph-profile:", 6),
+                ("surface:nibble-profile:", 1),
+                ("surface:byte-profile:", 2),
+                ("surface:orthographic-profile:", 5),
+                ("surface:sentence-profile:", 7),
+                ("surface:paragraph-profile:", 8),
             ):
                 rows = store.query(subject=subject + result["source_sha256"][:20])
                 self.assertEqual(len(rows), 1, subject)
