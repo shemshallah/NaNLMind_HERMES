@@ -19,6 +19,24 @@ def make_server(authority: PairingAuthority, host="127.0.0.1", port=8765, tls_ce
             self.send_header("Content-Length",str(len(data))); self.send_header("Cache-Control","no-store")
             self.end_headers(); self.wfile.write(data)
         def do_POST(self):
+            if self.path == "/v1/authorize":
+                token = self.headers.get("Authorization", "")
+                if not token.startswith("Bearer "):
+                    return self._reply(401, {"error": "bearer_required"})
+                try:
+                    size = int(self.headers.get("Content-Length", "0"))
+                    if size < 1 or size > 4096:
+                        return self._reply(413, {"error": "invalid_body_size"})
+                    payload = json.loads(self.rfile.read(size))
+                    scope = payload.get("scope")
+                    if not isinstance(scope, str):
+                        return self._reply(400, {"error": "scope_required"})
+                    claims = authority.verify_access_token(token[7:], required_scope=scope)
+                    return self._reply(200, {"authorized": True, "installation_id": claims["sub"], "scope": scope, "expires_at": claims["exp"]})
+                except AuthError:
+                    return self._reply(401, {"error": "token_invalid_or_scope_denied"})
+                except (ValueError, TypeError, json.JSONDecodeError):
+                    return self._reply(400, {"error": "invalid_request"})
             if self.path == "/v1/revoke":
                 token = self.headers.get("Authorization", "")
                 if not token.startswith("Bearer "):
