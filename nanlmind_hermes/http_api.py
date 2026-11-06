@@ -20,12 +20,24 @@ def make_server(authority: PairingAuthority, host="127.0.0.1", port=8765, tls_ce
             self.send_response(status); self.send_header("Content-Type","application/json")
             self.send_header("Content-Length",str(len(data))); self.send_header("Cache-Control","no-store")
             self.end_headers(); self.wfile.write(data)
-        def _body(self, limit=16384):
+        def _raw_body(self, limit=16384):
             size=int(self.headers.get("Content-Length","0"))
             if size < 1 or size > limit: raise ValueError("invalid_body_size")
-            value=json.loads(self.rfile.read(size))
+            return self.rfile.read(size)
+        def _body(self, limit=16384):
+            value=json.loads(self._raw_body(limit))
             if not isinstance(value,dict): raise ValueError("invalid_request")
             return value
+        def _request_signature(self):
+            try:
+                return {
+                    "timestamp": int(self.headers.get("X-NANNET-Timestamp", "")),
+                    "nonce": self.headers.get("X-NANNET-Nonce", ""),
+                    "body_sha256": self.headers.get("X-NANNET-Body-SHA256", ""),
+                    "signature": self.headers.get("X-NANNET-Signature", ""),
+                }
+            except (TypeError, ValueError) as exc:
+                raise AuthError("signed request headers are missing or invalid") from exc
         def _bearer(self):
             header=self.headers.get("Authorization","")
             return header[7:] if header.startswith("Bearer ") else ""
@@ -49,11 +61,15 @@ def make_server(authority: PairingAuthority, host="127.0.0.1", port=8765, tls_ce
                 token = self._bearer()
                 if not token: return self._reply(401, {"error": "bearer_required"})
                 try:
-                    payload = self._body(4096); scope = payload.get("scope")
+                    raw = self._raw_body(4096)
+                    payload = json.loads(raw)
+                    if not isinstance(payload, dict): return self._reply(400, {"error": "invalid_request"})
+                    scope = payload.get("scope")
                     if not isinstance(scope, str): return self._reply(400, {"error": "scope_required"})
+                    authority.verify_signed_request(token, "POST", self.path, raw, self._request_signature())
                     claims = authority.verify_access_token(token, required_scope=scope)
                     return self._reply(200, {"authorized": True, "installation_id": claims["sub"], "scope": scope, "expires_at": claims["exp"]})
-                except AuthError: return self._reply(401, {"error": "token_invalid_or_scope_denied"})
+                except AuthError: return self._reply(401, {"error": "token_invalid_scope_or_signature"})
                 except (ValueError, TypeError, json.JSONDecodeError): return self._reply(400, {"error": "invalid_request"})
             if self.path == "/v1/admin/identities/revoke":
                 token = self._bearer()
@@ -71,8 +87,12 @@ def make_server(authority: PairingAuthority, host="127.0.0.1", port=8765, tls_ce
             if self.path == "/v1/revoke":
                 token = self._bearer()
                 if not token: return self._reply(401, {"error": "bearer_required"})
-                try: return self._reply(200, authority.revoke_token(token))
-                except AuthError: return self._reply(401, {"error": "token_invalid_or_revoked"})
+                try:
+                    raw = self._raw_body(4096)
+                    authority.verify_signed_request(token, "POST", self.path, raw, self._request_signature())
+                    return self._reply(200, authority.revoke_token(token))
+                except AuthError: return self._reply(401, {"error": "token_invalid_signature_or_revoked"})
+                except (ValueError, TypeError, json.JSONDecodeError): return self._reply(400, {"error": "invalid_request"})
             if self.path!="/v1/pair": return self._reply(404,{"error":"not_found"})
             try:
                 payload=self._body(16384)
