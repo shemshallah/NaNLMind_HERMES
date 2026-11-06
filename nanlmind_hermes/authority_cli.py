@@ -16,12 +16,12 @@ def _master(name):
 def main():
     parser=argparse.ArgumentParser(prog="nannet-authority")
     sub=parser.add_subparsers(dest="command",required=True)
-    sub.add_parser("public-key")
+    pub=sub.add_parser("public-key"); pub.add_argument("--role",choices=("guest","admin"),default="guest"); pub.add_argument("--identity",default="legacy")
     code=sub.add_parser("create-code"); code.add_argument("--scopes",required=True); code.add_argument("--ttl-seconds",type=int,default=600); code.add_argument("--role",choices=("guest","admin"),default="guest")
     serve=sub.add_parser("serve"); serve.add_argument("--host",default="127.0.0.1"); serve.add_argument("--port",type=int,default=8765); serve.add_argument("--tls-cert"); serve.add_argument("--tls-key")
     args=parser.parse_args()
     authority=PairingAuthority(os.environ.get("NANNET_AUTHORITY_DB",os.path.expanduser("~/.local/share/nannet-api-hermes/authority.sqlite")),_master("NANNET_AUTHORITY_MASTER_KEY"))
-    if args.command=="public-key": print(authority.issuer_public_key()); return
+    if args.command=="public-key": print(authority.issuer_public_key(args.role,args.identity)); return
     if args.command=="create-code":
         scopes=[s.strip() for s in args.scopes.split(",") if s.strip()]
         result=authority.create_pairing_code(scopes,args.ttl_seconds,role=args.role)
