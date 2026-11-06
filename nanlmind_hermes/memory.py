@@ -13,7 +13,7 @@ import uuid
 from pathlib import Path
 from typing import Any, Iterable
 
-SCHEMA = "nanlm-hermes-memory/1"
+SCHEMA = "nanlm-hermes-memory/2"\nRESOLUTION_INDEX = {\n    "bit": 0, "nibble": 1, "byte": 2, "phonetic": 3, "morpheme": 4,\n    "lexical": 5, "word_completion": 6, "sentence": 7,\n    "paragraph": 8, "narrative": 9,\n}
 VALID_KINDS = {"entity", "relation", "operator", "equation", "constraint", "observation", "hypothesis", "counterexample"}
 VALID_POLARITIES = {"supports", "refutes", "neutral"}
 
@@ -29,7 +29,7 @@ def _digest(value: Any) -> str:
 class MemoryStore:
     """Append-only discovery log plus rebuildable head/layer projections."""
 
-    def __init__(self, path: str | Path, heads: int = 256, layers: int = 7):
+    def __init__(self, path: str | Path, heads: int = 256, layers: int = 10):
         if isinstance(heads, bool) or not 1 <= heads <= 256:
             raise ValueError("heads must be in [1, 256]")
         if isinstance(layers, bool) or not 1 <= layers <= 32:
@@ -225,15 +225,9 @@ class MemoryStore:
                 # Linguistic resolution is a first-class routing signal shared by
                 # conversational reflection and native runner discoveries.  It
                 # refines (rather than replaces) the semantic kind default.
-                resolution_layers = {
-                    "bit": 0, "nibble": 0, "byte": 0,
-                    "phonetic": 1, "morpheme": 2, "lexical": 3,
-                    "word_completion": 4, "sentence": 5,
-                    "paragraph": 6, "narrative": 6,
-                }
                 resolution = provenance.get("resolution")
-                if resolution in resolution_layers:
-                    layer = min(self.layers - 1, resolution_layers[resolution])
+                if resolution in RESOLUTION_INDEX:
+                    layer = min(self.layers - 1, RESOLUTION_INDEX[resolution])
                 else:
                     # Native runner discoveries carry an explicit layer from
                     # the 256-head topology. Preserve that route when rebuilding
