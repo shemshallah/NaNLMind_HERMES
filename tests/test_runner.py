@@ -12,14 +12,14 @@ class RunnerTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             corpus = root / "sample.n16txt"
-            corpus.write_text("N16TXT/1\\nhello\\n", encoding="utf-8")
+            corpus.write_text("N16TXT/1\nhello\n", encoding="utf-8")
             script = root / "fake_runner.py"
             script.write_text(
-                "import pathlib, sys\\n"
-                "args = sys.argv[1:]\\n"
-                "assert args[0] == 'train'\\n"
-                "checkpoint = pathlib.Path(args[args.index('--checkpoint') + 1])\\n"
-                "checkpoint.write_text('checkpoint')\\n",
+                "import pathlib, sys\n"
+                "args = sys.argv[1:]\n"
+                "assert args[0] == 'train'\n"
+                "checkpoint = pathlib.Path(args[args.index('--checkpoint') + 1])\n"
+                "checkpoint.write_text('checkpoint')\n",
                 encoding="utf-8",
             )
             result = run_bounded(
