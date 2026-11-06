@@ -18,6 +18,7 @@ Available tools:
 - nanlm_memory_ingest — append typed mathematical discoveries with source digest, polarity, confidence and provenance.
 - nanlm_memory_query — inspect the active head/layer projection.
 - nanlm_memory_reorganize — rebuild deterministic projections without mutating the discovery ledger.
+- nanlm_memory_merge — idempotently union peer discovery events into the local ledger.
 - nanlm_auth_init, nanlm_auth_pair, nanlm_auth_status, nanlm_auth_revoke — manage the local NANNET installation identity.
 
 N16TXT/1 is validated and its framing header is removed before native CLI use. Native bootstrap requires at least 1,000 UTF-8 bytes; byte and baseline evaluations require at least 100 bytes. The harness never pads or duplicates a small corpus.
