@@ -226,7 +226,9 @@ class MemoryStore:
                 # conversational reflection and native runner discoveries.  It
                 # refines (rather than replaces) the semantic kind default.
                 resolution = provenance.get("resolution")
-                if resolution in RESOLUTION_INDEX:
+                if provenance.get("cross_resolution") is True:
+                    layer = min(self.layers - 1, 9)
+                elif resolution in RESOLUTION_INDEX:
                     layer = min(self.layers - 1, RESOLUTION_INDEX[resolution])
                 else:
                     # Native runner discoveries carry an explicit layer from
