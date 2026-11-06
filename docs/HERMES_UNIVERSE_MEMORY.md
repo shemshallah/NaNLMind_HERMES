@@ -4,7 +4,7 @@
 
 There is one native `GlobalTopology`, not 256 independent models. Its 256 palindromic `HeadView` instances address head records, cells and scratchpads in the same shared root `Universe`. The head index is a routing/learning address, not a separate neural network.
 
-The native `math-train` command currently trains a bounded, explicit task: each head learns a Boolean truth-table rule for a byte-bit transition, using a deterministic 80/20 sequential train/held-out split. It emits one JSONL discovery per head with the source SHA-256, head address, selected Boolean rule, all 16 operator scores, sample counts and held-out accuracy. This is a first working native learning path, not yet a general mathematical reasoner or a full seven-layer learning loop.
+The native `math-train` command currently trains a bounded, explicit task: each head learns a Boolean truth-table rule for a byte-bit transition, using a deterministic 80/20 sequential train/held-out split. It emits one JSONL discovery per head with the source SHA-256, head address, selected Boolean rule, all 16 operator scores, sample counts and held-out accuracy. This is a first working native learning path, not yet a general mathematical reasoner or the complete ten-resolution language-learning loop.
 
 The native topology serializer persists the global chart and its Universe contents, including the per-head scratchpads where Boolean scores are stored, the shared hypergraph, and the append-only ledger. Each trained head adds a learned hyperedge connecting its fixed-point head cell to its adjacent pair-cell address; edge weight is the held-out accuracy in Q16.16. A final ledger event commits the before/after hypergraph digests. A subsequent invocation restores the serialized topology before applying new updates. Hermes reports this as a `serialized_global_topology` checkpoint; it must not be confused with a conventional neural-weight file or with the legacy Context2 bootstrap, which remains in-memory.
 
@@ -36,7 +36,7 @@ This is an associative, commutative, idempotent merge at the event-set layer. It
 
 ## Continuous reorganization
 
-Reorganization does not mutate discoveries. It creates a deterministic active projection: observations L0, entities L1, relations L2, operators L3, equations L4, hypotheses and constraints L5, and counterexamples L6. Native head provenance is retained when claims are rerouted. The evidence assessor aggregates support/refutation weights by subject; contradictory subjects are promoted to L6 and receive a versioned assessment record with contributing event IDs. Assessment records are rebuildable projections, not new claims. This is currently deterministic evidence review, not yet a learned top-down evaluator that changes lower-layer training. Future head/layer scores may influence routing only when the scoring algorithm and version are recorded.
+Reorganization does not mutate discoveries. The linguistic substrate has ten independent resolution coordinates: L0 bit, L1 nibble, L2 byte, L3 phonetic, L4 morpheme, L5 lexical, L6 word completion, L7 sentence, L8 paragraph and L9 narrative. These are not aliases for seven semantic buckets. Native head provenance is retained when claims are rerouted. The evidence assessor aggregates support/refutation weights by subject; contradictory subjects are promoted to L9 and receive a versioned assessment record with contributing event IDs. Assessment records are rebuildable projections, not new claims. This is currently deterministic evidence review, not yet a learned top-down evaluator that changes lower-layer training. Future head/layer scores may influence routing only when the scoring algorithm and version are recorded.
 
 A contradiction is a first-class relation. The evaluator can compare conditions, derive counterexamples, lower confidence, or mark a claim superseded in a separate assessment event. It cannot erase the earlier claim.
 
@@ -143,3 +143,14 @@ discoveries also preserve their native head/layer routes in that projection.
 This is a shared read/append/reorganize interface, not a claim that the native
 C++ learner directly executes SQL or has absorbed every symbolic memory item
 into its internal parameters.
+
+
+## Cross-resolution mathematical feedback
+
+Every discovery may carry a resolution label and, when appropriate, a stable `alignment_id` or `concept_id` in provenance. The same concept can therefore be represented at several granularities without pretending that its bit-level, phonetic, lexical and narrative descriptions are identical data.
+
+The cross-resolution analyzer constructs a symmetric 10×10 co-occurrence matrix over the ten resolution coordinates. For each aligned concept it compares cross-level pairs, records polarity agreement and support/refutation contradictions, computes polarity entropy, and calculates the descriptive consistency score `(aligned - contradicted) / (aligned + contradicted)` (zero when no comparable pair exists). Neutral pairs remain visible but do not count as support/refutation agreement.
+
+Each multi-resolution concept produces a deterministic equation record with an n-ary hyperedge whose participants are the original immutable event IDs. The record stores pair evidence, resolution indices, coverage and score; it is routed to the tenth review channel. It never replaces, averages away or deletes the original claims. Explicit alignment IDs can join layer-specific subjects; without one, equal subjects are compared. The operation is invoked after Hermes chat reflection and native math training, and is callable by runners through `nanlm_memory_cross_resolution`.
+
+This creates several useful mathematical feedback paths: coarse-to-fine constraint checking, fine-to-coarse evidence aggregation, cross-level contradiction detection, resolution coverage measurement, and uncertainty/entropy tracking. It is a deterministic structural analysis layer, not a learned differentiable gradient or proof of semantic equivalence. The next experiment should test whether feedback scores predict held-out word, sentence and narrative improvements.
