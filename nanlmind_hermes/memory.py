@@ -57,6 +57,10 @@ class MemoryStore:
                 );
                 CREATE INDEX IF NOT EXISTS edge_src ON edges(src);
                 CREATE INDEX IF NOT EXISTS edge_dst ON edges(dst);
+                CREATE TABLE IF NOT EXISTS hyperedges(
+                    hyperedge_id TEXT PRIMARY KEY, relation TEXT NOT NULL,
+                    members TEXT NOT NULL, event_id TEXT NOT NULL REFERENCES events(event_id)
+                );
                 CREATE TABLE IF NOT EXISTS meta(key TEXT PRIMARY KEY, value TEXT NOT NULL);
             """)
             db.execute("INSERT OR REPLACE INTO meta(key,value) VALUES('schema',?)", (SCHEMA,))
@@ -101,9 +105,10 @@ class MemoryStore:
             "schema": SCHEMA, "kind": kind, "subject": item.get("subject"),
             "predicate": item.get("predicate"), "object": item.get("object"),
             "expression": item.get("expression"), "units": item.get("units"),
-            "conditions": item.get("conditions", []), "polarity": polarity,
-            "confidence": float(confidence), "evidence": item.get("evidence", {}),
-            "provenance": item.get("provenance", {}), "tags": sorted(set(item.get("tags", []))),
+            "conditions": item.get("conditions", []), "participants": item.get("participants", []),
+            "polarity": polarity, "confidence": float(confidence),
+            "evidence": item.get("evidence", {}), "provenance": item.get("provenance", {}),
+            "tags": sorted(set(item.get("tags", []))),
         }
         if not payload["subject"] and kind not in {"observation", "counterexample"}:
             raise ValueError("subject is required for this discovery kind")
@@ -118,6 +123,14 @@ class MemoryStore:
                 edge = {"s": payload["subject"], "p": payload["predicate"], "o": payload["object"]}
                 db.execute("INSERT OR IGNORE INTO edges VALUES(?,?,?,?,?)",
                            (_digest(edge), str(edge["s"]), str(edge["p"]), str(edge["o"]), event_id))
+            members = payload["participants"]
+            if members:
+                if not isinstance(members, list) or len(members) < 2 or not all(isinstance(x, (str, int)) for x in members):
+                    raise ValueError("participants must be a list of at least two string/integer identifiers")
+                relation = str(payload["predicate"] or payload["kind"])
+                hyperedge = {"relation": relation, "members": members}
+                db.execute("INSERT OR IGNORE INTO hyperedges VALUES(?,?,?,?)",
+                           (_digest(hyperedge), relation, _canonical(members), event_id))
         return {"event_id": event_id, "head": head, "layer": layer, "duplicate_safe": True}
 
     def merge(self, records: Iterable[dict[str, Any]]) -> dict[str, int]:
@@ -179,8 +192,10 @@ class MemoryStore:
         with self._db() as db:
             events = db.execute("SELECT COUNT(*) FROM events").fetchone()[0]
             edges = db.execute("SELECT COUNT(*) FROM edges").fetchone()[0]
+            hyperedges = db.execute("SELECT COUNT(*) FROM hyperedges").fetchone()[0]
             routes = db.execute("SELECT COUNT(*) FROM projections WHERE active=1").fetchone()[0]
         return {"schema": SCHEMA, "path": str(self.path), "heads": self.heads,
-                "layers": self.layers, "events": events, "hypergraph_edges": edges,
+                "layers": self.layers, "events": events, "graph_edges": edges,
+                "hyperedges": hyperedges,
                 "active_routes": routes, "append_only": True,
                 "weights_checkpoint": False}
