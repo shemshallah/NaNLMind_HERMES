@@ -253,3 +253,18 @@ def math_train(ctx, corpus_path: str, epochs: int = 3, max_samples_per_head: int
     temp.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     os.replace(temp, manifest)
     return result
+
+
+# Conversational interface. Unlike the bounded native bootstrap, this path accepts
+# ordinary UTF-8 text and records each interaction as a durable conversation.
+def chat(ctx, message: str, session_id: str = "default", system_prompt: str = None,
+         temperature: float = 0.7, max_tokens: int = 2048):
+    """Answer an open-ended user turn, then reflect it into multiresolution memory."""
+    from .chat import chat as run_chat
+    return run_chat(ctx, message, session_id, system_prompt, temperature, max_tokens)
+
+
+def chat_history(ctx, session_id: str = "default", limit: int = 40):
+    """Retrieve a conversation transcript by session ID."""
+    from .chat import chat_history as read_history
+    return read_history(ctx, session_id, limit)
