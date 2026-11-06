@@ -16,7 +16,7 @@ class PairingTests(unittest.TestCase):
             pub=base64.urlsafe_b64encode(raw).rstrip(b"=").decode()
             result=authority.pair(code["pairing_code"],str(uuid.uuid4()),pub,now=1010)
             self.assertEqual(result["scopes"],["training:execute","universe:read"])
-            revoked=authority.revoke_token(result["token"])\n            self.assertTrue(revoked["revoked"])\n            with self.assertRaises(AuthError): authority.verify_access_token(result["token"])
+            revoked=authority.revoke_token(result["token"],now=1020)\n            self.assertTrue(revoked["revoked"])\n            with self.assertRaises(AuthError): authority.verify_access_token(result["token"],now=1020)
             with self.assertRaises(AuthError):
                 authority.pair(code["pairing_code"],str(uuid.uuid4()),pub,now=1020)
     def test_expired_pairing_code_rejected(self):
