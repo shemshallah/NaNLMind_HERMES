@@ -110,11 +110,12 @@ they are not silently collapsed to the semantic-kind default. When evidence
 for one subject conflicts, the review projection still promotes both sides to
 the highest review layer while preserving original head/layer provenance.
 
-The active Hermes model can now generate an eleven-stage curriculum corpus through
+The active Hermes model can now generate an twelve-stage curriculum corpus through
 `nanlm_generate_curriculum`: Boolean inverses, deep logic, exceptions,
 repetitive/common words, consonant/vowel phonetic pairings, morpheme structure,
 individual lexical words with roots and affixes, word-completion alternatives,
-sentence choice, paragraph structure and short narratives. It writes canonical N16TXT/1 plus a content-addressed manifest.
+sentence choice, paragraph structure and short narratives. Short stories also
+appear immediately after deep logic to saturate the language field early. It writes canonical N16TXT/1 plus a content-addressed manifest.
 This creates training material; it does not by itself prove that the native
 256-head trainer has learned language. The native trainer remains responsible
 for its own measured held-out results and committed hyperedges.
