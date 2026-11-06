@@ -38,6 +38,36 @@ class CrossResolutionTests(unittest.TestCase):
         self.assertAlmostEqual(item["consistency_score"], -1 / 3)
         self.assertTrue(any(p["status"] == "contradiction" for p in item["pairs"]))
 
+    def test_feedback_hyperedge_merges_into_tenth_review_channel(self):
+        import tempfile
+        from pathlib import Path
+        from nanlmind_hermes.memory import MemoryStore
+        with tempfile.TemporaryDirectory() as tmp:
+            store = MemoryStore(Path(tmp) / "universe.sqlite3", layers=10)
+            digest = hashlib.sha256(b"cross-resolution-test").hexdigest()
+            left = store.ingest(
+                {"kind": "hypothesis", "subject": "shared-concept",
+                 "polarity": "supports", "provenance": {"resolution": "lexical",
+                 "alignment_id": "concept:river"}},
+                source_digest=digest,
+            )
+            right = store.ingest(
+                {"kind": "hypothesis", "subject": "shared-concept",
+                 "polarity": "supports", "provenance": {"resolution": "sentence",
+                 "alignment_id": "concept:river"}},
+                source_digest=hashlib.sha256(b"second").hexdigest(),
+            )
+            analysis = analyze_cross_resolution(store.query(limit=100))
+            generated = feedback_records(analysis)
+            merged = store.merge(generated)
+            self.assertEqual(merged["accepted"], 1)
+            store.reorganize()
+            subject = generated[0]["item"]["subject"]
+            route = store.query(subject=subject)
+            self.assertEqual(len(route), 1)
+            self.assertEqual(route[0]["layer"], 9)
+            self.assertEqual(store.status()["hyperedges"], 1)
+
     def test_feedback_records_are_deterministic_hyperedges(self):
         rows = [
             self.row("a", "river", "lexical"),
