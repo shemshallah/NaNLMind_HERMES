@@ -1,7 +1,7 @@
 import base64, json, tempfile, threading, unittest, urllib.request
 from pathlib import Path
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+from nanlmind_hermes.crypto_compat import serialization
+from nanlmind_hermes.crypto_compat import Ed25519PrivateKey
 from nanlmind_hermes.auth import _unb64, generate_master_key, sign_request
 from nanlmind_hermes.pairing import PairingAuthority
 from nanlmind_hermes.http_api import make_server

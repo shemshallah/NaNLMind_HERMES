@@ -9,8 +9,8 @@ class PairingTests(unittest.TestCase):
             master=_unb64(generate_master_key())
             authority=PairingAuthority(Path(tmp)/"authority.sqlite",master)
             code=authority.create_pairing_code(["training:execute","universe:read"],ttl_seconds=300,now=1000)
-            from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
-            from cryptography.hazmat.primitives import serialization
+            from nanlmind_hermes.crypto_compat import Ed25519PrivateKey
+            from nanlmind_hermes.crypto_compat import serialization
             import uuid, base64
             raw=Ed25519PrivateKey.generate().public_key().public_bytes(serialization.Encoding.Raw,serialization.PublicFormat.Raw)
             pub=base64.urlsafe_b64encode(raw).rstrip(b"=").decode()
@@ -31,8 +31,8 @@ class PairingTests(unittest.TestCase):
             with self.assertRaises(AuthError):
                 authority.create_pairing_code(["installation:admin"], role="guest")
             code = authority.create_pairing_code(["installation:admin", "training:execute"], role="admin")
-            from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
-            from cryptography.hazmat.primitives import serialization
+            from nanlmind_hermes.crypto_compat import Ed25519PrivateKey
+            from nanlmind_hermes.crypto_compat import serialization
             import uuid, base64
             raw = Ed25519PrivateKey.generate().public_key().public_bytes(serialization.Encoding.Raw, serialization.PublicFormat.Raw)
             public = base64.urlsafe_b64encode(raw).rstrip(b"=").decode()
@@ -48,8 +48,8 @@ class PairingTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             authority=PairingAuthority(Path(tmp)/"authority.sqlite",_unb64(generate_master_key()))
             code=authority.create_pairing_code(["universe:read"],ttl_seconds=60,now=100)
-            from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
-            from cryptography.hazmat.primitives import serialization
+            from nanlmind_hermes.crypto_compat import Ed25519PrivateKey
+            from nanlmind_hermes.crypto_compat import serialization
             import uuid,base64
             raw=Ed25519PrivateKey.generate().public_key().public_bytes(serialization.Encoding.Raw,serialization.PublicFormat.Raw)
             pub=base64.urlsafe_b64encode(raw).rstrip(b"=").decode()

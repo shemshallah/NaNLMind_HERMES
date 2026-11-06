@@ -2,8 +2,7 @@
 from __future__ import annotations
 import hashlib, json, os, secrets, sqlite3, time, uuid
 from pathlib import Path
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey, Ed25519PublicKey
+from .crypto_compat import serialization, Ed25519PrivateKey, Ed25519PublicKey
 from .auth import ALLOWED_SCOPES, AuthError, _b64, _unb64, _derive, _json_bytes, issue_token, derive_identity_private_key, verify_request
 
 class PairingAuthority:
@@ -37,18 +36,18 @@ class PairingAuthority:
             raw=private.private_bytes(serialization.Encoding.Raw,serialization.PrivateFormat.Raw,serialization.NoEncryption())
             import os
             salt,nonce=secrets.token_bytes(16),secrets.token_bytes(12)
-            from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+            from .crypto_compat import AESGCM
             key=_derive(self.master_key,salt,b"authority-signing-key")
             envelope={"salt":_b64(salt),"nonce":_b64(nonce),"ciphertext":_b64(AESGCM(key).encrypt(nonce,raw,b"nannet-authority-v1"))}
             db.execute("INSERT INTO authority_meta VALUES ('issuer_private',?)",(json.dumps(envelope,separators=(",",":")),))
 
     def _legacy_private_key(self):
-        from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+        from .crypto_compat import AESGCM
         with sqlite3.connect(self.database) as db:
             row=db.execute("SELECT value FROM authority_meta WHERE key='issuer_private'").fetchone()
         if not row: raise AuthError("authority signing key is missing")
         env=json.loads(row[0]); key=_derive(self.master_key,_unb64(env["salt"]),b"authority-signing-key")
-        from cryptography.exceptions import InvalidTag
+        from .crypto_compat import InvalidTag
         try: raw=AESGCM(key).decrypt(_unb64(env["nonce"]),_unb64(env["ciphertext"]),b"nannet-authority-v1")
         except InvalidTag as exc: raise AuthError("authority master key cannot unlock signing key") from exc
         return Ed25519PrivateKey.from_private_bytes(raw)

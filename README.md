@@ -2,6 +2,20 @@
 
 Hermes plugin for a local NaNLMind 256-head universe, with NANNET installation identity, authority-side scope checks, native mathematical training, and additive discovery memory.
 
+## Cryptography fallback
+
+HERMES does not require the `cryptography` package. It uses the audited package
+when installed and falls back to a dependency-free RFC 8032 Ed25519, AES-256-GCM,
+and HKDF-SHA256 implementation for minimal images such as Termux. Install the
+optional extra for the accelerated/audited backend:
+
+```sh
+pip install "nanlmind-hermes[auth]"
+```
+
+The fallback is intended for local demo and minimal-host operation; use the
+optional backend or an HSM for production key custody.
+
 ## Native mathematical trainer
 
 Build the core repository and configure Hermes `runner_command` as an argv array containing the absolute path to `build/nanlm-universal`:

@@ -1,6 +1,6 @@
 import base64, tempfile, unittest
 from pathlib import Path
-from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+from nanlmind_hermes.crypto_compat import Ed25519PrivateKey
 from nanlmind_hermes.auth import AuthError, TokenRegistry, create_installation, decrypt_payload, encrypt_payload, generate_master_key, issue_token, load_installation, sign_request, verify_request, verify_token
 
 def key_bytes():

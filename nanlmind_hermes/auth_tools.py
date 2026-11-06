@@ -41,7 +41,7 @@ def auth_status(ctx):
         try:
             envelope=json.loads(token_path.read_text(encoding="utf-8"))
             token=decrypt_payload(_master_key(),envelope,("nannet-token-v1:"+doc["installation_id"]).encode()).decode()
-            from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
+            from .crypto_compat import Ed25519PublicKey
             claims=verify_token(token,Ed25519PublicKey.from_public_bytes(_unb64(os.environ["NANNET_ISSUER_PUBLIC_KEY"])))
             result.update({"token_valid":True,"token_scopes":claims["scope"],"token_expires_at":claims["exp"]})
         except Exception:
@@ -80,7 +80,7 @@ def auth_pair(ctx,pairing_code):
     except Exception as exc: raise ValueError("NANNET pairing request failed") from exc
     if not hmac.compare_digest(str(result.get("issuer_public_key","")),pinned):
         raise ValueError("pairing authority issuer key does not match pinned NANNET_ISSUER_PUBLIC_KEY")
-    from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
+    from .crypto_compat import Ed25519PublicKey
     issuer=Ed25519PublicKey.from_public_bytes(_unb64(pinned))
     claims=verify_token(result["token"],issuer,now=None)
     if claims.get("sub")!=doc["installation_id"] or sorted(claims.get("scope",[]))!=sorted(result.get("scopes",[])):
@@ -139,7 +139,7 @@ def require_scope(ctx, required_scope):
     doc,_=load_installation(root,_master_key())
     envelope=json.loads(token_path.read_text(encoding="utf-8"))
     token=decrypt_payload(_master_key(),envelope,("nannet-token-v1:"+doc["installation_id"]).encode()).decode()
-    from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
+    from .crypto_compat import Ed25519PublicKey
     claims=verify_token(token,Ed25519PublicKey.from_public_bytes(_unb64(os.environ["NANNET_ISSUER_PUBLIC_KEY"])),required_scope=required_scope)
     if claims.get("sub")!=doc["installation_id"]:
         raise ValueError("NANNET token belongs to a different installation")

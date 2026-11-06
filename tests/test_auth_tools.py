@@ -1,8 +1,8 @@
 import os, tempfile, unittest
 from pathlib import Path
 from unittest.mock import patch
-from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
-from cryptography.hazmat.primitives import serialization
+from nanlmind_hermes.crypto_compat import Ed25519PrivateKey
+from nanlmind_hermes.crypto_compat import serialization
 from nanlmind_hermes.auth import create_installation, encrypt_payload, issue_token, generate_master_key, _unb64
 from nanlmind_hermes.auth_tools import require_scope
 

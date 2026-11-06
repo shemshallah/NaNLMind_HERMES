@@ -3,11 +3,10 @@ from __future__ import annotations
 import base64, hashlib, json, os, secrets, sqlite3, time, uuid
 from pathlib import Path
 from typing import Iterable
-from cryptography.exceptions import InvalidSignature, InvalidTag
-from cryptography.hazmat.primitives import hashes, serialization
-from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey, Ed25519PublicKey
-from cryptography.hazmat.primitives.ciphers.aead import AESGCM
-from cryptography.hazmat.primitives.kdf.hkdf import HKDF
+from .crypto_compat import (
+    InvalidSignature, InvalidTag, hashes, serialization,
+    Ed25519PrivateKey, Ed25519PublicKey, AESGCM, HKDF,
+)
 
 TOKEN_ISSUER = "nannet-api-hermes"
 TOKEN_AUDIENCE = "nanlmind-hermes"
