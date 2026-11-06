@@ -104,6 +104,19 @@ class DeviceRegistry:
             db.execute("UPDATE device_leases SET hw_slot=NULL,released_at=? WHERE lease_id=?", (now, row["lease_id"]))
         return {"released": True, "address": address}
 
+    def rotate(self, token: str, now: int | None = None) -> dict:
+        """Rotate a live bearer without creating a second device or lease."""
+        now = int(time.time()) if now is None else int(now)
+        replacement = "nnt_" + secrets.token_urlsafe(32)
+        with self._connect() as db:
+            row = self._active(db, token, now)
+            db.execute("UPDATE device_leases SET token_hash=? WHERE lease_id=?", (_digest(replacement), row["lease_id"]))
+            expires = now + self.lease_seconds
+            db.execute("UPDATE device_leases SET expires_at=? WHERE lease_id=?", (expires, row["lease_id"]))
+            db.execute("UPDATE devices SET last_seen=? WHERE device_id=?", (now, row["device_id"]))
+        return {"lease_id": row["lease_id"], "lease_expires_at": expires,
+                "address": f"nan://GM0:SC0:MC0:BS0:HW{row['hw_slot']}", "token": replacement}
+
     def report(self, token: str, payload: dict, now: int | None = None) -> dict:
         now = int(time.time()) if now is None else int(now)
         if not isinstance(payload, dict): raise ValueError("invalid report")
