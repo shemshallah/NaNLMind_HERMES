@@ -34,15 +34,18 @@ def auth_status(ctx):
     try:
         doc,_=load_installation(root,_master_key())
         result.update({"installation_id":doc["installation_id"],"public_key":doc["public_key"],"identity_unlocked":True})
-        if token_path.exists() and os.environ.get("NANNET_ISSUER_PUBLIC_KEY"):
+    except Exception:
+        result["identity_unlocked"]=False
+        return result
+    if token_path.exists() and os.environ.get("NANNET_ISSUER_PUBLIC_KEY"):
+        try:
             envelope=json.loads(token_path.read_text(encoding="utf-8"))
             token=decrypt_payload(_master_key(),envelope,("nannet-token-v1:"+doc["installation_id"]).encode()).decode()
             from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
             claims=verify_token(token,Ed25519PublicKey.from_public_bytes(_unb64(os.environ["NANNET_ISSUER_PUBLIC_KEY"])))
             result.update({"token_valid":True,"token_scopes":claims["scope"],"token_expires_at":claims["exp"]})
-    except Exception:
-        result["identity_unlocked"]=False
-        if token_path.exists(): result["token_valid"]=False
+        except Exception:
+            result["token_valid"]=False
     return result
 
 def auth_pair(ctx,pairing_code):
