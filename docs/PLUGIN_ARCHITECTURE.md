@@ -21,6 +21,8 @@ learned parameters.
 
 ```text
 /nanlm logic|words|sentences|pipeline
+  -> mandatory native full-Boolean foundation (1,024 truth checks + circuits)
+  -> fail closed if the foundation is incomplete
   -> selected curriculum stages
   -> N16TXT/1 corpus
   -> native 256-head math-train
@@ -83,5 +85,6 @@ idempotent union; conflicting claims remain visible and are promoted for review.
 
 ## Versioning
 
-`1.0.0` is the first documented plugin release. The manifest, `pyproject.toml`,
+`1.0.1` is the current documented plugin release. The manifest, `pyproject.toml`,
 tool reference, README, and changelog share the same version and release date.
+The `1.0.0` entry remains the first documented release.

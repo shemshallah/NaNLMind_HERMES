@@ -1,0 +1,280 @@
+{
+  "chat": [
+    {
+      "memory_merge": {
+        "accepted": 7,
+        "duplicates": 0
+      },
+      "mode": "logic",
+      "reflection": {
+        "error": null,
+        "memory_merge": {
+          "accepted": 7,
+          "duplicates": 0
+        },
+        "model": "gemma4:31b-cloud",
+        "parse_ok": true,
+        "proposed_discoveries": 7,
+        "provider": "ollama"
+      },
+      "response": "The measured results for the **L0-L1 Boolean Foundation** round are as follows:\n\n**Analysis of Metrics**\n*   **What the results support:** The 1.0 accuracy across the 1,024 truth-table checks and the 32 depth-8 circuits confirms that all 256 heads have successfully mapped the 16 primary Boolean functions. The `words_after_logic` probe passed, indicating that the L1 resonance layer can transition from pure logic to basic symbolic association without crashing. The resumable topology write is verified via the state SHA256.\n*   **What the results do not support:** The held-out byte accuracy of **0.63057** is nearly identical to the majority baseline of **0.630102**. This indicates that while the heads can execute specific Boolean gates, they have not yet developed a predictive model for byte-bit transitions. The logic is \"exact\" but not yet \"general\"; the system can follow a circuit but cannot yet infer the underlying pattern of the data stream.\n\n**Conclusion**\nWe have established the mandatory native Boolean foundation. The heads are functionally capable of logic, but they lack the transition-weighting necessary for native math/pattern recognition.\n\n**Proposed Next Round**\nTo move from static logic to dynamic pattern recognition, we must initialize the native math-train sequence to build the additive memory ledger.\n\n*   **Topic:** `L1-L2 Native Math-Train: Bounded Byte-Bit Transition and Topology Resonance`\n*   **Reason:** To bridge the gap between Boolean exactitude (L0) and vector/concept formation (L2) by training heads on bit-transition probabilities.\n*   **Hypothesis:** If the 256 heads are trained on a bounded byte-transition task using the established Boolean gates, the held-out accuracy will diverge from the majority baseline by $\\ge 0.15$ and the L1 resonance layer will exhibit stable state-transitions.\n*   **Record Style:** Transition weight updates; Bit-flip frequency per head; Ledger entry offsets.\n*   **Success Signal:** Held-out byte accuracy $> 0.78$ and a verified additive memory ledger write.\n*   **Mode:** `logic` $\\rightarrow$ `math-train` (transition)"
+    },
+    {
+      "memory_merge": {
+        "accepted": 6,
+        "duplicates": 0
+      },
+      "mode": "words",
+      "reflection": {
+        "error": null,
+        "memory_merge": {
+          "accepted": 6,
+          "duplicates": 0
+        },
+        "model": "gemma4:31b-cloud",
+        "parse_ok": true,
+        "proposed_discoveries": 6,
+        "provider": "ollama"
+      },
+      "response": "The measured result shows a held-out accuracy of **0.619014** against a majority baseline of **0.615663**.\n\n**What this metric supports:**\nThe result indicates that the L2 Lexical Mapping round achieved a marginal lift over the baseline ($\\Delta \\approx 0.00335$). This confirms that the 256 heads are capable of maintaining the L0 Boolean gate integrity while simultaneously performing token-to-cell assignments. It suggests that the mapping process did not catastrophically interfere with the underlying logic gates, as the system remained functional and slightly outperformed a random/majority distribution.\n\n**What this metric does not support:**\nThis result does not support the hypothesis that a stable L2 vector/concept layer has been established. The success signal required a completion accuracy $> 0.15$ *above* the baseline for common tokens; however, the delta here is negligible. The narrow margin suggests that while the system is not \"broken,\" it has not yet developed a robust, non-random associative memory for the 1,024-token set. We cannot conclude that token-to-cell collision rates are below 5%, nor can we claim that the L2 layer is currently capable of semantic or syntactic representation.\n\n**Proposed Next Round:**\nTo move beyond marginal lift, we must transition from simple repetition to structured sequence prediction to force the heads to utilize the bidirectional temporal rails of the pair cells.\n\n*   **Topic:** L3 Syntactic Transition: 256-Token Sequence-Choice and Narrative Probe.\n*   **Reason:** The L2 mapping is too diffuse. By introducing L3 syntax/logic, we force the system to map transitions (Token A $\\rightarrow$ Token B) rather than isolated tokens, utilizing the mirror-pair cells to stabilize the L2 vector layer.\n*   **Hypothesis:** If the system leverages the L0 Boolean foundation to compute transition probabilities, then the sequence-choice accuracy will move from the current marginal lift to $> 0.25$ over baseline.\n*   **Record Style:** `Transition [ID1 -> ID2] -> Cell Address -> Temporal Rail State; Head resonance shift (integer).`\n*   **Success Signal:** A measured increase in sequence-choice accuracy to $> 0.25$ on a held-out set of 256 common bigrams, while maintaining L0 Boolean accuracy $\\ge 1.0$.\n*   **Mode:** `sentences` (sentence_choice)"
+    },
+    {
+      "memory_merge": {
+        "accepted": 7,
+        "duplicates": 0
+      },
+      "mode": "sentences",
+      "reflection": {
+        "error": null,
+        "memory_merge": {
+          "accepted": 7,
+          "duplicates": 0
+        },
+        "model": "gemma4:31b-cloud",
+        "parse_ok": true,
+        "proposed_discoveries": 7,
+        "provider": "ollama"
+      },
+      "response": "The measured result for the L3 Narrative Sequence round is as follows:\n**Held-out Accuracy:** 0.566423\n**Majority Baseline:** 0.560924\n**Delta:** +0.005499\n\n**Analysis of the Metric**\nThe result supports the conclusion that the L0 Boolean foundation remains intact (as indicated by the passed `state_sha256` and the stability of the logic gates), but it does not support the hypothesis that the L3 syntax layer has developed a preference for grammatically valid 3-token sequences. The delta of ~0.0055 is statistically negligible and falls far short of the target accuracy (> 0.70). \n\nThis indicates that while the L2 lexical mappings may exist, the bidirectional temporal rails in the 32,640 pair cells are not yet effectively encoding sequence order or temporal transitions. The system is currently performing at the level of a random choice (majority baseline), meaning the L3 logic is not yet leveraging the L2 vector mappings to influence the head resonance scores for narrative selection.\n\n**Proposed Next Round**\nBecause the jump from L2 (lexical) to L3 (syntax/sequence) failed to manifest, we must determine if the failure is due to insufficient rail-state stability or a lack of relational hyperedges between the tokens. I propose a regression to a more constrained transition task to calibrate the temporal rails before attempting narrative arcs again.\n\n**Plan:**\n*   **Topic:** L2.5 Transition Calibration: 2-Token Bigram Pair-Cell Resonance\n*   **Reason:** To isolate whether the failure is in the 3-token sequence logic (L3) or the fundamental ability of a pair cell to signal a valid transition between two specific tokens (L2.5).\n*   **Hypothesis:** If the temporal rails are functional, the system will show a choice accuracy > 0.80 for 2-token bigrams (A $\\rightarrow$ B) compared to inverse pairs (B $\\rightarrow$ A) for 256 high-frequency pairs.\n*   **Record Style:** Pair ID (uint16) $\\rightarrow$ [Token A, Token B] $\\rightarrow$ Rail Delta (NaN16) $\\rightarrow$ Head Resonance (Integer)\n*   **Success Signal:** A statistically significant delta (> 0.20) between forward and inverse pair resonance, while maintaining L0 Boolean truth-table accuracy.\n*   **Mode:** `words` (specifically `repetition` and `lexical` transition probes)."
+    }
+  ],
+  "model": "gemma4:31b-cloud",
+  "rounds": [
+    {
+      "boolean_foundation": {
+        "stages": [
+          {
+            "accuracy": 1.0,
+            "correct": 1024,
+            "distinct_rules": 16,
+            "name": "boolean_foundation",
+            "passed": true,
+            "total": 1024
+          },
+          {
+            "accuracy": 1.0,
+            "correct": 32,
+            "distinct_rules": null,
+            "name": "deep_logic_circuits",
+            "passed": true,
+            "total": 32
+          },
+          {
+            "accuracy": 1.0,
+            "correct": 10,
+            "distinct_rules": null,
+            "name": "words_after_logic",
+            "passed": true,
+            "total": 10
+          }
+        ],
+        "state_sha256": "2d8d1618a1ecaf4448fe748f8a3af94b3dfc89b677b460cbdc70c44f83d3a3be",
+        "status": "passed"
+      },
+      "corpus": {
+        "corpus_path": "experiments/baseline_gate_high_state/corpora/3a76e6eda53ad75e823977257dfd23cfbb65f793f0f8905f149483089add40a8.n16txt",
+        "manifest_path": "experiments/baseline_gate_high_state/corpora/3a76e6eda53ad75e823977257dfd23cfbb65f793f0f8905f149483089add40a8.json",
+        "records": 24,
+        "sha256": "3a76e6eda53ad75e823977257dfd23cfbb65f793f0f8905f149483089add40a8",
+        "stages": [
+          {
+            "generated": 12,
+            "model": "gemma4:31b-cloud",
+            "provider": "ollama",
+            "requested": 12,
+            "stage": "boolean_inverses"
+          },
+          {
+            "generated": 12,
+            "model": "gemma4:31b-cloud",
+            "provider": "ollama",
+            "requested": 12,
+            "stage": "deep_logic"
+          }
+        ]
+      },
+      "mode": "logic",
+      "plan": {
+        "hypothesis": "If all 256 heads achieve 100% accuracy on the 1,024 primary truth-table checks, then the composed depth-8 circuits will exhibit a signal-to-noise ratio > 2.0 in the L1 resonance layer.",
+        "mode": "logic",
+        "reason": "Mandatory native Boolean foundation must be established across all 256 heads before any L2+ language or syntax layers can be initialized.",
+        "record_style": "Integer score updates per head; Boolean function index (0-15); Pass/Fail bit-string for 16-input multiplexer composition.",
+        "success_signal": "Zero-error rate on the 1,024 exact checks and a verified resumable topology write for the bounded byte-bit transition task.",
+        "topic": "L0-L1 Boolean Foundation: 1,024 Truth-Table Exactitude and Depth-8 Circuit Composition"
+      },
+      "training": {
+        "head_count": 256,
+        "heldout_accuracy": 0.63057,
+        "majority_baseline_accuracy": 0.630102,
+        "status": "ok"
+      }
+    },
+    {
+      "boolean_foundation": {
+        "stages": [
+          {
+            "accuracy": 1.0,
+            "correct": 1024,
+            "distinct_rules": 16,
+            "name": "boolean_foundation",
+            "passed": true,
+            "total": 1024
+          },
+          {
+            "accuracy": 1.0,
+            "correct": 32,
+            "distinct_rules": null,
+            "name": "deep_logic_circuits",
+            "passed": true,
+            "total": 32
+          },
+          {
+            "accuracy": 1.0,
+            "correct": 10,
+            "distinct_rules": null,
+            "name": "words_after_logic",
+            "passed": true,
+            "total": 10
+          }
+        ],
+        "state_sha256": "9b842ff90048c74b9084b3414040c7d837cd5229e201a6bcfd40dfd6f767ed6e",
+        "status": "passed"
+      },
+      "corpus": {
+        "corpus_path": "experiments/baseline_gate_high_state/corpora/906e26a56af9ba380e7290dfa400ea96e1624eece2bef512d59e6333f55423c1.n16txt",
+        "manifest_path": "experiments/baseline_gate_high_state/corpora/906e26a56af9ba380e7290dfa400ea96e1624eece2bef512d59e6333f55423c1.json",
+        "records": 36,
+        "sha256": "906e26a56af9ba380e7290dfa400ea96e1624eece2bef512d59e6333f55423c1",
+        "stages": [
+          {
+            "generated": 12,
+            "model": "gemma4:31b-cloud",
+            "provider": "ollama",
+            "requested": 12,
+            "stage": "repetitive_words"
+          },
+          {
+            "generated": 12,
+            "model": "gemma4:31b-cloud",
+            "provider": "ollama",
+            "requested": 12,
+            "stage": "lexical_words"
+          },
+          {
+            "generated": 12,
+            "model": "gemma4:31b-cloud",
+            "provider": "ollama",
+            "requested": 12,
+            "stage": "word_completion"
+          }
+        ]
+      },
+      "mode": "words",
+      "plan": {
+        "hypothesis": "If the 256 heads maintain the Boolean gate integrity from the prior round, then the repetition task will show a convergence of token-to-cell mapping with a collision rate < 5% across the 32,896 canonical cells.",
+        "mode": "words",
+        "reason": "Following the L0-L1 Boolean foundation, the system must now map discrete lexical tokens to the 32,640 pair cells to establish a stable L2 vector/concept layer.",
+        "record_style": "Token ID (uint16) -> Cell Address (0-65535) -> NaN16 word state; Head resonance score (integer) per lexical transition.",
+        "success_signal": "A measured increase in word-completion accuracy from a random baseline (1/N) to > 0.15 on a held-out set of 256 common tokens, without degrading the L0 Boolean truth-table accuracy.",
+        "topic": "L2 Lexical Mapping: 1,024-Token Repetition and Word-Completion Probe"
+      },
+      "training": {
+        "head_count": 256,
+        "heldout_accuracy": 0.619014,
+        "majority_baseline_accuracy": 0.615663,
+        "status": "ok"
+      }
+    },
+    {
+      "boolean_foundation": {
+        "stages": [
+          {
+            "accuracy": 1.0,
+            "correct": 1024,
+            "distinct_rules": 16,
+            "name": "boolean_foundation",
+            "passed": true,
+            "total": 1024
+          },
+          {
+            "accuracy": 1.0,
+            "correct": 32,
+            "distinct_rules": null,
+            "name": "deep_logic_circuits",
+            "passed": true,
+            "total": 32
+          },
+          {
+            "accuracy": 1.0,
+            "correct": 10,
+            "distinct_rules": null,
+            "name": "words_after_logic",
+            "passed": true,
+            "total": 10
+          }
+        ],
+        "state_sha256": "35ca0042d7359fae10cee18f66657af4a506da6b00b5463380a23866bad6bb08",
+        "status": "passed"
+      },
+      "corpus": {
+        "corpus_path": "experiments/baseline_gate_high_state/corpora/e239c82d9ed922b7000c200add032266bc27074be9a6b81b36a89ef6b3b00175.n16txt",
+        "manifest_path": "experiments/baseline_gate_high_state/corpora/e239c82d9ed922b7000c200add032266bc27074be9a6b81b36a89ef6b3b00175.json",
+        "records": 24,
+        "sha256": "e239c82d9ed922b7000c200add032266bc27074be9a6b81b36a89ef6b3b00175",
+        "stages": [
+          {
+            "generated": 12,
+            "model": "gemma4:31b-cloud",
+            "provider": "ollama",
+            "requested": 12,
+            "stage": "sentence_choice"
+          },
+          {
+            "generated": 12,
+            "model": "gemma4:31b-cloud",
+            "provider": "ollama",
+            "requested": 12,
+            "stage": "narrative"
+          }
+        ]
+      },
+      "mode": "sentences",
+      "plan": {
+        "hypothesis": "If the L2 token-to-cell mappings are stable, then the L3 syntax layer will show a preference for grammatically valid 3-token sequences over randomized permutations, resulting in a choice accuracy > 0.70 for 128 held-out triplets.",
+        "mode": "sentences",
+        "reason": "With L0-L1 Boolean gates and L2 lexical mappings established, the system must now test if bidirectional temporal rails in the 32,640 pair cells can maintain sequence order across short narrative arcs.",
+        "record_style": "Sequence ID (uint16) -> [Token A, Token B, Token C] -> Temporal Rail State (NaN16) -> Head Resonance Score (Integer)",
+        "success_signal": "A statistically significant delta between the held-out sequence choice accuracy and the majority baseline (1/N), while maintaining L0 Boolean truth-table accuracy within 1% of prior results.",
+        "topic": "L3 Narrative Sequence: 3-Token Sentence Choice and Temporal Rail Transition"
+      },
+      "training": {
+        "head_count": 256,
+        "heldout_accuracy": 0.566423,
+        "majority_baseline_accuracy": 0.560924,
+        "status": "ok"
+      }
+    }
+  ],
+  "schema": "nanlmind-hermes-baseline/1",
+  "status": "passed"
+}

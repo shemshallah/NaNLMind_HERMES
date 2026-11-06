@@ -348,6 +348,9 @@ Proven/demonstrated in the current repository:
 - native 256-head training with resumable topology;
 - additive memory merge, evidence assessment, and cross-resolution analysis;
 - Hermes plugin registration and validation with 24 tools;
+- mandatory full-Boolean foundation (1,024 exact truth checks) before language
+  training;
+- model-planned logic/words/sentences baseline with 256-head native runs;
 - real model → training action → metrics → reflection loop.
 
 Not proven:

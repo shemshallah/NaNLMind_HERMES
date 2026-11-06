@@ -1,5 +1,5 @@
 name: nanlmind-hermes
-version: 1.0.0
+version: 1.0.1
 manifest_version: 2
 api_version: 1
 description: Local NaNLMind conversational learning, explicit staged training, reproducible evaluation and NANNET-connected universe operations through Hermes.

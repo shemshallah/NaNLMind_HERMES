@@ -161,6 +161,62 @@ def evaluate_native(command: Sequence[str], corpus_path: Path, state_dir: Path,
             "comparison_note": "These are independent native CLI runs with the CLI's documented 80/20 split; compare BPC/top-1 on the same corpus, not across different splits."}
 
 
+def run_logic_train(command: Sequence[str], state_path: Path,
+                    boolean_reps: int = 32, circuit_reps: int = 64,
+                    timeout_seconds: int = 300) -> dict:
+    """Run the native full-Boolean foundation and persist its state.
+
+    This is a prerequisite gate, not a language-quality metric. The native
+    session trains every one of the 256 heads on all 16 two-input Boolean
+    functions (4 truth-table rows each), then tests composed gates and the
+    word-after-logic probes.
+    """
+    base = _command(command)
+    state_path = state_path.expanduser().resolve()
+    state_path.parent.mkdir(parents=True, exist_ok=True)
+    result = _run(base + ["logic-train", str(max(1, int(boolean_reps))),
+                          str(max(1, int(circuit_reps))), str(state_path)],
+                  timeout_seconds)
+    output = result["output"]
+    if result["exit_code"] != 0 or result["timed_out"]:
+        raise RunnerError("native logic-train failed: " + output[-4000:])
+    if "result=PASS" not in output:
+        raise RunnerError("native Boolean foundation did not pass: " + output[-4000:])
+    stages = []
+    for line in output.splitlines():
+        if not line.startswith("stage="):
+            continue
+        match = re.search(r"stage=(\S+) passed=(yes|no) correct=(\d+)/(\d+) accuracy=([0-9.]+)", line)
+        if not match:
+            continue
+        distinct = re.search(r"distinct_rules=(\d+)", line)
+        stages.append({
+            "name": match.group(1), "passed": match.group(2) == "yes",
+            "correct": int(match.group(3)), "total": int(match.group(4)),
+            "accuracy": float(match.group(5)),
+            "distinct_rules": int(distinct.group(1)) if distinct else None,
+        })
+    boolean = next((s for s in stages if s["name"] == "boolean_foundation"), None)
+    if not boolean or not boolean["passed"] or boolean["correct"] != boolean["total"]:
+        raise RunnerError("native Boolean foundation is incomplete or not exact")
+    if boolean["total"] < 1024:
+        raise RunnerError("native Boolean foundation did not cover 256 heads x 4 truth rows")
+    if boolean.get("distinct_rules") != 16:
+        raise RunnerError("native Boolean foundation did not produce all 16 distinct learned rules")
+    if not state_path.is_file() or state_path.stat().st_size == 0:
+        raise RunnerError("native Boolean foundation did not persist its state")
+    digest_match = re.search(r"state_digest=([0-9a-f]{64})", output)
+    return {
+        "schema": "nanlm-hermes-boolean-foundation/1",
+        "status": "passed", "native_command": result["argv"],
+        "elapsed_seconds": result["elapsed_seconds"],
+        "state_path": str(state_path), "state_bytes": state_path.stat().st_size,
+        "state_sha256": hashlib.sha256(state_path.read_bytes()).hexdigest(),
+        "state_digest": digest_match.group(1) if digest_match else None,
+        "stages": stages, "stdout": output[-12000:],
+    }
+
+
 def run_math_train(command: Sequence[str], corpus_path: Path, state_dir: Path,
                    epochs: int = 3, max_samples_per_head: int = 4096) -> dict:
     """Train all native heads, resume the serialized global object, and emit typed discoveries."""

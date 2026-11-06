@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from nanlmind_hermes.runner import evaluate_native, run_bounded, run_math_train
+from nanlmind_hermes.runner import evaluate_native, run_bounded, run_logic_train, run_math_train
 
 
 class NativeHarnessTests(unittest.TestCase):
@@ -105,6 +105,23 @@ class NativeHarnessTests(unittest.TestCase):
             self.assertEqual(second["head_count"], 256)
             self.assertEqual(state.read_bytes(), b"xx")
             self.assertEqual(second["corpus_sha256"], first["corpus_sha256"])
+
+    def test_boolean_gate_rejects_a_population_that_learned_one_rule(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            script = root / "bad_logic.py"
+            script.write_text(
+                "import pathlib, sys\n"
+                "state = pathlib.Path(sys.argv[4]); state.parent.mkdir(parents=True, exist_ok=True); state.write_bytes(b'x')\n"
+                "print('stage=boolean_foundation passed=yes correct=1024/1024 accuracy=1 detail=distinct_rules=1 failed_heads=0')\n"
+                "print('stage=deep_logic_circuits passed=yes correct=32/32 accuracy=1 detail=composed')\n"
+                "print('stage=words_after_logic passed=yes correct=10/10 accuracy=1 detail=words')\n"
+                "print('result=PASS')\n",
+                encoding="utf-8",
+            )
+            from nanlmind_hermes.runner import RunnerError
+            with self.assertRaises(RunnerError):
+                run_logic_train([sys.executable, str(script)], root / "foundation.nmg")
 
     def test_math_train_rejects_incomplete_head_trace(self):
         with tempfile.TemporaryDirectory() as tmp:

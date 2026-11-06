@@ -18,3 +18,7 @@ auth.sqlite
 *.sqlite-shm
 nannet_token.json
 nannet-authority.sqlite*
+
+experiments/baseline_state*/
+
+experiments/baseline_*_state/

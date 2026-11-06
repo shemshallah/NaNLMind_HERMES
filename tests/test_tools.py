@@ -22,6 +22,16 @@ class HermesMathTrainTests(unittest.TestCase):
             fake = root / "fake_native.py"
             fake.write_text(
                 "import hashlib, json, pathlib, sys\n"
+                "mode = sys.argv[1]\n"
+                "if mode == 'logic-train':\n"
+                " state = pathlib.Path(sys.argv[4]); state.parent.mkdir(parents=True, exist_ok=True); state.write_bytes(b'boolean-foundation')\n"
+                " print('logic_train boolean_reps=32 circuit_reps=64 state_path=' + str(state))\n"
+                " print('stage=boolean_foundation passed=yes correct=1024/1024 accuracy=1 detail=256 heads x 4 truth-table rows | distinct_rules=16 | failed_heads=0')\n"
+                " print('stage=deep_logic_circuits passed=yes correct=32/32 accuracy=1 detail=composed gates')\n"
+                " print('stage=words_after_logic passed=yes correct=10/10 accuracy=1 detail=word probes')\n"
+                " print('state_bytes=19 state_digest=' + '0' * 64)\n"
+                " print('result=PASS')\n"
+                " raise SystemExit(0)\n"
                 "_, corpus, epochs, samples, state, trace = sys.argv[1:]\n"
                 "data=pathlib.Path(corpus).read_bytes(); digest=hashlib.sha256(data).hexdigest()\n"
                 "sp=pathlib.Path(state); sp.parent.mkdir(parents=True,exist_ok=True)\n"
@@ -51,6 +61,10 @@ class HermesMathTrainTests(unittest.TestCase):
             self.assertEqual(result["surface_extraction"]["discoveries"], 2)
             self.assertEqual(result["surface_extraction"]["merge"]["accepted"], 2)
             self.assertEqual(result["reorganization"]["contested_subjects"], 1)
+            self.assertEqual(result["boolean_foundation"]["status"], "passed")
+            self.assertEqual(result["boolean_foundation"]["stages"][0]["correct"], 1024)
+            self.assertEqual(result["boolean_foundation"]["stages"][0]["total"], 1024)
+            self.assertTrue(Path(result["boolean_foundation"]["state_path"]).is_file())
             memory = status(ctx)["mathematical_memory"]
             self.assertEqual(memory["events"], 258)
             self.assertTrue(status(ctx)["native_checkpoint_present"])

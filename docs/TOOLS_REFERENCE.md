@@ -1,6 +1,6 @@
 # Tool reference
 
-Version 1.0.0 (2026-11-06). All tools are registered under the `nanlmind` toolset.
+Version 1.0.1 (2026-11-06). All tools are registered under the `nanlmind` toolset.
 Tool schemas reject unknown properties unless stated otherwise.
 
 ## Default conversation
@@ -66,8 +66,12 @@ Explicit native 256-head training.
 - `epochs` (integer, 1–100, default 3)
 - `max_samples_per_head` (integer, 1–100000, default 4096)
 
-Requires configured `runner_command`. Writes a resumable topology and emits one
-discovery per head.
+Requires configured `runner_command`. Before language training it runs the
+mandatory native full-Boolean gate: 256 heads × all 16 two-input functions ×
+4 truth rows (1,024 exact checks), composed half/full adders, majority,
+multiplexer and depth-8 circuits, and a word-after-logic probe. A failed gate
+aborts the run. It then writes a resumable topology and emits one discovery per
+head.
 
 ### `nanlm_train`
 Legacy in-memory Context2 bootstrap.
@@ -92,7 +96,9 @@ save an experiment manifest.
 - `max_samples_per_head` (integer, 1–100000, default 4096)
 
 ### `nanlm_logic_session`
-Explicit logic-only session: Boolean inverses + deep logic.
+Explicit logic-only session: Boolean inverses + deep logic. The native
+full-Boolean foundation gate is mandatory before the generated logic corpus is
+trained.
 
 - `topic` (string, optional; default `logic`)
 - `records_per_stage` (1–64, default 12)

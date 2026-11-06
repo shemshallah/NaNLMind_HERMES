@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from .policy import DEFAULT_DURATION_MINUTES, load_n16txt, parse_n16txt, validate_duration
-from .runner import RunnerError, run_bounded, evaluate_native, run_math_train
+from .runner import RunnerError, run_bounded, evaluate_native, run_math_train, run_logic_train
 from .extract import extract_discoveries
 
 
@@ -70,6 +70,8 @@ def status(ctx):
     math_manifest = universe / "last_math_run.json"
     math_latest = json.loads(math_manifest.read_text(encoding="utf-8")) if math_manifest.exists() else None
     native_state = Path(math_latest["native_state_path"]) if math_latest and math_latest.get("native_state_path") else None
+    foundation_path = universe / "boolean_foundation.json"
+    foundation = json.loads(foundation_path.read_text(encoding="utf-8")) if foundation_path.exists() else None
     configured = _setting(ctx, "runner_command", [])
     return {
         "universe_id": _universe_id(universe),
@@ -87,6 +89,7 @@ def status(ctx):
         "last_math_run": math_latest,
         "native_checkpoint_present": bool(native_state and native_state.is_file() and native_state.stat().st_size > 0),
         "native_checkpoint_kind": "serialized_global_topology" if native_state and native_state.is_file() else None,
+        "boolean_foundation": foundation,
         "mathematical_memory": _memory_store(ctx).status(),
     }
 
@@ -278,8 +281,32 @@ def memory_merge(ctx, records: list):
             "memory": _memory_store(ctx).status()}
 
 
+def ensure_boolean_foundation(ctx):
+    """Mandatory full-Boolean prerequisite for every native training run.
+
+    The native session is the arbiter: it trains all 256 heads over all 16
+    two-input Boolean functions (four truth-table rows per head), tests composed
+    gates, and only then runs the word-after-logic probe. A Python receipt is
+    written beside a persistent foundation checkpoint; the language trainer is
+    never allowed to start from a failed or partial receipt.
+    """
+    root, _, universe = _paths(ctx)
+    command = _setting(ctx, "runner_command", [])
+    if not command:
+        raise RunnerError("runner_command is not configured; Boolean foundation cannot run")
+    result = run_logic_train(command, universe / "boolean_foundation.nmg")
+    result["created_at"] = datetime.now(timezone.utc).isoformat()
+    result["universe_id"] = _universe_id(universe)
+    path = universe / "boolean_foundation.json"
+    temp = path.with_suffix(".tmp")
+    temp.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    os.replace(temp, path)
+    return result
+
+
 def math_train(ctx, corpus_path: str, epochs: int = 3, max_samples_per_head: int = 4096):
     """Run the native 256-head learner, persist its global object, and merge all head discoveries."""
+    foundation = ensure_boolean_foundation(ctx)
     info = load_n16txt(corpus_path)
     root, corpora, universe = _paths(ctx)
     native_corpus = _native_corpus(info, corpora, 1000)
@@ -307,6 +334,7 @@ def math_train(ctx, corpus_path: str, epochs: int = 3, max_samples_per_head: int
     result["universe_id"] = _universe_id(universe)
     result["native_checkpoint_present"] = True
     result["native_checkpoint_kind"] = "serialized_global_topology"
+    result["boolean_foundation"] = foundation
     manifest = universe / "last_math_run.json"
     temp = manifest.with_suffix(".tmp")
     temp.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")

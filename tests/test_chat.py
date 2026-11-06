@@ -53,6 +53,15 @@ class HermesChatTests(unittest.TestCase):
             self.assertEqual(status(ctx)["mathematical_memory"]["events"], 7)
             self.assertEqual(len(ctx.llm.calls), 2)
 
+    def test_chat_system_prompt_includes_architecture_context(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            ctx = FakeContext(Path(tmp))
+            chat(ctx, "What are you?", session_id="architecture")
+            system = ctx.llm.calls[0]["messages"][0]["content"]
+            self.assertIn("C(256,2)=32,640", system)
+            self.assertIn("not a transformer", system)
+            self.assertIn("NANNET", system)
+
     def test_reflection_uses_bounded_prior_conversation_context(self):
         with tempfile.TemporaryDirectory() as tmp:
             ctx = FakeContext(Path(tmp))

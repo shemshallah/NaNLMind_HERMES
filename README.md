@@ -78,12 +78,13 @@ plugins:
 The plugin itself needs no Google API key. It uses the model provider configured
 in Hermes (local Ollama, a custom endpoint, or any configured provider).
 
-**Version 1.0.0 — released 2026-11-06**
+**Version 1.0.1 — released 2026-11-06**
 
 NaNLMind Hermes connects a Hermes agent to a local NaNLMind 256-head universe.
 It provides:
 
 - a default open-ended chat loop with durable conversation history;
+- a mandatory full-Boolean foundation gate before language training;
 - explicit, ordered logic → words → sentences training sessions;
 - a full staged training pipeline;
 - native NaNLMind head training with resumable global-topology state;
@@ -304,10 +305,12 @@ discoveries into mathematical memory.
 
 ### What native training actually learns
 
-`nanlm_math_train` trains the 256 native heads on a bounded byte-bit transition
-task. It is real, persistent native training, but not a general language model.
-Held-out accuracy measures that task only. Chat reflection is symbolic evidence,
-not online gradient descent.
+Before any language training, `nanlm_math_train` runs a mandatory native
+full-Boolean foundation: all 256 heads learn all 16 two-input functions
+(1,024 exact truth-table checks), composed gates, and a word-after-logic probe.
+A failed gate aborts training. The separate byte-bit `math-train` task is real,
+persistent native training, but its held-out accuracy is not general language
+competence. Chat reflection is symbolic evidence, not online gradient descent.
 
 ---
 
@@ -375,9 +378,10 @@ nanlm_auth_pair
 nanlm_auth_revoke
 ```
 
-Standalone local chat/training does not require NANNET. Paired mode fails closed
-when authority credentials are missing or invalid. See
-`docs/NANNET_API_HERMES.md`.
+Chat and training through Hermes require NANNET login and fail closed when
+authority credentials are missing or invalid. The test-only
+`NANLM_AUTH_TEST_BYPASS=1` switch exists for the local test suite and must not be
+used in a live installation. See `docs/NANNET_API_HERMES.md`.
 
 ---
 
@@ -425,9 +429,14 @@ and the limits of the experiment.
 | `docs/WALKTHROUGHS.md` | end-to-end usage scenarios |
 | `docs/PLUGIN_ARCHITECTURE.md` | design, boundaries, and invariants |
 | `docs/NAN16DE.md` | raw NaN16 double-endian route protocol |
+| `docs/BASELINE_1.0.1.md` | model-planned logic/words/sentences baseline results |
+| `docs/TEACHER_LOOP.md` | teacher → validator → student → feedback protocol |
 
 ## 11. Versioning
 
+- `1.0.1` — 2026-11-06: mandatory full-Boolean foundation gate, architecture-aware
+  model planning, chat checkpoints after logic/words/sentences rounds, baseline
+  metrics, and no-robust-learning conclusion.
 - `1.0.0` — 2026-11-06: default chat loop, explicit training modes, full
   pipeline, 24 tools, `/nanlm` command, validation-ready manifest, dependency
   fallback, complete documentation.

@@ -1,5 +1,26 @@
 # Changelog
 
+## 1.0.1 — 2026-11-06
+
+- Added a mandatory full-Boolean foundation gate: 256 heads × 4 truth rows,
+  16 distinct learned rules, composed gates, and a persisted
+  `boolean_foundation.nmg` checkpoint must pass before any language training.
+  A one-row-per-head budget can fail the gate; it is not hardcoded success.
+- Added the model-planned logic → chat → words → chat → sentences → chat
+  baseline experiment.
+- Recorded all three native 256-head runs and their held-out/majority metrics
+  in `docs/BASELINE_1.0.1.md`.
+- Added mandatory NANNET hardware-key login (`HW_HERMES_API`), one-key
+  registration, HW2 Hermes / HW3 Clocked slot reservation, and admin stale-lease
+  cleanup.
+- Added NaN16DE raw double-endian route codec and five-part
+  `nan://HW2:BS0:MC0:SC0:GM0` routes.
+- Documented `HERMES_GATEWAY_NO_SUPERVISE=1` for one-shot/CI runs.
+- Baseline result: full Boolean gate passed 1,024/1,024 in every round.
+  Byte-task deltas were small and mixed: standard −0.0032/+0.0051/+0.0150,
+  higher-budget +0.0005/+0.0034/+0.0055 (logic/words/sentences). No robust
+  language-learning claim.
+
 ## 1.0.0 — 2026-11-06
 
 - Default interaction is the conversational `nanlm_chat` path.
