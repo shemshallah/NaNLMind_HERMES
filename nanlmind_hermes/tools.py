@@ -289,8 +289,9 @@ CURRICULUM_STAGES = (
     ("deep_logic", "Nested AND/OR/NOT expressions, implications, equivalences, long relation chains and explicitly stated premises/conclusions."),
     ("exceptions", "Rules with exceptions, boundary conditions, defeasible conclusions and cases where a normally valid inference fails."),
     ("repetitive_words", "Common words, repeated tokens, frequency contrast, function words, punctuation and varied contexts for the same word."),
-    ("phonetic_morpheme", "Consonant/vowel patterns, syllables, sound contrasts and plausible morpheme boundaries. Mark uncertain pronunciations rather than inventing facts."),
-    ("roots_affixes", "Word roots, prefixes, suffixes, inflection, derivation and contrasts between related word forms."),
+    ("phonetic_pairs", "Consonant/vowel pairings, syllables, phoneme contrasts, onset/rime patterns and sound-to-spelling correspondences. Mark uncertain pronunciations rather than inventing facts."),
+    ("morpheme_structure", "Morpheme boundaries, stems, inflectional units and derivational structure. Distinguish productive patterns from exceptions."),
+    ("lexical_words", "Individual word identity, roots, prefixes, suffixes, inflection, derivation, spelling variants and contrasts between related words."),
     ("word_completion", "Context-rich partial phrases with plausible competing next-word completions and the contextual clue that favors one."),
     ("sentence_choice", "Natural sentence continuations, grammatical agreement, word order, ambiguity and next-word alternatives."),
     ("paragraph_structure", "Coherent paragraphs with topic continuity, reference tracking, transitions, cause/effect and exceptions."),
@@ -306,9 +307,9 @@ def generate_curriculum(ctx, topic: str, records_per_stage: int = 12):
         raise ValueError("records_per_stage must be between 1 and 64")
     generated, stage_manifest = [], []
     stage_layers = {
-        "boolean_inverses": 0, "deep_logic": 3, "exceptions": 5,
-        "repetitive_words": 3, "phonetic_morpheme": 1, "roots_affixes": 2,
-        "word_completion": 4, "sentence_choice": 5,
+        "boolean_inverses": 0, "deep_logic": 4, "exceptions": 5,
+        "repetitive_words": 3, "phonetic_pairs": 1, "morpheme_structure": 2,
+        "lexical_words": 3, "word_completion": 4, "sentence_choice": 5,
         "paragraph_structure": 6, "narrative": 6,
     }
     for stage, focus in CURRICULUM_STAGES:
