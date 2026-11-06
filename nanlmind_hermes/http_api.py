@@ -77,7 +77,13 @@ def make_server(authority: PairingAuthority, host="127.0.0.1", port=8765, tls_ce
                 try:
                     claims = authority.verify_access_token(token, required_scope="installation:admin")
                     if claims.get("role") != "admin": return self._reply(403, {"error": "admin_role_required"})
-                    payload = self._body(4096)
+                    if authority.is_paired_installation(claims["sub"]):
+                        raw = self._raw_body(4096)
+                        authority.verify_signed_request(token, "POST", self.path, raw, self._request_signature())
+                        payload = json.loads(raw)
+                        if not isinstance(payload, dict): return self._reply(400, {"error": "invalid_request"})
+                    else:
+                        payload = self._body(4096)
                     role, identity = payload.get("role"), payload.get("identity")
                     if role not in ("admin", "guest") or not isinstance(identity, str):
                         return self._reply(400, {"error": "invalid_identity_target"})
