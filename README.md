@@ -1,5 +1,40 @@
 # NaNLMind Hermes
 
+## Quickstart for the impatient
+
+```sh
+# Install the plugin from its public repository
+hermes plugins install shemshallah/NaNLMind_HERMES --yes-deps --enable
+
+# Validate the manifest and registration
+hermes plugins doctor /path/to/NaNLMind_HERMES --ci
+
+# Default: chat
+/nanlm Hello. What can you do?
+
+# Explicit training modes
+/nanlm logic Boolean inverses and nested implications
+/nanlm words common words and next-word choice
+/nanlm sentences short stories and sentence continuations
+/nanlm pipeline full logic -> language curriculum
+
+# Inspect state
+/nanlm status
+```
+
+Native training requires the local binary:
+
+```yaml
+plugins:
+  entries:
+    nanlmind-hermes:
+      settings:
+        runner_command: ["/absolute/path/to/NaNLMind/build/nanlm-universal"]
+```
+
+The plugin itself needs no Google API key. It uses the model provider configured
+in Hermes (local Ollama, a custom endpoint, or any configured provider).
+
 **Version 1.0.0 — released 2026-11-06**
 
 NaNLMind Hermes connects a Hermes agent to a local NaNLMind 256-head universe.
@@ -326,7 +361,13 @@ python -m unittest discover -s tests -v
 
 ---
 
-## 9. Repository map
+## 9. Vision and larger system
+
+See [HACKATHON_NOTE.md](HACKATHON_NOTE.md) for the architecture/manifesto: the
+c(256,2) universe, layered learning, NANNET, merge model, distributed hierarchy,
+and the limits of the experiment.
+
+## 10. Repository map
 
 | path | contents |
 |---|---|
@@ -341,7 +382,7 @@ python -m unittest discover -s tests -v
 | `docs/WALKTHROUGHS.md` | end-to-end usage scenarios |
 | `docs/PLUGIN_ARCHITECTURE.md` | design, boundaries, and invariants |
 
-## 10. Versioning
+## 11. Versioning
 
 - `1.0.0` — 2026-11-06: default chat loop, explicit training modes, full
   pipeline, 23 tools, `/nanlm` command, validation-ready manifest, dependency
