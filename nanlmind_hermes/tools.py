@@ -708,195 +708,95 @@ def generate_relation_curriculum(ctx, topic: str, records_per_stage: int = 12,
     }
 
 
-def run_curriculum_experiment(ctx, topic: str, records_per_stage: int = 12,
-                               epochs: int = 3, max_samples_per_head: int = 4096,
-                               stages: list[str] | tuple[str, ...] | None = None):
-    """Train the task-specific relation objective, never relabel byte-bit accuracy as language learning."""
-    corpus = generate_relation_curriculum(ctx, topic, records_per_stage, stages)
-    training = _native_relation_train(ctx, corpus["records"], "structured_teacher_training", epochs)
-    memory_result = _merge_relation_memory(ctx, corpus["records"], train_only=True, reorganize=True)
-    training.update(memory_result)
-    _, _, universe = _paths(ctx)
-    experiments = universe / "experiments"
-    experiments.mkdir(parents=True, exist_ok=True)
-    experiment_id = uuid.uuid4().hex
+def run_curriculum_experiment(ctx, topic: str = "logic and language",
+                               records_per_stage: int = 12, epochs: int = 3,
+                               max_samples_per_head: int = 4096,
+                               stages: list[str] | tuple[str, ...] | None = None,
+                               teacher_rounds: int = 3):
+    if not 1 <= teacher_rounds <= 8:
+        raise ValueError("teacher_rounds must be between 1 and 8")
+    feedback = {}
+    round_history = []
+    stagnant_rounds = 0
+    stop_reason = "requested_teacher_rounds_completed"
+    corpus = None
+    training = None
+    for round_index in range(teacher_rounds):
+        corpus = generate_relation_curriculum(
+            ctx, topic, records_per_stage, stages, feedback=feedback
+        )
+        training = _native_relation_train(
+            ctx, corpus["records"], "structured_teacher_training", epochs
+        )
+        training.update(_merge_relation_memory(
+            ctx, corpus["records"], train_only=True, reorganize=True
+        ))
+        rejected = sum(int(stage.get("rejected", 0)) for stage in corpus.get("stages", []))
+        summary = {
+            "round": round_index + 1,
+            "test_set_sha256": corpus.get("test_sha256"),
+            "resolution_order": corpus.get("resolution_order", []),
+            "records": len(corpus.get("records", [])),
+            "rejected_records": rejected,
+            "status": training.get("status"),
+            "changed_heads": training.get("changed_heads", 0),
+            "mirror_pair_updates": training.get("mirror_pair_updates", 0),
+            "hyperedges_added": training.get("hyperedges_added", 0),
+            "resolution_metrics": training.get("resolution_metrics", {}),
+            "cross_run_comparison": training.get("cross_run_comparison", {}),
+            "state_digest_before": training.get("state_digest_before"),
+            "state_digest_after": training.get("state_digest_after"),
+        }
+        round_history.append(summary)
+        comparison = training.get("cross_run_comparison", {})
+        deltas = comparison.get("resolution_deltas", {}) if comparison.get("comparable") else {}
+        if deltas and not any(float(value.get("delta", 0.0)) > 0.0 for value in deltas.values()):
+            stagnant_rounds += 1
+        else:
+            stagnant_rounds = 0
+        feedback = {
+            "round_completed": round_index + 1,
+            "boolean_foundation": training.get("boolean_foundation", {}),
+            "per_resolution_metrics": training.get("resolution_metrics", {}),
+            "cross_run_comparison": comparison,
+            "rejected_teacher_records": rejected,
+            "native_mutation": {
+                "changed_heads": training.get("changed_heads", 0),
+                "mirror_pair_updates": training.get("mirror_pair_updates", 0),
+                "hyperedges_added": training.get("hyperedges_added", 0),
+            },
+            "loss_metric_status": "not_computed_for_boolean_relation_head",
+            "instruction": (
+                "Propose novel, schema-valid training relations that target weak resolutions. "
+                "Do not repeat frozen challenge inputs. Do not request or infer held-out labels; "
+                "only aggregate metrics are supplied."
+            ),
+        }
+        if stagnant_rounds >= 2:
+            stop_reason = "heldout_accuracy_plateau_for_two_rounds"
+            break
     corpus_summary = {
-        "schema": corpus["schema"], "topic_key": corpus["topic_key"],
-        "record_count": len(corpus["records"]), "resolution_order": corpus["resolution_order"],
-        "frozen_challenge_sets": corpus["frozen_challenge_sets"], "stages": corpus["stages"],
+        "schema": corpus["schema"],
+        "topic_key": corpus["topic_key"],
+        "resolution_order": corpus["resolution_order"],
+        "frozen_challenge_sets": corpus["frozen_challenge_sets"],
+        "stages": corpus["stages"],
+        "record_count": len(corpus["records"]),
+        "test_set_sha256": corpus.get("test_sha256"),
     }
     result = {
-        "schema": "nanlm-curriculum-experiment/2",
-        "experiment_id": experiment_id,
-        "topic": topic.strip(),
-        "mode": "structured_teacher_training",
-        "corpus": corpus_summary,
-        "training": training,
+        "topic": topic, "corpus": corpus_summary, "training": training,
+        "teacher_rounds_requested": teacher_rounds,
+        "teacher_rounds_completed": len(round_history),
+        "rounds": round_history, "stop_reason": stop_reason,
         "legacy_max_samples_per_head_ignored": max_samples_per_head,
-        "interpretation": (
-            "The native student receives typed relation-polarity examples, updates routed heads, "
-            "canonical mirror-pair cells and provenance-bound hyperedges. Each L0-L9 channel has "
-            "its own held-out relation-polarity metrics and frozen topic challenge set. These scores "
-            "measure teacher-label relation prediction, not text generation or independently verified facts. "
-            "Teacher labels remain explicitly marked as unverified distillation evidence."
-        ),
+        "teacher_feedback_sent": bool(round_history[:-1]),
     }
-    manifest = experiments / (experiment_id + ".json")
-    temp = manifest.with_suffix(".tmp")
-    temp.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    os.replace(temp, manifest)
+    root, corpora, universe = _paths(ctx)
+    manifest = universe / "last_curriculum_experiment.json"
+    manifest.write_text(json.dumps(result, indent=2, sort_keys=True) + "\\n", encoding="utf-8")
     result["manifest_path"] = str(manifest)
     return result
-
-
-def run_training_session(ctx, topic: str, mode: str = "logic",
-                          records_per_stage: int = 12, epochs: int = 3,
-                          max_samples_per_head: int = 4096):
-    """Run one explicit training mode without changing the default chat path.
-
-    modes:
-      logic     Boolean inverses + deep logic
-      words     repetitive/lexical words + word completion
-      sentences sentence choice + narrative
-      pipeline  all twelve stages in canonical order
-    """
-    presets = {
-        "logic": ["boolean_inverses", "deep_logic", "exceptions"],
-        "words": ["repetitive_words", "phonetic_pairs", "morpheme_structure", "lexical_words", "word_completion"],
-        "sentences": ["sentence_choice", "paragraph_structure", "narrative"],
-        "pipeline": [name for name, _ in CURRICULUM_STAGES],
-    }
-    if mode not in presets:
-        raise ValueError("mode must be one of: " + ", ".join(sorted(presets)))
-    result = run_curriculum_experiment(
-        ctx, topic, records_per_stage, epochs, max_samples_per_head,
-        presets[mode])
-    result["mode"] = mode
-    result["stages_requested"] = presets[mode]
-    return result
-
-
-def chat(ctx, message: str, session_id: str = "default", system_prompt: str = None,
-         temperature: float = 0.7, max_tokens: int = 2048):
-    """Answer an open-ended user turn, then reflect it into multiresolution memory."""
-    from .chat import chat as run_chat
-    return run_chat(ctx, message, session_id, system_prompt, temperature, max_tokens)
-
-
-def chat_history(ctx, session_id: str = "default", limit: int = 40):
-    """Retrieve a conversation transcript by session ID."""
-    from .chat import chat_history as read_history
-    return read_history(ctx, session_id, limit)
-
-
-_RELATION_RESOLUTIONS = {
-    "bit": 0, "nibble": 1, "byte": 2, "phonetic": 3, "morpheme": 4,
-    "lexical": 5, "word_completion": 6, "sentence": 7,
-    "paragraph": 8, "narrative": 9,
-}
-
-
-def _relation_corpus(ctx, records):
-    """Encode supervised typed claims as source-bound N16REL/1 rows."""
-    if not isinstance(records, list) or not records:
-        raise ValueError("records must be a non-empty array")
-    root, corpora, _ = _paths(ctx)
-    rows, rejected = [], {}
-    counts = {"train": {}, "test": {}}
-    for index, record in enumerate(records):
-        if not isinstance(record, dict):
-            rejected["not_object"] = rejected.get("not_object", 0) + 1
-            continue
-        item = record.get("item", record)
-        if not isinstance(item, dict):
-            rejected["missing_item"] = rejected.get("missing_item", 0) + 1
-            continue
-        subject, predicate, obj = item.get("subject"), item.get("predicate"), item.get("object")
-        if not isinstance(subject, str) or not subject.strip() or not isinstance(predicate, str) or not predicate.strip() or obj is None:
-            rejected["incomplete_relation"] = rejected.get("incomplete_relation", 0) + 1
-            continue
-        if not isinstance(obj, str):
-            obj = json.dumps(obj, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
-        polarity = item.get("polarity", "neutral")
-        if polarity not in {"supports", "refutes"}:
-            rejected["non_supervised_polarity"] = rejected.get("non_supervised_polarity", 0) + 1
-            continue
-        provenance = item.get("provenance") if isinstance(item.get("provenance"), dict) else {}
-        resolution = provenance.get("resolution", item.get("resolution", "lexical"))
-        if resolution not in _RELATION_RESOLUTIONS:
-            rejected["unknown_resolution"] = rejected.get("unknown_resolution", 0) + 1
-            continue
-        split = record.get("split", "train")
-        if split not in {"train", "test"}:
-            rejected["invalid_split"] = rejected.get("invalid_split", 0) + 1
-            continue
-        confidence = item.get("confidence", 0.5)
-        if isinstance(confidence, bool) or not isinstance(confidence, (int, float)):
-            confidence = 0.5
-        confidence_value = float(confidence)
-        if not 0.0 <= confidence_value <= 1.0:
-            raise ValueError("relation confidence must be finite and between 0 and 1")
-        confidence_q16 = int(round(confidence_value * 65535.0))
-        source_digest = record.get("source_digest")
-        if not isinstance(source_digest, str) or len(source_digest) != 64 or any(c not in "0123456789abcdef" for c in source_digest.lower()):
-            source_digest = hashlib.sha256(json.dumps(
-                {"record": record, "index": index}, ensure_ascii=False,
-                sort_keys=True, separators=(",", ":")).encode("utf-8")).hexdigest()
-        row = "\t".join((
-            split, str(_RELATION_RESOLUTIONS[resolution]),
-            "+" if polarity == "supports" else "-",
-            str(confidence_q16), subject.encode("utf-8").hex(),
-            predicate.encode("utf-8").hex(), obj.encode("utf-8").hex(),
-            source_digest.lower(),
-        ))
-        rows.append(row)
-        counts[split][resolution] = counts[split].get(resolution, 0) + 1
-    if not any(row.startswith("train\t") for row in rows):
-        raise ValueError("no trainable supported/refuted subject-predicate-object relations")
-    # The native CLI trains first and evaluates second, independent of caller order.
-    rows.sort(key=lambda row: 0 if row.startswith("train\t") else 1)
-    test_rows = [row for row in rows if row.startswith("test\t")]
-    test_sha256 = hashlib.sha256(("N16REL_TEST/1\n" + "\n".join(test_rows) + "\n").encode("utf-8")).hexdigest() if test_rows else None
-    raw = ("N16REL/1\n" + "\n".join(rows) + "\n").encode("utf-8")
-    digest = hashlib.sha256(raw).hexdigest()
-    directory = corpora / "relations"
-    directory.mkdir(parents=True, exist_ok=True)
-    path = directory / (digest + ".n16rel")
-    if not path.exists():
-        temp = path.with_suffix(".tmp")
-        temp.write_bytes(raw)
-        os.replace(temp, path)
-    return {"path": path, "sha256": digest, "test_sha256": test_sha256, "records": len(rows),
-            "rejected": rejected, "counts": counts}
-
-
-def _merge_relation_memory(ctx, records, train_only=False, reorganize=False):
-    """Merge relation evidence into the additive ledger at its actual resolution."""
-    memory_records = []
-    for record in records:
-        if not isinstance(record, dict) or not isinstance(record.get("item"), dict):
-            continue
-        if train_only and record.get("split") != "train":
-            continue
-        item = record["item"]
-        provenance = item.get("provenance")
-        provenance = provenance if isinstance(provenance, dict) else {}
-        resolution = provenance.get("resolution", item.get("resolution", "lexical"))
-        layer = _RELATION_RESOLUTIONS.get(resolution, _RELATION_RESOLUTIONS["lexical"])
-        memory_records.append({
-            "item": item, "source_digest": record.get("source_digest"), "layer": layer,
-        })
-    store = _memory_store(ctx)
-    merge = store.merge(memory_records) if memory_records else {"accepted": 0, "duplicates": 0}
-    if not reorganize:
-        return {"merge": merge}
-    cross_resolution = memory_cross_resolution(ctx, limit=1000)
-    reorganization = store.reorganize()
-    return {
-        "merge": merge, "cross_resolution": cross_resolution,
-        "reorganization": reorganization, "memory": store.status(),
-    }
-
 
 def _native_relation_train(ctx, records, mode, epochs=1):
     corpus = _relation_corpus(ctx, records)
