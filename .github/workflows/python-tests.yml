@@ -23,6 +23,8 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Verify base install remains dependency-free
         run: python -m pip install --no-deps -e .
+      - name: Install optional auth test dependency
+        run: python -m pip install cryptography
       - name: Run Hermes tests
         env:
           PYTHONPATH: .
