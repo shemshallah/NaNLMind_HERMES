@@ -25,6 +25,16 @@ Read the durable transcript.
 - `session_id` (string, default `default`)
 - `limit` (integer, 1–200, default 40)
 
+### `nanlm_nan16de_route`
+Send one signed raw NaN16 double-endian route envelope to the authenticated
+NANNET portal. Requires a paired installation token.
+
+- `route` (string, required, `nan://HW:BS:MC:SC:GM` or explicit `:UM0..254`)
+- `kind` (string, default `route`)
+- `far_type`, `near_type` (0–3)
+- `payload` (32-bit)
+- `epoch` (nonnegative)
+
 ## Status and corpus
 
 ### `nanlm_status`

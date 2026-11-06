@@ -22,6 +22,10 @@ hermes plugins doctor /path/to/NaNLMind_HERMES --ci
 /nanlm status
 ```
 
+NANNET login is required for chat and training. Pair first with
+`nanlm_auth_init` and `nanlm_auth_pair`, then set `NANNET_AUTH_URL` and the
+pinned issuer key. The plugin fails closed without a paired token.
+
 Native training requires the local binary:
 
 ```yaml
@@ -381,11 +385,12 @@ and the limits of the experiment.
 | `docs/TOOLS_REFERENCE.md` | complete tool/option reference |
 | `docs/WALKTHROUGHS.md` | end-to-end usage scenarios |
 | `docs/PLUGIN_ARCHITECTURE.md` | design, boundaries, and invariants |
+| `docs/NAN16DE.md` | raw NaN16 double-endian route protocol |
 
 ## 11. Versioning
 
 - `1.0.0` — 2026-11-06: default chat loop, explicit training modes, full
-  pipeline, 23 tools, `/nanlm` command, validation-ready manifest, dependency
+  pipeline, 24 tools, `/nanlm` command, validation-ready manifest, dependency
   fallback, complete documentation.
 
 License: MIT.

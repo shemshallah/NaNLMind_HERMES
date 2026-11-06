@@ -226,7 +226,10 @@ or general reasoning.
 
 ## 5. NANNET, Koyeb, and mathematical memory
 
-NANNET is the identity, authorization, and delta-coordination boundary.
+NANNET is the identity, authorization, and delta-coordination boundary. The
+Hermes route speaks raw NaN16DE: far/near 0xNaN heads, 16 Boolean opcodes, the
+4×4 type/value table, and the double-endian word layout. Chat and training are
+fail-closed until a paired token exists.
 
 The local installation owns an Ed25519 key. A one-time pairing code binds the
 installation to a public key; the authority issues a short-lived, role-scoped
@@ -264,7 +267,16 @@ world/UM       up to 256 global-mesh regions
 A compact logical route is:
 
 ```text
-nan://HW0-255:BS0-255:MC0-255:SC0-255:GM0-255:UM0-254
+nan://HW2:BS0:MC0:SC0:GM0
+```
+
+The five-part Hermes route omits `UM`; internally `UM=255` is the reserved
+NaN/portal interface. An explicit `UM0..UM254` is available to routed worlds.
+
+The full hierarchy can be written:
+
+```text
+nan://HW0-255:BS0-255:MC0-255:SC0-255:GM0-255(:UM0-254)?
 ```
 
 - `HW` — hardware/device universe slot;
@@ -330,7 +342,7 @@ Proven/demonstrated in the current repository:
 - integer head learning and self-modification;
 - native 256-head training with resumable topology;
 - additive memory merge, evidence assessment, and cross-resolution analysis;
-- Hermes plugin registration and validation with 23 tools;
+- Hermes plugin registration and validation with 24 tools;
 - real model → training action → metrics → reflection loop.
 
 Not proven:
@@ -350,7 +362,7 @@ The experiment is worth running precisely because the answer is open.
 ## 9. What to tell reviewers and Hermes staff
 
 - Start with the quickstart and run `hermes plugins doctor --ci`.
-- Validate the manifest, 23 declared tools, and the default chat path.
+- Validate the manifest, 24 declared tools, and the default chat path.
 - Treat training as explicit; do not let a tool call silently launch a large job.
 - Inspect the corpus digest, native trace, memory merge, and held-out metric
   separately.

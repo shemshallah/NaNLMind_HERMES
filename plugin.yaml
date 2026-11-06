@@ -20,6 +20,7 @@ provides_tools:
   - nanlm_word_session
   - nanlm_sentence_session
   - nanlm_training_pipeline
+  - nanlm_nan16de_route
   - nanlm_generate_corpus
   - nanlm_train
   - nanlm_math_train

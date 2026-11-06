@@ -1,3 +1,4 @@
+import os
 import subprocess
 import sys
 import unittest
@@ -65,6 +66,7 @@ with tempfile.TemporaryDirectory() as tmp:
         result = subprocess.run(
             [sys.executable, "-c", code], cwd=root,
             text=True, capture_output=True, timeout=20,
+            env={**os.environ, "NANLM_AUTH_TEST_BYPASS": "1"},
         )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("without cryptography", result.stdout)

@@ -13,7 +13,7 @@ hermes tools
 ```
 
 The plugin must register the tools declared in `plugin.yaml`. The current
-manifest declares 19 tools, including:
+manifest declares 24 tools, including:
 
 ```text
 nanlm_chat, nanlm_chat_history, nanlm_curriculum_experiment,

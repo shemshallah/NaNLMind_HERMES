@@ -59,6 +59,7 @@ def register(ctx):
             params.get("max_samples_per_head", 4096))
 
     def handle_chat(params, **kwargs):
+        _require_scope("universe:read")
         return tools.chat(ctx, params["message"], params.get("session_id", "default"),
                           params.get("system_prompt"), params.get("temperature", 0.7),
                           params.get("max_tokens", 2048))
@@ -83,18 +84,45 @@ def register(ctx):
             raise
 
     def _require_scope(scope):
-        # In standalone/local mode there is no authority to consult, so avoid
-        # importing the optional crypto stack at all. Paired/authority mode
-        # still performs the full signed-token verification.
-        if not (os.environ.get("NANNET_AUTH_URL") or
-                os.environ.get("NANNET_ISSUER_PUBLIC_KEY")):
+        # NANNET login is required for chat and training. The only bypass is an
+        # explicit test flag; production/local interactive use must pair first.
+        if os.environ.get("NANLM_AUTH_TEST_BYPASS") == "1":
             return False
+        if not (os.environ.get("NANNET_AUTH_URL") and
+                os.environ.get("NANNET_ISSUER_PUBLIC_KEY")):
+            raise RuntimeError(
+                "NANNET login is required before chat or training. "
+                "Configure NANNET_AUTH_URL, NANNET_ISSUER_PUBLIC_KEY and pair "
+                "the installation with nanlm_auth_init/nanlm_auth_pair."
+            )
         return _auth_tools().require_scope(ctx, scope)
 
     def handle_auth_init(params, **kwargs): return _auth_tools().auth_init(ctx)
     def handle_auth_status(params, **kwargs): return _auth_tools().auth_status(ctx)
     def handle_auth_pair(params, **kwargs): return _auth_tools().auth_pair(ctx, params["pairing_code"])
     def handle_auth_revoke(params, **kwargs): return _auth_tools().auth_revoke(ctx)
+
+    def handle_nan16de_route(params, **kwargs):
+        _require_scope("universe:read")
+        from .auth import load_installation, decrypt_payload
+        from .auth_tools import _master_key, _universe_dir
+        from .nan16de import NanWord, make_envelope, send_envelope
+        import json as _json
+        root = _universe_dir(ctx)
+        doc, private = load_installation(root, _master_key())
+        token_path = root / "nannet_token.json"
+        if not token_path.exists():
+            raise RuntimeError("NANNET paired token is missing; pair before routing")
+        envelope = _json.loads(token_path.read_text(encoding="utf-8"))
+        token = decrypt_payload(_master_key(), envelope,
+                                ("nannet-token-v1:" + doc["installation_id"]).encode()).decode()
+        word = NanWord.from_bits(int(params.get("far_type", 0)),
+                                 int(params.get("near_type", 0)),
+                                 int(params.get("payload", 0)))
+        env = make_envelope(params["route"], params.get("kind", "route"),
+                            word, private, doc["installation_id"],
+                            int(params.get("epoch", 0)))
+        return send_envelope(os.environ["NANNET_AUTH_URL"], token, env)
 
     def handle_generate(params, **kwargs):
         _require_scope("corpus:write")
@@ -192,6 +220,14 @@ def register(ctx):
           "epochs": {"type": "integer", "minimum": 1, "maximum": 100, "default": 3},
           "max_samples_per_head": {"type": "integer", "minimum": 1, "maximum": 100000, "default": 4096}},
          [], handle_training_pipeline),
+        ("nanlm_nan16de_route", "Send one signed NaN16DE raw NaN16 double-endian envelope to the authenticated NANNET portal.",
+         {"route": {"type": "string", "pattern": "^nan://HW[0-9]{1,3}:BS[0-9]{1,3}:MC[0-9]{1,3}:SC[0-9]{1,3}:GM[0-9]{1,3}:UM[0-9]{1,3}$"},
+          "kind": {"type": "string", "minLength": 1, "maxLength": 64},
+          "far_type": {"type": "integer", "minimum": 0, "maximum": 3},
+          "near_type": {"type": "integer", "minimum": 0, "maximum": 3},
+          "payload": {"type": "integer", "minimum": 0, "maximum": 4294967295},
+          "epoch": {"type": "integer", "minimum": 0}},
+         ["route"], handle_nan16de_route),
         ("nanlm_generate_corpus", "Generate a bounded N16TXT/1 corpus using Hermes' active model.",
          {"topic": {"type": "string"}, "records": {"type": "integer", "minimum": 1, "maximum": 64, "default": 24}}, ["topic"], handle_generate),
         ("nanlm_train", "Run the native NaNLMind Context2 bootstrap trainer locally.",
@@ -259,7 +295,7 @@ def register(ctx):
         rest = parts[1:]
         if command in {"help", "?"}:
             return _json.dumps({
-                "usage": "/nanlm [chat|logic|words|sentences|pipeline|status] ...",
+                "usage": "/nanlm [chat|logic|words|sentences|pipeline|route|status] ...",
                 "default": "chat",
                 "note": "Bare /nanlm text is treated as a chat message.",
             }, sort_keys=True)
@@ -273,6 +309,8 @@ def register(ctx):
             return handle_sentence_session({"topic": " ".join(rest) or "sentences"})
         if command == "pipeline":
             return handle_training_pipeline({"topic": " ".join(rest) or "logic and language", "mode": "pipeline"})
+        if command == "route":
+            return _json.dumps(handle_nan16de_route({"route": rest[0] if rest else ""}), sort_keys=True)
         if command == "chat":
             message = " ".join(rest)
         else:
