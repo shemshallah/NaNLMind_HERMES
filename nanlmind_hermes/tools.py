@@ -597,6 +597,8 @@ def _relation_corpus(ctx, records):
         counts[split][resolution] = counts[split].get(resolution, 0) + 1
     if not any(row.startswith("train\t") for row in rows):
         raise ValueError("no trainable supported/refuted subject-predicate-object relations")
+    # The native CLI trains first and evaluates second, independent of caller order.
+    rows.sort(key=lambda row: 0 if row.startswith("train\t") else 1)
     raw = ("N16REL/1\n" + "\n".join(rows) + "\n").encode("utf-8")
     digest = hashlib.sha256(raw).hexdigest()
     directory = corpora / "relations"
