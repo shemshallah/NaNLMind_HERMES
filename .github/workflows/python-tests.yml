@@ -29,3 +29,13 @@ jobs:
         env:
           PYTHONPATH: .
         run: python -m unittest discover -s tests -v
+      - name: Run deterministic cross-resolution baselines
+        run: |
+          mkdir -p benchmark-results
+          python -m benchmarks.cross_resolution_baseline > benchmark-results/cross_resolution_baseline.json
+          cat benchmark-results/cross_resolution_baseline.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cross-resolution-baselines-py${{ matrix.python-version }}
+          path: benchmark-results/cross_resolution_baseline.json
+          if-no-files-found: error
