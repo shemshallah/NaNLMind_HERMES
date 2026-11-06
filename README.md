@@ -1,53 +1,65 @@
 # NaNLMind Hermes
 
-A Hermes plugin for generating, checking, and training one local NaNLMind universe per installation.
+A Hermes plugin for generating, validating, and training one local NaNLMind universe per installation.
 
 ## Operating model
 
-Each installation owns one universe, one hardware endpoint, one bounded runner, and one local state directory. No shared mutable universe or always-on community coordinator is started by default. A second universe is only added through explicit endpoint registration and authorization.
+Each installation owns one universe, one hardware endpoint, one bounded runner, and one local state directory. No shared mutable universe or always-on community coordinator is started by default. Another universe is added only through explicit endpoint registration and authorization.
 
-The core topology is the existing NaNLMind **256 palindromic heads over one universe**. This is not a transformer fine-tune. Its replayable learning path uses integer score updates, temporal links, and deterministic state changes.
+The native topology is NaNLMind's **256 palindromic heads over one universe**. This is not transformer fine-tuning. Its documented replayable learning path uses integer score updates, temporal links, and deterministic state changes.
 
-## Training duration
+## Configurable training duration
 
-Every run has a configurable wall-clock budget from 1 through 360 minutes. The default is 30 minutes. The deadline is enforced by a monotonic clock, checked between bounded work units. A run checkpoints on graceful stop and never starts another work unit after its deadline. The duration is a ceiling, not a promise of continuous compute or a target epoch count.
+- Default: **30 minutes** per run.
+- Minimum: **1 minute**.
+- Maximum: **360 minutes (6 hours)**.
+- Set the persistent default in the plugin's Hermes settings as `duration_minutes`.
+- Override a single run with the `duration_minutes` argument to `nanlm_train`.
+- The runner is supervised against a monotonic wall-clock deadline. At the deadline it receives SIGINT and up to 30 seconds to finish its current bounded unit and atomically checkpoint; TERM/KILL are fallbacks.
+- The duration is a ceiling, not a promised epoch count or guarantee of uninterrupted compute.
 
-Configuration lives in `~/.config/nanlmind-hermes/config.json` (or `NANLM_CONFIG`). Example:
+The plugin also exposes `checkpoint_interval_seconds`, `runner_command`, and `state_dir` in its settings. A typical local state directory is `~/.local/share/nanlmind-hermes`.
 
-```json
-{
-  "training": {
-    "duration_minutes": 30,
-    "checkpoint_interval_seconds": 60,
-    "max_records_per_batch": 128
-  },
-  "universe": {
-    "id": "local-default",
-    "state_dir": "~/.local/share/nanlmind-hermes/universe",
-    "runner_command": ["./build/nanlm-runner", "train"]
-  }
-}
-```
+## Hermes tools currently registered
 
-Set `duration_minutes` to any integer from 1 to 360. A training tool call may override it for that run, within the same limit.
+- `nanlm_status` — local universe and runner configuration.
+- `nanlm_generate_corpus` — uses Hermes' active model to generate bounded N16TXT/1 records.
+- `nanlm_train` — validates N16TXT/1 then invokes the configured local runner with the requested duration.
+- `nanlm_evaluate` — invokes the configured runner's evaluation mode.
 
-## Hermes integration
-
-Install as a trusted general plugin using the Hermes plugin installer, then enable it. The plugin registers tools for status, corpus generation, critique, training, evaluation, recall, and snapshots. LLM generation uses Hermes' host-owned `ctx.llm` route; provider credentials are not exposed to the plugin.
+Critique, recall, snapshot exchange, and explicit additional-endpoint registration are follow-on implementation work; they are not represented as complete yet.
 
 ## Corpus format
 
-Training input uses the NaN16-owned N16TXT v1 format. The plugin validates the framing and bounds before handing the file to the NaN16 codec/runner. Provenance metadata is stored separately from corpus text; corpus records are never treated as commands.
+Training input uses the NaN16-owned N16TXT v1 text format. The plugin validates the framing and bounds before handing a corpus to the native runner. Provenance metadata is stored separately from corpus text; corpus records are never treated as commands.
+
+The format enforces UTF-8, exact `N16TXT/1` header, 4096-byte maximum records, 1 MiB maximum corpus, control-character rejection, and deterministic exact-duplicate removal. The NaN16 codec remains authoritative for canonical record-stream encoding.
 
 ## Safety and persistence
 
-- A run is single-writer per local universe (exclusive lock).
-- Deadlines use monotonic time and are enforced in the runner supervisor.
-- Checkpoints are written to a temporary file and atomically renamed.
-- A failed or malformed corpus never mutates the active universe.
-- Snapshots record universe ID, base digest, corpus digest, codec version, runner version, and completion reason.
-- GitHub tokens and model credentials are never written into the universe, prompts, logs, or snapshots.
+- One writer per local universe (exclusive lock).
+- Monotonic wall-clock deadline, checked by the runner supervisor.
+- Checkpoint path is isolated to the installation's state directory.
+- A malformed corpus is rejected before runner invocation.
+- Corpus SHA-256 and stop reason are recorded in local run status.
+- GitHub tokens and Hermes model credentials are never written into the universe, prompts, logs, or snapshots.
 
-## Current status
+## Native runner adapter boundary
 
-Initial plugin scaffold and bounded-run supervisor are under active development. The native runner protocol is deliberately isolated behind an adapter; no unsupported NaNLMind CLI command is assumed.
+The existing NaNLMind core documents the learning substrate but does not yet expose this plugin's subprocess contract. Configure `runner_command` only after building an adapter that accepts:
+
+```text
+<runner argv> train --corpus PATH --duration-seconds N
+  --checkpoint PATH --checkpoint-interval-seconds N
+<runner argv> evaluate --corpus PATH
+```
+
+The adapter must handle SIGINT by finishing its current bounded work unit and atomically publishing the checkpoint. Until that adapter exists, training is intentionally disabled rather than pretending the existing CLI supports these flags.
+
+## Development
+
+```sh
+python -m unittest discover -s tests -v
+```
+
+CI runs the same policy and supervisor tests on pushes and pull requests.
