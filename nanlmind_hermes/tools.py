@@ -868,20 +868,23 @@ def _native_relation_train(ctx, records, mode, epochs=1):
     command = _setting(ctx, "runner_command", [])
     if not command:
         raise RunnerError("runner_command is not configured; native relation learning cannot run")
-    prior_manifest = universe / "last_relation_run.json"
+    history_path = universe / "relation_metric_history.json"
     try:
-        prior_result = json.loads(prior_manifest.read_text(encoding="utf-8")) if prior_manifest.exists() else None
+        metric_history = json.loads(history_path.read_text(encoding="utf-8")) if history_path.exists() else {}
+        if not isinstance(metric_history, dict):
+            metric_history = {}
     except (OSError, ValueError):
-        prior_result = None
+        metric_history = {}
+    prior_metrics = metric_history.get(corpus["test_sha256"], {}) if corpus["test_sha256"] else {}
     result = run_relation_train(command, corpus["path"], universe, epochs=epochs)
     result["mode"] = mode
     result["test_set_sha256"] = corpus["test_sha256"]
     result["cross_run_comparison"] = {"comparable": False, "reason": "no matching frozen held-out set"}
-    if corpus["test_sha256"] and prior_result and prior_result.get("test_set_sha256") == corpus["test_sha256"]:
-        prior_metrics = prior_result.get("resolution_metrics", {})
+    if corpus["test_sha256"] and prior_metrics:
+        previous_metrics = prior_metrics.get("resolution_metrics", {})
         deltas = {}
         for resolution, current in result.get("resolution_metrics", {}).items():
-            previous = prior_metrics.get(str(resolution), prior_metrics.get(resolution))
+            previous = previous_metrics.get(str(resolution), previous_metrics.get(resolution))
             if previous and "relation_polarity_accuracy" in previous:
                 deltas[str(resolution)] = {
                     "previous_accuracy": previous["relation_polarity_accuracy"],
@@ -890,8 +893,18 @@ def _native_relation_train(ctx, records, mode, epochs=1):
                 }
         result["cross_run_comparison"] = {
             "comparable": bool(deltas), "test_set_sha256": corpus["test_sha256"],
+            "previous_state_digest": prior_metrics.get("state_digest"),
             "resolution_deltas": deltas,
         }
+    if corpus["test_sha256"] and result.get("resolution_metrics"):
+        metric_history[corpus["test_sha256"]] = {
+            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "state_digest": result.get("state_digest_after"),
+            "resolution_metrics": result["resolution_metrics"],
+        }
+        history_tmp = history_path.with_suffix(".tmp")
+        history_tmp.write_text(json.dumps(metric_history, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        os.replace(history_tmp, history_path)
     result["foundation_seed"] = foundation_seed
     result["boolean_foundation"] = {
         "status": foundation.get("status"),
