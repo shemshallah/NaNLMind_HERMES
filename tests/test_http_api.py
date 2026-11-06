@@ -10,7 +10,7 @@ class PairingHttpTests(unittest.TestCase):
     def test_loopback_pair_endpoint(self):
         with tempfile.TemporaryDirectory() as tmp:
             authority=PairingAuthority(Path(tmp)/"auth.sqlite",_unb64(generate_master_key()))
-            code=authority.create_pairing_code(["training:execute"],now=1000)
+            code=authority.create_pairing_code(["training:execute"])
             server=make_server(authority,"127.0.0.1",0)
             thread=threading.Thread(target=server.serve_forever,daemon=True); thread.start()
             try:
@@ -27,7 +27,8 @@ class PairingHttpTests(unittest.TestCase):
                 server.shutdown(); server.server_close(); thread.join(timeout=2)
 
     def test_non_loopback_requires_tls(self):
-        authority=PairingAuthority(":memory:",_unb64(generate_master_key()))
-        with self.assertRaises(ValueError): make_server(authority,"0.0.0.0",0)
+        with tempfile.TemporaryDirectory() as tmp:
+            authority=PairingAuthority(Path(tmp)/"auth.sqlite",_unb64(generate_master_key()))
+            with self.assertRaises(ValueError): make_server(authority,"0.0.0.0",0)
 
 if __name__=="__main__": unittest.main()
