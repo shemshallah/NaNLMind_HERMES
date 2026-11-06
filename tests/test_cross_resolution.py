@@ -86,5 +86,64 @@ class CrossResolutionTests(unittest.TestCase):
         self.assertEqual(first[0]["layer"], 9)
 
 
+    def test_numeric_relations_discovered_only_with_alignment_and_matching_units(self):
+        from nanlmind_hermes.cross_resolution import discover_numeric_relations
+        rows = [
+            {"event_id": "bit-v", "object": 8, "units": "count",
+             "provenance": {"resolution": "bit", "alignment_id": "count:octet"}},
+            {"event_id": "byte-v", "expression": {"value": 8, "units": "count"},
+             "provenance": {"resolution": "byte", "alignment_id": "count:octet"}},
+            {"event_id": "sentence-v", "object": 4, "units": "seconds",
+             "provenance": {"resolution": "sentence", "alignment_id": "count:octet"}},
+            {"event_id": "unanchored", "object": 2,
+             "provenance": {"resolution": "narrative"}},
+        ]
+        result = discover_numeric_relations(rows)
+        self.assertEqual(result["relation_count"], 1)
+        relation = result["relations"][0]
+        self.assertEqual(relation["relation"], "equal")
+        self.assertEqual(relation["left_resolution"], "bit")
+        self.assertEqual(relation["right_resolution"], "byte")
+        self.assertTrue(relation["verified"])
+
+    def test_numeric_relation_finds_exact_ratio_without_executing_expression(self):
+        from nanlmind_hermes.cross_resolution import discover_numeric_relations
+        rows = [
+            {"event_id": "fine", "expression": {"value": 12, "op": "untrusted"},
+             "units": "meters", "provenance": {"resolution": "morpheme", "alignment_id": "length:x"}},
+            {"event_id": "coarse", "object": 3, "units": "meters",
+             "provenance": {"resolution": "paragraph", "alignment_id": "length:x"}},
+        ]
+        relation = discover_numeric_relations(rows)["relations"][0]
+        self.assertEqual(relation["relation"], "ratio")
+        self.assertEqual(relation["result"], 4.0)
+
+    def test_permutation_negative_control_is_deterministic(self):
+        from nanlmind_hermes.cross_resolution import permutation_control
+        rows = [
+            self.row("a", "concept-a", "bit", "supports"),
+            self.row("b", "concept-a", "byte", "supports"),
+            self.row("c", "concept-b", "sentence", "refutes"),
+            self.row("d", "concept-b", "narrative", "refutes"),
+        ]
+        for row, label in zip(rows, ["A", "A", "B", "B"]):
+            row["provenance"]["alignment_id"] = label
+        first = permutation_control(rows, seed=19)
+        second = permutation_control(rows, seed=19)
+        self.assertEqual(first, second)
+        self.assertEqual(first["seed"], 19)
+        self.assertIn("not a p-value", first["interpretation"])
+
+    def test_negative_control_has_no_false_links_when_labels_are_unique(self):
+        from nanlmind_hermes.cross_resolution import analyze_cross_resolution
+        rows = [self.row("e" + str(i), "subject" + str(i), name)
+                for i, name in enumerate(RESOLUTIONS)]
+        for i, row in enumerate(rows):
+            row["provenance"]["alignment_id"] = "unique-" + str(i)
+        result = analyze_cross_resolution(rows)
+        self.assertEqual(result["concepts_compared"], 0)
+        self.assertEqual(sum(map(sum, result["cooccurrence_matrix"])), 0)
+
+
 if __name__ == "__main__":
     unittest.main()
