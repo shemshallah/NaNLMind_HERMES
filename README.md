@@ -84,12 +84,13 @@ NaNLMind Hermes connects a Hermes agent to a local NaNLMind 256-head universe.
 It provides:
 
 - a default open-ended chat loop with durable conversation history;
-- a mandatory full-Boolean foundation gate before language training;
+- online free-form relation learning from explicit supervised claims in back-and-forth chat;
+- a mandatory full-Boolean foundation gate before structured training;
 - explicit, ordered logic → words → sentences training sessions;
-- a full staged training pipeline;
-- native NaNLMind head training with resumable global-topology state;
-- additive mathematical memory with evidence assessment and cross-resolution
-  feedback;
+- a teacher-generated structured relation pipeline with frozen held-out challenges at L0-L9;
+- native head, canonical mirror-pair, temporal-link and hyperedge updates in one resumable topology;
+- separate pre/post and cross-run metrics for each evaluated resolution;
+- additive mathematical memory with evidence assessment and cross-resolution feedback;
 - local NANNET identity, pairing, signed requests, and optional authority
   scopes;
 - a dependency-free Ed25519/AES-GCM/HKDF path for Alpine, Termux, and minimal
@@ -103,7 +104,11 @@ it is not the model runner or corpus store.
 ## 1. Default behaviour: chat
 
 Plain conversation is the default. The model should use `nanlm_chat` for normal
-interaction. Training tools are explicit actions, not side effects of chat.
+interaction. With `chat_learning: true` (default), each exchange is reflected
+and explicit supported/refuted subject-predicate-object relations are submitted
+to the native relation learner. This is a bounded online update, not an automatic
+curriculum-generation job. Set `chat_learning: false` to disable native chat
+updates while retaining transcripts and symbolic reflection.
 
 Inside a Hermes session:
 
@@ -124,10 +129,15 @@ Chat records:
 - provider/model metadata;
 - exact UTF-8 bit, nibble, byte, lexical, sentence, and paragraph measurements;
 - a structured reflection proposal merged into additive mathematical memory;
+- native-learning receipt: accepted relation events, changed heads, mirror-pair
+  mutations, hyperedges, checkpoint digests and per-resolution metrics when a
+  held-out set is available;
 - optional cross-resolution relations.
 
-Reflection is best effort and never blocks the conversational answer. It
-updates symbolic evidence, not model weights.
+Reflection is best effort and never blocks the conversational answer. Only
+explicit, non-neutral triples with evidence update native state. Neutral or
+incomplete reflections remain symbolic evidence; the plugin never claims a
+head update unless the native runner confirms it.
 
 ---
 
@@ -193,6 +203,7 @@ Settings live under `plugins.entries.nanlmind-hermes.settings`.
 | `duration_minutes` | int | `30` | wall budget for legacy native bootstrap runs, 1–360 |
 | `checkpoint_interval_seconds` | int | `60` | reserved for native checkpoint support |
 | `runner_command` | list[str] | `[]` | absolute argv for the local `nanlm-universal` binary |
+| `chat_learning` | bool | `true` | allow free-form chat to update native heads/mirror pairs/hyperedges from explicit supervised relations |
 | `state_dir` | str | `~/.local/share/nanlmind-hermes` | universe, corpora, transcripts, runs |
 | `universe_layers` | int | `7` | logical memory projection layers L0–L6 |
 
@@ -209,9 +220,9 @@ plugins:
         runner_command: ["/opt/NaNLMind/build/nanlm-universal"]
 ```
 
-The native runner is required for `nanlm_math_train`, `nanlm_train`,
-`nanlm_evaluate`, and the training pipeline. Chat and memory tools work without
-it.
+The native runner is required for structured training and native chat learning.
+Without it, chat still answers and stores reflection evidence, but its
+`native_learning` receipt reports that no native update occurred.
 
 ---
 
