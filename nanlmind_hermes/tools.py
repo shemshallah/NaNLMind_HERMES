@@ -7,8 +7,8 @@ import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
-from .policy import DEFAULT_DURATION_MINUTES, load_n16txt, validate_duration
-from .runner import RunnerError, run_bounded
+from .policy import DEFAULT_DURATION_MINUTES, load_n16txt, parse_n16txt, validate_duration
+from .runner import RunnerError, run_bounded, evaluate_native
 
 
 def _setting(ctx, key, default):
@@ -46,12 +46,13 @@ def status(ctx):
     configured = _setting(ctx, "runner_command", [])
     return {
         "universe_id": _universe_id(universe),
-        "scope": "one installation / one local universe / one runner",
+        "scope": "one installation / one local universe / one local native runner",
         "heads": 256,
         "duration_default_minutes": _setting(ctx, "duration_minutes", DEFAULT_DURATION_MINUTES),
         "duration_min_minutes": 1,
         "duration_max_minutes": 360,
-        "runner_configured": bool(configured),
+        "native_runner_configured": bool(configured),
+        "training_location": "local machine; Koyeb is control-plane only",
         "state_dir": str(root),
         "last_run": latest,
     }
@@ -71,9 +72,7 @@ def generate_corpus(ctx, topic: str, records: int = 12):
             )},
             {"role": "user", "content": f"Topic: {topic.strip()}\nExamples: {records}"},
         ],
-        temperature=0.3,
-        max_tokens=min(4096, records * 100),
-        timeout=120,
+        temperature=0.3, max_tokens=min(4096, records * 100), timeout=120,
         purpose="nanlmind-corpus-generation",
     )
     lines = [line.strip() for line in result.text.splitlines() if line.strip()]
@@ -82,8 +81,6 @@ def generate_corpus(ctx, topic: str, records: int = 12):
     if not lines:
         raise ValueError("model returned no usable corpus records")
     raw = ("N16TXT/1\n" + "\n".join(lines) + "\n").encode("utf-8")
-    # Validate the canonical codec framing before persisting.
-    from .policy import parse_n16txt
     info = parse_n16txt(raw)
     root, corpora, _ = _paths(ctx)
     corpora.mkdir(parents=True, exist_ok=True)
@@ -96,10 +93,8 @@ def generate_corpus(ctx, topic: str, records: int = 12):
     manifest = {
         "schema": "nanlm-corpus-manifest/1",
         "created_at": datetime.now(timezone.utc).isoformat(),
-        "corpus_sha256": digest,
-        "record_count": info.unique_records,
-        "topic": topic.strip(),
-        "provider": getattr(result, "provider", "active-hermes-provider"),
+        "corpus_sha256": digest, "record_count": info.unique_records,
+        "topic": topic.strip(), "provider": getattr(result, "provider", "active-hermes-provider"),
         "model": getattr(result, "model", "active-hermes-model"),
     }
     path.with_suffix(".json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
@@ -126,15 +121,9 @@ def evaluate(ctx, corpus_path: str):
     info = load_n16txt(corpus_path)
     command = _setting(ctx, "runner_command", [])
     if not command:
-        raise RunnerError("runner_command is not configured")
-    import subprocess
-    completed = subprocess.run(
-        list(command) + ["evaluate", "--corpus", str(Path(corpus_path).expanduser().resolve())],
-        capture_output=True, text=True, timeout=300, check=False,
-    )
-    return {
-        "exit_code": completed.returncode,
-        "records": info.unique_records,
-        "stdout": completed.stdout[-12000:],
-        "stderr": completed.stderr[-4000:],
-    }
+        raise RunnerError("runner_command is not configured; set it to the local build/nanlm-universal executable")
+    _, _, universe = _paths(ctx)
+    result = evaluate_native(command, Path(corpus_path), universe)
+    result["records_validated"] = info.unique_records
+    result["universe_id"] = _universe_id(universe)
+    return result
