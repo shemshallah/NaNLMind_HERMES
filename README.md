@@ -327,8 +327,7 @@ The new `relation-train` objective is separate from the legacy byte-bit
 `math-train` control. It updates routed heads, canonical mirror-pair cells,
 temporal links and provenance-bound hyperedges from typed L0-L9 relations.
 Free-form chat does the same online for explicit supported/refuted triples.
-Neither relation-polarity accuracy nor byte-bit accuracy is text-generation
-accuracy or independent fact verification.
+The relation trainer uses resolution-specific surface feature vectors; SHA-256 is used only for routing and event identity. It is a compact feature learner, not a pretrained semantic encoder. Neither relation-polarity accuracy nor byte-bit accuracy is text-generation accuracy or independent fact verification.
 
 ---
 
