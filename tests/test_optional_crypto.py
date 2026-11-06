@@ -51,6 +51,8 @@ with tempfile.TemporaryDirectory() as tmp:
     assert "nanlm_chat" in ctx.tools
     assert "nanlm_chat_history" in ctx.tools
     assert "nanlm_math_train" in ctx.tools
+    assert "nanlm_generate_curriculum" in ctx.tools
+    assert "nanlm_curriculum_experiment" in ctx.tools
     assert "nanlm_auth_init" in ctx.tools
     result = ctx.tools["nanlm_chat"]({"message": "Try an open-ended experiment."})
     assert result["response"] == "Hermes is ready."
