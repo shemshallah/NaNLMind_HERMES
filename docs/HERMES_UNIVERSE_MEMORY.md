@@ -110,7 +110,7 @@ they are not silently collapsed to the semantic-kind default. When evidence
 for one subject conflicts, the review projection still promotes both sides to
 the highest review layer while preserving original head/layer provenance.
 
-The active Hermes model can now generate a ten-stage curriculum corpus through
+The active Hermes model can now generate a eleven-stage curriculum corpus through
 `nanlm_generate_curriculum`: Boolean inverses, deep logic, exceptions,
 repetitive/common words, phonetic/morpheme patterns, roots and affixes,
 word-completion alternatives, sentence choice, paragraph structure and short
