@@ -69,7 +69,7 @@ def _run(argv: list[str], timeout: float) -> dict:
 
 def _metrics(output: str) -> dict:
     metrics = {}
-    for key in ("bpc", "top1", "alpha_top1", "word_start_top1", "accuracy"):
+    for key in ("bpc", "top1", "alpha_top1", "word_start_top1", "accuracy", "acc"):
         matches = re.findall(r"\b" + key + r"=([0-9]+(?:\.[0-9]+)?)", output)
         if matches:
             try:
