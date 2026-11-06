@@ -188,10 +188,16 @@ def _memory_context(ctx, layer=None, limit: int = 24):
     rows = store.query(layer=layer, limit=limit) if layer is not None else store.query(limit=limit)
     claims = []
     for row in rows:
+        expression = row.get("expression")
+        encoded_expression = json.dumps(expression, ensure_ascii=False, sort_keys=True)
+        if len(encoded_expression) > 1500:
+            expression = {"truncated": True, "sha256": hashlib.sha256(
+                encoded_expression.encode("utf-8")).hexdigest(),
+                "preview": encoded_expression[:1200]}
         claims.append({
-            "kind": row.get("kind"), "subject": row.get("subject"),
+            "kind": row.get("kind"), "subject": str(row.get("subject") or "")[:240],
             "predicate": row.get("predicate"), "object": row.get("object"),
-            "expression": row.get("expression"), "polarity": row.get("polarity"),
+            "expression": expression, "polarity": row.get("polarity"),
             "head": row.get("head"), "layer": row.get("layer"),
         })
     assessments = store.query_assessments(limit=min(limit, 24))
