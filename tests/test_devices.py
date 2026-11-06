@@ -14,7 +14,7 @@ class DeviceLeaseTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             registry=DeviceRegistry(Path(tmp)/"authority.sqlite")
             first=registry.register(payload("a"*43),now=1000)
-            self.assertEqual(first["address"],"nan://GM0:SC0:MC0:BS0:HW0")
+            self.assertEqual(first["address"],"nan://GM0:SC0:MC0:BS0:HW4")
             with self.assertRaisesRegex(ValueError,"active lease"):
                 registry.register(payload("a"*43),now=1001)
             hb=registry.heartbeat(first["token"],now=1100)
