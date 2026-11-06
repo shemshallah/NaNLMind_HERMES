@@ -24,14 +24,25 @@ def auth_init(ctx):
             "identity_path":identity["path"],"private_key_encrypted_at_rest":True,"master_key_returned":False}
 
 def auth_status(ctx):
-    path=_universe_dir(ctx)/"installation.json"; result={"identity_present":path.exists(),
-        "master_key_present":bool(os.environ.get("NANNET_MASTER_KEY")),"paired_token_present":(_universe_dir(ctx)/"nannet_token.json").exists()}
+    root=_universe_dir(ctx)
+    path=root/"installation.json"
+    token_path=root/"nannet_token.json"
+    result={"identity_present":path.exists(),"master_key_present":bool(os.environ.get("NANNET_MASTER_KEY")),
+            "paired_token_present":token_path.exists(),
+            "pairing_authority_configured":bool(os.environ.get("NANNET_AUTH_URL") and os.environ.get("NANNET_ISSUER_PUBLIC_KEY"))}
     if not path.exists(): return result
     try:
-        doc,_=load_installation(path.parent,_master_key())
+        doc,_=load_installation(root,_master_key())
         result.update({"installation_id":doc["installation_id"],"public_key":doc["public_key"],"identity_unlocked":True})
-    except Exception: result["identity_unlocked"]=False
-    result["pairing_authority_configured"]=bool(os.environ.get("NANNET_AUTH_URL") and os.environ.get("NANNET_ISSUER_PUBLIC_KEY"))
+        if token_path.exists() and os.environ.get("NANNET_ISSUER_PUBLIC_KEY"):
+            envelope=json.loads(token_path.read_text(encoding="utf-8"))
+            token=decrypt_payload(_master_key(),envelope,("nannet-token-v1:"+doc["installation_id"]).encode()).decode()
+            from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
+            claims=verify_token(token,Ed25519PublicKey.from_public_bytes(_unb64(os.environ["NANNET_ISSUER_PUBLIC_KEY"])))
+            result.update({"token_valid":True,"token_scopes":claims["scope"],"token_expires_at":claims["exp"]})
+    except Exception:
+        result["identity_unlocked"]=False
+        if token_path.exists(): result["token_valid"]=False
     return result
 
 def auth_pair(ctx,pairing_code):
