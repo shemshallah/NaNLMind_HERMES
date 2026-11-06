@@ -44,7 +44,7 @@ unknown resolutions, invalid labels and duplicate examples.
 | L8 paragraph | cohesion/reference/topic | relation-polarity accuracy and balanced accuracy |
 | L9 narrative | event/time/causality | relation-polarity accuracy and balanced accuracy |
 
-These are **binary relation-polarity** measurements, not text-generation
+The native relation learner uses deterministic resolution-specific surface features (phonetic, morphemic, lexical, syntactic, cohesive and narrative cues); SHA-256 is reserved for stable routing, source identity and event deduplication. This is a compact feature learner, not a pretrained semantic encoder.\n\nThese are **binary relation-polarity** measurements, not text-generation
 accuracy. The old `math-train` byte-bit score remains a separate control and
 must never be presented as a lexical or sentence metric.
 
