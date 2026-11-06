@@ -4,7 +4,7 @@ import hashlib, json, os, secrets, sqlite3, time, uuid
 from pathlib import Path
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
-from .auth import ALLOWED_SCOPES, AuthError, _b64, _unb64, _derive, _json_bytes, issue_token
+from .auth import ALLOWED_SCOPES, AuthError, _b64, _unb64, _derive, _json_bytes, issue_token, derive_identity_private_key
 
 class PairingAuthority:
     def __init__(self, database: str | Path, master_key: bytes):
@@ -16,7 +16,14 @@ class PairingAuthority:
         with sqlite3.connect(self.database) as db:
             db.execute("CREATE TABLE IF NOT EXISTS authority_meta (key TEXT PRIMARY KEY,value TEXT NOT NULL)")
             db.execute("CREATE TABLE IF NOT EXISTS pairing_codes (code_hash TEXT PRIMARY KEY,scopes TEXT NOT NULL,expires_at INTEGER NOT NULL,used_at INTEGER)")
+            columns = {row[1] for row in db.execute("PRAGMA table_info(pairing_codes)")}
+            if "role" not in columns:
+                db.execute("ALTER TABLE pairing_codes ADD COLUMN role TEXT NOT NULL DEFAULT 'guest'")
             db.execute("CREATE TABLE IF NOT EXISTS installations (installation_id TEXT PRIMARY KEY,public_key TEXT NOT NULL,paired_at INTEGER NOT NULL)")
+            db.execute("CREATE TABLE IF NOT EXISTS identity_status (identity TEXT NOT NULL,role TEXT NOT NULL,created_at INTEGER NOT NULL,last_seen INTEGER NOT NULL DEFAULT 0,revoked_at INTEGER,PRIMARY KEY(identity,role))")
+            identity_columns = {row[1] for row in db.execute("PRAGMA table_info(identity_status)")}
+            if "last_seen" not in identity_columns:
+                db.execute("ALTER TABLE identity_status ADD COLUMN last_seen INTEGER NOT NULL DEFAULT 0")
         try: os.chmod(self.database,0o600)
         except OSError: pass
         self._ensure_signer()
@@ -34,7 +41,7 @@ class PairingAuthority:
             envelope={"salt":_b64(salt),"nonce":_b64(nonce),"ciphertext":_b64(AESGCM(key).encrypt(nonce,raw,b"nannet-authority-v1"))}
             db.execute("INSERT INTO authority_meta VALUES ('issuer_private',?)",(json.dumps(envelope,separators=(",",":")),))
 
-    def _private_key(self):
+    def _legacy_private_key(self):
         from cryptography.hazmat.primitives.ciphers.aead import AESGCM
         with sqlite3.connect(self.database) as db:
             row=db.execute("SELECT value FROM authority_meta WHERE key='issuer_private'").fetchone()
@@ -45,19 +52,46 @@ class PairingAuthority:
         except InvalidTag as exc: raise AuthError("authority master key cannot unlock signing key") from exc
         return Ed25519PrivateKey.from_private_bytes(raw)
 
-    def issuer_public_key(self) -> str:
-        return _b64(self._private_key().public_key().public_bytes(serialization.Encoding.Raw,serialization.PublicFormat.Raw))
+    def _private_key(self, role="guest", identity="legacy"):
+        if identity == "legacy":
+            return self._legacy_private_key()
+        return derive_identity_private_key(self.master_key, role, identity)
 
-    def create_pairing_code(self, scopes, ttl_seconds=600, now=None) -> dict:
+    def issuer_public_key(self, role="guest", identity="legacy") -> str:
+        return _b64(self._private_key(role, identity).public_key().public_bytes(serialization.Encoding.Raw,serialization.PublicFormat.Raw))
+
+    def register_identity(self, role: str, identity: str, now=None) -> None:
+        from .auth import IDENTITY_DOMAINS
+        if role not in IDENTITY_DOMAINS or not isinstance(identity, str) or not identity or len(identity) > 256:
+            raise AuthError("invalid identity")
+        stamp = int(time.time()) if now is None else int(now)
+        with sqlite3.connect(self.database) as db:
+            db.execute("INSERT OR IGNORE INTO identity_status (identity,role,created_at,last_seen,revoked_at) VALUES (?,?,?,?,NULL)", (identity, role, stamp, stamp))
+            row = db.execute("SELECT revoked_at FROM identity_status WHERE identity=? AND role=?", (identity, role)).fetchone()
+            if row and row[0] is not None:
+                raise AuthError("identity has been revoked")
+            db.execute("UPDATE identity_status SET last_seen=? WHERE identity=? AND role=? AND revoked_at IS NULL", (stamp, identity, role))
+
+    def revoke_identity(self, role: str, identity: str, now=None) -> dict:
+        stamp = int(time.time()) if now is None else int(now)
+        with sqlite3.connect(self.database) as db:
+            cur = db.execute("UPDATE identity_status SET revoked_at=? WHERE identity=? AND role=? AND revoked_at IS NULL", (stamp, identity, role))
+            if cur.rowcount != 1:
+                raise AuthError("identity not found or already revoked")
+        return {"revoked": True, "identity": identity, "role": role}
+
+    def create_pairing_code(self, scopes, ttl_seconds=600, now=None, role="guest") -> dict:
+        from .auth import identity_scope_ceiling
         scopes=sorted(set(scopes))
-        if not scopes or not set(scopes)<=ALLOWED_SCOPES: raise AuthError("invalid pairing scopes")
+        if role not in ("admin", "guest") or not scopes or not set(scopes)<=identity_scope_ceiling(role):
+            raise AuthError("pairing scopes exceed role ceiling")
         if isinstance(ttl_seconds,bool) or not isinstance(ttl_seconds,int) or not 60<=ttl_seconds<=3600: raise AuthError("pairing code lifetime must be 60–3600 seconds")
         now=int(time.time()) if now is None else int(now)
         code="nnh_"+secrets.token_urlsafe(24)
         digest=hashlib.sha256(code.encode()).hexdigest()
         with sqlite3.connect(self.database) as db:
-            db.execute("INSERT INTO pairing_codes VALUES (?,?,?,NULL)",(digest,json.dumps(scopes),now+ttl_seconds))
-        return {"pairing_code":code,"expires_at":now+ttl_seconds,"scopes":scopes}
+            db.execute("INSERT INTO pairing_codes (code_hash,scopes,expires_at,used_at,role) VALUES (?,?,?,NULL,?)",(digest,json.dumps(scopes),now+ttl_seconds,role))
+        return {"pairing_code":code,"expires_at":now+ttl_seconds,"scopes":scopes,"role":role}
 
     def pair(self, code: str, installation_id: str, public_key: str, token_ttl_seconds=900, now=None) -> dict:
         now=int(time.time()) if now is None else int(now)
@@ -67,20 +101,25 @@ class PairingAuthority:
         if len(raw)!=32: raise AuthError("installation public key must be 32 bytes")
         digest=hashlib.sha256(code.encode()).hexdigest()
         with sqlite3.connect(self.database,timeout=10,isolation_level="IMMEDIATE") as db:
-            row=db.execute("SELECT scopes,expires_at,used_at FROM pairing_codes WHERE code_hash=?",(digest,)).fetchone()
+            row=db.execute("SELECT scopes,expires_at,used_at,role FROM pairing_codes WHERE code_hash=?",(digest,)).fetchone()
             if not row or row[2] is not None or now>=row[1]: raise AuthError("pairing code is invalid, expired, or already used")
             existing=db.execute("SELECT public_key FROM installations WHERE installation_id=?",(installation_id,)).fetchone()
             if existing and existing[0]!=public_key: raise AuthError("installation ID is already bound to another key")
             db.execute("UPDATE pairing_codes SET used_at=? WHERE code_hash=? AND used_at IS NULL",(now,digest))
             if db.total_changes<1: raise AuthError("pairing code was already consumed")
             db.execute("INSERT OR REPLACE INTO installations VALUES (?,?,?)",(installation_id,public_key,now))
-            scopes=json.loads(row[0])
-        token=issue_token(self._private_key(),installation_id,scopes,token_ttl_seconds,now)
-        return {"token":token,"issuer_public_key":self.issuer_public_key(),"installation_id":installation_id,"scopes":scopes,"expires_at":now+token_ttl_seconds}
+            scopes=json.loads(row[0]); role=row[3]
+        self.register_identity(role, installation_id, now)
+        token=issue_token(self._private_key(role, installation_id),installation_id,scopes,token_ttl_seconds,now,role=role)
+        return {"token":token,"issuer_public_key":self.issuer_public_key(role, installation_id),"installation_id":installation_id,"scopes":scopes,"role":role,"expires_at":now+token_ttl_seconds}
 
     def revoke_token(self, token: str, now=None) -> dict:
         from .auth import verify_token
-        claims=verify_token(token,self._private_key().public_key(),now=now)
+        claims = self._decode_claims(token)
+        try:
+            verify_token(token, self._private_key(claims.get("role", "guest"), claims["sub"]).public_key(), now=now)
+        except AuthError:
+            claims = verify_token(token, self._legacy_private_key().public_key(), now=now)
         with sqlite3.connect(self.database) as db:
             db.execute("CREATE TABLE IF NOT EXISTS revoked_tokens (jti TEXT PRIMARY KEY,revoked_at INTEGER NOT NULL)")
             db.execute("INSERT OR IGNORE INTO revoked_tokens VALUES (?,?)",(claims["jti"],int(time.time()) if now is None else int(now)))
@@ -91,4 +130,22 @@ class PairingAuthority:
         with sqlite3.connect(self.database) as db:
             db.execute("CREATE TABLE IF NOT EXISTS revoked_tokens (jti TEXT PRIMARY KEY,revoked_at INTEGER NOT NULL)")
             revoked={row[0] for row in db.execute("SELECT jti FROM revoked_tokens")}
-        return verify_token(token,self._private_key().public_key(),required_scope,now,revoked)
+        claims = self._decode_claims(token)
+        role = claims.get("role", "guest")
+        try:
+            verified = verify_token(token, self._private_key(role, claims["sub"]).public_key(), required_scope, now, revoked)
+        except AuthError:
+            verified = verify_token(token, self._legacy_private_key().public_key(), required_scope, now, revoked)
+        with sqlite3.connect(self.database) as db:
+            status = db.execute("SELECT revoked_at FROM identity_status WHERE identity=? AND role=?", (verified["sub"], verified.get("role", "guest"))).fetchone()
+        if status and status[0] is not None:
+            raise AuthError("identity has been revoked")
+        return verified
+
+    @staticmethod
+    def _decode_claims(token):
+        try:
+            payload = token.split(".")[1]
+            return json.loads(_unb64(payload))
+        except (IndexError, ValueError, TypeError, json.JSONDecodeError) as exc:
+            raise AuthError("invalid NANNET token") from exc
