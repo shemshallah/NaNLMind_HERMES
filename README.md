@@ -28,7 +28,7 @@ The state file includes the global topology and serialized universe/head scratch
 
 ## What persists
 
-The native global topology is serialized to `universe/native/global_universe.nmg` and resumed on subsequent math-training runs. Structured discoveries are stored separately in a SQLite WAL event ledger with content-addressed IDs, typed graph edges and n-ary hyperedges. Reorganization rebuilds deterministic head/layer projections without deleting evidence. Conflicting hypotheses remain independently auditable.
+The native global topology is serialized to `universe/native/global_universe.nmg` and resumed on subsequent math-training runs. Structured discoveries are stored separately in a SQLite WAL event ledger with content-addressed IDs, typed graph edges and n-ary hyperedges. Chat reflection and curriculum generation read a bounded snapshot of that same universe before proposing new evidence; native runner discoveries append to it and retain their native head/layer routes. Reorganization rebuilds deterministic projections without deleting evidence. Conflicting hypotheses remain independently auditable.
 
 NANNET is the authorization and delta-coordination boundary. Training and corpus processing run locally; Koyeb is not the native trainer or corpus store.
 
