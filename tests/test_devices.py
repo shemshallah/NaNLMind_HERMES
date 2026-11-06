@@ -26,6 +26,18 @@ class DeviceLeaseTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,"invalid, expired, or released"):
                 registry.heartbeat(first["token"],now=1202)
 
+
+    def test_token_rotation_keeps_same_slot_and_revokes_old_bearer(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            registry=DeviceRegistry(Path(tmp)/"authority.sqlite")
+            first=registry.register(payload("r"*43),now=1000)
+            rotated=registry.rotate(first["token"],now=1100)
+            self.assertEqual(rotated["address"],first["address"])
+            self.assertEqual(rotated["lease_id"],first["lease_id"])
+            with self.assertRaisesRegex(ValueError,"invalid, expired, or released"):
+                registry.heartbeat(first["token"],now=1101)
+            self.assertEqual(registry.heartbeat(rotated["token"],now=1102)["lease_id"],first["lease_id"])
+
     def test_registration_requires_consent_and_terms(self):
         with tempfile.TemporaryDirectory() as tmp:
             registry=DeviceRegistry(Path(tmp)/"authority.sqlite")
