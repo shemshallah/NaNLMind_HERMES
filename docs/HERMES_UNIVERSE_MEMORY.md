@@ -19,7 +19,7 @@ The ledger is not a neural-weight checkpoint. Equations and operator expressions
 
 ## What a head contributes
 
-Each head contributes a candidate rule and evidence for a defined byte-bit task. The head index and palindromic address remain attached to the discovery. All 256 heads are required for a native math-training trace; incomplete or duplicate head traces are rejected before merge. The native topology's head count is fixed at 256; Hermes does not permit a reduced head count for native discoveries.
+Each head contributes a candidate rule and evidence for a defined byte-bit task. The head index and palindromic address remain attached to the discovery. All 256 heads are required for a native math-training trace; incomplete or duplicate head traces are rejected before merge. The native topology's head count is fixed at 256; Hermes does not permit a reduced head count for native discoveries. Reorganization preserves each discovery's native head attribution rather than replacing it with a subject hash.
 
 ## Merge protocol
 
@@ -36,7 +36,7 @@ This is an associative, commutative, idempotent merge at the event-set layer. It
 
 ## Continuous reorganization
 
-Reorganization does not mutate discoveries. It creates a deterministic active projection: observations L0, entities L1, relations L2, operators L3, equations L4, hypotheses and constraints L5, and counterexamples L6. Routing is recomputed from the complete immutable event set. This is currently a deterministic structural reorganization, not yet a learned top-down evaluator that changes lower-layer training. Future head/layer scores may influence routing only when the scoring algorithm and version are recorded.
+Reorganization does not mutate discoveries. It creates a deterministic active projection: observations L0, entities L1, relations L2, operators L3, equations L4, hypotheses and constraints L5, and counterexamples L6. Native head provenance is retained when claims are rerouted. The evidence assessor aggregates support/refutation weights by subject; contradictory subjects are promoted to L6 and receive a versioned assessment record with contributing event IDs. Assessment records are rebuildable projections, not new claims. This is currently deterministic evidence review, not yet a learned top-down evaluator that changes lower-layer training. Future head/layer scores may influence routing only when the scoring algorithm and version are recorded.
 
 A contradiction is a first-class relation. The evaluator can compare conditions, derive counterexamples, lower confidence, or mark a claim superseded in a separate assessment event. It cannot erase the earlier claim.
 
