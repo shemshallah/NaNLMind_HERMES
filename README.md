@@ -85,6 +85,45 @@ local mode the runner does not require NANNET cryptography; configure the
 authority URL and pinned issuer key only when using paired authority mode.
 
 
+## Cross-resolution discovery and controls
+
+The ten resolutions are not isolated bins. When evidence carries an explicit stable
+`alignment_id` or `concept_id`, the engine can compare numeric observations across
+resolutions. It currently discovers exact equality, ratios, and differences only
+when both observations declare matching non-empty units. Numeric expressions are
+treated as inert data: only a literal numeric `value` or numeric `object` is read;
+arbitrary expression trees are never executed. Each accepted relation becomes an
+auditable equation/hyperedge that points back to its source event IDs and is routed
+to the narrative/review channel.
+
+Controls and baselines:
+
+- **Known-answer positive control:** one aligned concept represented at all ten
+  resolutions produces 45 pairwise level comparisons and a consistency score of 1.
+- **Contradiction control:** a deliberately refuting level remains visible as
+  contradiction evidence; it is not averaged away.
+- **Unrelated-concept negative control:** ten unique alignment IDs produce zero
+  cross-resolution links.
+- **Numeric unit control:** matching values and units can produce an equality;
+  a known 12-to-3 ratio produces 4. Incompatible or missing units are excluded.
+- **Permutation negative control:** a seeded label permutation reports observed
+  versus shuffled comparison counts and consistency magnitudes. It is a diagnostic,
+  not a statistical p-value.
+
+Run the deterministic synthetic suite with:
+
+    python -m benchmarks.cross_resolution_baseline
+
+Run the complete unit suite with:
+
+    python -m unittest discover -s tests -v
+
+These synthetic numbers validate implementation behavior, not real-world language
+understanding. Real corpus baselines still need held-out corpora, repeated seeds,
+per-resolution coverage, relation precision/recall against adjudicated labels,
+and comparison against shuffled-label and single-resolution controls. No learned
+neural weights are updated by these symbolic relation discoveries.
+
 ## Ten-resolution mathematical feedback
 
 The language substrate has ten distinct resolution coordinates, not seven coarse buckets:
