@@ -69,7 +69,7 @@ class DeviceRegistry:
                 device_id = uuid.uuid4().hex
                 db.execute("INSERT INTO devices VALUES (?,?,?,?)", (device_id, secret_hash, now, now))
             used = {r[0] for r in db.execute("SELECT hw_slot FROM device_leases WHERE hw_slot IS NOT NULL AND released_at IS NULL AND expires_at>?", (now,))}
-            slot = next((n for n in range(256) if n not in used), None)
+            slot = next((n for n in range(4, 256) if n not in used), None)
             if slot is None:
                 raise ValueError("no hardware slots currently available")
             lease_id = str(uuid.uuid4())
