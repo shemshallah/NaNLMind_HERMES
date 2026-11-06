@@ -10,6 +10,7 @@ from pathlib import Path
 
 from .policy import DEFAULT_DURATION_MINUTES, load_n16txt, parse_n16txt, validate_duration
 from .runner import RunnerError, run_bounded, evaluate_native, run_math_train
+from .extract import extract_discoveries
 
 
 def _setting(ctx, key, default):
@@ -230,10 +231,18 @@ def math_train(ctx, corpus_path: str, epochs: int = 3, max_samples_per_head: int
         raise RunnerError("runner_command is not configured; set it to the local build/nanlm-universal executable")
     result = run_math_train(command, native_corpus, universe, epochs, max_samples_per_head)
     records = result.pop("records")
+    extracted = extract_discoveries(native_corpus, result["corpus_sha256"])
     store = _memory_store(ctx)
     merge = store.merge(records)
+    semantic_merge = store.merge(extracted) if extracted else {"accepted": 0, "duplicates": 0}
     reorganization = store.reorganize()
     result["merge"] = merge
+    result["surface_extraction"] = {
+        "version": "surface-relations/1", "discoveries": len(extracted),
+        "by_kind": {kind: sum(1 for record in extracted if record["item"]["kind"] == kind)
+                    for kind in sorted({record["item"]["kind"] for record in extracted})},
+        "merge": semantic_merge,
+    }
     result["reorganization"] = reorganization
     result["memory"] = store.status()
     result["universe_id"] = _universe_id(universe)
