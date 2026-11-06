@@ -335,9 +335,9 @@ def chat(ctx, message: str, session_id: str = "default", system_prompt: str = No
             item["provenance"] = provenance
             record["item"] = item
         if reflection["records"]:
-            from .tools import _memory_store
-            store = _memory_store(ctx)
-            merge = store.merge(reflection["records"])
+            from .tools import _merge_relation_memory
+            memory_result = _merge_relation_memory(ctx, reflection["records"], train_only=False)
+            merge = memory_result["merge"]
     except Exception as exc:
         # Chat must remain usable if the optional reflection provider call fails.
         reflection["error"] = type(exc).__name__ + ": " + str(exc)[:500]
