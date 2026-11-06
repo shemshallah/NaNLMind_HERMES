@@ -202,6 +202,11 @@ def memory_query(ctx, subject: str = None, head: int = None, layer: int = None, 
     return {"records": _memory_store(ctx).query(subject=subject, head=head, layer=layer, limit=limit)}
 
 
+def memory_assessments(ctx, subject: str = None, limit: int = 100):
+    """Return deterministic evidence-weighted assessments without mutating claims."""
+    return {"assessments": _memory_store(ctx).query_assessments(subject=subject, limit=limit)}
+
+
 def memory_status(ctx):
     """Report durable additive memory separately from native model checkpoints."""
     return _memory_store(ctx).status()
