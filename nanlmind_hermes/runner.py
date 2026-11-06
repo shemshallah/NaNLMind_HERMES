@@ -140,7 +140,16 @@ def evaluate_native(command: Sequence[str], corpus_path: Path, state_dir: Path,
     ):
         item = _run(base + args, timeout_seconds)
         results[name] = {k: item[k] for k in ("exit_code", "timed_out", "elapsed_seconds")}
-        results[name]["metrics"] = _metrics(item["output"])
+        metric_output = item["output"]
+        if name == "topology_byte":
+            # The byte CLI prints topology, reference and order-0 baselines.
+            # Score the topology line only; taking the final bpc silently
+            # reports the weaker order-0 baseline as the model's result.
+            topology_lines = [line for line in metric_output.splitlines()
+                              if re.search(r"^\\s*topology\\b", line, re.IGNORECASE)]
+            if topology_lines:
+                metric_output = topology_lines[-1]
+        results[name]["metrics"] = _metrics(metric_output)
         results[name]["output"] = item["output"][-12000:]
         if item["timed_out"]:
             raise RunnerError(f"{name} evaluation exceeded {timeout_seconds}s")
