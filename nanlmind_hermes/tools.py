@@ -66,6 +66,9 @@ def status(ctx):
     root, corpora, universe = _paths(ctx)
     last = universe / "last_run.json"
     latest = json.loads(last.read_text(encoding="utf-8")) if last.exists() else None
+    math_manifest = universe / "last_math_run.json"
+    math_latest = json.loads(math_manifest.read_text(encoding="utf-8")) if math_manifest.exists() else None
+    native_state = Path(math_latest["native_state_path"]) if math_latest and math_latest.get("native_state_path") else None
     configured = _setting(ctx, "runner_command", [])
     return {
         "universe_id": _universe_id(universe),
@@ -80,6 +83,10 @@ def status(ctx):
         "training_location": "local machine; Koyeb is control-plane only",
         "state_dir": str(root),
         "last_run": latest,
+        "last_math_run": math_latest,
+        "native_checkpoint_present": bool(native_state and native_state.is_file() and native_state.stat().st_size > 0),
+        "native_checkpoint_kind": "serialized_global_topology" if native_state and native_state.is_file() else None,
+        "mathematical_memory": _memory_store(ctx).status(),
     }
 
 
@@ -169,7 +176,7 @@ def evaluate(ctx, corpus_path: str):
 def _memory_store(ctx):
     from .memory import MemoryStore
     _, _, universe = _paths(ctx)
-    heads = int(_setting(ctx, "universe_heads", 256))
+    heads = 256  # Native topology has exactly 256 palindromic heads.
     layers = int(_setting(ctx, "universe_layers", 7))
     return MemoryStore(universe / "mathematical_memory.sqlite3", heads=heads, layers=layers)
 
