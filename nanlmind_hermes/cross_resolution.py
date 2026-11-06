@@ -134,6 +134,7 @@ def analyze_cross_resolution(rows: list[dict]) -> dict:
         "coarse_to_fine_feedback_matrix": coarse_to_fine,
         "concepts_compared": len(feedback),
         "feedback": feedback,
+        "numeric_relations": discover_numeric_relations(rows),
     }
 
 
@@ -181,6 +182,38 @@ def feedback_records(analysis: dict) -> list[dict]:
             "tags": ["cross-resolution", "derived-mathematics", "non-destructive"],
         }
         records.append({"item": payload, "source_digest": source_digest, "layer": 9})
+    for relation in analysis.get("numeric_relations", {}).get("relations", []):
+        identity = _digest({"numeric_relation": relation})
+        payload = {
+            "kind": "equation",
+            "subject": "cross-resolution-numeric:" + identity[:24],
+            "predicate": "verified_numeric_relation",
+            "object": relation["result"],
+            "expression": {
+                "op": relation["relation"],
+                "left_value": relation["left_value"],
+                "right_value": relation["right_value"],
+                "result": relation["result"],
+                "units": relation["units"],
+                "left_resolution": relation["left_resolution"],
+                "right_resolution": relation["right_resolution"],
+                "verified": True,
+            },
+            "participants": [relation["left_event_id"], relation["right_event_id"]],
+            "polarity": "neutral",
+            "confidence": 1.0,
+            "evidence": {"alignment_id": relation["alignment_id"]},
+            "provenance": {
+                "cross_resolution": True,
+                "cross_resolution_relation": True,
+            },
+            "tags": ["cross-resolution", "verified-numeric-relation", "non-destructive"],
+        }
+        records.append({
+            "item": payload,
+            "source_digest": _digest({"numeric_relation_source": identity}),
+            "layer": 9,
+        })
     return records
 
 
@@ -220,7 +253,7 @@ def discover_numeric_relations(rows: list[dict]) -> dict:
             for right_name in names[i + 1:]:
                 for left in levels[left_name]:
                     for right in levels[right_name]:
-                        if left["units"] != right["units"]:
+                        if left["units"] is None or left["units"] != right["units"]:
                             continue
                         a, b = left["value"], right["value"]
                         if math.isclose(a, b, rel_tol=1e-12, abs_tol=1e-12):
