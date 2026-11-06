@@ -33,13 +33,14 @@ def make_server(authority: PairingAuthority, host="127.0.0.1", port=8765, tls_ce
             if self.path == "/v1/devices/register":
                 try: return self._reply(201,devices.register(self._body(8192)))
                 except (ValueError,TypeError,json.JSONDecodeError) as exc: return self._reply(400,{"error":str(exc)[:160]})
-            if self.path in ("/v1/devices/heartbeat","/v1/devices/release","/v1/devices/report"):
+            if self.path in ("/v1/devices/heartbeat","/v1/devices/release","/v1/devices/report","/v1/devices/rotate"):
                 token=self._bearer()
                 if not token: return self._reply(401,{"error":"bearer_required"})
                 try:
                     payload=self._body(8192) if self.path.endswith("/report") else self._body(1024)
                     if self.path.endswith("/heartbeat"): result=devices.heartbeat(token)
                     elif self.path.endswith("/release"): result=devices.release(token)
+                    elif self.path.endswith("/rotate"): result=devices.rotate(token)
                     else: result=devices.report(token,payload)
                     return self._reply(200,result)
                 except (ValueError,TypeError,json.JSONDecodeError) as exc:
