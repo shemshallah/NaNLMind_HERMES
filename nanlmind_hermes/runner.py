@@ -346,26 +346,6 @@ def run_relation_train(command: Sequence[str], records_path: Path, state_dir: Pa
         raise RunnerError("native relation-train epoch receipt does not match request")
     if state_bytes != state_path.stat().st_size:
         raise RunnerError("native relation-train state byte count does not match persisted file")
-    if status == "no_op":
-        if train_events or changed_heads or pair_updates or edges or digest_before != digest_after:
-            raise RunnerError("native relation-train no-op receipt contains mutation claims")
-        return {
-            "schema": "nanlm-hermes-native-relation-run/1", "status": "no_op",
-            "native_command": result["argv"], "elapsed_seconds": result["elapsed_seconds"],
-            "corpus_sha256": corpus_digest, "records_path": str(records_path),
-            "native_state_path": str(state_path), "native_state_bytes": state_bytes,
-            "native_state_sha256_before": before_sha,
-            "native_state_sha256_after": hashlib.sha256(state_path.read_bytes()).hexdigest(),
-            "state_digest_before": digest_before, "state_digest_after": digest_after,
-            "epochs": reported_epochs, "train_events": 0, "duplicate_events": duplicates, "changed_heads": 0,
-            "mirror_pair_updates": 0, "hyperedges_added": 0, "resolution_metrics": {},
-            "metric_scope": "idempotent replay; no new learning event",
-            "stdout": result["output"][-12000:],
-        }
-    if not train_events or not changed_heads or not pair_updates or not edges:
-        raise RunnerError("native relation-train reported no effective head/mirror/hyperedge mutation")
-    if digest_before == digest_after:
-        raise RunnerError("native relation-train claimed updates but global state digest did not change")
     resolution_metrics = {}
     for match in re.finditer(
         r"resolution_L(\d+) train=(\d+) test=(\d+) before_accuracy=([0-9.]+) "
@@ -380,6 +360,27 @@ def run_relation_train(command: Sequence[str], records_path: Path, state_dir: Pa
             "balanced_accuracy": float(match.group(8)),
             "majority_baseline": float(match.group(9)),
         }
+    if status == "no_op":
+        if train_events or changed_heads or pair_updates or edges or digest_before != digest_after:
+            raise RunnerError("native relation-train no-op receipt contains mutation claims")
+        return {
+            "schema": "nanlm-hermes-native-relation-run/1", "status": "no_op",
+            "native_command": result["argv"], "elapsed_seconds": result["elapsed_seconds"],
+            "corpus_sha256": corpus_digest, "records_path": str(records_path),
+            "native_state_path": str(state_path), "native_state_bytes": state_bytes,
+            "native_state_sha256_before": before_sha,
+            "native_state_sha256_after": hashlib.sha256(state_path.read_bytes()).hexdigest(),
+            "state_digest_before": digest_before, "state_digest_after": digest_after,
+            "epochs": reported_epochs, "train_events": 0, "duplicate_events": duplicates, "changed_heads": 0,
+            "mirror_pair_updates": 0, "hyperedges_added": 0,
+            "resolution_metrics": resolution_metrics,
+            "metric_scope": "idempotent replay; no new learning event; held-out metrics re-evaluated on unchanged state",
+            "stdout": result["output"][-12000:],
+        }
+    if not train_events or not changed_heads or not pair_updates or not edges:
+        raise RunnerError("native relation-train reported no effective head/mirror/hyperedge mutation")
+    if digest_before == digest_after:
+        raise RunnerError("native relation-train claimed updates but global state digest did not change")
     after_sha = hashlib.sha256(state_path.read_bytes()).hexdigest()
     return {
         "schema": "nanlm-hermes-native-relation-run/1",
