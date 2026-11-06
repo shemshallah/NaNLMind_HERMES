@@ -1,6 +1,6 @@
 import tempfile, unittest
 from pathlib import Path
-from nanlmind_hermes.auth import AuthError, generate_master_key, _unb64
+from nanlmind_hermes.auth import AuthError, generate_master_key, _unb64, verify_token
 from nanlmind_hermes.pairing import PairingAuthority
 
 class PairingTests(unittest.TestCase):
@@ -15,7 +15,7 @@ class PairingTests(unittest.TestCase):
             raw=Ed25519PrivateKey.generate().public_key().public_bytes(serialization.Encoding.Raw,serialization.PublicFormat.Raw)
             pub=base64.urlsafe_b64encode(raw).rstrip(b"=").decode()
             result=authority.pair(code["pairing_code"],str(uuid.uuid4()),pub,now=1010)
-            self.assertEqual(result["scopes"],["training:execute","universe:read"])
+            self.assertEqual(result["scopes"],["training:execute","universe:read"])\n            claims=verify_token(result["token"],__import__("cryptography.hazmat.primitives.asymmetric.ed25519",fromlist=["Ed25519PrivateKey"]).Ed25519PrivateKey.from_private_bytes(b"\\0"*32).public_key()) if False else None\n            revoked=authority.revoke_token(result["token"])\n            self.assertTrue(revoked["revoked"])\n            with self.assertRaises(AuthError): authority.verify_access_token(result["token"])
             with self.assertRaises(AuthError):
                 authority.pair(code["pairing_code"],str(uuid.uuid4()),pub,now=1020)
     def test_expired_pairing_code_rejected(self):
