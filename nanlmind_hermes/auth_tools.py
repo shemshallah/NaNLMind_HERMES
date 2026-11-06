@@ -129,4 +129,23 @@ def require_scope(ctx, required_scope):
     claims=verify_token(token,Ed25519PublicKey.from_public_bytes(_unb64(os.environ["NANNET_ISSUER_PUBLIC_KEY"])),required_scope=required_scope)
     if claims.get("sub")!=doc["installation_id"]:
         raise ValueError("NANNET token belongs to a different installation")
+    authority_url=os.environ.get("NANNET_AUTH_URL","").rstrip("/")
+    if authority_url:
+        import ipaddress
+        from urllib.parse import urlsplit
+        parsed=urlsplit(authority_url)
+        try: loopback=ipaddress.ip_address(parsed.hostname or "").is_loopback
+        except ValueError: loopback=(parsed.hostname or "").lower()=="localhost"
+        if parsed.scheme!="https" and not (parsed.scheme=="http" and loopback):
+            raise ValueError("online scope verification requires HTTPS except for loopback development")
+        request=urllib.request.Request(authority_url+"/v1/authorize",
+            data=json.dumps({"scope":required_scope}).encode(),
+            headers={"Authorization":"Bearer "+token,"Content-Type":"application/json","Cache-Control":"no-store"},method="POST")
+        try:
+            with urllib.request.urlopen(request,timeout=10) as response:
+                remote=json.loads(response.read(8192))
+        except Exception as exc:
+            raise ValueError("NANNET authority rejected or could not verify this operation; failing closed") from exc
+        if not remote.get("authorized") or remote.get("installation_id")!=doc["installation_id"]:
+            raise ValueError("NANNET authority denied this installation scope")
     return True
