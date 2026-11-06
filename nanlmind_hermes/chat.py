@@ -333,6 +333,8 @@ def chat(ctx, message: str, session_id: str = "default", system_prompt: str = No
             provenance["source_type"] = "free_form_chat_reflection"
             provenance["independently_fact_verified"] = False
             item["provenance"] = provenance
+            if not isinstance(item.get("evidence"), dict):
+                item["evidence"] = {"reflection_evidence": item.get("evidence")}
             record["item"] = item
         if reflection["records"]:
             from .tools import _merge_relation_memory
