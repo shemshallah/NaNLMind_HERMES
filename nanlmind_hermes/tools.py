@@ -662,24 +662,44 @@ def generate_relation_curriculum(ctx, topic: str, records_per_stage: int = 12,
 def run_curriculum_experiment(ctx, topic: str, records_per_stage: int = 12,
                                epochs: int = 3, max_samples_per_head: int = 4096,
                                stages: list[str] | tuple[str, ...] | None = None):
-    """Generate a staged corpus, train the native 256-head universe and record one experiment."""
-    corpus = generate_curriculum(ctx, topic, records_per_stage, stages)
-    training = math_train(ctx, corpus["corpus_path"], epochs, max_samples_per_head)
+    """Train the task-specific relation objective, never relabel byte-bit accuracy as language learning."""
+    corpus = generate_relation_curriculum(ctx, topic, records_per_stage, stages)
+    training = _native_relation_train(ctx, corpus["records"], "structured_teacher_training", epochs)
+    train_records = [
+        {"item": row["item"], "source_digest": row["source_digest"]}
+        for row in corpus["records"] if row.get("split") == "train"
+    ]
+    store = _memory_store(ctx)
+    merge = store.merge(train_records) if train_records else {"accepted": 0, "duplicates": 0}
+    cross_resolution = memory_cross_resolution(ctx, limit=1000)
+    reorganization = store.reorganize()
+    training["merge"] = merge
+    training["cross_resolution"] = cross_resolution
+    training["reorganization"] = reorganization
+    training["memory"] = store.status()
     _, _, universe = _paths(ctx)
     experiments = universe / "experiments"
     experiments.mkdir(parents=True, exist_ok=True)
     experiment_id = uuid.uuid4().hex
+    corpus_summary = {
+        "schema": corpus["schema"], "topic_key": corpus["topic_key"],
+        "record_count": len(corpus["records"]), "resolution_order": corpus["resolution_order"],
+        "frozen_challenge_sets": corpus["frozen_challenge_sets"], "stages": corpus["stages"],
+    }
     result = {
-        "schema": "nanlm-curriculum-experiment/1",
+        "schema": "nanlm-curriculum-experiment/2",
         "experiment_id": experiment_id,
         "topic": topic.strip(),
-        "corpus": corpus,
+        "mode": "structured_teacher_training",
+        "corpus": corpus_summary,
         "training": training,
+        "legacy_max_samples_per_head_ignored": max_samples_per_head,
         "interpretation": (
-            "This experiment combines language-model-generated curriculum examples "
-            "with the native 256-head Boolean learner and shared additive memory. "
-            "Native held-out metrics apply only to the native task and do not establish "
-            "general language competence."
+            "The native student receives typed relation-polarity examples, updates routed heads, "
+            "canonical mirror-pair cells and provenance-bound hyperedges. Each L0-L9 channel has "
+            "its own held-out relation-polarity metrics and frozen topic challenge set. These scores "
+            "measure teacher-label relation prediction, not text generation or independently verified facts. "
+            "Teacher labels remain explicitly marked as unverified distillation evidence."
         ),
     }
     manifest = experiments / (experiment_id + ".json")
@@ -702,9 +722,9 @@ def run_training_session(ctx, topic: str, mode: str = "logic",
       pipeline  all twelve stages in canonical order
     """
     presets = {
-        "logic": ["boolean_inverses", "deep_logic"],
-        "words": ["repetitive_words", "lexical_words", "word_completion"],
-        "sentences": ["sentence_choice", "narrative"],
+        "logic": ["boolean_inverses", "deep_logic", "exceptions"],
+        "words": ["repetitive_words", "phonetic_pairs", "morpheme_structure", "lexical_words", "word_completion"],
+        "sentences": ["sentence_choice", "paragraph_structure", "narrative"],
         "pipeline": [name for name, _ in CURRICULUM_STAGES],
     }
     if mode not in presets:
@@ -808,7 +828,7 @@ def _relation_corpus(ctx, records):
             "rejected": rejected, "counts": counts}
 
 
-def _native_relation_train(ctx, records, mode):
+def _native_relation_train(ctx, records, mode, epochs=1):
     corpus = _relation_corpus(ctx, records)
     foundation = ensure_boolean_foundation(ctx)
     command = _setting(ctx, "runner_command", [])
@@ -820,7 +840,7 @@ def _native_relation_train(ctx, records, mode):
         prior_result = json.loads(prior_manifest.read_text(encoding="utf-8")) if prior_manifest.exists() else None
     except (OSError, ValueError):
         prior_result = None
-    result = run_relation_train(command, corpus["path"], universe)
+    result = run_relation_train(command, corpus["path"], universe, epochs=epochs)
     result["mode"] = mode
     result["test_set_sha256"] = corpus["test_sha256"]
     result["cross_run_comparison"] = {"comparable": False, "reason": "no matching frozen held-out set"}
@@ -877,10 +897,12 @@ def ingest_conversation_relations(ctx, records):
                 "error": type(exc).__name__ + ": " + str(exc)[:1000]}
 
 
-def structured_relation_train(ctx, records):
+def structured_relation_train(ctx, records, epochs=1):
     """Explicit schema-bound training with separate train and held-out relation rows."""
     if not isinstance(records, list) or len(records) > 10000:
         raise ValueError("records must be an array with at most 10000 entries")
+    if isinstance(epochs, bool) or not isinstance(epochs, int) or not 1 <= epochs <= 100:
+        raise ValueError("epochs must be between 1 and 100")
     if not any(isinstance(x, dict) and x.get("split") == "test" for x in records):
         raise ValueError("structured relation training requires explicit held-out test records")
-    return _native_relation_train(ctx, records, "structured_teacher_training")
+    return _native_relation_train(ctx, records, "structured_teacher_training", epochs)
