@@ -229,8 +229,9 @@ or general reasoning.
 NANNET is the identity, authorization, and delta-coordination boundary. Hermes
 has a dedicated `HW_HERMES_API` hardware key, separate from Android test keys;
 the portal records `hardware_kind=hermes` so identified hardware can later be
-routed to the appropriate kernels. Android remotes use their own device key
-namespace. The
+routed to the appropriate kernels. HW2 is the Hermes demo, HW3 is reserved for
+Clocked, and new Hermes instances take the lowest free slot from HW4. Android
+remotes use their own device key namespace. The
 Hermes route speaks raw NaN16DE: far/near 0xNaN heads, 16 Boolean opcodes, the
 4×4 type/value table, and the double-endian word layout. Chat and training are
 fail-closed until a paired token exists.

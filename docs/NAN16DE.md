@@ -67,6 +67,10 @@ Hermes registers one `hwh_` key at `/v1/hermes/register`, stores it under
 `<state_dir>/hw_hermes_api.json` with mode `0600`, and reuses it. Android device
 tokens (`nnt_`) are a separate namespace and are not reused by Hermes.
 
+Slot allocation is `HW2` for the Hermes demo, `HW3` reserved for Clocked, then
+the lowest free slot from `HW4`. A seeded HW2 key is reused through
+`HW_HERMES_API`; it is not reissued or duplicated.
+
 ## Portal route
 
 ```http

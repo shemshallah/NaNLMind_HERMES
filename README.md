@@ -40,6 +40,18 @@ test namespace, and is tagged `hardware_kind=hermes` at the portal so a later
 router can send the identity to the correct kernel. If a system key is present,
 Hermes does not register another one.
 
+Slot policy:
+
+```text
+HW2  Hermes demo identity
+HW3  Clocked demo identity (reserved; Hermes never claims it)
+HW4+ lowest free Hermes registration after the demo slot is occupied
+```
+
+Two Hermes instances therefore use HW2 (the seeded demo key) and HW4; a third
+uses HW5. Android test registration stays in its own namespace and does not
+take HW2/HW3.
+
 ```sh
 export NANNET_AUTH_URL=https://your-nannet-portal
 export HW_HERMES_API=hwh_...        # optional; otherwise auto-register
