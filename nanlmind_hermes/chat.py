@@ -322,6 +322,18 @@ def chat(ctx, message: str, session_id: str = "default", system_prompt: str = No
 
     try:
         reflection = _reflect(ctx, message, response_text, source_digest, history)
+        # Conversation-derived relations are evidence proposals, never silently
+        # promoted to independently verified facts.
+        for record in reflection.get("records", []):
+            if not isinstance(record, dict) or not isinstance(record.get("item"), dict):
+                continue
+            item = dict(record["item"])
+            existing_provenance = item.get("provenance")
+            provenance = dict(existing_provenance) if isinstance(existing_provenance, dict) else {}
+            provenance["source_type"] = "free_form_chat_reflection"
+            provenance["independently_fact_verified"] = False
+            item["provenance"] = provenance
+            record["item"] = item
         if reflection["records"]:
             from .tools import _memory_store
             store = _memory_store(ctx)
