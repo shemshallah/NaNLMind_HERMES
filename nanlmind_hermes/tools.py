@@ -320,9 +320,36 @@ def ensure_boolean_foundation(ctx):
     return result
 
 
+def _seed_native_universe_from_foundation(universe: Path):
+    """Seed the one shared native checkpoint from the verified Boolean foundation exactly once."""
+    foundation = universe / "boolean_foundation.nmg"
+    native_dir = universe / "native"
+    native_dir.mkdir(parents=True, exist_ok=True)
+    target = native_dir / "global_universe.nmg"
+    receipt = universe / "foundation_seed.json"
+    if target.is_file() and target.stat().st_size > 0:
+        return {"seeded": False, "reason": "existing_native_state_preserved",
+                "native_state_path": str(target)}
+    if not foundation.is_file() or foundation.stat().st_size == 0:
+        raise RunnerError("verified Boolean foundation checkpoint is missing")
+    raw = foundation.read_bytes()
+    tmp = target.with_suffix(".tmp")
+    tmp.write_bytes(raw)
+    os.replace(tmp, target)
+    result = {
+        "seeded": True, "source": str(foundation), "target": str(target),
+        "source_sha256": hashlib.sha256(raw).hexdigest(),
+        "bytes": len(raw), "created_at": datetime.now(timezone.utc).isoformat(),
+    }
+    receipt.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    return result
+
+
 def math_train(ctx, corpus_path: str, epochs: int = 3, max_samples_per_head: int = 4096):
     """Run the native 256-head learner, persist its global object, and merge all head discoveries."""
     foundation = ensure_boolean_foundation(ctx)
+    _, _, universe = _paths(ctx)
+    foundation_seed = _seed_native_universe_from_foundation(universe)
     info = load_n16txt(corpus_path)
     root, corpora, universe = _paths(ctx)
     native_corpus = _native_corpus(info, corpora, 1000)
@@ -351,6 +378,7 @@ def math_train(ctx, corpus_path: str, epochs: int = 3, max_samples_per_head: int
     result["native_checkpoint_present"] = True
     result["native_checkpoint_kind"] = "serialized_global_topology"
     result["boolean_foundation"] = foundation
+    result["foundation_seed"] = foundation_seed
     manifest = universe / "last_math_run.json"
     temp = manifest.with_suffix(".tmp")
     temp.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
@@ -831,10 +859,11 @@ def _relation_corpus(ctx, records):
 def _native_relation_train(ctx, records, mode, epochs=1):
     corpus = _relation_corpus(ctx, records)
     foundation = ensure_boolean_foundation(ctx)
+    _, _, universe = _paths(ctx)
+    foundation_seed = _seed_native_universe_from_foundation(universe)
     command = _setting(ctx, "runner_command", [])
     if not command:
         raise RunnerError("runner_command is not configured; native relation learning cannot run")
-    _, _, universe = _paths(ctx)
     prior_manifest = universe / "last_relation_run.json"
     try:
         prior_result = json.loads(prior_manifest.read_text(encoding="utf-8")) if prior_manifest.exists() else None
@@ -859,6 +888,7 @@ def _native_relation_train(ctx, records, mode, epochs=1):
             "comparable": bool(deltas), "test_set_sha256": corpus["test_sha256"],
             "resolution_deltas": deltas,
         }
+    result["foundation_seed"] = foundation_seed
     result["boolean_foundation"] = {
         "status": foundation.get("status"),
         "reused_checkpoint": foundation.get("reused_checkpoint", False),
