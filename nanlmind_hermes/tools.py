@@ -523,6 +523,120 @@ RESOLUTION_FOCUS = {
 }
 
 
+
+# Shared resolution indices are the canonical L0-L9 order used by N16REL/1.
+_RELATION_RESOLUTIONS = {
+    "bit": 0, "nibble": 1, "byte": 2, "phonetic": 3, "morpheme": 4,
+    "lexical": 5, "word_completion": 6, "sentence": 7,
+    "paragraph": 8, "narrative": 9,
+}
+
+
+def _relation_corpus(ctx, records):
+    """Validate and encode relation records into the native N16REL/1 wire format."""
+    if not isinstance(records, list) or not records:
+        raise ValueError("relation records must be a non-empty list")
+    _, corpora, _ = _paths(ctx)
+    corpora.mkdir(parents=True, exist_ok=True)
+    lines = ["N16REL/1"]
+    counts = {"train": {}, "test": {}}
+    test_lines = []
+    rejected = 0
+    for index, record in enumerate(records):
+        if not isinstance(record, dict):
+            raise ValueError(f"relation record {index} must be an object")
+        split = record.get("split")
+        item = record.get("item")
+        digest = record.get("source_digest")
+        if split not in {"train", "test"} or not isinstance(item, dict):
+            raise ValueError(f"relation record {index} needs split and item")
+        if not isinstance(digest, str) or len(digest) != 64:
+            raise ValueError(f"relation record {index} needs a SHA-256 source digest")
+        try:
+            int(digest, 16)
+        except ValueError as exc:
+            raise ValueError(f"relation record {index} has a non-hex source digest") from exc
+        subject, predicate, obj = item.get("subject"), item.get("predicate"), item.get("object")
+        if not all(isinstance(x, str) and x.strip() for x in (subject, predicate, obj)):
+            raise ValueError(f"relation record {index} has an incomplete triple")
+        polarity = item.get("polarity")
+        if polarity not in {"supports", "refutes"}:
+            raise ValueError(f"relation record {index} polarity must be supports or refutes")
+        confidence = item.get("confidence", 0.5)
+        if isinstance(confidence, bool) or not isinstance(confidence, (int, float)) or not 0 <= confidence <= 1:
+            raise ValueError(f"relation record {index} confidence must be between 0 and 1")
+        provenance = item.get("provenance") or {}
+        resolution = provenance.get("resolution") if isinstance(provenance, dict) else None
+        if resolution not in _RELATION_RESOLUTIONS:
+            raise ValueError(f"relation record {index} has an unknown linguistic resolution")
+        layer = _RELATION_RESOLUTIONS[resolution]
+        confidence_word = int(round(float(confidence) * 65535))
+        fields = [
+            split, str(layer), "+" if polarity == "supports" else "-",
+            str(confidence_word),
+            subject.strip().encode("utf-8").hex(),
+            predicate.strip().encode("utf-8").hex(),
+            obj.strip().encode("utf-8").hex(),
+            digest.lower(),
+        ]
+        line = "\\t".join(fields)
+        lines.append(line)
+        if split == "test":
+            test_lines.append(line)
+        counts[split][resolution] = counts[split].get(resolution, 0) + 1
+    raw = ("\\n".join(lines) + "\\n").encode("utf-8")
+    digest = hashlib.sha256(raw).hexdigest()
+    path = corpora / (digest + ".n16rel")
+    if not path.exists():
+        temp = path.with_suffix(".tmp")
+        temp.write_bytes(raw)
+        os.replace(temp, path)
+    test_digest = hashlib.sha256(("\\n".join(test_lines) + ("\\n" if test_lines else "")).encode("utf-8")).hexdigest() if test_lines else None
+    return {
+        "path": path, "sha256": digest, "test_sha256": test_digest,
+        "records": len(lines) - 1, "rejected": rejected, "counts": counts,
+    }
+
+
+def _merge_relation_memory(ctx, records, train_only=False, reorganize=False):
+    """Merge teacher/chat relation evidence into the append-only shared memory ledger."""
+    selected = []
+    for record in records:
+        if not isinstance(record, dict) or not isinstance(record.get("item"), dict):
+            continue
+        if train_only and record.get("split") != "train":
+            continue
+        item = record["item"]
+        provenance = item.get("provenance") if isinstance(item.get("provenance"), dict) else {}
+        resolution = provenance.get("resolution", "lexical")
+        layer = _RELATION_RESOLUTIONS.get(resolution, _RELATION_RESOLUTIONS["lexical"])
+        selected.append({
+            "item": item, "source_digest": record.get("source_digest"),
+            "head": record.get("head"), "layer": record.get("layer", layer),
+        })
+    if selected:
+        merge = _memory_store(ctx).merge(selected)
+    else:
+        merge = {"accepted": 0, "duplicates": 0}
+    result = {"merge": merge}
+    if reorganize:
+        result["reorganization"] = _memory_store(ctx).reorganize()
+    return result
+
+
+def chat(ctx, message: str, session_id: str = "default", system_prompt: str = None,
+         temperature: float = 0.7, max_tokens: int = 2048):
+    """Public Hermes chat entry point; keep conversation logic in its own module."""
+    from .chat import chat as run_chat
+    return run_chat(ctx, message, session_id, system_prompt, temperature, max_tokens)
+
+
+def chat_history(ctx, session_id: str = "default", limit: int = 40):
+    """Read a persisted Hermes conversation transcript."""
+    from .chat import chat_history as read_history
+    return read_history(ctx, session_id, limit)
+
+
 def generate_relation_curriculum(ctx, topic: str, records_per_stage: int = 12,
                                  stages: list[str] | tuple[str, ...] | None = None,
                                  feedback: dict | None = None):
