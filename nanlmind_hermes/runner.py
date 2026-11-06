@@ -69,7 +69,8 @@ def _run(argv: list[str], timeout: float) -> dict:
 
 def _metrics(output: str) -> dict:
     metrics = {}
-    for key in ("bpc", "top1", "alpha_top1", "word_start_top1", "accuracy", "acc"):
+    for key in ("bpc", "top1", "alpha_top1", "word_start_top1", "heldout_accuracy",
+                "majority_baseline_accuracy", "accuracy", "acc"):
         matches = re.findall(r"\b" + key + r"=([0-9]+(?:\.[0-9]+)?)", output)
         if matches:
             try:
@@ -227,6 +228,6 @@ def run_math_train(command: Sequence[str], corpus_path: Path, state_dir: Path,
         "elapsed_seconds": result["elapsed_seconds"], "corpus_sha256": corpus_digest,
         "native_state_path": str(state_path), "native_state_bytes": state_path.stat().st_size,
         "discovery_trace_path": str(trace_path), "discoveries": len(records),
-        "head_count": len(seen_heads), "stdout": result["output"][-12000:],
-        "records": records,
+        "head_count": len(seen_heads), "metrics": _metrics(result["output"]),
+        "stdout": result["output"][-12000:], "records": records,
     }
