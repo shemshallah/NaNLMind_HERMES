@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-import re
+import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -24,13 +24,28 @@ def _paths(ctx):
     return root, root / "corpora", root / "universe"
 
 
+def _universe_id(universe: Path) -> str:
+    universe.mkdir(parents=True, exist_ok=True)
+    identity = universe / "identity.json"
+    if identity.exists():
+        return json.loads(identity.read_text(encoding="utf-8"))["universe_id"]
+    value = {"universe_id": str(uuid.uuid4()), "created_at": datetime.now(timezone.utc).isoformat()}
+    tmp = identity.with_suffix(".tmp")
+    tmp.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
+    try:
+        tmp.replace(identity)
+    except FileExistsError:
+        tmp.unlink(missing_ok=True)
+    return json.loads(identity.read_text(encoding="utf-8"))["universe_id"]
+
+
 def status(ctx):
     root, corpora, universe = _paths(ctx)
     last = universe / "last_run.json"
     latest = json.loads(last.read_text(encoding="utf-8")) if last.exists() else None
     configured = _setting(ctx, "runner_command", [])
     return {
-        "universe_id": "local-default",
+        "universe_id": _universe_id(universe),
         "scope": "one installation / one local universe / one runner",
         "heads": 256,
         "duration_default_minutes": _setting(ctx, "duration_minutes", DEFAULT_DURATION_MINUTES),
@@ -102,6 +117,7 @@ def train(ctx, corpus_path: str, duration_minutes=None):
     _, _, universe = _paths(ctx)
     result = run_bounded(command, Path(corpus_path), universe, duration, interval)
     result["records_validated"] = info.unique_records
+    result["universe_id"] = _universe_id(universe)
     result["codec"] = "N16TXT/1"
     return result
 
