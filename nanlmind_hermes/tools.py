@@ -161,3 +161,40 @@ def evaluate(ctx, corpus_path: str):
     result["records_validated"] = info.unique_records
     result["universe_id"] = _universe_id(universe)
     return result
+
+
+
+# Additive universe memory handlers. These persist mathematical discoveries,
+# not the native Context2Model's un-serialized in-process parameters.
+def _memory_store(ctx):
+    from .memory import MemoryStore
+    _, _, universe = _paths(ctx)
+    heads = int(_setting(ctx, "universe_heads", 256))
+    layers = int(_setting(ctx, "universe_layers", 7))
+    return MemoryStore(universe / "mathematical_memory.sqlite3", heads=heads, layers=layers)
+
+
+def memory_ingest(ctx, discoveries: list, source_digest: str, head=None, layer: int = 0):
+    """Append validated structured discoveries; each item remains independently auditable."""
+    if not isinstance(discoveries, list) or not 1 <= len(discoveries) <= 1000:
+        raise ValueError("discoveries must be a list containing 1..1000 records")
+    store = _memory_store(ctx)
+    results = [store.ingest(item, source_digest=source_digest, head=head, layer=layer)
+               for item in discoveries]
+    return {"ingested": len(results), "results": results, "memory": store.status()}
+
+
+def memory_reorganize(ctx):
+    """Rebuild deterministic head/layer views without mutating discovery history."""
+    store = _memory_store(ctx)
+    return {"reorganization": store.reorganize(), "memory": store.status()}
+
+
+def memory_query(ctx, subject: str = None, head: int = None, layer: int = None, limit: int = 100):
+    """Read the current active mathematical memory projection."""
+    return {"records": _memory_store(ctx).query(subject=subject, head=head, layer=layer, limit=limit)}
+
+
+def memory_status(ctx):
+    """Report durable additive memory separately from native model checkpoints."""
+    return _memory_store(ctx).status()
