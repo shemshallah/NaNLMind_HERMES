@@ -38,6 +38,25 @@ class MemoryStoreTests(unittest.TestCase):
         self.assertEqual(a, b)
         self.assertEqual(self.store.status()["active_routes"], 1)
 
+
+    def test_merge_is_idempotent_and_unions_events(self):
+        records = [
+            {"item": {"kind": "entity", "subject": "node-a"}, "source_digest": self.source},
+            {"item": {"kind": "entity", "subject": "node-b"}, "source_digest": self.source},
+        ]
+        first = self.store.merge(records)
+        second = self.store.merge(records)
+        self.assertEqual(first, {"accepted": 2, "duplicates": 0})
+        self.assertEqual(second, {"accepted": 0, "duplicates": 2})
+        self.assertEqual(self.store.status()["events"], 2)
+
+    def test_nary_hyperedge_persists(self):
+        self.store.ingest({"kind": "relation", "subject": "triangle",
+                           "predicate": "connects", "object": "a",
+                           "participants": ["a", "b", "c"]},
+                          source_digest=self.source)
+        self.assertEqual(self.store.status()["hyperedges"], 1)
+
     def test_merge_order_independent_event_set(self):
         items = [
             {"kind": "entity", "subject": "alpha"},
