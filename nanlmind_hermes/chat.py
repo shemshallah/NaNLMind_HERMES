@@ -297,13 +297,17 @@ def chat(ctx, message: str, session_id: str = "default", system_prompt: str = No
         # Chat must remain usable if the optional reflection provider call fails.
         reflection["error"] = type(exc).__name__ + ": " + str(exc)[:500]
 
+    cross_resolution = {"derived_hyperedges": 0, "merge": {"accepted": 0, "duplicates": 0}, "error": None}
     try:
-        from .tools import _memory_store
-        store = _memory_store(ctx)
-        store.reorganize()
+        from .tools import memory_cross_resolution
+        cross_resolution = memory_cross_resolution(ctx, limit=1000)
     except Exception as exc:
-        if surface_error is None:
-            surface_error = type(exc).__name__ + ": " + str(exc)[:500]
+        cross_resolution["error"] = type(exc).__name__ + ": " + str(exc)[:500]
+        try:
+            from .tools import _memory_store
+            _memory_store(ctx).reorganize()
+        except Exception:
+            pass
 
     return {
         "session_id": session_id, "response": response_text,
@@ -321,7 +325,8 @@ def chat(ctx, message: str, session_id: str = "default", system_prompt: str = No
             "proposed_discoveries": len(reflection.get("records", [])),
             "memory_merge": merge, "error": reflection.get("error"),
         },
-        "memory_note": "Structured reflection proposals are additive evidence, not learned neural weights.",
+        "cross_resolution_feedback": cross_resolution,
+        "memory_note": "Structured reflection proposals and derived cross-resolution equations are additive evidence, not learned neural weights.",
     }
 
 
