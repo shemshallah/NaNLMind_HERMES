@@ -18,7 +18,7 @@ The state file includes the global topology and serialized universe/head scratch
 
 - `nanlm_status` — local universe, latest native math run, checkpoint presence, and memory status.
 - `nanlm_generate_corpus` — produce a content-addressed N16TXT/1 corpus.
-- `nanlm_generate_curriculum` — ask the active Hermes model for a balanced 11-stage corpus, from Boolean inverses and deep logic through morphology, word choice, sentences, paragraphs and stories.
+- `nanlm_generate_curriculum` — ask the active Hermes model for a balanced 12-stage corpus, from Boolean inverses and deep logic through morphology, word choice, sentences, paragraphs and stories.
 - `nanlm_curriculum_experiment` — generate that corpus, run the native 256-head trainer, merge runner discoveries into the same additive memory as chat, and save a reproducible experiment manifest.
 - `nanlm_train` — run the legacy Context2 bootstrap trainer (its parameters remain in-memory).
 - `nanlm_math_train` — run native 256-head training, resume the global topology, validate discoveries, merge, and reorganize.
