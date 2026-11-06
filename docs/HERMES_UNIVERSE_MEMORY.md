@@ -118,3 +118,14 @@ narratives. It writes canonical N16TXT/1 plus a content-addressed manifest.
 This creates training material; it does not by itself prove that the native
 256-head trainer has learned language. The native trainer remains responsible
 for its own measured held-out results and committed hyperedges.
+
+## Deterministic surface measurements from conversation
+
+Each successful chat turn appends exact, source-digest-bound measurements for
+UTF-8 bit counts, nibble frequencies, byte frequencies, orthographic token
+frequencies, sentence segmentation and paragraph segmentation. These are
+observations of the actual user/assistant exchange, not inferred semantics.
+They route into the shared bit/nibble/byte, lexical, sentence and paragraph
+layers. Phonetic, morphemic, word-completion and narrative interpretation stays
+in the separate structured language-model reflection pass and is explicitly
+treated as a hypothesis when it is not directly observable.
