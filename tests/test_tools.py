@@ -16,6 +16,35 @@ class FakeContext:
 
 
 class HermesMathTrainTests(unittest.TestCase):
+
+    def test_relation_corpus_preserves_resolution_polarity_and_train_test_split(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            ctx = FakeContext({"state_dir": str(Path(tmp) / "state")})
+            from nanlmind_hermes.tools import _relation_corpus
+            records = [
+                {"split": "test", "source_digest": "a" * 64,
+                 "item": {"subject": "penguin", "predicate": "can", "object": "fly",
+                          "polarity": "refutes", "confidence": 0.8,
+                          "provenance": {"resolution": "lexical"}}},
+                {"split": "train", "source_digest": "b" * 64,
+                 "item": {"subject": "penguin", "predicate": "is_a", "object": "bird",
+                          "polarity": "supports", "confidence": 1.0,
+                          "provenance": {"resolution": "lexical"}}},
+                {"split": "train", "source_digest": "c" * 64,
+                 "item": {"subject": "river", "predicate": "flows_through", "object": "valley",
+                          "polarity": "supports", "confidence": 0.9,
+                          "provenance": {"resolution": "narrative"}}},
+            ]
+            result = _relation_corpus(ctx, records)
+            lines = Path(result["path"]).read_text(encoding="utf-8").splitlines()
+            self.assertEqual(lines[0], "N16REL/1")
+            self.assertTrue(lines[1].startswith("train\\t"))
+            self.assertTrue(lines[2].startswith("train\\t"))
+            self.assertTrue(lines[3].startswith("test\\t"))
+            self.assertEqual(result["counts"]["train"]["lexical"], 1)
+            self.assertEqual(result["counts"]["test"]["lexical"], 1)
+            self.assertEqual(result["counts"]["train"]["narrative"], 1)
+
     def test_native_discoveries_and_literal_relations_share_durable_memory(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
