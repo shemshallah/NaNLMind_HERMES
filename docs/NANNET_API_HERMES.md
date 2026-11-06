@@ -14,7 +14,7 @@ Allowed scopes: corpus:write, training:execute, universe:read, snapshot:read, sn
 
 ## Pairing HTTP endpoint
 
-The optional stdlib HTTP service exposes POST /v1/pair and POST /v1/revoke. Revocation accepts the token's bearer credential, records its token ID, and causes subsequent authority-side validation to reject it. It must be deployed behind HTTPS; plain HTTP is accepted only for loopback development. The client pins NANNET_ISSUER_PUBLIC_KEY before trusting the returned token. The token is saved encrypted under the installation master key.
+The optional stdlib HTTP service exposes POST /v1/pair, POST /v1/authorize, and POST /v1/revoke. The authorize route checks a requested scope against a signed token and persisted revocation state. Revocation accepts the token's bearer credential, records its token ID, and causes subsequent authority-side validation to reject it. It must be deployed behind HTTPS; plain HTTP is accepted only for loopback development. The client pins NANNET_ISSUER_PUBLIC_KEY before trusting the returned token. The token is saved encrypted under the installation master key.
 
 For subsequent API requests, send the bearer token and Ed25519 request signature over method, exact path, timestamp, nonce, and SHA-256 body digest. The API must verify token signature, issuer, audience, expiry, scope, installation key, and five-minute clock skew, then atomically consume the nonce. Token revocation is persisted by TokenRegistry.
 
