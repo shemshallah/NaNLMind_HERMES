@@ -79,6 +79,18 @@ class MemoryStoreTests(unittest.TestCase):
         self.assertEqual({row["head"] for row in routes}, {42, 43})
         self.assertEqual({row["layer"] for row in routes}, {6})
 
+    def test_native_runner_layer_survives_shared_reorganization(self):
+        self.store.ingest(
+            {"kind": "hypothesis", "subject": "native-layer-two",
+             "provenance": {"native_head": 17}},
+            source_digest=self.source, head=17, layer=2,
+        )
+        self.store.reorganize()
+        rows = self.store.query(subject="native-layer-two")
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["head"], 17)
+        self.assertEqual(rows[0]["layer"], 2)
+
     def test_merge_order_independent_event_set(self):
         items = [
             {"kind": "entity", "subject": "alpha"},
