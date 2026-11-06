@@ -7,8 +7,8 @@ def register(ctx):
     def handle_auth_status(params, **kwargs): return auth_tools.auth_status(ctx)
     def handle_auth_pair(params, **kwargs): return auth_tools.auth_pair(ctx,params["pairing_code"])
     def handle_auth_revoke(params, **kwargs): return auth_tools.auth_revoke(ctx)
-    def handle_generate(params, **kwargs): return tools.generate_corpus(ctx,params.get("topic",""),params.get("records",12))
-    def handle_train(params, **kwargs): return tools.train(ctx,params["corpus_path"],params.get("duration_minutes"))
+    def handle_generate(params, **kwargs):\n        auth_tools.require_scope(ctx,"corpus:write")\n        return tools.generate_corpus(ctx,params.get("topic",""),params.get("records",12))
+    def handle_train(params, **kwargs):\n        auth_tools.require_scope(ctx,"training:execute")\n        return tools.train(ctx,params["corpus_path"],params.get("duration_minutes"))
     def handle_evaluate(params, **kwargs): return tools.evaluate(ctx,params["corpus_path"])
 
     specs=[
