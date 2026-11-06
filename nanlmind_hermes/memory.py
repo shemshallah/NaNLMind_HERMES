@@ -234,6 +234,18 @@ class MemoryStore:
                 resolution = provenance.get("resolution")
                 if resolution in resolution_layers:
                     layer = min(self.layers - 1, resolution_layers[resolution])
+                else:
+                    # Native runner discoveries carry an explicit layer from
+                    # the 256-head topology. Preserve that route when rebuilding
+                    # the shared projection; chat/extracted claims without a
+                    # native head continue to use semantic-kind defaults.
+                    native_head = provenance.get("native_head")
+                    origin_layer = provenance.get("origin_layer")
+                    if (isinstance(native_head, int) and not isinstance(native_head, bool)
+                            and 0 <= native_head < self.heads
+                            and isinstance(origin_layer, int) and not isinstance(origin_layer, bool)
+                            and 0 <= origin_layer < self.layers):
+                        layer = origin_layer
                 # Contested claims move to the highest review layer without
                 # erasing their origin head or changing the source event.
                 if subject in contested:
