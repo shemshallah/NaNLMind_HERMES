@@ -24,6 +24,8 @@ class CrossResolutionTests(unittest.TestCase):
         self.assertEqual(result["feedback"][0]["pair_count"], 45)
         self.assertEqual(result["cooccurrence_matrix"][0][9], 1)
         self.assertEqual(result["cooccurrence_matrix"][9][0], 1)
+        self.assertEqual(result["fine_to_coarse_feedback_matrix"][0][9], 1.0)
+        self.assertEqual(result["coarse_to_fine_feedback_matrix"][9][0], 1.0)
 
     def test_cross_resolution_contradictions_are_not_averaged_away(self):
         rows = [
@@ -35,6 +37,7 @@ class CrossResolutionTests(unittest.TestCase):
         item = result["feedback"][0]
         self.assertEqual(item["contradicted_pairs"], 2)
         self.assertEqual(item["aligned_pairs"], 1)
+        self.assertEqual(item["content_divergent_pairs"], 0)
         self.assertAlmostEqual(item["consistency_score"], -1 / 3)
         self.assertTrue(any(p["status"] == "contradiction" for p in item["pairs"]))
 
