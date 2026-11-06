@@ -1,8 +1,9 @@
-"""Minimal HTTPS-capable NANNET pairing endpoint."""
+"""HTTPS-capable NANNET pairing authority and device lease API."""
 from __future__ import annotations
 import json, ipaddress, ssl
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from .auth import AuthError
+from .devices import DeviceRegistry
 from .pairing import PairingAuthority
 
 def make_server(authority: PairingAuthority, host="127.0.0.1", port=8765, tls_cert=None, tls_key=None):
@@ -10,6 +11,7 @@ def make_server(authority: PairingAuthority, host="127.0.0.1", port=8765, tls_ce
     except ValueError: loopback=host.lower()=="localhost"
     if not loopback and not (tls_cert and tls_key):
         raise ValueError("non-loopback pairing listener requires TLS certificate and private key")
+    devices = DeviceRegistry(authority.database)
     class Handler(BaseHTTPRequestHandler):
         server_version="NANNET-HERMES/1"
         def log_message(self, fmt, *args): return
@@ -18,38 +20,48 @@ def make_server(authority: PairingAuthority, host="127.0.0.1", port=8765, tls_ce
             self.send_response(status); self.send_header("Content-Type","application/json")
             self.send_header("Content-Length",str(len(data))); self.send_header("Cache-Control","no-store")
             self.end_headers(); self.wfile.write(data)
+        def _body(self, limit=16384):
+            size=int(self.headers.get("Content-Length","0"))
+            if size < 1 or size > limit: raise ValueError("invalid_body_size")
+            value=json.loads(self.rfile.read(size))
+            if not isinstance(value,dict): raise ValueError("invalid_request")
+            return value
+        def _bearer(self):
+            header=self.headers.get("Authorization","")
+            return header[7:] if header.startswith("Bearer ") else ""
         def do_POST(self):
+            if self.path == "/v1/devices/register":
+                try: return self._reply(201,devices.register(self._body(8192)))
+                except (ValueError,TypeError,json.JSONDecodeError) as exc: return self._reply(400,{"error":str(exc)[:160]})
+            if self.path in ("/v1/devices/heartbeat","/v1/devices/release","/v1/devices/report"):
+                token=self._bearer()
+                if not token: return self._reply(401,{"error":"bearer_required"})
+                try:
+                    payload=self._body(8192) if self.path.endswith("/report") else self._body(1024)
+                    if self.path.endswith("/heartbeat"): result=devices.heartbeat(token)
+                    elif self.path.endswith("/release"): result=devices.release(token)
+                    else: result=devices.report(token,payload)
+                    return self._reply(200,result)
+                except (ValueError,TypeError,json.JSONDecodeError) as exc:
+                    return self._reply(401 if "token" in str(exc) or "bearer" in str(exc) else 400,{"error":str(exc)[:160]})
             if self.path == "/v1/authorize":
-                token = self.headers.get("Authorization", "")
-                if not token.startswith("Bearer "):
-                    return self._reply(401, {"error": "bearer_required"})
+                token = self._bearer()
+                if not token: return self._reply(401, {"error": "bearer_required"})
                 try:
-                    size = int(self.headers.get("Content-Length", "0"))
-                    if size < 1 or size > 4096:
-                        return self._reply(413, {"error": "invalid_body_size"})
-                    payload = json.loads(self.rfile.read(size))
-                    scope = payload.get("scope")
-                    if not isinstance(scope, str):
-                        return self._reply(400, {"error": "scope_required"})
-                    claims = authority.verify_access_token(token[7:], required_scope=scope)
+                    payload = self._body(4096); scope = payload.get("scope")
+                    if not isinstance(scope, str): return self._reply(400, {"error": "scope_required"})
+                    claims = authority.verify_access_token(token, required_scope=scope)
                     return self._reply(200, {"authorized": True, "installation_id": claims["sub"], "scope": scope, "expires_at": claims["exp"]})
-                except AuthError:
-                    return self._reply(401, {"error": "token_invalid_or_scope_denied"})
-                except (ValueError, TypeError, json.JSONDecodeError):
-                    return self._reply(400, {"error": "invalid_request"})
+                except AuthError: return self._reply(401, {"error": "token_invalid_or_scope_denied"})
+                except (ValueError, TypeError, json.JSONDecodeError): return self._reply(400, {"error": "invalid_request"})
             if self.path == "/v1/revoke":
-                token = self.headers.get("Authorization", "")
-                if not token.startswith("Bearer "):
-                    return self._reply(401, {"error": "bearer_required"})
-                try:
-                    return self._reply(200, authority.revoke_token(token[7:]))
-                except AuthError:
-                    return self._reply(401, {"error": "token_invalid_or_revoked"})
+                token = self._bearer()
+                if not token: return self._reply(401, {"error": "bearer_required"})
+                try: return self._reply(200, authority.revoke_token(token))
+                except AuthError: return self._reply(401, {"error": "token_invalid_or_revoked"})
             if self.path!="/v1/pair": return self._reply(404,{"error":"not_found"})
             try:
-                size=int(self.headers.get("Content-Length","0"))
-                if size<1 or size>16384: return self._reply(413,{"error":"invalid_body_size"})
-                payload=json.loads(self.rfile.read(size))
+                payload=self._body(16384)
                 result=authority.pair(payload["pairing_code"],payload["installation_id"],payload["public_key"])
                 self._reply(200,result)
             except (ValueError,KeyError,TypeError,json.JSONDecodeError,AuthError) as exc:
