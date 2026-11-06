@@ -98,7 +98,7 @@ class HermesChatTests(unittest.TestCase):
     def test_sentence_and_paragraph_segmentation_uses_real_boundaries(self):
         with tempfile.TemporaryDirectory() as tmp:
             ctx = FakeContext(Path(tmp))
-            result = chat(ctx, "First sentence. Second sentence!\\n\\nThird sentence?", session_id="boundaries")
+            result = chat(ctx, "First sentence. Second sentence!\n\nThird sentence?", session_id="boundaries")
             from nanlmind_hermes.tools import _memory_store
             store = _memory_store(ctx)
             digest = result["source_sha256"][:20]
