@@ -4,6 +4,22 @@ from . import tools
 
 def register(ctx):
     """Register NaNLMind tools with Hermes."""
+    def handle_status(params, **kwargs):
+        return tools.status(ctx)
+
+    def handle_generate(params, **kwargs):
+        return tools.generate_corpus(
+            ctx, params.get("topic", ""), params.get("records", 12)
+        )
+
+    def handle_train(params, **kwargs):
+        return tools.train(
+            ctx, params["corpus_path"], params.get("duration_minutes")
+        )
+
+    def handle_evaluate(params, **kwargs):
+        return tools.evaluate(ctx, params["corpus_path"])
+
     ctx.register_tool(
         name="nanlm_status",
         toolset="nanlmind",
@@ -12,7 +28,7 @@ def register(ctx):
             "description": "Inspect this installation's local NaNLMind universe and training configuration.",
             "parameters": {"type": "object", "properties": {}, "additionalProperties": False},
         },
-        handler=lambda **kwargs: tools.status(ctx),
+        handler=handle_status,
     )
     ctx.register_tool(
         name="nanlm_generate_corpus",
@@ -30,7 +46,7 @@ def register(ctx):
                 "additionalProperties": False,
             },
         },
-        handler=lambda topic, records=12, **kwargs: tools.generate_corpus(ctx, topic, records),
+        handler=handle_generate,
     )
     ctx.register_tool(
         name="nanlm_train",
@@ -48,9 +64,7 @@ def register(ctx):
                 "additionalProperties": False,
             },
         },
-        handler=lambda corpus_path, duration_minutes=None, **kwargs: tools.train(
-            ctx, corpus_path, duration_minutes
-        ),
+        handler=handle_train,
     )
     ctx.register_tool(
         name="nanlm_evaluate",
@@ -65,5 +79,5 @@ def register(ctx):
                 "additionalProperties": False,
             },
         },
-        handler=lambda corpus_path, **kwargs: tools.evaluate(ctx, corpus_path),
+        handler=handle_evaluate,
     )
