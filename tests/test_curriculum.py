@@ -126,8 +126,8 @@ class CurriculumTests(unittest.TestCase):
             first_stage, second_stage = first["stages"][0], second["stages"][0]
             self.assertEqual(first_stage["challenge_sha256"], second_stage["challenge_sha256"])
             self.assertEqual(first_stage["frozen_test"], second_stage["frozen_test"])
-            self.assertEqual(len([x for x in first["records"] if x["split"] == "test"]), 1)
-            self.assertEqual(len([x for x in second["records"] if x["split"] == "test"]), 1)
+            self.assertEqual(len([x for x in first["records"] if x["split"] == "test"]), 2)
+            self.assertEqual(len([x for x in second["records"] if x["split"] == "test"]), 2)
             self.assertEqual(first["resolution_order"], ["lexical"])
             self.assertTrue(all(x["item"]["provenance"]["independently_fact_verified"] is False
                                 for x in second["records"]))
