@@ -289,7 +289,7 @@ def register(ctx):
                       "items": {"type": "object",
                                 "properties": {"split": {"type": "string", "enum": ["train", "test"]},
                                                "source_digest": {"type": "string", "pattern": "^[0-9a-fA-F]{64}$"},
-                                               "item": {"type": "object"}}},
+                                               "item": {"type": "object"}}}},
           "epochs": {"type": "integer", "minimum": 1, "maximum": 100, "default": 1}},
          ["records"], handle_relation_train),
         ("nanlm_evaluate", "Run native topology-byte, Kneser-Ney and Context2 controls locally on the same corpus.",
