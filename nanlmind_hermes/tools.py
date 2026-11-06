@@ -528,8 +528,8 @@ def generate_relation_curriculum(ctx, topic: str, records_per_stage: int = 12,
     """Generate teacher-labeled relation examples with a frozen per-topic held-out set."""
     if not isinstance(topic, str) or not topic.strip():
         raise ValueError("topic is required")
-    if isinstance(records_per_stage, bool) or not isinstance(records_per_stage, int) or not 2 <= records_per_stage <= 64:
-        raise ValueError("structured relation training needs 2..64 records per stage")
+    if isinstance(records_per_stage, bool) or not isinstance(records_per_stage, int) or not 3 <= records_per_stage <= 64:
+        raise ValueError("structured relation training needs 3..64 records per stage")
     selected = list(CURRICULUM_STAGES)
     if stages is not None:
         if isinstance(stages, (str, bytes)) or not isinstance(stages, (list, tuple)) or not stages:
@@ -640,10 +640,24 @@ def generate_relation_curriculum(ctx, topic: str, records_per_stage: int = 12,
         if len(valid) < 2:
             raise ValueError(f"teacher supplied fewer than two valid relation examples for {resolution}: {rejected}")
         if existing_challenge is None:
+            if len(valid) < 3:
+                raise ValueError(f"need at least three valid examples to create train and held-out sets for {resolution}")
             ranked = sorted(valid, key=lambda x: hashlib.sha256(
                 json.dumps(x["item"], ensure_ascii=False, sort_keys=True).encode("utf-8")).hexdigest())
-            test_count = max(1, min(len(ranked) - 1, len(ranked) // 5))
-            existing_challenge = ranked[:test_count]
+            test_count = max(2, min(len(ranked) - 1, max(2, len(ranked) // 5)))
+            # When both labels exist, force one of each into the frozen challenge
+            # so balanced accuracy is actually defined.
+            chosen = []
+            for label in ("supports", "refutes"):
+                candidate = next((x for x in ranked if x["item"]["polarity"] == label), None)
+                if candidate is not None and candidate not in chosen:
+                    chosen.append(candidate)
+            for candidate in ranked:
+                if len(chosen) >= test_count:
+                    break
+                if candidate not in chosen:
+                    chosen.append(candidate)
+            existing_challenge = chosen
             temp = challenge_path.with_suffix(".tmp")
             temp.write_text(json.dumps(existing_challenge, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
                             encoding="utf-8")
