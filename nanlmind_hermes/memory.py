@@ -222,6 +222,18 @@ class MemoryStore:
                     "operator": 3, "equation": 4, "constraint": 5,
                     "hypothesis": 5, "counterexample": self.layers - 1,
                 }[payload["kind"]])
+                # Linguistic resolution is a first-class routing signal shared by
+                # conversational reflection and native runner discoveries.  It
+                # refines (rather than replaces) the semantic kind default.
+                resolution_layers = {
+                    "bit": 0, "nibble": 0, "byte": 0,
+                    "phonetic": 1, "morpheme": 2, "lexical": 3,
+                    "word_completion": 4, "sentence": 5,
+                    "paragraph": 6, "narrative": 6,
+                }
+                resolution = provenance.get("resolution")
+                if resolution in resolution_layers:
+                    layer = min(self.layers - 1, resolution_layers[resolution])
                 # Contested claims move to the highest review layer without
                 # erasing their origin head or changing the source event.
                 if subject in contested:
