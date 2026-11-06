@@ -19,7 +19,15 @@ def make_server(authority: PairingAuthority, host="127.0.0.1", port=8765, tls_ce
             self.send_header("Content-Length",str(len(data))); self.send_header("Cache-Control","no-store")
             self.end_headers(); self.wfile.write(data)
         def do_POST(self):
-            if self.path=="/v1/revoke":\n                token=self.headers.get("Authorization","")\n                if not token.startswith("Bearer "): return self._reply(401,{"error":"bearer_required"})\n                try: return self._reply(200,authority.revoke_token(token[7:]))\n                except AuthError: return self._reply(401,{"error":"token_invalid_or_revoked"})\n            if self.path!="/v1/pair": return self._reply(404,{"error":"not_found"})
+            if self.path == "/v1/revoke":
+                token = self.headers.get("Authorization", "")
+                if not token.startswith("Bearer "):
+                    return self._reply(401, {"error": "bearer_required"})
+                try:
+                    return self._reply(200, authority.revoke_token(token[7:]))
+                except AuthError:
+                    return self._reply(401, {"error": "token_invalid_or_revoked"})
+            if self.path!="/v1/pair": return self._reply(404,{"error":"not_found"})
             try:
                 size=int(self.headers.get("Content-Length","0"))
                 if size<1 or size>16384: return self._reply(413,{"error":"invalid_body_size"})
