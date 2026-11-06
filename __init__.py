@@ -7,77 +7,37 @@ def register(ctx):
     def handle_status(params, **kwargs):
         return tools.status(ctx)
 
+    def handle_auth_init(params, **kwargs):
+        return tools.auth_init(ctx)
+
+    def handle_auth_status(params, **kwargs):
+        return tools.auth_status(ctx)
+
     def handle_generate(params, **kwargs):
-        return tools.generate_corpus(
-            ctx, params.get("topic", ""), params.get("records", 12)
-        )
+        return tools.generate_corpus(ctx, params.get("topic", ""), params.get("records", 12))
 
     def handle_train(params, **kwargs):
-        return tools.train(
-            ctx, params["corpus_path"], params.get("duration_minutes")
-        )
+        return tools.train(ctx, params["corpus_path"], params.get("duration_minutes"))
 
     def handle_evaluate(params, **kwargs):
         return tools.evaluate(ctx, params["corpus_path"])
 
-    ctx.register_tool(
-        name="nanlm_status",
-        toolset="nanlmind",
-        schema={
-            "name": "nanlm_status",
-            "description": "Inspect this installation's local NaNLMind universe and training configuration.",
-            "parameters": {"type": "object", "properties": {}, "additionalProperties": False},
-        },
-        handler=handle_status,
-    )
-    ctx.register_tool(
-        name="nanlm_generate_corpus",
-        toolset="nanlmind",
-        schema={
-            "name": "nanlm_generate_corpus",
-            "description": "Generate a bounded N16TXT/1 training corpus using Hermes' active model.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "topic": {"type": "string", "description": "Topic or skill area."},
-                    "records": {"type": "integer", "minimum": 1, "maximum": 64, "default": 12},
-                },
-                "required": ["topic"],
-                "additionalProperties": False,
-            },
-        },
-        handler=handle_generate,
-    )
-    ctx.register_tool(
-        name="nanlm_train",
-        toolset="nanlmind",
-        schema={
-            "name": "nanlm_train",
-            "description": "Train this local universe for a bounded duration, at most six hours. A run may override the configured duration.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "corpus_path": {"type": "string", "description": "Path to an N16TXT/1 corpus file."},
-                    "duration_minutes": {"type": "integer", "minimum": 1, "maximum": 360},
-                },
-                "required": ["corpus_path"],
-                "additionalProperties": False,
-            },
-        },
-        handler=handle_train,
-    )
-    ctx.register_tool(
-        name="nanlm_evaluate",
-        toolset="nanlmind",
-        schema={
-            "name": "nanlm_evaluate",
-            "description": "Run the configured local runner's evaluation mode against a corpus.",
-            "parameters": {
-                "type": "object",
-                "properties": {"corpus_path": {"type": "string"}},
-                "required": ["corpus_path"],
-                "additionalProperties": False,
-            },
-        },
-        handler=handle_evaluate,
-    )
+    specs = [
+        ("nanlm_status", "Inspect this installation's local NaNLMind universe and training configuration.", {}, [], handle_status),
+        ("nanlm_auth_status", "Check local NANNET identity setup without exposing credentials.", {}, [], handle_auth_status),
+        ("nanlm_auth_init", "Create a local NANNET identity using the master key already provisioned in the host environment.", {}, [], handle_auth_init),
+        ("nanlm_generate_corpus", "Generate a bounded N16TXT/1 corpus using Hermes' active model.", {
+            "topic": {"type": "string"}, "records": {"type": "integer", "minimum": 1, "maximum": 64, "default": 12}
+        }, ["topic"], handle_generate),
+        ("nanlm_train", "Train this local universe for a bounded duration of at most six hours.", {
+            "corpus_path": {"type": "string"}, "duration_minutes": {"type": "integer", "minimum": 1, "maximum": 360}
+        }, ["corpus_path"], handle_train),
+        ("nanlm_evaluate", "Evaluate a corpus using the configured local runner.", {
+            "corpus_path": {"type": "string"}
+        }, ["corpus_path"], handle_evaluate),
+    ]
+    for name, description, properties, required, handler in specs:
+        ctx.register_tool(name=name, toolset="nanlmind", schema={
+            "name": name, "description": description,
+            "parameters": {"type": "object", "properties": properties, "required": required, "additionalProperties": False}
+        }, handler=handler)
