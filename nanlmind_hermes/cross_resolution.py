@@ -182,3 +182,105 @@ def feedback_records(analysis: dict) -> list[dict]:
         }
         records.append({"item": payload, "source_digest": source_digest, "layer": 9})
     return records
+
+
+def discover_numeric_relations(rows: list[dict]) -> dict:
+    """Discover only unit-compatible numeric relations explicitly grounded in events.
+
+    Each row may expose expression.value (or a numeric object), units, and a
+    stable alignment_id/concept_id. No model expression is evaluated.
+    """
+    grouped: dict[str, dict[str, list[dict]]] = defaultdict(lambda: defaultdict(list))
+    for row in rows:
+        provenance = row.get("provenance") or {}
+        resolution = provenance.get("resolution")
+        if resolution not in INDEX:
+            continue
+        alignment = provenance.get("alignment_id") or provenance.get("concept_id")
+        if not isinstance(alignment, str) or not alignment:
+            continue
+        expression = row.get("expression")
+        value = expression.get("value") if isinstance(expression, dict) else row.get("object")
+        if isinstance(value, bool) or not isinstance(value, (int, float)):
+            continue
+        units = row.get("units")
+        if units is None and isinstance(expression, dict):
+            units = expression.get("units")
+        grouped[alignment][resolution].append({
+            "event_id": row.get("event_id"),
+            "value": float(value),
+            "units": units,
+        })
+
+    relations = []
+    for alignment in sorted(grouped):
+        levels = grouped[alignment]
+        names = sorted(levels, key=INDEX.__getitem__)
+        for i, left_name in enumerate(names):
+            for right_name in names[i + 1:]:
+                for left in levels[left_name]:
+                    for right in levels[right_name]:
+                        if left["units"] != right["units"]:
+                            continue
+                        a, b = left["value"], right["value"]
+                        if math.isclose(a, b, rel_tol=1e-12, abs_tol=1e-12):
+                            relation, result = "equal", 1.0
+                        elif not math.isclose(b, 0.0, abs_tol=1e-15):
+                            relation, result = "ratio", a / b
+                        else:
+                            relation, result = "difference", a - b
+                        relations.append({
+                            "alignment_id": alignment,
+                            "left_resolution": left_name,
+                            "right_resolution": right_name,
+                            "left_event_id": left["event_id"],
+                            "right_event_id": right["event_id"],
+                            "relation": relation,
+                            "left_value": a,
+                            "right_value": b,
+                            "result": result,
+                            "units": left["units"],
+                            "verified": True,
+                        })
+    return {
+        "schema": "nanlm-numeric-relations/1",
+        "relations": relations,
+        "relation_count": len(relations),
+        "distinct_alignments": len(grouped),
+        "policy": "explicit-alignment-and-unit-compatible; inert numeric fields only",
+    }
+
+
+def permutation_control(rows: list[dict], seed: int = 1729) -> dict:
+    """Deterministic negative control: permute alignment labels, preserving coverage."""
+    import random
+
+    labels = []
+    indices = []
+    for i, row in enumerate(rows):
+        provenance = row.get("provenance") or {}
+        label = provenance.get("alignment_id") or provenance.get("concept_id")
+        if isinstance(label, str) and label:
+            labels.append(label)
+            indices.append(i)
+    shuffled = list(labels)
+    random.Random(seed).shuffle(shuffled)
+    control_rows = [dict(row) for row in rows]
+    for index, label in zip(indices, shuffled):
+        provenance = dict(control_rows[index].get("provenance") or {})
+        provenance["alignment_id"] = label
+        provenance.pop("concept_id", None)
+        control_rows[index]["provenance"] = provenance
+    observed = analyze_cross_resolution(rows)
+    control = analyze_cross_resolution(control_rows)
+    return {
+        "schema": "nanlm-cross-resolution-permutation-control/1",
+        "seed": seed,
+        "observed_concepts_compared": observed["concepts_compared"],
+        "control_concepts_compared": control["concepts_compared"],
+        "observed_comparable_pairs": sum(x["comparable_pairs"] for x in observed["feedback"]),
+        "control_comparable_pairs": sum(x["comparable_pairs"] for x in control["feedback"]),
+        "observed_abs_consistency": sum(abs(x["consistency_score"]) for x in observed["feedback"]),
+        "control_abs_consistency": sum(abs(x["consistency_score"]) for x in control["feedback"]),
+        "interpretation": "negative-control diagnostic; not a p-value",
+    }
