@@ -143,7 +143,7 @@ class NativeHarnessTests(unittest.TestCase):
                 "else:\\n"
                 " p.write_bytes(b'x')\\n"
                 " print('relation_train status=updated train_events=1 duplicate_events=0 changed_heads=3 mirror_pair_updates=3 hyperedges_added=1 state_bytes=1 state_digest_before=' + 'a'*64 + ' state_digest_after=' + 'b'*64)\\n"
-                " print('resolution_L5 train=1 test=1 accuracy=1.0 balanced_accuracy=1.0 majority_baseline=0.0')\\n",
+                " print('resolution_L5 train=1 test=1 before_accuracy=0.0 accuracy=1.0 delta=1.0 before_balanced_accuracy=0.0 balanced_accuracy=1.0 majority_baseline=0.0')\\n",
                 encoding="utf-8")
             command = [sys.executable, str(script)]
             first = run_relation_train(command, corpus, root / "universe")
