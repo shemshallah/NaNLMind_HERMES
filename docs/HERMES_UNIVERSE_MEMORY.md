@@ -29,7 +29,7 @@ A merge is set union over immutable event IDs, followed by deterministic project
 - rebuild projections from the complete event set;
 - evaluate before promoting any derived conclusion.
 
-This is an associative, commutative, idempotent merge at the event-set layer. It is not a last-writer-wins register and not an averaging of fictitious weights. Remote nodes exchange compact deltas (new events plus base/root digest), never corpora or native process memory by default.
+This is an associative, commutative, idempotent merge at the event-set layer. It is not a last-writer-wins register and not an averaging of fictitious weights. Remote nodes exchange compact deltas (new events plus base/root digest), never corpora or native process memory by default. The Hermes `nanlm_memory_merge` tool performs the local idempotent event-set union; authenticated transport and global generation/base-root reconciliation remain the NANNET merge boundary's responsibility.
 
 ## Continuous reorganization
 
