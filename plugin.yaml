@@ -6,6 +6,26 @@ description: Local NaNLMind training, reproducible evaluation and NANNET-connect
 license: MIT
 homepage: https://github.com/shemshallah/NaNLMind_HERMES
 tags: [nanlmind, training, corpus, local-runner, nannet]
+provides_tools:
+  - nanlm_status
+  - nanlm_chat
+  - nanlm_chat_history
+  - nanlm_auth_init
+  - nanlm_auth_status
+  - nanlm_auth_pair
+  - nanlm_auth_revoke
+  - nanlm_generate_curriculum
+  - nanlm_curriculum_experiment
+  - nanlm_generate_corpus
+  - nanlm_train
+  - nanlm_math_train
+  - nanlm_evaluate
+  - nanlm_memory_ingest
+  - nanlm_memory_reorganize
+  - nanlm_memory_cross_resolution
+  - nanlm_memory_merge
+  - nanlm_memory_query
+  - nanlm_memory_assessments
 config_schema:
   duration_minutes:
     type: int
