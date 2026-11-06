@@ -16,3 +16,5 @@ installation.json
 auth.sqlite
 *.sqlite-wal
 *.sqlite-shm
+nannet_token.json
+nannet-authority.sqlite*
