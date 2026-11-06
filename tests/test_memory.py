@@ -89,6 +89,33 @@ class MemoryStoreTests(unittest.TestCase):
             ids.add(self.store.ingest(item, source_digest=self.source)["event_id"])
         self.assertEqual(len(ids), 2)
 
+    def test_linguistic_resolution_routes_all_sources_through_shared_layers(self):
+        resolutions = {
+            "bit": 0, "nibble": 0, "byte": 0, "phonetic": 1,
+            "morpheme": 2, "lexical": 3, "word_completion": 4,
+            "sentence": 5, "paragraph": 6, "narrative": 6,
+        }
+        for resolution, expected_layer in resolutions.items():
+            self.store.ingest(
+                {"kind": "hypothesis", "subject": "resolution-" + resolution,
+                 "provenance": {"resolution": resolution}},
+                source_digest=self.source,
+            )
+        self.store.reorganize()
+        for resolution, expected_layer in resolutions.items():
+            rows = self.store.query(subject="resolution-" + resolution)
+            self.assertEqual(len(rows), 1)
+            self.assertEqual(rows[0]["layer"], expected_layer, resolution)
+
+    def test_unrecognized_resolution_keeps_semantic_default(self):
+        self.store.ingest(
+            {"kind": "hypothesis", "subject": "unknown-resolution",
+             "provenance": {"resolution": "invented-layer"}},
+            source_digest=self.source,
+        )
+        self.store.reorganize()
+        self.assertEqual(self.store.query(subject="unknown-resolution")[0]["layer"], 5)
+
 
 if __name__ == "__main__":
     unittest.main()
