@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from nanlmind_hermes.runner import evaluate_native, run_bounded, run_logic_train, run_math_train
+from nanlmind_hermes.runner import evaluate_native, run_bounded, run_logic_train, run_math_train, run_relation_train
 
 
 class NativeHarnessTests(unittest.TestCase):
@@ -122,6 +122,39 @@ class NativeHarnessTests(unittest.TestCase):
             from nanlmind_hermes.runner import RunnerError
             with self.assertRaises(RunnerError):
                 run_logic_train([sys.executable, str(script)], root / "foundation.nmg")
+
+
+    def test_relation_train_requires_real_head_pair_hyperedge_mutation_and_supports_noop(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            corpus = root / "relations.n16rel"
+            corpus.write_text(
+                "N16REL/1\\n"
+                "train\\t5\\t+\\t60000\\t70656e6775696e\\t69735f61\\t62697264\\t" + "1" * 64 + "\\n"
+                "test\\t5\\t-\\t60000\\t6f737472696368\\t63616e\\t666c79\\t" + "2" * 64 + "\\n",
+                encoding="utf-8")
+            script = root / "fake_relation.py"
+            script.write_text(
+                "import pathlib, sys\\n"
+                "mode, records, state = sys.argv[1:]\\n"
+                "p=pathlib.Path(state); p.parent.mkdir(parents=True,exist_ok=True)\\n"
+                "if p.exists():\\n"
+                " print('relation_train status=no_op train_events=0 duplicate_events=1 changed_heads=0 mirror_pair_updates=0 hyperedges_added=0 state_bytes=' + str(p.stat().st_size) + ' state_digest_before=' + 'a'*64 + ' state_digest_after=' + 'a'*64)\\n"
+                "else:\\n"
+                " p.write_bytes(b'x')\\n"
+                " print('relation_train status=updated train_events=1 duplicate_events=0 changed_heads=3 mirror_pair_updates=3 hyperedges_added=1 state_bytes=1 state_digest_before=' + 'a'*64 + ' state_digest_after=' + 'b'*64)\\n"
+                " print('resolution_L5 train=1 test=1 accuracy=1.0 balanced_accuracy=1.0 majority_baseline=0.0')\\n",
+                encoding="utf-8")
+            command = [sys.executable, str(script)]
+            first = run_relation_train(command, corpus, root / "universe")
+            self.assertEqual(first["status"], "updated")
+            self.assertEqual(first["changed_heads"], 3)
+            self.assertEqual(first["mirror_pair_updates"], 3)
+            self.assertEqual(first["hyperedges_added"], 1)
+            self.assertAlmostEqual(first["resolution_metrics"][5]["relation_polarity_accuracy"], 1.0)
+            second = run_relation_train(command, corpus, root / "universe")
+            self.assertEqual(second["status"], "no_op")
+            self.assertEqual(second["duplicate_events"], 1)
 
     def test_math_train_rejects_incomplete_head_trace(self):
         with tempfile.TemporaryDirectory() as tmp:
