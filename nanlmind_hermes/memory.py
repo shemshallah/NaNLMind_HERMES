@@ -137,16 +137,17 @@ class MemoryStore:
         """Idempotently merge remote discovery records; no last-writer-wins replacement."""
         accepted = duplicates = 0
         for record in records:
-            result = self.ingest(record["item"], source_digest=record["source_digest"],
-                                 head=record.get("head"), layer=record.get("layer", 0))
             with self._db() as db:
-                count = db.execute("SELECT COUNT(*) FROM projections WHERE event_id=?",
-                                   (result["event_id"],)).fetchone()[0]
-            if count > 1:
-                duplicates += 1
-            else:
+                before = db.execute("SELECT COUNT(*) FROM events").fetchone()[0]
+            self.ingest(record["item"], source_digest=record["source_digest"],
+                        head=record.get("head"), layer=record.get("layer", 0))
+            with self._db() as db:
+                after = db.execute("SELECT COUNT(*) FROM events").fetchone()[0]
+            if after > before:
                 accepted += 1
-        return {"accepted_or_present": accepted, "duplicate_events": duplicates}
+            else:
+                duplicates += 1
+        return {"accepted": accepted, "duplicates": duplicates}
 
     def reorganize(self) -> dict[str, int]:
         """Recompute routing projections from immutable events, deterministically."""
