@@ -284,8 +284,10 @@ def math_train(ctx, corpus_path: str, epochs: int = 3, max_samples_per_head: int
     store = _memory_store(ctx)
     merge = store.merge(records)
     semantic_merge = store.merge(extracted) if extracted else {"accepted": 0, "duplicates": 0}
+    cross_resolution = memory_cross_resolution(ctx, limit=1000)
     reorganization = store.reorganize()
     result["merge"] = merge
+    result["cross_resolution"] = cross_resolution
     result["surface_extraction"] = {
         "version": "surface-relations/1", "discoveries": len(extracted),
         "by_kind": {kind: sum(1 for record in extracted if record["item"]["kind"] == kind)
