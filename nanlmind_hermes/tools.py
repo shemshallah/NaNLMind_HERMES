@@ -287,6 +287,7 @@ def math_train(ctx, corpus_path: str, epochs: int = 3, max_samples_per_head: int
 CURRICULUM_STAGES = (
     ("boolean_inverses", "Boolean truth values, false/true, negation, inverse pairs and truth-table cases. Include both directions and counterexamples."),
     ("deep_logic", "Nested AND/OR/NOT expressions, implications, equivalences, long relation chains and explicitly stated premises/conclusions."),
+    ("story_saturation", "Immediately saturate the language field with short, varied stories: ordinary dialogue, objects, actions, time, place, causality, descriptions and unexpected events. Keep mathematical/logic relations discoverable without reducing stories to formal test strings."),
     ("exceptions", "Rules with exceptions, boundary conditions, defeasible conclusions and cases where a normally valid inference fails."),
     ("repetitive_words", "Common words, repeated tokens, frequency contrast, function words, punctuation and varied contexts for the same word."),
     ("phonetic_pairs", "Consonant/vowel pairings, syllables, phoneme contrasts, onset/rime patterns and sound-to-spelling correspondences. Mark uncertain pronunciations rather than inventing facts."),
@@ -307,8 +308,9 @@ def generate_curriculum(ctx, topic: str, records_per_stage: int = 12):
         raise ValueError("records_per_stage must be between 1 and 64")
     generated, stage_manifest = [], []
     stage_layers = {
-        "boolean_inverses": 0, "deep_logic": 4, "exceptions": 5,
-        "repetitive_words": 3, "phonetic_pairs": 1, "morpheme_structure": 2,
+        "boolean_inverses": 0, "deep_logic": 4, "story_saturation": 6,
+        "exceptions": 5, "repetitive_words": 3,
+        "phonetic_pairs": 1, "morpheme_structure": 2,
         "lexical_words": 3, "word_completion": 4, "sentence_choice": 5,
         "paragraph_structure": 6, "narrative": 6,
     }
