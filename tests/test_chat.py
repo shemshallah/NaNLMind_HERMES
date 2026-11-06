@@ -68,6 +68,8 @@ class HermesChatTests(unittest.TestCase):
             self.assertIn("penguin cannot fly", prompt["prior_context"][0]["content"])
             self.assertIn("fictional flying penguin", prompt["user_text"])
             self.assertLessEqual(len(prompt["prior_context"][0]["content"]), 4000)
+            self.assertTrue(any(claim.get("subject") == "river"
+                                for claim in prompt["prior_universe_memory"]["claims"]))
 
     def test_chat_measures_exact_bit_nibble_byte_and_text_resolutions(self):
         with tempfile.TemporaryDirectory() as tmp:
