@@ -61,6 +61,13 @@ class MemoryStore:
                     hyperedge_id TEXT PRIMARY KEY, relation TEXT NOT NULL,
                     members TEXT NOT NULL, event_id TEXT NOT NULL REFERENCES events(event_id)
                 );
+                CREATE TABLE IF NOT EXISTS assessments(
+                    assessment_id TEXT PRIMARY KEY, subject TEXT NOT NULL,
+                    status TEXT NOT NULL, support_weight REAL NOT NULL,
+                    refute_weight REAL NOT NULL, evidence_count INTEGER NOT NULL,
+                    source_event_ids TEXT NOT NULL, assessor_version TEXT NOT NULL
+                );
+                CREATE INDEX IF NOT EXISTS assessment_subject ON assessments(subject);
                 CREATE TABLE IF NOT EXISTS meta(key TEXT PRIMARY KEY, value TEXT NOT NULL);
             """)
             db.execute("INSERT OR REPLACE INTO meta(key,value) VALUES('schema',?)", (SCHEMA,))
@@ -101,13 +108,22 @@ class MemoryStore:
         # Preserve a typed expression tree; do not execute supplied expressions.
         if "expression" in item and not isinstance(item["expression"], (dict, list, str, int, float)):
             raise ValueError("expression must be inert structured data")
+        provenance = item.get("provenance", {})
+        if not isinstance(provenance, dict):
+            raise ValueError("provenance must be an object")
+        provenance = dict(provenance)
+        provenance.setdefault("origin_head", head)
+        provenance.setdefault("origin_layer", layer)
+        evidence = item.get("evidence", {})
+        if not isinstance(evidence, dict):
+            raise ValueError("evidence must be an object")
         payload = {
             "schema": SCHEMA, "kind": kind, "subject": item.get("subject"),
             "predicate": item.get("predicate"), "object": item.get("object"),
             "expression": item.get("expression"), "units": item.get("units"),
             "conditions": item.get("conditions", []), "participants": item.get("participants", []),
             "polarity": polarity, "confidence": float(confidence),
-            "evidence": item.get("evidence", {}), "provenance": item.get("provenance", {}),
+            "evidence": evidence, "provenance": provenance,
             "tags": sorted(set(item.get("tags", []))),
         }
         if not payload["subject"] and kind not in {"observation", "counterexample"}:
@@ -150,26 +166,102 @@ class MemoryStore:
         return {"accepted": accepted, "duplicates": duplicates}
 
     def reorganize(self) -> dict[str, int]:
-        """Recompute routing projections from immutable events, deterministically."""
+        """Rebuild routes and evidence assessments from the immutable event set."""
+        assessor_version = "evidence-review/1"
         with self._db() as db:
             rows = db.execute("SELECT event_id,payload FROM events ORDER BY event_id").fetchall()
+            grouped: dict[str, list[tuple[str, dict[str, Any]]]] = {}
+            for row in rows:
+                payload = json.loads(row["payload"])
+                subject = str(payload.get("subject") or payload["kind"])
+                grouped.setdefault(subject, []).append((row["event_id"], payload))
+
+            assessments: dict[str, dict[str, Any]] = {}
+            contested: set[str] = set()
+            for subject, claims in grouped.items():
+                support = refute = 0.0
+                for _, payload in claims:
+                    polarity = payload["polarity"]
+                    evidence = payload.get("evidence", {})
+                    samples = evidence.get("test_samples", evidence.get("samples", 1))
+                    if isinstance(samples, bool) or not isinstance(samples, (int, float)) or samples < 0:
+                        samples = 1
+                    weight = float(payload["confidence"]) * max(1.0, float(samples))
+                    if polarity == "supports":
+                        support += weight
+                    elif polarity == "refutes":
+                        refute += weight
+                if support > 0 and refute > 0:
+                    status = "contested"
+                    contested.add(subject)
+                elif support > refute:
+                    status = "supported"
+                elif refute > support:
+                    status = "refuted"
+                else:
+                    status = "unresolved"
+                event_ids = sorted(event_id for event_id, _ in claims)
+                assessment_id = _digest([assessor_version, subject, status, support, refute, event_ids])
+                assessments[subject] = {
+                    "assessment_id": assessment_id, "subject": subject, "status": status,
+                    "support_weight": support, "refute_weight": refute,
+                    "evidence_count": len(event_ids), "source_event_ids": event_ids,
+                    "assessor_version": assessor_version,
+                }
+
             db.execute("UPDATE projections SET active=0")
             for row in rows:
                 payload = json.loads(row["payload"])
-                # Route related claims together; layer follows abstraction level.
-                key = payload.get("subject") or payload.get("kind")
-                head = int(_digest({"route": key})[:8], 16) % self.heads
+                provenance = payload.get("provenance", {})
+                origin_head = provenance.get("native_head", provenance.get("origin_head"))
+                if isinstance(origin_head, bool) or not isinstance(origin_head, int) or not 0 <= origin_head < self.heads:
+                    origin_head = int(_digest({"route": payload.get("subject") or payload["kind"]})[:8], 16) % self.heads
+                subject = str(payload.get("subject") or payload["kind"])
                 layer = min(self.layers - 1, {
                     "observation": 0, "entity": 1, "relation": 2,
                     "operator": 3, "equation": 4, "constraint": 5,
                     "hypothesis": 5, "counterexample": self.layers - 1,
                 }[payload["kind"]])
-                pid = _digest([row["event_id"], head, layer])
+                # Contested claims move to the highest review layer without
+                # erasing their origin head or changing the source event.
+                if subject in contested:
+                    layer = self.layers - 1
+                pid = _digest([row["event_id"], origin_head, layer, assessor_version])
                 db.execute("INSERT OR IGNORE INTO projections(projection_id,event_id,head,layer,role,active) VALUES(?,?,?,?,?,1)",
-                           (pid, row["event_id"], head, layer, "reorganized"))
+                           (pid, row["event_id"], origin_head, layer, "evidence-review"))
                 db.execute("UPDATE projections SET active=1 WHERE projection_id=?", (pid,))
-            return {"events": len(rows), "active_routes": db.execute(
-                "SELECT COUNT(*) FROM projections WHERE active=1").fetchone()[0]}
+
+            db.execute("DELETE FROM assessments")
+            for assessment in assessments.values():
+                db.execute(
+                    "INSERT INTO assessments VALUES(?,?,?,?,?,?,?,?)",
+                    (assessment["assessment_id"], assessment["subject"], assessment["status"],
+                     assessment["support_weight"], assessment["refute_weight"],
+                     assessment["evidence_count"], _canonical(assessment["source_event_ids"]),
+                     assessment["assessor_version"]),
+                )
+            return {"events": len(rows),
+                    "active_routes": db.execute("SELECT COUNT(*) FROM projections WHERE active=1").fetchone()[0],
+                    "assessments": len(assessments), "contested_subjects": len(contested)}
+
+    def query_assessments(self, subject: str | None = None, limit: int = 100) -> list[dict[str, Any]]:
+        if isinstance(limit, bool) or not 1 <= limit <= 1000:
+            raise ValueError("limit must be in [1,1000]")
+        sql = "SELECT * FROM assessments"
+        args: list[Any] = []
+        if subject is not None:
+            sql += " WHERE subject=?"
+            args.append(subject)
+        sql += " ORDER BY subject LIMIT ?"
+        args.append(limit)
+        with self._db() as db:
+            return [{
+                "assessment_id": row["assessment_id"], "subject": row["subject"],
+                "status": row["status"], "support_weight": row["support_weight"],
+                "refute_weight": row["refute_weight"], "evidence_count": row["evidence_count"],
+                "source_event_ids": json.loads(row["source_event_ids"]),
+                "assessor_version": row["assessor_version"],
+            } for row in db.execute(sql, args)]
 
     def query(self, subject: str | None = None, head: int | None = None,
               layer: int | None = None, limit: int = 100) -> list[dict[str, Any]]:
@@ -194,9 +286,12 @@ class MemoryStore:
             events = db.execute("SELECT COUNT(*) FROM events").fetchone()[0]
             edges = db.execute("SELECT COUNT(*) FROM edges").fetchone()[0]
             hyperedges = db.execute("SELECT COUNT(*) FROM hyperedges").fetchone()[0]
+            assessments = db.execute("SELECT COUNT(*) FROM assessments").fetchone()[0]
+            contested = db.execute("SELECT COUNT(*) FROM assessments WHERE status='contested'").fetchone()[0]
             routes = db.execute("SELECT COUNT(*) FROM projections WHERE active=1").fetchone()[0]
         return {"schema": SCHEMA, "path": str(self.path), "heads": self.heads,
                 "layers": self.layers, "events": events, "graph_edges": edges,
-                "hyperedges": hyperedges,
+                "hyperedges": hyperedges, "assessments": assessments,
+                "contested_subjects": contested,
                 "active_routes": routes, "append_only": True,
                 "weights_checkpoint": False}
