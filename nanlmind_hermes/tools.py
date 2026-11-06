@@ -194,11 +194,14 @@ def _memory_context(ctx, layer=None, limit: int = 24):
             expression = {"truncated": True, "sha256": hashlib.sha256(
                 encoded_expression.encode("utf-8")).hexdigest(),
                 "preview": encoded_expression[:1200]}
+        provenance = row.get("provenance") or {}
         claims.append({
             "kind": row.get("kind"), "subject": str(row.get("subject") or "")[:240],
             "predicate": row.get("predicate"), "object": row.get("object"),
             "expression": expression, "polarity": row.get("polarity"),
             "head": row.get("head"), "layer": row.get("layer"),
+            "resolution": provenance.get("resolution"),
+            "alignment_id": provenance.get("alignment_id") or provenance.get("concept_id"),
         })
     assessments = store.query_assessments(limit=min(limit, 24))
     reviews = [{
