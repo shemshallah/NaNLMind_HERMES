@@ -95,6 +95,18 @@ class HermesChatTests(unittest.TestCase):
             self.assertEqual(bit["expression"]["bit_length"],
                              bit["expression"]["zero_bits"] + bit["expression"]["one_bits"])
 
+    def test_sentence_and_paragraph_segmentation_uses_real_boundaries(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            ctx = FakeContext(Path(tmp))
+            result = chat(ctx, "First sentence. Second sentence!\\n\\nThird sentence?", session_id="boundaries")
+            from nanlmind_hermes.tools import _memory_store
+            store = _memory_store(ctx)
+            digest = result["source_sha256"][:20]
+            sentence = store.query(subject="surface:sentence-profile:" + digest)[0]
+            paragraph = store.query(subject="surface:paragraph-profile:" + digest)[0]
+            self.assertEqual(sentence["expression"]["sentence_count"], 4)
+            self.assertEqual(paragraph["expression"]["paragraph_count"], 2)
+
     def test_chat_survives_optional_reflection_failure(self):
         with tempfile.TemporaryDirectory() as tmp:
             ctx = FakeContext(Path(tmp))
