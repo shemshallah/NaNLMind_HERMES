@@ -6,7 +6,7 @@ There is one native `GlobalTopology`, not 256 independent models. Its 256 palind
 
 The native `math-train` command currently trains a bounded, explicit task: each head learns a Boolean truth-table rule for a byte-bit transition, using a deterministic 80/20 sequential train/held-out split. It emits one JSONL discovery per head with the source SHA-256, head address, selected Boolean rule, all 16 operator scores, sample counts and held-out accuracy. This is a first working native learning path, not yet a general mathematical reasoner or a full seven-layer learning loop.
 
-The native topology serializer persists the global chart and its Universe contents, including the per-head scratchpads where Boolean scores are stored. A subsequent invocation restores the serialized topology before applying new updates. Hermes reports this as a `serialized_global_topology` checkpoint; it must not be confused with a conventional neural-weight file or with the legacy Context2 bootstrap, which remains in-memory.
+The native topology serializer persists the global chart and its Universe contents, including the per-head scratchpads where Boolean scores are stored, the shared hypergraph, and the append-only ledger. Each trained head adds a learned hyperedge connecting its fixed-point head cell to its adjacent pair-cell address; edge weight is the held-out accuracy in Q16.16. A final ledger event commits the before/after hypergraph digests. A subsequent invocation restores the serialized topology before applying new updates. Hermes reports this as a `serialized_global_topology` checkpoint; it must not be confused with a conventional neural-weight file or with the legacy Context2 bootstrap, which remains in-memory.
 
 ## What is stored
 
@@ -19,7 +19,7 @@ The ledger is not a neural-weight checkpoint. Equations and operator expressions
 
 ## What a head contributes
 
-Each head contributes a candidate rule and evidence for a defined byte-bit task. The head index and palindromic address remain attached to the discovery. All 256 heads are required for a native math-training trace; incomplete or duplicate head traces are rejected before merge. The native topology's head count is fixed at 256; Hermes does not permit a reduced head count for native discoveries. Reorganization preserves each discovery's native head attribution rather than replacing it with a subject hash.
+Each head contributes a candidate rule and evidence for a defined byte-bit task. The head index and palindromic address remain attached to the discovery. All 256 heads are required for a native math-training trace; incomplete or duplicate head traces and discoveries without valid native hyperedge IDs are rejected before merge. The native topology's head count is fixed at 256; Hermes does not permit a reduced head count for native discoveries. Reorganization preserves each discovery's native head attribution rather than replacing it with a subject hash.
 
 ## Merge protocol
 
@@ -51,7 +51,7 @@ The native trace is now a stable structured-discovery stream for the Boolean tra
 - Native serialized topology: resumable computational state.
 - SQLite WAL event ledger: durable additive discoveries and evidence.
 - Rebuildable projections: disposable routing views, never the source of truth.
-- Native chart integration: discoveries are currently persisted in the native state and separately in Hermes' event ledger; direct native hypergraph insertion of each event remains a subsequent integration step.
+- Native chart integration: each head's learned relation is now inserted into the native hypergraph and committed through the global ledger; Hermes separately preserves the structured evidence event and native hyperedge reference in its additive event ledger.
 - NANNET: authorization and delta coordination only; Koyeb is not the trainer or corpus store.
 
 ## Required gates
