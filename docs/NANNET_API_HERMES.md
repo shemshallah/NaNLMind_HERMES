@@ -47,3 +47,11 @@ The GitHub Actions BSR OIDC bootstrap is a separate service identity flow and do
 ## Cluster / Mesh-LLM boundary
 
 The NaNLMind Mesh-LLM Cluster Universe document is an architecture proposal, not a deployed API contract. Its cluster create/simulate/schedule routes and Mesh-LLM management integration are not implemented by this Hermes plugin or the current Koyeb portal. Do not send training corpora or model execution through Koyeb. A future cluster orchestrator may use NANNET-authorized worker agents and Mesh-LLM as a data plane, while semantic updates still enter the single global commit path with base hashes, idempotency and ledger validation.
+
+## Per-installation issuer pin
+
+New tokens are signed by a domain-separated per-identity key. The client must pin the public key for its own installation UUID, not the legacy global signer key. After the client creates its installation identity, the authority operator obtains the matching public key with:
+
+    nannet-authority public-key --role guest --identity INSTALLATION_UUID
+
+The operator communicates this public key to the installation over a trusted channel as NANNET_ISSUER_PUBLIC_KEY. Admin identities use --role admin. The default public-key command without --identity remains the legacy signer key for backwards compatibility only.
