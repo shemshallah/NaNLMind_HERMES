@@ -29,3 +29,21 @@ Payload encryption uses AES-256-GCM with HKDF-SHA256 domain separation and authe
 5. The demo uses the issued token, then revokes it and demonstrates rejection.
 
 The local authority, domain-separated per-identity signing keys, role-bounded one-time codes, identity-wide revocation, HTTP pairing and self-revocation endpoints, client pairing/revocation handlers, encrypted token storage, and authority-side token validation are implemented as source components. A public hosted deployment, TLS certificate/operations, and authenticated training/snapshot API endpoints remain deployment/integration work; do not claim a live hosted NANNET service until those pieces are deployed and tested.
+
+## Signed request enforcement (implemented)
+
+After pairing, the Hermes client signs each authority request using its installation Ed25519 private key. The canonical message is:
+
+    UPPERCASE_METHOD
+    EXACT_PATH
+    UNIX_TIMESTAMP
+    ONE_TIME_NONCE
+    SHA256_HEX_OF_EXACT_BODY_BYTES
+
+The request carries X-NANNET-Timestamp, X-NANNET-Nonce, X-NANNET-Body-SHA256 and X-NANNET-Signature alongside the bearer token. The authority looks up the public key bound during pairing, checks the five-minute clock-skew window and body digest, verifies Ed25519, and atomically consumes the nonce. Replayed signed requests are rejected. Hermes uses this for POST /v1/authorize and POST /v1/revoke; the one-time /v1/pair exchange is authenticated by its single-use pairing code and pinned issuer key.
+
+The GitHub Actions BSR OIDC bootstrap is a separate service identity flow and does not use a paired-installation signing key.
+
+## Cluster / Mesh-LLM boundary
+
+The NaNLMind Mesh-LLM Cluster Universe document is an architecture proposal, not a deployed API contract. Its cluster create/simulate/schedule routes and Mesh-LLM management integration are not implemented by this Hermes plugin or the current Koyeb portal. Do not send training corpora or model execution through Koyeb. A future cluster orchestrator may use NANNET-authorized worker agents and Mesh-LLM as a data plane, while semantic updates still enter the single global commit path with base hashes, idempotency and ledger validation.
