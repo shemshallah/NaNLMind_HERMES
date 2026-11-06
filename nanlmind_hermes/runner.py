@@ -35,15 +35,18 @@ def _atomic_json(path: Path, value: dict) -> None:
 
 
 def _command(command: Sequence[str]) -> list[str]:
-    if not command or not all(isinstance(x, str) and x for x in command):
+    if isinstance(command, (str, bytes)) or not command or not all(isinstance(x, str) and x for x in command):
         raise RunnerError("runner_command must be a non-empty argv list pointing to the local nanlm-universal executable")
     return list(command)
 
 
 def _run(argv: list[str], timeout: float) -> dict:
     started = time.monotonic()
-    proc = subprocess.Popen(argv, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                            text=True, encoding="utf-8", errors="replace")
+    try:
+        proc = subprocess.Popen(argv, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                text=True, encoding="utf-8", errors="replace")
+    except OSError as exc:
+        raise RunnerError(f"cannot start local native runner: {exc}") from exc
     try:
         output, _ = proc.communicate(timeout=max(0.1, timeout))
         timed_out = False
