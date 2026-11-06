@@ -285,11 +285,33 @@ def register(ctx):
          ["corpus_path"], handle_math_train),
 
         ("nanlm_structured_relation_train", "Train the shared native heads from schema-bound relation records across L0-L9. Train rows mutate state; test rows are held out. Every accepted event updates mirror-pair cells and a provenance-bound hyperedge.",
-         {"records": {"type": "array", "minItems": 2, "maxItems": 10000,
-                      "items": {"type": "object",
-                                "properties": {"split": {"type": "string", "enum": ["train", "test"]},
-                                               "source_digest": {"type": "string", "pattern": "^[0-9a-fA-F]{64}$"},
-                                               "item": {"type": "object"}}}},
+         {"records": {
+              "type": "array", "minItems": 2, "maxItems": 10000,
+              "items": {
+                  "type": "object",
+                  "required": ["split", "source_digest", "item"],
+                  "properties": {
+                      "split": {"type": "string", "enum": ["train", "test"]},
+                      "source_digest": {"type": "string", "pattern": "^[0-9a-fA-F]{64}$"},
+                      "item": {
+                          "type": "object",
+                          "required": ["subject", "predicate", "object", "polarity", "confidence", "evidence", "provenance"],
+                          "properties": {
+                              "subject": {"type": "string", "minLength": 1},
+                              "predicate": {"type": "string", "minLength": 1},
+                              "object": {"type": "string", "minLength": 1},
+                              "polarity": {"type": "string", "enum": ["supports", "refutes"]},
+                              "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+                              "evidence": {"type": "object"},
+                              "provenance": {
+                                  "type": "object", "required": ["resolution"],
+                                  "properties": {"resolution": {"type": "string", "enum": ["bit", "nibble", "byte", "phonetic", "morpheme", "lexical", "word_completion", "sentence", "paragraph", "narrative"]}}
+                              }
+                          }
+                      }
+                  }
+              }
+          },
           "epochs": {"type": "integer", "minimum": 1, "maximum": 100, "default": 1}},
          ["records"], handle_relation_train),
         ("nanlm_evaluate", "Run native topology-byte, Kneser-Ney and Context2 controls locally on the same corpus.",
