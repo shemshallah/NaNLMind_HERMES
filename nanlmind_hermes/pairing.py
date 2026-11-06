@@ -1,6 +1,6 @@
 """One-time pairing authority for NANNET_API_HERMES."""
 from __future__ import annotations
-import hashlib, json, secrets, sqlite3, time, uuid
+import hashlib, json, os, secrets, sqlite3, time, uuid
 from pathlib import Path
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
@@ -10,10 +10,14 @@ class PairingAuthority:
     def __init__(self, database: str | Path, master_key: bytes):
         self.database=str(database); self.master_key=master_key
         Path(self.database).parent.mkdir(parents=True,exist_ok=True)
+        try: os.chmod(Path(self.database).parent,0o700)
+        except OSError: pass
         with sqlite3.connect(self.database) as db:
             db.execute("CREATE TABLE IF NOT EXISTS authority_meta (key TEXT PRIMARY KEY,value TEXT NOT NULL)")
             db.execute("CREATE TABLE IF NOT EXISTS pairing_codes (code_hash TEXT PRIMARY KEY,scopes TEXT NOT NULL,expires_at INTEGER NOT NULL,used_at INTEGER)")
             db.execute("CREATE TABLE IF NOT EXISTS installations (installation_id TEXT PRIMARY KEY,public_key TEXT NOT NULL,paired_at INTEGER NOT NULL)")
+        try: os.chmod(self.database,0o600)
+        except OSError: pass
         self._ensure_signer()
 
     def _ensure_signer(self):
