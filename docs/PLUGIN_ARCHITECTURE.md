@@ -54,7 +54,7 @@ The legacy `math-train` task remains byte-bit transition prediction. Its
 held-out score must never be relabeled as word, sentence or narrative accuracy.
 
 The new `relation-train` objective predicts relation polarity from the routed
-predicate head. It reports independent L0-L9 counts, pre-training accuracy,
+predicate head. The native relation learner uses deterministic resolution-specific surface features (phonetic, morphemic, lexical, syntactic, cohesive and narrative cues); SHA-256 is reserved for stable routing, source identity and event deduplication. This is a compact feature learner, not a pretrained semantic encoder. It reports independent L0-L9 counts, pre-training accuracy,
 post-training accuracy, within-run delta, balanced accuracy and majority
 baseline. These are relation-polarity metrics for teacher/chat labels, not text
 generation metrics or independent factual verification.
