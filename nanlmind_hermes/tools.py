@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from .policy import DEFAULT_DURATION_MINUTES, load_n16txt, parse_n16txt, validate_duration
-from .runner import RunnerError, run_bounded, evaluate_native
+from .runner import RunnerError, run_bounded, evaluate_native, run_math_train
 
 
 def _setting(ctx, key, default):
@@ -206,3 +206,29 @@ def memory_merge(ctx, records: list):
     if not isinstance(records, list) or not 1 <= len(records) <= 1000:
         raise ValueError("records must contain 1..1000 merge entries")
     return _memory_store(ctx).merge(records)
+
+
+def math_train(ctx, corpus_path: str, epochs: int = 3, max_samples_per_head: int = 4096):
+    """Run the native 256-head learner, persist its global object, and merge all head discoveries."""
+    info = load_n16txt(corpus_path)
+    root, corpora, universe = _paths(ctx)
+    native_corpus = _native_corpus(info, corpora, 1000)
+    command = _setting(ctx, "runner_command", [])
+    if not command:
+        raise RunnerError("runner_command is not configured; set it to the local build/nanlm-universal executable")
+    result = run_math_train(command, native_corpus, universe, epochs, max_samples_per_head)
+    records = result.pop("records")
+    store = _memory_store(ctx)
+    merge = store.merge(records)
+    reorganization = store.reorganize()
+    result["merge"] = merge
+    result["reorganization"] = reorganization
+    result["memory"] = store.status()
+    result["universe_id"] = _universe_id(universe)
+    result["native_checkpoint_present"] = True
+    result["native_checkpoint_kind"] = "serialized_global_topology"
+    manifest = universe / "last_math_run.json"
+    temp = manifest.with_suffix(".tmp")
+    temp.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    os.replace(temp, manifest)
+    return result
