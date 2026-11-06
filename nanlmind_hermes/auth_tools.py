@@ -2,7 +2,7 @@
 from __future__ import annotations
 import base64, json, os, urllib.parse, urllib.request, hmac
 from pathlib import Path
-from .auth import create_installation, load_installation, _unb64, _b64, encrypt_payload, verify_token
+from .auth import create_installation, load_installation, _unb64, _b64, encrypt_payload, decrypt_payload, verify_token
 
 def _universe_dir(ctx):
     try: configured=ctx.get_config("state_dir",default="~/.local/share/nanlmind-hermes")
@@ -68,3 +68,32 @@ def auth_pair(ctx,pairing_code):
     except OSError: pass
     os.replace(temp,target)
     return {"paired":True,"installation_id":doc["installation_id"],"scopes":claims["scope"],"expires_at":claims["exp"],"token_saved_encrypted":True,"issuer_key_pinned":True}
+
+def auth_revoke(ctx):
+    """Revoke this installation's active token at the pinned authority."""
+    import urllib.request, ipaddress
+    from urllib.parse import urlsplit
+    base=os.environ.get("NANNET_AUTH_URL","").rstrip("/")
+    pinned=os.environ.get("NANNET_ISSUER_PUBLIC_KEY","")
+    if not base or not pinned:
+        raise ValueError("NANNET_AUTH_URL and pinned issuer key are required")
+    root=_universe_dir(ctx); master=_master_key()
+    doc,_=load_installation(root,master)
+    token_path=root/"nannet_token.json"
+    if not token_path.exists():
+        raise ValueError("no paired NANNET token is stored")
+    envelope=json.loads(token_path.read_text(encoding="utf-8"))
+    token=decrypt_payload(master,envelope,("nannet-token-v1:"+doc["installation_id"]).encode()).decode()
+    parsed=urlsplit(base)
+    try: loopback=ipaddress.ip_address(parsed.hostname or "").is_loopback
+    except ValueError: loopback=(parsed.hostname or "").lower()=="localhost"
+    if parsed.scheme!="https" and not (parsed.scheme=="http" and loopback):
+        raise ValueError("token revocation requires HTTPS except for loopback development")
+    req=urllib.request.Request(base+"/v1/revoke",data=b"{}",headers={"Authorization":"Bearer "+token,"Content-Type":"application/json","Cache-Control":"no-store"},method="POST")
+    try:
+        with urllib.request.urlopen(req,timeout=15) as response:
+            result=json.loads(response.read(8192))
+    except Exception as exc:
+        raise ValueError("NANNET token revocation failed") from exc
+    token_path.unlink(missing_ok=True)
+    return {"revoked":bool(result.get("revoked")),"installation_id":doc["installation_id"],"local_token_erased":True}
