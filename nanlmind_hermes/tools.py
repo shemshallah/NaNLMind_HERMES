@@ -612,12 +612,18 @@ def _relation_corpus(ctx, records):
 
 def _native_relation_train(ctx, records, mode):
     corpus = _relation_corpus(ctx, records)
+    foundation = ensure_boolean_foundation(ctx)
     command = _setting(ctx, "runner_command", [])
     if not command:
         raise RunnerError("runner_command is not configured; native relation learning cannot run")
     _, _, universe = _paths(ctx)
     result = run_relation_train(command, corpus["path"], universe)
     result["mode"] = mode
+    result["boolean_foundation"] = {
+        "status": foundation.get("status"),
+        "reused_checkpoint": foundation.get("reused_checkpoint", False),
+        "state_sha256": foundation.get("state_sha256"),
+    }
     result["corpus"] = {
         "path": str(corpus["path"]), "sha256": corpus["sha256"],
         "records": corpus["records"], "rejected": corpus["rejected"],
