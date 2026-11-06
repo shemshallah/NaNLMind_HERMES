@@ -110,7 +110,7 @@ not substituted for native head or mirror-pair state.
 
 ## 3. CLOCKED structured-observation integration (design)
 
-CLOCKED is an external structured-reasoning API, not another NaNLMind model or a second semantic topology. Its Decide, Extract, Fill, PII/Protect, Injection/Guard, Script/Inspect, Grounding/Verify, Compare, Rerank and Pipeline results should enter the same native `GlobalTopology` as typed, provenance-bound observations.
+CLOCKED by Rezolve.ai is an external structured-reasoning API, not another NaNLMind model or a second semantic topology. Note that NaNLMind already has a class named `ClockedAdapter` in its staged training corpus pipeline; that existing adapter binds a session to the NaNLMind logical epoch/clock and is not the Rezolve.ai HTTP API client. Keep the new service adapter distinctly named (for example `ClockedApiAdapter`) and reuse the existing pipeline/conversation trainer where compatible. Its Decide, Extract, Fill, PII/Protect, Injection/Guard, Script/Inspect, Grounding/Verify, Compare, Rerank and Pipeline results should enter the same native `GlobalTopology` as typed, provenance-bound observations.
 
 The canonical cross-repository design is maintained in
 [`NaNLMind/docs/CLOCKED_HERMES_BRAINSTORM.md](https://github.com/shemshallah/NaNLMind/blob/main/docs/CLOCKED_HERMES_BRAINSTORM.md).
