@@ -20,7 +20,7 @@ def main():
     code=sub.add_parser("create-code"); code.add_argument("--scopes",required=True); code.add_argument("--ttl-seconds",type=int,default=600)
     serve=sub.add_parser("serve"); serve.add_argument("--host",default="127.0.0.1"); serve.add_argument("--port",type=int,default=8765); serve.add_argument("--tls-cert"); serve.add_argument("--tls-key")
     args=parser.parse_args()
-    authority=PairingAuthority(os.environ.get("NANNET_AUTHORITY_DB","./nannet-authority.sqlite"),_master("NANNET_AUTHORITY_MASTER_KEY"))
+    authority=PairingAuthority(os.environ.get("NANNET_AUTHORITY_DB",os.path.expanduser("~/.local/share/nannet-api-hermes/authority.sqlite")),_master("NANNET_AUTHORITY_MASTER_KEY"))
     if args.command=="public-key": print(authority.issuer_public_key()); return
     if args.command=="create-code":
         scopes=[s.strip() for s in args.scopes.split(",") if s.strip()]
