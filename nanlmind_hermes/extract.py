@@ -30,8 +30,11 @@ IMPLICATION = re.compile(
 )
 
 
-def extract_discoveries(corpus_path: str | Path, source_digest: str) -> list[dict]:
+def extract_discoveries(corpus_path: str | Path, source_digest: str,
+                        max_records: int = 10000) -> list[dict]:
     """Extract literal relations/equations with line-accurate evidence."""
+    if isinstance(max_records, bool) or not isinstance(max_records, int) or not 1 <= max_records <= 100000:
+        raise ValueError("max_records must be in [1,100000]")
     path = Path(corpus_path)
     records: list[dict] = []
     for line_number, raw_line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
@@ -69,6 +72,8 @@ def extract_discoveries(corpus_path: str | Path, source_digest: str) -> list[dic
                     "tags": ["corpus-extract", "ability"],
                 }
                 records.append({**common, "item": item})
+                if len(records) > max_records:
+                    raise ValueError(f"surface extraction exceeded max_records={max_records}; split the corpus")
             for match in IS_A.finditer(text):
                 entity = match.group("entity").lower()
                 category = match.group("class").lower()
