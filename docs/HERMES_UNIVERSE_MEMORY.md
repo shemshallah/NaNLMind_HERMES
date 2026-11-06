@@ -129,3 +129,16 @@ They route into the shared bit/nibble/byte, lexical, sentence and paragraph
 layers. Phonetic, morphemic, word-completion and narrative interpretation stays
 in the separate structured language-model reflection pass and is explicitly
 treated as a hypothesis when it is not directly observable.
+
+## Read/write loop: runners and chat experience the same universe
+
+Both curriculum generation and conversational reflection receive a compact,
+read-only snapshot of active claims and evidence assessments from the shared
+SQLite universe before proposing new material. Curriculum prompts select
+context from the layer relevant to the current stage; chat reflection receives
+a bounded cross-layer context. Their outputs are then appended to the same
+event ledger and deterministically reorganized. Native 256-head runner
+discoveries also preserve their native head/layer routes in that projection.
+This is a shared read/append/reorganize interface, not a claim that the native
+C++ learner directly executes SQL or has absorbed every symbolic memory item
+into its internal parameters.
