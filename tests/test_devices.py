@@ -68,15 +68,21 @@ class DeviceLeaseTests(unittest.TestCase):
                     with urllib.request.urlopen(req,timeout=5) as response: return response.status,json.loads(response.read())
                 status,reg=post("/v1/devices/register",payload("z"*43))
                 self.assertEqual(status,201)
+                self.assertEqual(authority.verify_access_token(reg["token"][4:], "training:execute")["role"], "guest")
                 _,hb=post("/v1/devices/heartbeat",{},reg["token"])
                 self.assertIn("lease_expires_at",hb)
                 self.assertNotEqual(hb["token"], reg["token"])
+                from nanlmind_hermes.auth import AuthError
+                with self.assertRaises(AuthError):
+                    authority.verify_access_token(reg["token"][4:], "training:execute")
                 with self.assertRaises(urllib.error.HTTPError):
                     post("/v1/devices/report",{"report_type":"device_error","summary":"old token","details":""},reg["token"])
                 _,report=post("/v1/devices/report",{"report_type":"device_error","summary":"test","details":""},hb["token"])
                 self.assertTrue(report["accepted"])
                 _,released=post("/v1/devices/release",{},hb["token"])
                 self.assertTrue(released["released"])
+                with self.assertRaises(AuthError):
+                    authority.verify_access_token(hb["token"][4:], "training:execute")
                 with self.assertRaises(urllib.error.HTTPError):
                     post("/v1/devices/heartbeat",{},reg["token"])
             finally:
