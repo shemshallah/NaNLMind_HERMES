@@ -879,7 +879,11 @@ def _native_relation_train(ctx, records, mode, epochs=1):
     result = run_relation_train(command, corpus["path"], universe, epochs=epochs)
     result["mode"] = mode
     result["test_set_sha256"] = corpus["test_sha256"]
-    result["cross_run_comparison"] = {"comparable": False, "reason": "no matching frozen held-out set"}
+    result["cross_run_comparison"] = {
+        "comparable": False,
+        "reason": ("no held-out test set" if not corpus["test_sha256"]
+                   else "first evaluation of this frozen held-out set"),
+    }
     if corpus["test_sha256"] and prior_metrics:
         previous_metrics = prior_metrics.get("resolution_metrics", {})
         deltas = {}
