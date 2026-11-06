@@ -8,6 +8,15 @@ def register(ctx):
         result["mathematical_memory"] = tools.memory_status(ctx)
         return result
 
+    def handle_chat(params, **kwargs):
+        return tools.chat(ctx, params["message"], params.get("session_id", "default"),
+                          params.get("system_prompt"), params.get("temperature", 0.7),
+                          params.get("max_tokens", 2048))
+
+    def handle_chat_history(params, **kwargs):
+        return tools.chat_history(ctx, params.get("session_id", "default"),
+                                  params.get("limit", 40))
+
     # Load cryptography-backed NANNET handlers only when one is invoked.
     # This keeps ordinary Hermes chat/training importable on Android/Termux.
     def _auth_tools():
@@ -29,46 +38,56 @@ def register(ctx):
     def handle_auth_revoke(params, **kwargs): return _auth_tools().auth_revoke(ctx)
 
     def handle_generate(params, **kwargs):
-        auth_tools.require_scope(ctx, "corpus:write")
+        _auth_tools().require_scope(ctx, "corpus:write")
         return tools.generate_corpus(ctx, params.get("topic", ""), params.get("records", 12))
 
     def handle_train(params, **kwargs):
-        auth_tools.require_scope(ctx, "training:execute")
+        _auth_tools().require_scope(ctx, "training:execute")
         return tools.train(ctx, params["corpus_path"], params.get("duration_minutes"))
 
     def handle_math_train(params, **kwargs):
-        auth_tools.require_scope(ctx, "training:execute")
+        _auth_tools().require_scope(ctx, "training:execute")
         return tools.math_train(ctx, params["corpus_path"], params.get("epochs", 3),
                                 params.get("max_samples_per_head", 4096))
 
     def handle_evaluate(params, **kwargs):
-        auth_tools.require_scope(ctx, "universe:read")
+        _auth_tools().require_scope(ctx, "universe:read")
         return tools.evaluate(ctx, params["corpus_path"])
 
     def handle_memory_ingest(params, **kwargs):
-        auth_tools.require_scope(ctx, "training:execute")
+        _auth_tools().require_scope(ctx, "training:execute")
         return tools.memory_ingest(ctx, params["discoveries"], params["source_digest"],
                                    params.get("head"), params.get("layer", 0))
 
     def handle_memory_reorganize(params, **kwargs):
-        auth_tools.require_scope(ctx, "training:execute")
+        _auth_tools().require_scope(ctx, "training:execute")
         return tools.memory_reorganize(ctx)
 
     def handle_memory_merge(params, **kwargs):
-        auth_tools.require_scope(ctx, "training:execute")
+        _auth_tools().require_scope(ctx, "training:execute")
         return tools.memory_merge(ctx, params["records"])
 
     def handle_memory_query(params, **kwargs):
-        auth_tools.require_scope(ctx, "universe:read")
+        _auth_tools().require_scope(ctx, "universe:read")
         return tools.memory_query(ctx, params.get("subject"), params.get("head"),
                                   params.get("layer"), params.get("limit", 100))
 
     def handle_memory_assessments(params, **kwargs):
-        auth_tools.require_scope(ctx, "universe:read")
+        _auth_tools().require_scope(ctx, "universe:read")
         return tools.memory_assessments(ctx, params.get("subject"), params.get("limit", 100))
 
     specs = [
         ("nanlm_status", "Inspect local NaNLMind universe and durable mathematical-memory status.", {}, [], handle_status),
+        ("nanlm_chat", "Open-ended Hermes conversation; reflect the exchange into the shared multi-resolution mathematical universe.",
+         {"message": {"type": "string", "minLength": 1, "maxLength": 1048576},
+          "session_id": {"type": "string", "maxLength": 80}, "system_prompt": {"type": "string"},
+          "temperature": {"type": "number", "minimum": 0, "maximum": 2},
+          "max_tokens": {"type": "integer", "minimum": 1, "maximum": 8192}},
+         ["message"], handle_chat),
+        ("nanlm_chat_history", "Read the durable transcript for an open-ended Hermes conversation.",
+         {"session_id": {"type": "string", "maxLength": 80},
+          "limit": {"type": "integer", "minimum": 1, "maximum": 200}},
+         [], handle_chat_history),
         ("nanlm_auth_init", "Create this installation's encrypted NANNET identity.", {}, [], handle_auth_init),
         ("nanlm_auth_status", "Inspect local NANNET identity and pairing status without revealing secrets.", {}, [], handle_auth_status),
         ("nanlm_auth_pair", "Pair this installation using a one-time code from the trusted NANNET authority.",
