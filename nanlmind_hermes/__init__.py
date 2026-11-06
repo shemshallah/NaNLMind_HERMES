@@ -13,6 +13,11 @@ def register(ctx):
     def handle_curriculum(params, **kwargs):
         return tools.generate_curriculum(ctx, params["topic"], params.get("records_per_stage", 12))
 
+    def handle_curriculum_experiment(params, **kwargs):
+        return tools.run_curriculum_experiment(
+            ctx, params["topic"], params.get("records_per_stage", 12),
+            params.get("epochs", 3), params.get("max_samples_per_head", 4096))
+
     def handle_chat(params, **kwargs):
         return tools.chat(ctx, params["message"], params.get("session_id", "default"),
                           params.get("system_prompt"), params.get("temperature", 0.7),
@@ -111,6 +116,12 @@ def register(ctx):
          {"topic": {"type": "string", "minLength": 1, "maxLength": 500},
           "records_per_stage": {"type": "integer", "minimum": 1, "maximum": 64, "default": 12}},
          ["topic"], handle_curriculum),
+        ("nanlm_curriculum_experiment", "Generate the balanced 10-stage corpus, train the native 256-head universe, and merge discoveries into shared mathematical memory.",
+         {"topic": {"type": "string", "minLength": 1, "maxLength": 500},
+          "records_per_stage": {"type": "integer", "minimum": 1, "maximum": 64, "default": 12},
+          "epochs": {"type": "integer", "minimum": 1, "maximum": 100, "default": 3},
+          "max_samples_per_head": {"type": "integer", "minimum": 1, "maximum": 100000, "default": 4096}},
+         ["topic"], handle_curriculum_experiment),
         ("nanlm_generate_corpus", "Generate a bounded N16TXT/1 corpus using Hermes' active model.",
          {"topic": {"type": "string"}, "records": {"type": "integer", "minimum": 1, "maximum": 64, "default": 24}}, ["topic"], handle_generate),
         ("nanlm_train", "Run the native NaNLMind Context2 bootstrap trainer locally.",
