@@ -307,7 +307,7 @@ def run_relation_train(command: Sequence[str], records_path: Path, state_dir: Pa
     base = _command(command)
     records_path = records_path.expanduser().resolve(strict=True)
     raw = records_path.read_bytes()
-    if not raw.startswith(b"N16REL/1\\n"):
+    if not raw.startswith(b"N16REL/1\n"):
         raise RunnerError("relation corpus must use N16REL/1")
     corpus_digest = hashlib.sha256(raw).hexdigest()
     state_dir.mkdir(parents=True, exist_ok=True)
@@ -327,9 +327,9 @@ def run_relation_train(command: Sequence[str], records_path: Path, state_dir: Pa
     if not state_path.is_file() or state_path.stat().st_size == 0:
         raise RunnerError("native relation-train did not persist the global universe")
     summary = re.search(
-        r"relation_train status=updated train_events=(\\d+) duplicate_events=(\\d+) "
-        r"changed_heads=(\\d+) mirror_pair_updates=(\\d+) hyperedges_added=(\\d+) "
-        r"state_bytes=(\\d+) state_digest_before=([0-9a-f]{64}) state_digest_after=([0-9a-f]{64})",
+        r"relation_train status=updated train_events=(\d+) duplicate_events=(\d+) "
+        r"changed_heads=(\d+) mirror_pair_updates=(\d+) hyperedges_added=(\d+) "
+        r"state_bytes=(\d+) state_digest_before=([0-9a-f]{64}) state_digest_after=([0-9a-f]{64})",
         result["output"])
     if not summary:
         raise RunnerError("native relation-train omitted its mutation receipt: " + result["output"][-3000:])
@@ -344,7 +344,7 @@ def run_relation_train(command: Sequence[str], records_path: Path, state_dir: Pa
         raise RunnerError("native relation-train state byte count does not match persisted file")
     resolution_metrics = {}
     for match in re.finditer(
-        r"resolution_L(\\d+) train=(\\d+) test=(\\d+) accuracy=([0-9.]+) "
+        r"resolution_L(\d+) train=(\d+) test=(\d+) accuracy=([0-9.]+) "
         r"balanced_accuracy=([0-9.]+) majority_baseline=([0-9.]+)", result["output"]):
         resolution_metrics[int(match.group(1))] = {
             "train": int(match.group(2)), "test": int(match.group(3)),
