@@ -43,8 +43,8 @@ class CurriculumTests(unittest.TestCase):
             result = generate_curriculum(ctx, "English and mathematical reasoning", 4)
             self.assertIn("seeded-universe-claim", ctx.llm.calls[0]["messages"][1]["content"])
             info = load_n16txt(result["corpus_path"])
-            self.assertEqual(len(CURRICULUM_STAGES), 11)
-            self.assertEqual(len(ctx.llm.calls), 11)
+            self.assertEqual(len(CURRICULUM_STAGES), 12)
+            self.assertEqual(len(ctx.llm.calls), 12)
             self.assertEqual(info.unique_records, 4 * len(CURRICULUM_STAGES))
             self.assertEqual(result["records"], 4 * len(CURRICULUM_STAGES))
             self.assertEqual([x["stage"] for x in result["stages"]],
