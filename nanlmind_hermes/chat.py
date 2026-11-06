@@ -1,0 +1,225 @@
+"""Open-ended conversational learning loop for Hermes.
+
+The chat path deliberately accepts ordinary large text, not N16TXT. A provider
+answers the user first; a separate structured reflection pass proposes typed,
+provenance-bound discoveries across linguistic resolutions. Reflection is
+best-effort and never blocks the conversational answer.
+"""
+from __future__ import annotations
+
+import hashlib
+import json
+import re
+import uuid
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any
+
+MAX_INPUT_BYTES = 1_048_576
+MAX_HISTORY_MESSAGES = 24
+MAX_DISCOVERIES = 128
+RESOLUTIONS = (
+    "bit", "nibble", "byte", "phonetic", "morpheme",
+    "lexical", "word_completion", "sentence", "paragraph", "narrative",
+)
+
+
+def _canonical(value: Any) -> str:
+    return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+
+
+def _json_object(text: str) -> dict:
+    candidate = text.strip()
+    if candidate.startswith("```"):
+        candidate = re.sub(r"^\```(?:json)?\s*|\s*\```$", "", candidate, flags=re.I)
+    try:
+        value = json.loads(candidate)
+    except json.JSONDecodeError:
+        start, end = candidate.find("{"), candidate.rfind("}")
+        if start < 0 or end <= start:
+            return {}
+        try:
+            value = json.loads(candidate[start:end + 1])
+        except json.JSONDecodeError:
+            return {}
+    return value if isinstance(value, dict) else {}
+
+
+def _session_path(root: Path, session_id: str) -> Path:
+    if not isinstance(session_id, str) or not re.fullmatch(r"[A-Za-z0-9_-]{1,80}", session_id):
+        raise ValueError("session_id must contain 1..80 letters, digits, underscores or hyphens")
+    path = root / "conversations" / (session_id + ".jsonl")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    return path
+
+
+def _read_history(path: Path) -> list[dict]:
+    if not path.exists():
+        return []
+    rows = []
+    for line in path.read_text(encoding="utf-8").splitlines()[-MAX_HISTORY_MESSAGES:]:
+        try:
+            item = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if item.get("role") in {"user", "assistant"} and isinstance(item.get("content"), str):
+            rows.append({"role": item["role"], "content": item["content"]})
+    return rows
+
+
+def _append(path: Path, row: dict) -> None:
+    with path.open("a", encoding="utf-8") as stream:
+        stream.write(_canonical(row) + "\n")
+
+
+def _reflect(ctx, user_text: str, assistant_text: str, source_digest: str) -> dict:
+    """Ask the active provider to propose inspectable multi-resolution discoveries."""
+    prompt = {
+        "task": "Reflect on this conversation as language-learning evidence.",
+        "rules": [
+            "Return JSON only, with a discoveries array of at most 128 objects.",
+            "Do not invent facts absent from the exchange; mark uncertainty explicitly.",
+            "Cover applicable resolutions among: " + ", ".join(RESOLUTIONS),
+            "Treat bit/nibble/byte and phonetic/morpheme structures as hypotheses unless directly observable.",
+            "Do not emit raw hidden chain-of-thought. Emit concise inspectable features, not private reasoning.",
+            "Stories, definitions, dialogue, logic and technical prose are all valid linguistic evidence.",
+            "Each object: kind (entity|relation|operator|equation|constraint|observation|hypothesis|counterexample), "
+            "subject, predicate (optional), object (optional), expression (optional), resolution, "
+            "polarity (supports|refutes|neutral), confidence (0..1), evidence (object), provenance (object).",
+        ],
+        "source_sha256": source_digest,
+        "user_text": user_text,
+        "assistant_text": assistant_text,
+    }
+    result = ctx.llm.complete(
+        messages=[
+            {"role": "system", "content": "You are Hermes' structured linguistic reflection worker. Return valid JSON only."},
+            {"role": "user", "content": json.dumps(prompt, ensure_ascii=False)},
+        ],
+        temperature=0.1, max_tokens=6000, timeout=120,
+        purpose="nanlmind-hermes-multiresolution-reflection",
+    )
+    data = _json_object(getattr(result, "text", ""))
+    discoveries = data.get("discoveries", [])
+    if not isinstance(discoveries, list):
+        return {"records": [], "provider": getattr(result, "provider", None),
+                "model": getattr(result, "model", None), "parse_ok": False}
+    records = []
+    for item in discoveries[:MAX_DISCOVERIES]:
+        if not isinstance(item, dict) or item.get("kind") not in {
+            "entity", "relation", "operator", "equation", "constraint",
+            "observation", "hypothesis", "counterexample",
+        }:
+            continue
+        subject = item.get("subject")
+        if not isinstance(subject, str) or not subject.strip():
+            continue
+        resolution = item.get("resolution", "lexical")
+        if resolution not in RESOLUTIONS:
+            resolution = "lexical"
+        polarity = item.get("polarity", "neutral")
+        if polarity not in {"supports", "refutes", "neutral"}:
+            polarity = "neutral"
+        confidence = item.get("confidence", 0.5)
+        if isinstance(confidence, bool) or not isinstance(confidence, (int, float)):
+            confidence = 0.5
+        confidence = min(1.0, max(0.0, float(confidence)))
+        payload = {k: v for k, v in item.items() if k in {
+            "kind", "subject", "predicate", "object", "expression", "evidence", "provenance"
+        }}
+        payload["kind"] = item["kind"]
+        payload["polarity"] = polarity
+        payload["confidence"] = confidence
+        payload["evidence"] = payload.get("evidence") if isinstance(payload.get("evidence"), dict) else {}
+        provenance = payload.get("provenance") if isinstance(payload.get("provenance"), dict) else {}
+        provenance.update({"resolution": resolution, "reflection": "provider-structured-pass/1"})
+        payload["provenance"] = provenance
+        records.append({"item": payload, "source_digest": source_digest})
+    return {"records": records, "provider": getattr(result, "provider", None),
+            "model": getattr(result, "model", None), "parse_ok": True}
+
+
+def chat(ctx, message: str, session_id: str = "default", system_prompt: str = None,
+         temperature: float = 0.7, max_tokens: int = 2048) -> dict:
+    """Open-ended conversation plus asynchronous-in-spirit best-effort reflection."""
+    if not isinstance(message, str) or not message.strip():
+        raise ValueError("message must be non-empty text")
+    encoded = message.encode("utf-8")
+    if len(encoded) > MAX_INPUT_BYTES:
+        raise ValueError("message exceeds the 1 MiB conversational input limit")
+    if isinstance(max_tokens, bool) or not isinstance(max_tokens, int) or not 1 <= max_tokens <= 8192:
+        raise ValueError("max_tokens must be an integer between 1 and 8192")
+    if isinstance(temperature, bool) or not isinstance(temperature, (int, float)) or not 0 <= temperature <= 2:
+        raise ValueError("temperature must be between 0 and 2")
+
+    root = Path(str(ctx.get_config("state_dir", "~/.local/share/nanlmind-hermes"))).expanduser()
+    root.mkdir(parents=True, exist_ok=True)
+    path = _session_path(root, session_id)
+    history = _read_history(path)
+    default_system = (
+        "You are Hermes, an experimental open-ended language and mathematical learning interface. "
+        "Be curious, precise, exploratory and conversational. Work with large bodies of text, "
+        "logic, stories, dialogue and technical material. Do not pretend that reflection proposals "
+        "are already learned model weights. Explain uncertainty and distinguish hypotheses from facts."
+    )
+    messages = [{"role": "system", "content": system_prompt or default_system}]
+    messages.extend(history)
+    messages.append({"role": "user", "content": message})
+    answer = ctx.llm.complete(
+        messages=messages, temperature=float(temperature), max_tokens=max_tokens,
+        timeout=180, purpose="nanlmind-hermes-chat",
+    )
+    response_text = getattr(answer, "text", "")
+    if not isinstance(response_text, str) or not response_text.strip():
+        raise RuntimeError("active language provider returned an empty response")
+
+    source_digest = hashlib.sha256(
+        (message + "\0" + response_text).encode("utf-8")
+    ).hexdigest()
+    now = datetime.now(timezone.utc).isoformat()
+    _append(path, {"role": "user", "content": message, "created_at": now,
+                   "source_sha256": hashlib.sha256(encoded).hexdigest()})
+    _append(path, {"role": "assistant", "content": response_text, "created_at": now,
+                   "provider": getattr(answer, "provider", None),
+                   "model": getattr(answer, "model", None)})
+
+    reflection = {"records": [], "parse_ok": False, "error": None}
+    merge = {"accepted": 0, "duplicates": 0}
+    try:
+        reflection = _reflect(ctx, message, response_text, source_digest)
+        if reflection["records"]:
+            from .tools import _memory_store
+            store = _memory_store(ctx)
+            merge = store.merge(reflection["records"])
+            store.reorganize()
+    except Exception as exc:
+        # Chat must remain usable if the optional reflection provider call fails.
+        reflection["error"] = type(exc).__name__ + ": " + str(exc)[:500]
+
+    return {
+        "session_id": session_id, "response": response_text,
+        "provider": getattr(answer, "provider", None), "model": getattr(answer, "model", None),
+        "source_sha256": source_digest, "history_messages": len(history) + 2,
+        "reflection": {
+            "parse_ok": reflection.get("parse_ok", False),
+            "provider": reflection.get("provider"), "model": reflection.get("model"),
+            "proposed_discoveries": len(reflection.get("records", [])),
+            "memory_merge": merge, "error": reflection.get("error"),
+        },
+        "memory_note": "Structured reflection proposals are additive evidence, not learned neural weights.",
+    }
+
+
+def chat_history(ctx, session_id: str = "default", limit: int = 40) -> dict:
+    if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 200:
+        raise ValueError("limit must be between 1 and 200")
+    root = Path(str(ctx.get_config("state_dir", "~/.local/share/nanlmind-hermes"))).expanduser()
+    path = _session_path(root, session_id)
+    rows = []
+    if path.exists():
+        for line in path.read_text(encoding="utf-8").splitlines()[-limit:]:
+            try:
+                rows.append(json.loads(line))
+            except json.JSONDecodeError:
+                continue
+    return {"session_id": session_id, "messages": rows, "count": len(rows)}
