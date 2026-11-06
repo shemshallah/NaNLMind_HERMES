@@ -49,6 +49,7 @@ class CurriculumTests(unittest.TestCase):
             self.assertEqual(result["records"], 4 * len(CURRICULUM_STAGES))
             self.assertEqual([x["stage"] for x in result["stages"]],
                              [x[0] for x in CURRICULUM_STAGES])
+            self.assertEqual(result["stages"][2]["stage"], "story_saturation")
             self.assertEqual(result["stages"][-1]["stage"], "narrative")
             manifest = json.loads(Path(result["manifest_path"]).read_text())
             self.assertEqual(manifest["record_count"], 4 * len(CURRICULUM_STAGES))
