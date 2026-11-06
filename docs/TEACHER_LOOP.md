@@ -50,7 +50,9 @@ must never be presented as a lexical or sentence metric.
 
 Every resolution reports sample counts, pre-training accuracy,
 post-training accuracy, within-run delta, balanced accuracy and majority
-baseline. Each topic/resolution gets a frozen challenge set stored locally.
+baseline. Balanced accuracy is explicitly marked valid only when the held-out
+set contains both positive and negative labels; the teacher generator
+stratifies the frozen challenge to include both when available. Each topic/resolution gets a frozen challenge set stored locally.
 Reusing the same challenge digest enables a meaningful cross-run delta. A new
 test digest is marked non-comparable. Replaying the same event still evaluates
 the unchanged challenge set and returns `no_op` for mutation.
