@@ -9,7 +9,7 @@ from nanlmind_hermes.memory import MemoryStore
 class MemoryStoreTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
-        self.store = MemoryStore(Path(self.tmp.name) / "memory.sqlite3", heads=256, layers=7)
+        self.store = MemoryStore(Path(self.tmp.name) / "memory.sqlite3", heads=256, layers=10)
         self.source = hashlib.sha256(b"source").hexdigest()
 
     def tearDown(self):
@@ -77,7 +77,7 @@ class MemoryStoreTests(unittest.TestCase):
         self.assertEqual(assessment["status"], "contested")
         routes = self.store.query(subject="transition-x")
         self.assertEqual({row["head"] for row in routes}, {42, 43})
-        self.assertEqual({row["layer"] for row in routes}, {6})
+        self.assertEqual({row["layer"] for row in routes}, {9})
 
     def test_native_runner_layer_survives_shared_reorganization(self):
         self.store.ingest(
@@ -103,9 +103,9 @@ class MemoryStoreTests(unittest.TestCase):
 
     def test_linguistic_resolution_routes_all_sources_through_shared_layers(self):
         resolutions = {
-            "bit": 0, "nibble": 0, "byte": 0, "phonetic": 1,
-            "morpheme": 2, "lexical": 3, "word_completion": 4,
-            "sentence": 5, "paragraph": 6, "narrative": 6,
+            "bit": 0, "nibble": 1, "byte": 2, "phonetic": 3,
+            "morpheme": 4, "lexical": 5, "word_completion": 6,
+            "sentence": 7, "paragraph": 8, "narrative": 9,
         }
         for resolution, expected_layer in resolutions.items():
             self.store.ingest(
