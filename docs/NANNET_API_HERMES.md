@@ -55,3 +55,17 @@ New tokens are signed by a domain-separated per-identity key. The client must pi
     nannet-authority public-key --role guest --identity INSTALLATION_UUID
 
 The operator communicates this public key to the installation over a trusted channel as NANNET_ISSUER_PUBLIC_KEY. Admin identities use --role admin. The default public-key command without --identity remains the legacy signer key for backwards compatibility only.
+
+## CLOCKED API credential separation
+
+The Rezolve.ai CLOCKED API is a separate external service and its official
+SDK documents a dedicated CLOCKED API key (normally supplied as
+`CLOCKED_API_KEY`). This credential is not a NANNET installation token,
+`HW_HERMES_API`, the HW3 service identity, or an Android device token.
+Never substitute one credential for another or place a CLOCKED key in a
+NANNET-signed request payload, prompt, transcript, scratch lane or Git commit.
+
+The proposed HW3:0 gateway may provide a sponsored demo proxy only if the
+CLOCKED service owner explicitly authorizes that arrangement. Otherwise users
+must configure their own CLOCKED API key through the host secret store. NANNET
+pairing by itself does not grant CLOCKED account access or credits.
