@@ -30,6 +30,8 @@ def _digest(value: Any) -> str:
 def analyze_cross_resolution(rows: list[dict]) -> dict:
     """Compute a symmetric 10x10 interaction matrix and per-concept feedback."""
     matrix = [[0 for _ in RESOLUTIONS] for _ in RESOLUTIONS]
+    fine_to_coarse = [[0.0 for _ in RESOLUTIONS] for _ in RESOLUTIONS]
+    coarse_to_fine = [[0.0 for _ in RESOLUTIONS] for _ in RESOLUTIONS]
     by_subject: dict[str, dict[str, list[dict]]] = defaultdict(lambda: defaultdict(list))
     coverage = Counter()
     for row in rows:
@@ -51,6 +53,7 @@ def analyze_cross_resolution(rows: list[dict]) -> dict:
             continue
         pairs = []
         aligned = contradicted = comparable = 0
+        content_aligned = content_divergent = 0
         event_ids = []
         for resolution in present:
             event_ids.extend(row["event_id"] for row in groups[resolution])
@@ -60,6 +63,7 @@ def analyze_cross_resolution(rows: list[dict]) -> dict:
                 left_rows, right_rows = groups[left_name], groups[right_name]
                 matrix[left_i][right_i] += len(left_rows) * len(right_rows)
                 matrix[right_i][left_i] += len(left_rows) * len(right_rows)
+                pair_aligned = pair_contradicted = pair_comparable = 0
                 for left in left_rows:
                     for right in right_rows:
                         lp, rp = left.get("polarity", "neutral"), right.get("polarity", "neutral")
@@ -68,15 +72,23 @@ def analyze_cross_resolution(rows: list[dict]) -> dict:
                             status = "contradiction"
                             contradicted += 1
                             comparable += 1
+                            pair_contradicted += 1
+                            pair_comparable += 1
                         elif lp == rp and lp in {"supports", "refutes"}:
                             status = "polarity-aligned"
                             aligned += 1
                             comparable += 1
+                            pair_aligned += 1
+                            pair_comparable += 1
                         elif lp == rp == "neutral":
                             status = "neutral-aligned"
                         lo, ro = left.get("object"), right.get("object")
-                        if lo is not None and ro is not None and _canonical(lo) == _canonical(ro):
-                            status = "content-aligned" if status != "contradiction" else status
+                        if lo is not None and ro is not None:
+                            if _canonical(lo) == _canonical(ro):
+                                content_aligned += 1
+                                status = "content-aligned" if status != "contradiction" else status
+                            else:
+                                content_divergent += 1
                         pairs.append({
                             "left_resolution": left_name,
                             "right_resolution": right_name,
@@ -84,6 +96,10 @@ def analyze_cross_resolution(rows: list[dict]) -> dict:
                             "right_event": right["event_id"],
                             "status": status,
                         })
+                pair_score = ((pair_aligned - pair_contradicted) / pair_comparable
+                              if pair_comparable else 0.0)
+                fine_to_coarse[left_i][right_i] += pair_score
+                coarse_to_fine[right_i][left_i] += pair_score
         denominator = aligned + contradicted
         score = ((aligned - contradicted) / denominator) if denominator else 0.0
         polarity_counts = Counter(
@@ -102,6 +118,8 @@ def analyze_cross_resolution(rows: list[dict]) -> dict:
             "aligned_pairs": aligned,
             "contradicted_pairs": contradicted,
             "comparable_pairs": comparable,
+            "content_aligned_pairs": content_aligned,
+            "content_divergent_pairs": content_divergent,
             "consistency_score": round(score, 8),
             "polarity_entropy_bits": round(entropy, 8),
             "pairs": pairs[:256],
@@ -112,6 +130,8 @@ def analyze_cross_resolution(rows: list[dict]) -> dict:
         "resolution_order": list(RESOLUTIONS),
         "coverage": {name: coverage.get(name, 0) for name in RESOLUTIONS},
         "cooccurrence_matrix": matrix,
+        "fine_to_coarse_feedback_matrix": fine_to_coarse,
+        "coarse_to_fine_feedback_matrix": coarse_to_fine,
         "concepts_compared": len(feedback),
         "feedback": feedback,
     }
@@ -141,6 +161,8 @@ def feedback_records(analysis: dict) -> list[dict]:
                 "pair_count": item["pair_count"],
                 "aligned_pairs": item["aligned_pairs"],
                 "contradicted_pairs": item["contradicted_pairs"],
+                "content_aligned_pairs": item["content_aligned_pairs"],
+                "content_divergent_pairs": item["content_divergent_pairs"],
                 "consistency_score": item["consistency_score"],
                 "polarity_entropy_bits": item["polarity_entropy_bits"],
                 "pair_evidence": item["pairs"],
