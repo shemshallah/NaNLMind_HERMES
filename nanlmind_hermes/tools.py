@@ -900,6 +900,7 @@ def run_curriculum_experiment(ctx, topic: str = "logic and language",
         "test_set_sha256": corpus.get("test_sha256"),
     }
     result = {
+        "schema": "nanlm-curriculum-experiment/2",
         "topic": topic, "corpus": corpus_summary, "training": training,
         "teacher_rounds_requested": teacher_rounds,
         "teacher_rounds_completed": len(round_history),
