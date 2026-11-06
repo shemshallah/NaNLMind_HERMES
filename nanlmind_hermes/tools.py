@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from .policy import DEFAULT_DURATION_MINUTES, load_n16txt, parse_n16txt, validate_duration
-from .runner import RunnerError, run_bounded, evaluate_native, run_math_train, run_logic_train
+from .runner import RunnerError, run_bounded, evaluate_native, run_math_train, run_logic_train, run_relation_train
 from .extract import extract_discoveries
 
 
@@ -518,3 +518,119 @@ def chat_history(ctx, session_id: str = "default", limit: int = 40):
     """Retrieve a conversation transcript by session ID."""
     from .chat import chat_history as read_history
     return read_history(ctx, session_id, limit)
+
+
+_RELATION_RESOLUTIONS = {
+    "bit": 0, "nibble": 1, "byte": 2, "phonetic": 3, "morpheme": 4,
+    "lexical": 5, "word_completion": 6, "sentence": 7,
+    "paragraph": 8, "narrative": 9,
+}
+
+
+def _relation_corpus(ctx, records):
+    """Encode supervised typed claims as source-bound N16REL/1 rows."""
+    if not isinstance(records, list) or not records:
+        raise ValueError("records must be a non-empty array")
+    root, corpora, _ = _paths(ctx)
+    rows, rejected = [], {}
+    counts = {"train": {}, "test": {}}
+    for index, record in enumerate(records):
+        if not isinstance(record, dict):
+            rejected["not_object"] = rejected.get("not_object", 0) + 1
+            continue
+        item = record.get("item", record)
+        if not isinstance(item, dict):
+            rejected["missing_item"] = rejected.get("missing_item", 0) + 1
+            continue
+        subject, predicate, obj = item.get("subject"), item.get("predicate"), item.get("object")
+        if not isinstance(subject, str) or not subject.strip() or not isinstance(predicate, str) or not predicate.strip() or obj is None:
+            rejected["incomplete_relation"] = rejected.get("incomplete_relation", 0) + 1
+            continue
+        if not isinstance(obj, str):
+            obj = json.dumps(obj, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+        polarity = item.get("polarity", "neutral")
+        if polarity not in {"supports", "refutes"}:
+            rejected["non_supervised_polarity"] = rejected.get("non_supervised_polarity", 0) + 1
+            continue
+        provenance = item.get("provenance") if isinstance(item.get("provenance"), dict) else {}
+        resolution = provenance.get("resolution", item.get("resolution", "lexical"))
+        if resolution not in _RELATION_RESOLUTIONS:
+            rejected["unknown_resolution"] = rejected.get("unknown_resolution", 0) + 1
+            continue
+        split = record.get("split", "train")
+        if split not in {"train", "test"}:
+            rejected["invalid_split"] = rejected.get("invalid_split", 0) + 1
+            continue
+        confidence = item.get("confidence", 0.5)
+        if isinstance(confidence, bool) or not isinstance(confidence, (int, float)):
+            confidence = 0.5
+        confidence_q16 = max(0, min(65535, int(round(float(confidence) * 65535))))
+        source_digest = record.get("source_digest")
+        if not isinstance(source_digest, str) or len(source_digest) != 64 or any(c not in "0123456789abcdef" for c in source_digest.lower()):
+            source_digest = hashlib.sha256(json.dumps(
+                {"record": record, "index": index}, ensure_ascii=False,
+                sort_keys=True, separators=(",", ":")).encode("utf-8")).hexdigest()
+        row = "\\t".join((
+            split, str(_RELATION_RESOLUTIONS[resolution]),
+            "+" if polarity == "supports" else "-",
+            str(confidence_q16), subject.encode("utf-8").hex(),
+            predicate.encode("utf-8").hex(), obj.encode("utf-8").hex(),
+            source_digest.lower(),
+        ))
+        rows.append(row)
+        counts[split][resolution] = counts[split].get(resolution, 0) + 1
+    if not any(row.startswith("train\\t") for row in rows):
+        raise ValueError("no trainable supported/refuted subject-predicate-object relations")
+    raw = ("N16REL/1\\n" + "\\n".join(rows) + "\\n").encode("utf-8")
+    digest = hashlib.sha256(raw).hexdigest()
+    directory = corpora / "relations"
+    directory.mkdir(parents=True, exist_ok=True)
+    path = directory / (digest + ".n16rel")
+    if not path.exists():
+        temp = path.with_suffix(".tmp")
+        temp.write_bytes(raw)
+        os.replace(temp, path)
+    return {"path": path, "sha256": digest, "records": len(rows),
+            "rejected": rejected, "counts": counts}
+
+
+def _native_relation_train(ctx, records, mode):
+    corpus = _relation_corpus(ctx, records)
+    command = _setting(ctx, "runner_command", [])
+    if not command:
+        raise RunnerError("runner_command is not configured; native relation learning cannot run")
+    _, _, universe = _paths(ctx)
+    result = run_relation_train(command, corpus["path"], universe)
+    result["mode"] = mode
+    result["corpus"] = {
+        "path": str(corpus["path"]), "sha256": corpus["sha256"],
+        "records": corpus["records"], "rejected": corpus["rejected"],
+        "counts_by_split_and_resolution": corpus["counts"],
+    }
+    result["universe_id"] = _universe_id(universe)
+    manifest = universe / "last_relation_run.json"
+    temp = manifest.with_suffix(".tmp")
+    temp.write_text(json.dumps(result, indent=2, sort_keys=True) + "\\n", encoding="utf-8")
+    os.replace(temp, manifest)
+    return result
+
+
+def ingest_conversation_relations(ctx, records):
+    """Online free-form chat learning: only explicit supervised relation claims update native state."""
+    if not records:
+        return {"status": "no_supervised_relations", "train_events": 0,
+                "changed_heads": 0, "mirror_pair_updates": 0, "hyperedges_added": 0}
+    try:
+        return _native_relation_train(ctx, records, "free_form_chat")
+    except Exception as exc:
+        return {"status": "native_update_failed",
+                "error": type(exc).__name__ + ": " + str(exc)[:1000]}
+
+
+def structured_relation_train(ctx, records):
+    """Explicit schema-bound training with separate train and held-out relation rows."""
+    if not isinstance(records, list) or len(records) > 10000:
+        raise ValueError("records must be an array with at most 10000 entries")
+    if not any(isinstance(x, dict) and x.get("split") == "test" for x in records):
+        raise ValueError("structured relation training requires explicit held-out test records")
+    return _native_relation_train(ctx, records, "structured_teacher_training")
