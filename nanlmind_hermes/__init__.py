@@ -60,6 +60,12 @@ def register(ctx):
 
     def handle_chat(params, **kwargs):
         _require_scope("universe:read")
+        try:
+            learning_enabled = ctx.get_config("chat_learning", default=True)
+        except Exception:
+            learning_enabled = True
+        if learning_enabled:
+            _require_scope("training:execute")
         return tools.chat(ctx, params["message"], params.get("session_id", "default"),
                           params.get("system_prompt"), params.get("temperature", 0.7),
                           params.get("max_tokens", 2048))
@@ -174,6 +180,10 @@ def register(ctx):
         return tools.math_train(ctx, params["corpus_path"], params.get("epochs", 3),
                                 params.get("max_samples_per_head", 4096))
 
+    def handle_relation_train(params, **kwargs):
+        _require_scope("training:execute")
+        return tools.structured_relation_train(ctx, params["records"], params.get("epochs", 1))
+
     def handle_evaluate(params, **kwargs):
         _require_scope("universe:read")
         return tools.evaluate(ctx, params["corpus_path"])
@@ -206,7 +216,7 @@ def register(ctx):
 
     specs = [
         ("nanlm_status", "Inspect local NaNLMind universe and durable mathematical-memory status.", {}, [], handle_status),
-        ("nanlm_chat", "Open-ended Hermes conversation; reflect the exchange into the shared multi-resolution mathematical universe.",
+        ("nanlm_chat", "Open-ended Hermes conversation; reflect evidence and, when explicit supervised relations are present, update native heads, mirror pairs and hyperedges in the shared universe.",
          {"message": {"type": "string", "minLength": 1, "maxLength": 1048576},
           "session_id": {"type": "string", "maxLength": 80}, "system_prompt": {"type": "string"},
           "temperature": {"type": "number", "minimum": 0, "maximum": 2},
@@ -223,37 +233,37 @@ def register(ctx):
         ("nanlm_auth_revoke", "Revoke this installation token and erase its local encrypted copy.", {}, [], handle_auth_revoke),
         ("nanlm_generate_curriculum", "Generate a balanced 12-stage logic-to-language curriculum corpus, including Boolean inverses, deep relations, exceptions, word choice, sentences, paragraphs and stories.",
          {"topic": {"type": "string", "minLength": 1, "maxLength": 500},
-          "records_per_stage": {"type": "integer", "minimum": 1, "maximum": 64, "default": 12}},
+          "records_per_stage": {"type": "integer", "minimum": 3, "maximum": 64, "default": 12}},
          ["topic"], handle_curriculum),
-        ("nanlm_curriculum_experiment", "Generate the balanced 12-stage corpus, train the native 256-head universe, and merge discoveries into shared mathematical memory.",
+        ("nanlm_curriculum_experiment", "Generate teacher-labeled structured relations, train the native relation objective with frozen held-out challenges at each selected L0-L9 resolution, and merge training evidence into shared memory.",
          {"topic": {"type": "string", "minLength": 1, "maxLength": 500},
-          "records_per_stage": {"type": "integer", "minimum": 1, "maximum": 64, "default": 12},
+          "records_per_stage": {"type": "integer", "minimum": 3, "maximum": 64, "default": 12},
           "epochs": {"type": "integer", "minimum": 1, "maximum": 100, "default": 3},
           "max_samples_per_head": {"type": "integer", "minimum": 1, "maximum": 100000, "default": 4096}},
          ["topic"], handle_curriculum_experiment),
-        ("nanlm_logic_session", "Explicitly train the logic-only session: Boolean inverses and deep logic. Use only when the user asks for logic training; normal conversation uses nanlm_chat.",
+        ("nanlm_logic_session", "Explicitly train Boolean, nibble and byte relation tasks after the exact 1,024-check Boolean foundation gate. Uses separate held-out resolution metrics.",
          {"topic": {"type": "string", "minLength": 1, "maxLength": 500},
-          "records_per_stage": {"type": "integer", "minimum": 1, "maximum": 64, "default": 12},
+          "records_per_stage": {"type": "integer", "minimum": 3, "maximum": 64, "default": 12},
           "epochs": {"type": "integer", "minimum": 1, "maximum": 100, "default": 3},
           "max_samples_per_head": {"type": "integer", "minimum": 1, "maximum": 100000, "default": 4096}},
          [], handle_logic_session),
-        ("nanlm_word_session", "Explicitly train the word-only session: repetitive words, lexical words and word completion.",
+        ("nanlm_word_session", "Explicitly train phonetic, morphemic, lexical and word-completion relation tasks with separate frozen held-out metrics.",
          {"topic": {"type": "string", "minLength": 1, "maxLength": 500},
-          "records_per_stage": {"type": "integer", "minimum": 1, "maximum": 64, "default": 12},
+          "records_per_stage": {"type": "integer", "minimum": 3, "maximum": 64, "default": 12},
           "epochs": {"type": "integer", "minimum": 1, "maximum": 100, "default": 3},
           "max_samples_per_head": {"type": "integer", "minimum": 1, "maximum": 100000, "default": 4096}},
          [], handle_word_session),
-        ("nanlm_sentence_session", "Explicitly train the sentence/story session: sentence choice and narrative.",
+        ("nanlm_sentence_session", "Explicitly train sentence, paragraph and narrative relation tasks with separate frozen held-out metrics.",
          {"topic": {"type": "string", "minLength": 1, "maxLength": 500},
-          "records_per_stage": {"type": "integer", "minimum": 1, "maximum": 64, "default": 12},
+          "records_per_stage": {"type": "integer", "minimum": 3, "maximum": 64, "default": 12},
           "epochs": {"type": "integer", "minimum": 1, "maximum": 100, "default": 3},
           "max_samples_per_head": {"type": "integer", "minimum": 1, "maximum": 100000, "default": 4096}},
          [], handle_sentence_session),
-        ("nanlm_training_pipeline", "Explicitly run the full training pipeline, a preset, or a custom ordered stage list. Normal conversation must use nanlm_chat instead.",
+        ("nanlm_training_pipeline", "Explicitly run structured teacher training for selected task stages. Each linguistic resolution has its own native relation objective and frozen held-out challenge; normal conversation uses nanlm_chat for online free-form relation learning.",
          {"topic": {"type": "string", "minLength": 1, "maxLength": 500},
           "mode": {"type": "string", "enum": ["pipeline", "logic", "words", "sentences"], "default": "pipeline"},
           "stages": {"type": "array", "items": {"type": "string"}, "minItems": 1, "maxItems": 12},
-          "records_per_stage": {"type": "integer", "minimum": 1, "maximum": 64, "default": 12},
+          "records_per_stage": {"type": "integer", "minimum": 3, "maximum": 64, "default": 12},
           "epochs": {"type": "integer", "minimum": 1, "maximum": 100, "default": 3},
           "max_samples_per_head": {"type": "integer", "minimum": 1, "maximum": 100000, "default": 4096}},
          [], handle_training_pipeline),
@@ -273,6 +283,37 @@ def register(ctx):
          {"corpus_path": {"type": "string"}, "epochs": {"type": "integer", "minimum": 1, "maximum": 100, "default": 3},
           "max_samples_per_head": {"type": "integer", "minimum": 1, "maximum": 100000, "default": 4096}},
          ["corpus_path"], handle_math_train),
+
+        ("nanlm_structured_relation_train", "Train the shared native heads from schema-bound relation records across L0-L9. Train rows mutate state; test rows are held out. Every accepted event updates mirror-pair cells and a provenance-bound hyperedge.",
+         {"records": {
+              "type": "array", "minItems": 2, "maxItems": 10000,
+              "items": {
+                  "type": "object",
+                  "required": ["split", "source_digest", "item"],
+                  "properties": {
+                      "split": {"type": "string", "enum": ["train", "test"]},
+                      "source_digest": {"type": "string", "pattern": "^[0-9a-fA-F]{64}$"},
+                      "item": {
+                          "type": "object",
+                          "required": ["subject", "predicate", "object", "polarity", "confidence", "evidence", "provenance"],
+                          "properties": {
+                              "subject": {"type": "string", "minLength": 1},
+                              "predicate": {"type": "string", "minLength": 1},
+                              "object": {"type": "string", "minLength": 1},
+                              "polarity": {"type": "string", "enum": ["supports", "refutes"]},
+                              "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+                              "evidence": {"type": "object"},
+                              "provenance": {
+                                  "type": "object", "required": ["resolution"],
+                                  "properties": {"resolution": {"type": "string", "enum": ["bit", "nibble", "byte", "phonetic", "morpheme", "lexical", "word_completion", "sentence", "paragraph", "narrative"]}}
+                              }
+                          }
+                      }
+                  }
+              }
+          },
+          "epochs": {"type": "integer", "minimum": 1, "maximum": 100, "default": 1}},
+         ["records"], handle_relation_train),
         ("nanlm_evaluate", "Run native topology-byte, Kneser-Ney and Context2 controls locally on the same corpus.",
          {"corpus_path": {"type": "string"}}, ["corpus_path"], handle_evaluate),
         ("nanlm_memory_ingest", "Append structured mathematical discoveries to the durable additive universe memory.",

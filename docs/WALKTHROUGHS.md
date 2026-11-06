@@ -17,22 +17,18 @@ Expected:
 Validation passed.
 ```
 
-## 2. First conversation
+## 2. First conversation and online learning
 
 ```text
-/nanlm Hello. Tell me what you can do.
+/nanlm Penguins can swim. They are birds.
 ```
 
-or use the normal Hermes chat with `nanlm_chat` selected.
-
-Every turn writes a transcript under:
-
-```text
-<state_dir>/conversations/<session_id>.jsonl
-```
-
-and proposes symbolic discoveries to mathematical memory. A reflection failure
-does not prevent the answer.
+Every turn writes a transcript and proposes structured evidence. With
+`chat_learning: true` (default), explicit supported/refuted subject-predicate-
+object relations are sent to the native relation learner. A chat result reports
+whether heads, mirror pairs and hyperedges actually changed. Neutral or
+incomplete reflections remain symbolic evidence only. Set `chat_learning:
+false` to disable native updates while retaining normal chat.
 
 ## 3. Configure the native trainer
 
@@ -61,15 +57,18 @@ path.
 /nanlm logic Boolean inverses and nested implications
 ```
 
-This uses only:
+This uses:
 
 ```text
 boolean_inverses
 deep_logic
+exceptions
 ```
 
-It generates the corpus, calls the native 256-head trainer, validates all 256
-discoveries, merges them into memory, and writes an experiment manifest.
+The exact 1,024-check Boolean foundation gate runs first. The structured teacher
+then generates L0 bit, L1 nibble and L2 byte relation records with frozen
+held-out challenges. The native relation trainer updates routed heads,
+mirror-pair cells and hyperedges.
 
 Inspect the result:
 
@@ -87,11 +86,14 @@ This uses:
 
 ```text
 repetitive_words
+phonetic_pairs
+morpheme_structure
 lexical_words
 word_completion
 ```
 
-The model gets a word-choice corpus, not only byte completion.
+The model receives separate L3 phonetic, L4 morpheme, L5 lexical and L6 word
+completion tasks, each with its own frozen held-out measurements.
 
 ## 6. Sentence/story training
 
@@ -103,8 +105,11 @@ This uses:
 
 ```text
 sentence_choice
+paragraph_structure
 narrative
 ```
+
+L7 sentence, L8 paragraph and L9 narrative measurements are kept independent.
 
 ## 7. Full pipeline
 

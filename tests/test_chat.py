@@ -129,6 +129,50 @@ class HermesChatTests(unittest.TestCase):
             self.assertIn("RuntimeError", result["reflection"]["error"])
             self.assertEqual(len(chat_history(ctx, "fallback")["messages"]), 2)
 
+
+    def test_free_form_chat_reflection_updates_native_heads_and_hypergraph(self):
+        import sys
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            fake = root / "fake_native.py"
+            fake.write_text(
+                "import pathlib, sys\n"
+                "mode = sys.argv[1]\n"
+                "if mode == 'logic-train':\n"
+                " state=pathlib.Path(sys.argv[4]); state.parent.mkdir(parents=True,exist_ok=True); state.write_bytes(b'gate')\n"
+                " print('stage=boolean_foundation passed=yes correct=1024/1024 accuracy=1 detail=distinct_rules=16 failed_heads=0')\n"
+                " print('stage=deep_logic_circuits passed=yes correct=32/32 accuracy=1 detail=circuits')\n"
+                " print('stage=words_after_logic passed=yes correct=10/10 accuracy=1 detail=words')\n"
+                " print('state_bytes=4 state_digest=' + 'a'*64)\n"
+                " print('result=PASS')\n"
+                "else:\n"
+                " records, state = sys.argv[2], pathlib.Path(sys.argv[3]); state.parent.mkdir(parents=True,exist_ok=True); state.write_bytes(b'native')\n"
+                " print('relation_train status=updated epochs=1 train_events=1 duplicate_events=0 changed_heads=3 mirror_pair_updates=3 hyperedges_added=1 state_bytes=6 state_digest_before=' + 'b'*64 + ' state_digest_after=' + 'c'*64)\n",
+                encoding="utf-8",
+            )
+            class LearningLLM:
+                def complete(self, **kwargs):
+                    if kwargs.get("purpose") == "nanlmind-hermes-chat":
+                        return SimpleNamespace(text="Penguins can swim.", provider="fake", model="chat")
+                    return SimpleNamespace(
+                        text=json.dumps({"discoveries": [{
+                            "kind": "relation", "subject": "penguin", "predicate": "can",
+                            "object": "swim", "resolution": "lexical",
+                            "polarity": "supports", "confidence": 0.95,
+                            "evidence": {"turn": 1}, "provenance": {"alignment_id": "penguin-swim"}
+                        }]}),
+                        provider="fake", model="reflection",
+                    )
+            ctx = FakeContext(root)
+            ctx.llm = LearningLLM()
+            ctx.config["runner_command"] = [sys.executable, str(fake)]
+            result = chat(ctx, "Penguins can swim.", session_id="native-learning")
+            self.assertEqual(result["native_learning"]["status"], "updated")
+            self.assertEqual(result["native_learning"]["changed_heads"], 3)
+            self.assertEqual(result["native_learning"]["mirror_pair_updates"], 3)
+            self.assertEqual(result["native_learning"]["hyperedges_added"], 1)
+            self.assertTrue(Path(result["native_learning"]["native_state_path"]).is_file())
+
     def test_large_plain_text_is_not_forced_through_n16txt(self):
         with tempfile.TemporaryDirectory() as tmp:
             ctx = FakeContext(Path(tmp))

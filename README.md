@@ -84,12 +84,13 @@ NaNLMind Hermes connects a Hermes agent to a local NaNLMind 256-head universe.
 It provides:
 
 - a default open-ended chat loop with durable conversation history;
-- a mandatory full-Boolean foundation gate before language training;
+- online free-form relation learning from explicit supervised claims in back-and-forth chat;
+- a mandatory full-Boolean foundation gate before structured training;
 - explicit, ordered logic → words → sentences training sessions;
-- a full staged training pipeline;
-- native NaNLMind head training with resumable global-topology state;
-- additive mathematical memory with evidence assessment and cross-resolution
-  feedback;
+- a teacher-generated structured relation pipeline with frozen held-out challenges at L0-L9;
+- native head, canonical mirror-pair, temporal-link and hyperedge updates in one resumable topology;
+- separate pre/post and cross-run metrics for each evaluated resolution;
+- additive mathematical memory with evidence assessment and cross-resolution feedback;
 - local NANNET identity, pairing, signed requests, and optional authority
   scopes;
 - a dependency-free Ed25519/AES-GCM/HKDF path for Alpine, Termux, and minimal
@@ -103,7 +104,11 @@ it is not the model runner or corpus store.
 ## 1. Default behaviour: chat
 
 Plain conversation is the default. The model should use `nanlm_chat` for normal
-interaction. Training tools are explicit actions, not side effects of chat.
+interaction. With `chat_learning: true` (default), each exchange is reflected
+and explicit supported/refuted subject-predicate-object relations are submitted
+to the native relation learner. This is a bounded online update, not an automatic
+curriculum-generation job. Set `chat_learning: false` to disable native chat
+updates while retaining transcripts and symbolic reflection.
 
 Inside a Hermes session:
 
@@ -124,10 +129,15 @@ Chat records:
 - provider/model metadata;
 - exact UTF-8 bit, nibble, byte, lexical, sentence, and paragraph measurements;
 - a structured reflection proposal merged into additive mathematical memory;
+- native-learning receipt: accepted relation events, changed heads, mirror-pair
+  mutations, hyperedges, checkpoint digests and per-resolution metrics when a
+  held-out set is available;
 - optional cross-resolution relations.
 
-Reflection is best effort and never blocks the conversational answer. It
-updates symbolic evidence, not model weights.
+Reflection is best effort and never blocks the conversational answer. Only
+explicit, non-neutral triples with evidence update native state. Neutral or
+incomplete reflections remain symbolic evidence; the plugin never claims a
+head update unless the native runner confirms it.
 
 ---
 
@@ -193,8 +203,9 @@ Settings live under `plugins.entries.nanlmind-hermes.settings`.
 | `duration_minutes` | int | `30` | wall budget for legacy native bootstrap runs, 1–360 |
 | `checkpoint_interval_seconds` | int | `60` | reserved for native checkpoint support |
 | `runner_command` | list[str] | `[]` | absolute argv for the local `nanlm-universal` binary |
+| `chat_learning` | bool | `true` | allow free-form chat to update native heads/mirror pairs/hyperedges from explicit supervised relations |
 | `state_dir` | str | `~/.local/share/nanlmind-hermes` | universe, corpora, transcripts, runs |
-| `universe_layers` | int | `7` | logical memory projection layers L0–L6 |
+| `universe_layers` | int | `7` | logical memory projection layers L0–L9 |
 
 Example:
 
@@ -209,9 +220,9 @@ plugins:
         runner_command: ["/opt/NaNLMind/build/nanlm-universal"]
 ```
 
-The native runner is required for `nanlm_math_train`, `nanlm_train`,
-`nanlm_evaluate`, and the training pipeline. Chat and memory tools work without
-it.
+The native runner is required for structured training and native chat learning.
+Without it, chat still answers and stores reflection evidence, but its
+`native_learning` receipt reports that no native update occurred.
 
 ---
 
@@ -253,7 +264,7 @@ narrative
 Uses:
 
 ```text
-boolean_inverses + deep_logic
+boolean_inverses + deep_logic + exceptions (L0-L2)
 ```
 
 Tool: `nanlm_logic_session`.
@@ -267,7 +278,7 @@ Tool: `nanlm_logic_session`.
 Uses:
 
 ```text
-repetitive_words + lexical_words + word_completion
+repetitive_words + phonetic_pairs + morpheme_structure + lexical_words + word_completion (L3-L6)
 ```
 
 Tool: `nanlm_word_session`.
@@ -281,7 +292,7 @@ Tool: `nanlm_word_session`.
 Uses:
 
 ```text
-sentence_choice + narrative
+sentence_choice + paragraph_structure + narrative (L7-L9)
 ```
 
 Tool: `nanlm_sentence_session`.
@@ -300,17 +311,23 @@ Tool: `nanlm_sentence_session`.
 }
 ```
 
-Every training tool returns a reproducible manifest and merges native head
-discoveries into mathematical memory.
+Structured training generates N16REL/1 relation records, preserves a frozen
+challenge set per topic/resolution, and merges only training evidence into
+mathematical memory. Each resolution reports before/after held-out metrics and
+a cross-run delta only when its challenge digest is unchanged.
 
 ### What native training actually learns
 
-Before any language training, `nanlm_math_train` runs a mandatory native
-full-Boolean foundation: all 256 heads learn all 16 two-input functions
-(1,024 exact truth-table checks), composed gates, and a word-after-logic probe.
-A failed gate aborts training. The separate byte-bit `math-train` task is real,
-persistent native training, but its held-out accuracy is not general language
-competence. Chat reflection is symbolic evidence, not online gradient descent.
+Before structured relation training, Hermes runs the mandatory native
+full-Boolean foundation: all 1,024 truth-row checks, all 16 distinct learned
+functions, composed circuits and a persisted checkpoint. That checkpoint seeds
+the shared `native/global_universe.nmg` once.
+
+The new `relation-train` objective is separate from the legacy byte-bit
+`math-train` control. It updates routed heads, canonical mirror-pair cells,
+temporal links and provenance-bound hyperedges from typed L0-L9 relations.
+Free-form chat does the same online for explicit supported/refuted triples.
+The relation trainer uses resolution-specific surface feature vectors; SHA-256 is used only for routing and event identity. It is a compact feature learner, not a pretrained semantic encoder. Neither relation-polarity accuracy nor byte-bit accuracy is text-generation accuracy or independent fact verification.
 
 ---
 
@@ -335,10 +352,11 @@ The same actions are available as model tools. See
 
 There are two stores:
 
-1. **Native global topology** — serialized head/cell/scratchpad state at
-   `universe/native/global_universe.nmg`, resumed by later native runs.
+1. **Native global topology** — serialized head/cell/scratchpad state, canonical
+   mirror pairs, temporal links and hyperedges at
+   `universe/native/global_universe.nmg`, resumed by chat and training runs.
 2. **Additive discovery ledger** — immutable, content-addressed events, typed
-   edges, n-ary hyperedges, and deterministic L0–L6 projections.
+   edges, n-ary hyperedges, and deterministic L0–L9 projections.
 
 A merge is an idempotent set union followed by projection rebuild. Conflicting
 claims are retained and become contested; they are not averaged away. The

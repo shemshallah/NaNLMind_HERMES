@@ -4,7 +4,9 @@
 
 There is one native `GlobalTopology`, not 256 independent models. Its 256 palindromic `HeadView` instances address head records, cells and scratchpads in the same shared root `Universe`. The head index is a routing/learning address, not a separate neural network.
 
-The native `math-train` command currently trains a bounded, explicit task: each head learns a Boolean truth-table rule for a byte-bit transition, using a deterministic 80/20 sequential train/held-out split. It emits one JSONL discovery per head with the source SHA-256, head address, selected Boolean rule, all 16 operator scores, sample counts and held-out accuracy. This is a first working native learning path, not yet a general mathematical reasoner or the complete ten-resolution language-learning loop.
+The native `math-train` command remains a bounded byte-bit transition task. Its held-out score is a byte control, not lexical or sentence accuracy.
+
+The native `relation-train` command is a separate typed relation-polarity objective. It consumes source-bound `N16REL/1` records with train/test splits and a resolution tag L0-L9. It routes each relation through three distinct heads, updates their Boolean score tables, mutates three canonical mirror-pair cells, adds temporal links, and appends a six-member n-ary hyperedge containing the subject/predicate/object heads and their pair cells. It reports pre-training and post-training held-out relation-polarity accuracy, balanced accuracy, majority baseline and delta independently for every populated resolution. These scores are not text-generation accuracy and teacher labels are not independently verified facts.
 
 The native topology serializer persists the global chart and its Universe contents, including the per-head scratchpads where Boolean scores are stored, the shared hypergraph, and the append-only ledger. Each trained head adds a learned hyperedge connecting its fixed-point head cell to its adjacent pair-cell address; edge weight is the held-out accuracy in Q16.16. A final ledger event commits the before/after hypergraph digests. A subsequent invocation restores the serialized topology before applying new updates. Hermes reports this as a `serialized_global_topology` checkpoint; it must not be confused with a conventional neural-weight file or with the legacy Context2 bootstrap, which remains in-memory.
 
@@ -40,11 +42,19 @@ Reorganization does not mutate discoveries. The linguistic substrate has ten ind
 
 A contradiction is a first-class relation. The evaluator can compare conditions, derive counterexamples, lower confidence, or mark a claim superseded in a separate assessment event. It cannot erase the earlier claim.
 
-## Current training loop
+## Current training loops
 
-`corpus -> native 256-head trainer -> per-head JSONL discoveries -> schema/source/head validation -> append-only event merge -> deterministic layer reorganization -> held-out metrics`
+Structured teacher path:
 
-The native trace is now a stable structured-discovery stream for the Boolean transition task. The next research step is to extend the native trainer to emit richer typed operators, equations, hyperedges and explicit evaluation/counterexample events, then add cross-layer evaluation and bounded feedback.
+`teacher -> typed L0-L9 records -> schema/evidence/split validation -> frozen topic/resolution challenge -> N16REL/1 -> native relation-train -> heads + mirror pairs + temporal links + hyperedges -> pre/post metrics -> append-only memory merge`
+
+Free-form chat path:
+
+`user/assistant exchange -> structured reflection -> supported/refuted explicit triples -> N16REL/1 online batch -> same native relation-train -> shared topology commit -> mutation receipt`
+
+Both paths use the same `native/global_universe.nmg`. The verified Boolean foundation checkpoint seeds that shared state exactly once. The foundation gate is cached after a verified pass so it cannot reset the learner on every chat turn or training round.
+
+The legacy byte-bit trainer remains available as a separate control. It is no longer used as a proxy for lexical, word-completion, sentence, paragraph or narrative learning.
 
 ## Persistence and authority
 
@@ -154,3 +164,21 @@ The cross-resolution analyzer constructs a symmetric 10×10 co-occurrence matrix
 Each multi-resolution concept produces a deterministic equation record with an n-ary hyperedge whose participants are the original immutable event IDs. The record stores pair evidence, resolution indices, coverage and score; it is routed to the tenth review channel. It never replaces, averages away or deletes the original claims. Explicit alignment IDs can join layer-specific subjects; without one, equal subjects are compared. The operation is invoked after Hermes chat reflection and native math training, and is callable by runners through `nanlm_memory_cross_resolution`.
 
 This creates several useful mathematical feedback paths: coarse-to-fine constraint checking, fine-to-coarse evidence aggregation, cross-level contradiction detection, resolution coverage measurement, and uncertainty/entropy tracking. It is a deterministic structural analysis layer, not a learned differentiable gradient or proof of semantic equivalence. The next experiment should test whether feedback scores predict held-out word, sentence and narrative improvements.
+
+## Native relation record protocol
+
+`N16REL/1` is a UTF-8 file with tab-separated fields:
+
+`split, resolution, polarity, confidence_q16, subject_hex, predicate_hex, object_hex, source_sha256`.
+
+Only `train` rows mutate state. `test` rows are measured before and after
+training. The source digest is part of the event identity: exact replay is
+idempotent, while a later conversational turn that supplies the same relation
+from a different source remains a separate evidence event. Contradictions are
+retained as separate hyperedges.
+
+The ten resolutions remain distinct in the native report:
+bit, nibble, byte, phonetic, morpheme, lexical, word completion, sentence,
+paragraph and narrative. Missing test coverage is not reported as zero or
+copied from another resolution.
+

@@ -24,6 +24,7 @@ provides_tools:
   - nanlm_generate_corpus
   - nanlm_train
   - nanlm_math_train
+  - nanlm_structured_relation_train
   - nanlm_evaluate
   - nanlm_memory_ingest
   - nanlm_memory_reorganize
@@ -40,6 +41,10 @@ config_schema:
     type: int
     default: 60
     description: Reserved for native checkpoint support; current bootstrap artifacts are reproducibility manifests, not resumable model weights.
+  chat_learning:
+    type: bool
+    default: true
+    description: Enable free-form chat reflection to update native heads, mirror pairs and hyperedges when explicit supervised relations are extracted.
   runner_command:
     type: list
     default: []

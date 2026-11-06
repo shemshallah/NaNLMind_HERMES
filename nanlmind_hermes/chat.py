@@ -200,8 +200,11 @@ def _reflect(ctx, user_text: str, assistant_text: str, source_digest: str,
             "Do not emit raw hidden chain-of-thought. Emit concise inspectable features, not private reasoning.",
             "Stories, definitions, dialogue, logic and technical prose are all valid linguistic evidence.",
             "Each object: kind (entity|relation|operator|equation|constraint|observation|hypothesis|counterexample), "
-            "subject, predicate (optional), object (optional), expression (optional), resolution, "
+            "subject, predicate, object, expression (optional), resolution, "
             "polarity (supports|refutes|neutral), confidence (0..1), evidence (object), provenance (object).",
+            "For a claim that can supervise native relation learning, provide explicit non-empty subject, predicate and object. "
+            "Use supports/refutes only when the exchange supplies evidence for a binary label; otherwise use neutral. "
+            "Never invent a binary label to force a native update.",
         ],
         "source_sha256": source_digest,
         "prior_context": context,
@@ -319,10 +322,24 @@ def chat(ctx, message: str, session_id: str = "default", system_prompt: str = No
 
     try:
         reflection = _reflect(ctx, message, response_text, source_digest, history)
+        # Conversation-derived relations are evidence proposals, never silently
+        # promoted to independently verified facts.
+        for record in reflection.get("records", []):
+            if not isinstance(record, dict) or not isinstance(record.get("item"), dict):
+                continue
+            item = dict(record["item"])
+            existing_provenance = item.get("provenance")
+            provenance = dict(existing_provenance) if isinstance(existing_provenance, dict) else {}
+            provenance["source_type"] = "free_form_chat_reflection"
+            provenance["independently_fact_verified"] = False
+            item["provenance"] = provenance
+            if not isinstance(item.get("evidence"), dict):
+                item["evidence"] = {"reflection_evidence": item.get("evidence")}
+            record["item"] = item
         if reflection["records"]:
-            from .tools import _memory_store
-            store = _memory_store(ctx)
-            merge = store.merge(reflection["records"])
+            from .tools import _merge_relation_memory
+            memory_result = _merge_relation_memory(ctx, reflection["records"], train_only=False)
+            merge = memory_result["merge"]
     except Exception as exc:
         # Chat must remain usable if the optional reflection provider call fails.
         reflection["error"] = type(exc).__name__ + ": " + str(exc)[:500]
@@ -338,6 +355,19 @@ def chat(ctx, message: str, session_id: str = "default", system_prompt: str = No
             _memory_store(ctx).reorganize()
         except Exception:
             pass
+
+    native_learning = {"status": "disabled"}
+    try:
+        chat_learning = ctx.get_config("chat_learning", default=True)
+    except Exception:
+        chat_learning = True
+    if chat_learning:
+        try:
+            from .tools import ingest_conversation_relations
+            native_learning = ingest_conversation_relations(ctx, reflection.get("records", []))
+        except Exception as exc:
+            native_learning = {"status": "native_update_failed",
+                               "error": type(exc).__name__ + ": " + str(exc)[:1000]}
 
     return {
         "session_id": session_id, "response": response_text,
@@ -356,7 +386,8 @@ def chat(ctx, message: str, session_id: str = "default", system_prompt: str = No
             "memory_merge": merge, "error": reflection.get("error"),
         },
         "cross_resolution_feedback": cross_resolution,
-        "memory_note": "Structured reflection proposals and derived cross-resolution equations are additive evidence, not learned neural weights.",
+        "native_learning": native_learning,
+        "memory_note": "Structured reflection and cross-resolution equations remain additive evidence. Native learning is reported separately and only counts when the 256-head runner commits head, mirror-pair and hyperedge updates.",
     }
 
 
