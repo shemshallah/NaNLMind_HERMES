@@ -341,7 +341,7 @@ def run_relation_train(command: Sequence[str], records_path: Path, state_dir: Pa
     status = summary.group(1)
     reported_epochs, train_events, duplicates, changed_heads, pair_updates, edges, state_bytes = map(
         int, summary.groups()[1:8])
-    digest_before, digest_after = summary.group(8), summary.group(9)
+    digest_before, digest_after = summary.group(9), summary.group(10)
     if reported_epochs != epochs:
         raise RunnerError("native relation-train epoch receipt does not match request")
     if state_bytes != state_path.stat().st_size:
