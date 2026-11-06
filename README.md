@@ -436,7 +436,7 @@ NANNET interface, while preserving the distinction between Router node point
 3, BSR wire identities and NaNLMind's internal 256 heads.
 
 The architecture and implementation boundaries are documented in
-[NaNLMind CLOCKED/HERMES brainstorm](https://github.com/shemshallah/NaNLMind/blob/main/docs/CLOCKED_HERMES_BRAINSTORM.md).
+[NaNLMind CLOCKED/HERMES brainstorm](https://github.com/shemshallah/NaNLMind_CLOCKED/blob/main/docs/CLOCKED_HERMES_BRAINSTORM.md).
 This is a design specification, not a claim that CLOCKED mode, HW3:0 or the
 service proxy is already implemented.
 
@@ -463,7 +463,7 @@ and the limits of the experiment.
 | `nanlmind_hermes/crypto_compat.py` | dependency-free Ed25519/AES-GCM/HKDF |
 | `docs/TOOLS_REFERENCE.md` | complete tool/option reference |
 | `docs/WALKTHROUGHS.md` | end-to-end usage scenarios |
-| `docs/PLUGIN_ARCHITECTURE.md` | design, boundaries, and invariants |\n| CLOCKED architecture | [NaNLMind/docs/CLOCKED_HERMES_BRAINSTORM.md](https://github.com/shemshallah/NaNLMind/blob/main/docs/CLOCKED_HERMES_BRAINSTORM.md) |
+| `docs/PLUGIN_ARCHITECTURE.md` | design, boundaries, and invariants |\n| CLOCKED architecture | [NaNLMind/docs/CLOCKED_HERMES_BRAINSTORM.md](https://github.com/shemshallah/NaNLMind_CLOCKED/blob/main/docs/CLOCKED_HERMES_BRAINSTORM.md) |
 | `docs/NAN16DE.md` | raw NaN16 double-endian route protocol |
 | `docs/BASELINE_1.0.1.md` | model-planned logic/words/sentences baseline results |
 | `docs/TEACHER_LOOP.md` | teacher → validator → student → feedback protocol |
