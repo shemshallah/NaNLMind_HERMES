@@ -1,8 +1,8 @@
 name: nanlmind-hermes
-version: 0.2.0
+version: 1.0.0
 manifest_version: 2
 api_version: 1
-description: Local NaNLMind training, reproducible evaluation and NANNET-connected universe operations through Hermes.
+description: Local NaNLMind conversational learning, explicit staged training, reproducible evaluation and NANNET-connected universe operations through Hermes.
 license: MIT
 homepage: https://github.com/shemshallah/NaNLMind_HERMES
 tags: [nanlmind, training, corpus, local-runner, nannet]
@@ -16,6 +16,10 @@ provides_tools:
   - nanlm_auth_revoke
   - nanlm_generate_curriculum
   - nanlm_curriculum_experiment
+  - nanlm_logic_session
+  - nanlm_word_session
+  - nanlm_sentence_session
+  - nanlm_training_pipeline
   - nanlm_generate_corpus
   - nanlm_train
   - nanlm_math_train

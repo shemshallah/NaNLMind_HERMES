@@ -1,160 +1,350 @@
 # NaNLMind Hermes
 
-Hermes plugin for a local NaNLMind 256-head universe, with NANNET installation identity, authority-side scope checks, native mathematical training, and additive discovery memory.
+**Version 1.0.0 — released 2026-11-06**
 
-## Cryptography fallback
+NaNLMind Hermes connects a Hermes agent to a local NaNLMind 256-head universe.
+It provides:
 
-HERMES does not require the `cryptography` package. It uses the audited package
-when installed and falls back to a dependency-free RFC 8032 Ed25519, AES-256-GCM,
-and HKDF-SHA256 implementation for minimal images such as Termux. Install the
-optional extra for the accelerated/audited backend:
+- a default open-ended chat loop with durable conversation history;
+- explicit, ordered logic → words → sentences training sessions;
+- a full staged training pipeline;
+- native NaNLMind head training with resumable global-topology state;
+- additive mathematical memory with evidence assessment and cross-resolution
+  feedback;
+- local NANNET identity, pairing, signed requests, and optional authority
+  scopes;
+- a dependency-free Ed25519/AES-GCM/HKDF path for Alpine, Termux, and minimal
+  hosts.
+
+Training runs locally. Koyeb/NANNET is coordination and authorization only;
+it is not the model runner or corpus store.
+
+---
+
+## 1. Default behaviour: chat
+
+Plain conversation is the default. The model should use `nanlm_chat` for normal
+interaction. Training tools are explicit actions, not side effects of chat.
+
+Inside a Hermes session:
+
+```text
+/nanlm Hello, explain what you remember about penguins.
+/nanlm chat Continue the previous discussion.
+```
+
+Bare text after `/nanlm` is treated as a chat message:
+
+```text
+/nanlm What did we train last time?
+```
+
+Chat records:
+
+- a durable JSONL transcript per session;
+- provider/model metadata;
+- exact UTF-8 bit, nibble, byte, lexical, sentence, and paragraph measurements;
+- a structured reflection proposal merged into additive mathematical memory;
+- optional cross-resolution relations.
+
+Reflection is best effort and never blocks the conversational answer. It
+updates symbolic evidence, not model weights.
+
+---
+
+## 2. Installation
+
+### From the Hermes plugin service / Git repository
+
+```sh
+hermes plugins install shemshallah/NaNLMind_HERMES --yes-deps --enable
+hermes plugins list
+hermes tools
+```
+
+Installing from a repository is available immediately. Catalog review and
+listing are a separate submission process.
+
+### Local development
+
+```sh
+git clone https://github.com/shemshallah/NaNLMind_HERMES.git
+hermes plugins install /absolute/path/NaNLMind_HERMES --enable
+hermes plugins validate /absolute/path/NaNLMind_HERMES --install-deps
+hermes plugins doctor /absolute/path/NaNLMind_HERMES --ci
+```
+
+Expected validation:
+
+```text
+✓ manifest
+✓ loadable
+✓ capability probe
+✓ declared tools
+✓ declared hooks
+✓ built-in tool collisions
+✓ security scan
+✓ no core override
+Validation passed.
+```
+
+### Minimal Alpine / Termux
+
+The plugin has no required Python dependencies. It uses `cryptography` when
+present and otherwise falls back to pure-Python Ed25519, AES-256-GCM, HKDF, and
+RSA PKCS#1 verification. See `docs/ALPINE_PROOT_TESTING.md`.
+
+For the audited/accelerated backend:
 
 ```sh
 pip install "nanlmind-hermes[auth]"
 ```
 
-The fallback is intended for local demo and minimal-host operation; use the
-optional backend or an HSM for production key custody.
+The fallback is appropriate for minimal local hosts; use the optional backend
+or an HSM for production key custody.
 
-## Native mathematical trainer
+---
 
-Build the core repository and configure Hermes `runner_command` as an argv array containing the absolute path to `build/nanlm-universal`:
+## 3. Configuration
 
-    ["/absolute/path/to/NaNLMind/build/nanlm-universal"]
+Settings live under `plugins.entries.nanlmind-hermes.settings`.
 
-Use `nanlm_math_train` for the new path. It invokes the native `math-train` command, trains the 256 palindromic heads in the shared global topology, evaluates a held-out corpus split, writes a resumable serialized global topology, adds one learned hyperedge per head to the native global hypergraph (with a ledger commit), validates the 256-record JSONL discovery trace against those hyperedge IDs, and merges the discoveries into the additive memory ledger.
+| key | type | default | meaning |
+|---|---|---|---|
+| `duration_minutes` | int | `30` | wall budget for legacy native bootstrap runs, 1–360 |
+| `checkpoint_interval_seconds` | int | `60` | reserved for native checkpoint support |
+| `runner_command` | list[str] | `[]` | absolute argv for the local `nanlm-universal` binary |
+| `state_dir` | str | `~/.local/share/nanlmind-hermes` | universe, corpora, transcripts, runs |
+| `universe_layers` | int | `7` | logical memory projection layers L0–L6 |
 
-This first native trainer is deliberately scoped: it learns per-head Boolean truth-table rules for byte-bit transition tasks. It is a real persistent native training path, but it is not yet a general symbolic mathematics solver, a language model, or the complete multi-layer self-reorganizing trainer. Its held-out accuracy is an evaluation metric, not proof of broad mathematical reasoning.
+Example:
 
-The state file includes the global topology and serialized universe/head scratchpads. A later run loads that exact state before training. Hermes keeps a separate append-only event ledger so extracted claims and contradictory evidence survive even when native state evolves.
+```yaml
+plugins:
+  entries:
+    nanlmind-hermes:
+      enabled: true
+      settings:
+        state_dir: ~/.local/share/nanlmind-hermes
+        universe_layers: 7
+        runner_command: ["/opt/NaNLMind/build/nanlm-universal"]
+```
 
-## Other tools
+The native runner is required for `nanlm_math_train`, `nanlm_train`,
+`nanlm_evaluate`, and the training pipeline. Chat and memory tools work without
+it.
 
-- `nanlm_status` — local universe, latest native math run, checkpoint presence, and memory status.
-- `nanlm_generate_corpus` — produce a content-addressed N16TXT/1 corpus.
-- `nanlm_generate_curriculum` — ask the active Hermes model for a balanced 12-stage corpus, from Boolean inverses and deep logic through morphology, word choice, sentences, paragraphs and stories.
-- `nanlm_curriculum_experiment` — generate that corpus, run the native 256-head trainer, merge runner discoveries into the same additive memory as chat, and save a reproducible experiment manifest.
-- `nanlm_train` — run the legacy Context2 bootstrap trainer (its parameters remain in-memory).
-- `nanlm_math_train` — run native 256-head training, resume the global topology, validate discoveries, merge, and reorganize.
-- `nanlm_evaluate` — compare topology-byte, Kneser-Ney order-2 and Context2 controls.
-- `nanlm_memory_ingest`, `nanlm_memory_query`, `nanlm_memory_assessments`, `nanlm_memory_reorganize`, `nanlm_memory_merge` — manage durable additive mathematical memory and evidence review.
-- `nanlm_memory_cross_resolution` — compute the 10×10 language-resolution interaction matrix, compare aligned claims, preserve contradictions, and merge derived mathematical hyperedges.
-- `nanlm_auth_init`, `nanlm_auth_pair`, `nanlm_auth_status`, `nanlm_auth_revoke` — manage the local NANNET installation identity.
+---
 
-## What persists
+## 4. Training modes
 
-The native global topology is serialized to `universe/native/global_universe.nmg` and resumed on subsequent math-training runs. Structured discoveries are stored separately in a SQLite WAL event ledger with content-addressed IDs, typed graph edges and n-ary hyperedges. Chat reflection and curriculum generation read a bounded snapshot of that same universe before proposing new evidence; native runner discoveries append to it and retain their native head/layer routes. Reorganization rebuilds deterministic projections without deleting evidence. Conflicting hypotheses remain independently auditable.
+Training is deliberately command-driven.
 
-NANNET is the authorization and delta-coordination boundary. Training and corpus processing run locally; Koyeb is not the native trainer or corpus store.
+### Full pipeline
 
-See `docs/HERMES_UNIVERSE_MEMORY.md` for the memory model and current limitations.
+```text
+/nanlm pipeline English logic, common words, and short stories
+```
 
+or call `nanlm_training_pipeline`.
 
-## Open-ended Hermes conversation
+The canonical 12-stage order is:
 
-The conversational path is the primary language-model interface; it is separate
-from the legacy N16TXT corpus trainer. Expose `nanlmind_hermes.tools.chat` as
-`nanlm_chat` in the Hermes plugin tool registry and
-`nanlmind_hermes.tools.chat_history` as `nanlm_chat_history`.
+```text
+boolean_inverses
+deep_logic
+story_saturation
+exceptions
+repetitive_words
+phonetic_pairs
+morpheme_structure
+lexical_words
+word_completion
+sentence_choice
+paragraph_structure
+narrative
+```
 
-`nanlm_chat` accepts ordinary UTF-8 text up to 1 MiB, keeps a durable JSONL
-transcript per session, calls the active Hermes language provider for an
-open-ended answer, then records deterministic UTF-8 bit, nibble and byte histograms plus
-orthographic token, sentence and paragraph measurements in ten independent
-resolution channels. A structured reflection pass supplies phonetic, morpheme,
-word-completion and narrative evidence when supported by the exchange.
-It then makes a separate best-effort structured reflection call. The reflection
-worker proposes typed discoveries tagged with linguistic resolution (including
-phonetic, morpheme, lexical, word completion and narrative hypotheses). Valid
-proposals are merged into the additive memory ledger with a source digest and
-provenance. Stable concept alignment IDs let the cross-resolution engine compare
-the same concept across different linguistic resolutions. Reflection failure
-never blocks the conversational answer.
+### Logic-only session
 
-This is an interaction and evidence-learning loop, not online gradient training:
-the provider response is generated by the configured model, while reflected
-discoveries update Hermes' durable symbolic memory. They do not silently alter
-provider weights or claim that the native 256-head topology has learned language.
-Large-text conversation does not require N16TXT framing. The active provider
-selection is whatever the host Hermes runtime configures; multi-provider
-experimentation requires configuring/selecting additional providers at the host
-integration layer.
+```text
+/nanlm logic Boolean truth tables and nested implications
+```
 
-## Android / Termux installation
+Uses:
 
-The base plugin has no third-party Python runtime dependencies. On Termux, install
-the editable package without the optional NANNET cryptography stack:
+```text
+boolean_inverses + deep_logic
+```
 
-    python -m pip install -e .
+Tool: `nanlm_logic_session`.
 
-This enables plugin registration, `nanlm_chat`, `nanlm_chat_history`, SQLite
-mathematical memory, corpus handling and local runner integration. The NANNET
-identity/pairing/signature/encryption tools remain registered but require the
-optional `auth` extra on a platform with a supported cryptography wheel:
+### Word-only session
 
-    python -m pip install -e ".[auth]"
+```text
+/nanlm words common words, repetition, and next-word choice
+```
 
-Do not attempt to substitute pure-Python homemade cryptography. In standalone
-local mode the runner does not require NANNET cryptography; configure the
-authority URL and pinned issuer key only when using paired authority mode.
+Uses:
 
+```text
+repetitive_words + lexical_words + word_completion
+```
 
-## Cross-resolution discovery and controls
+Tool: `nanlm_word_session`.
 
-The ten resolutions are not isolated bins. When evidence carries an explicit stable
-`alignment_id` or `concept_id`, the engine can compare numeric observations across
-resolutions. It currently discovers exact equality, ratios, and differences only
-when both observations declare matching non-empty units. Numeric expressions are
-treated as inert data: only a literal numeric `value` or numeric `object` is read;
-arbitrary expression trees are never executed. Each accepted relation becomes an
-auditable equation/hyperedge that points back to its source event IDs and is routed
-to the narrative/review channel.
+### Sentence/story session
 
-Controls and baselines:
+```text
+/nanlm sentences sentence continuations and short narratives
+```
 
-- **Known-answer positive control:** one aligned concept represented at all ten
-  resolutions produces 45 pairwise level comparisons and a consistency score of 1.
-- **Contradiction control:** a deliberately refuting level remains visible as
-  contradiction evidence; it is not averaged away.
-- **Unrelated-concept negative control:** ten unique alignment IDs produce zero
-  cross-resolution links.
-- **Numeric unit control:** matching values and units can produce an equality;
-  a known 12-to-3 ratio produces 4. Incompatible or missing units are excluded.
-- **Permutation negative control:** a seeded label permutation reports observed
-  versus shuffled comparison counts and consistency magnitudes. It is a diagnostic,
-  not a statistical p-value.
+Uses:
 
-Run the deterministic synthetic suite with:
+```text
+sentence_choice + narrative
+```
 
-    python -m benchmarks.cross_resolution_baseline
+Tool: `nanlm_sentence_session`.
 
-Run the complete unit suite with:
+### Custom stage order
 
-    python -m unittest discover -s tests -v
+`nanlm_training_pipeline` accepts an ordered `stages` array:
 
-These synthetic numbers validate implementation behavior, not real-world language
-understanding. Real corpus baselines still need held-out corpora, repeated seeds,
-per-resolution coverage, relation precision/recall against adjudicated labels,
-and comparison against shuffled-label and single-resolution controls. No learned
-neural weights are updated by these symbolic relation discoveries.
+```json
+{
+  "topic": "logic and language",
+  "stages": ["boolean_inverses", "deep_logic", "word_completion", "sentence_choice"],
+  "records_per_stage": 12,
+  "epochs": 3,
+  "max_samples_per_head": 4096
+}
+```
 
-## Ten-resolution mathematical feedback
+Every training tool returns a reproducible manifest and merges native head
+discoveries into mathematical memory.
 
-The language substrate has ten distinct resolution coordinates, not seven coarse buckets:
+### What native training actually learns
 
-| Index | Resolution | Mathematical role |
-|---:|---|---|
-| 0 | Bit | Boolean features and binary evidence |
-| 1 | Nibble | Four-bit symbol partitions |
-| 2 | Byte | UTF-8 code-unit and byte distributions |
-| 3 | Phonetic | Consonant/vowel and sound-pattern hypotheses |
-| 4 | Morpheme | Roots, stems, prefixes and suffixes |
-| 5 | Lexical | Word identity and semantic relations |
-| 6 | Word completion | Candidate next-token alternatives |
-| 7 | Sentence | Syntax, agreement and local sequence constraints |
-| 8 | Paragraph | Discourse continuity and reference |
-| 9 | Narrative | Temporal, causal and story-level structure |
+`nanlm_math_train` trains the 256 native heads on a bounded byte-bit transition
+task. It is real, persistent native training, but not a general language model.
+Held-out accuracy measures that task only. Chat reflection is symbolic evidence,
+not online gradient descent.
 
-`nanlm_memory_cross_resolution` computes a symmetric 10×10 co-occurrence matrix plus separate fine-to-coarse and coarse-to-fine feedback matrices. It compares claims sharing a subject or explicit `alignment_id` / `concept_id`, measures polarity alignment, contradiction and content divergence, computes a bounded consistency score and polarity entropy, and emits deterministic n-ary equation/hyperedge records linking the original event IDs. Derived records are routed to resolution channel 9 for review; original evidence is never overwritten.
+---
 
-The score is descriptive evidence, not a truth oracle: `(aligned - contradicted) / (aligned + contradicted)`, or zero when no support/refutation comparison exists. Neutral evidence is retained but does not inflate the score. The same operation is invoked by chat and native mathematical training, and is exposed directly as a Hermes tool for runners.
+## 5. Commands
+
+| command | behaviour |
+|---|---|
+| `/nanlm` or `/nanlm chat ...` | default chat |
+| `/nanlm logic ...` | logic-only training |
+| `/nanlm words ...` | word-only training |
+| `/nanlm sentences ...` | sentence/story training |
+| `/nanlm pipeline ...` | full staged pipeline |
+| `/nanlm status` | universe/native/memory status |
+| `/nanlm help` | command help |
+
+The same actions are available as model tools. See
+`docs/TOOLS_REFERENCE.md` for every parameter.
+
+---
+
+## 6. Memory model
+
+There are two stores:
+
+1. **Native global topology** — serialized head/cell/scratchpad state at
+   `universe/native/global_universe.nmg`, resumed by later native runs.
+2. **Additive discovery ledger** — immutable, content-addressed events, typed
+   edges, n-ary hyperedges, and deterministic L0–L6 projections.
+
+A merge is an idempotent set union followed by projection rebuild. Conflicting
+claims are retained and become contested; they are not averaged away. The
+ledger contains evidence, not neural weights.
+
+Cross-resolution analysis covers ten channels:
+
+```text
+bit, nibble, byte, phonetic, morpheme, lexical,
+word_completion, sentence, paragraph, narrative
+```
+
+It compares aligned evidence, preserves contradictions, and emits auditable
+relations. Synthetic controls validate the mechanism; they do not establish
+general language understanding.
+
+---
+
+## 7. NANNET identity and pairing
+
+The optional NANNET path provides:
+
+- one local installation Ed25519 identity;
+- a master-key-encrypted private-key envelope;
+- one-time pairing codes;
+- role-bounded scoped tokens;
+- signed requests with replay-resistant nonces;
+- revocation;
+- device lease routes.
+
+Commands/tools:
+
+```text
+nanlm_auth_init
+nanlm_auth_status
+nanlm_auth_pair
+nanlm_auth_revoke
+```
+
+Standalone local chat/training does not require NANNET. Paired mode fails closed
+when authority credentials are missing or invalid. See
+`docs/NANNET_API_HERMES.md`.
+
+---
+
+## 8. Troubleshooting
+
+| symptom | fix |
+|---|---|
+| plugin not listed | `hermes plugins list`; enable `nanlmind-hermes` |
+| validation import error | ensure `__init__.py` exists; reinstall with `--force` |
+| no native training | configure `runner_command` to the local binary |
+| `nanlm-universal` not found | build NaNLMind and use an absolute path |
+| chat unavailable | configure the Hermes provider with `hermes model` |
+| authority errors | check `NANNET_AUTH_URL` and pinned issuer key |
+| Alpine `fchdir` error | use `proot-distro login --minimal` |
+| state not resumable | native math runner writes the serialized topology; legacy bootstrap does not |
+
+Diagnostics:
+
+```sh
+hermes plugins validate /path/to/NaNLMind_HERMES
+hermes plugins doctor /path/to/NaNLMind_HERMES --ci
+python -m unittest discover -s tests -v
+```
+
+---
+
+## 9. Repository map
+
+| path | contents |
+|---|---|
+| `nanlmind_hermes/__init__.py` | tool registration, `/nanlm` command |
+| `nanlmind_hermes/tools.py` | chat, corpus, training, memory, status |
+| `nanlmind_hermes/chat.py` | conversational loop and multiresolution reflection |
+| `nanlmind_hermes/runner.py` | local native process harness |
+| `nanlmind_hermes/memory.py` | additive memory ledger and projections |
+| `nanlmind_hermes/auth.py`, `pairing.py` | NANNET identity and signing |
+| `nanlmind_hermes/crypto_compat.py` | dependency-free Ed25519/AES-GCM/HKDF |
+| `docs/TOOLS_REFERENCE.md` | complete tool/option reference |
+| `docs/WALKTHROUGHS.md` | end-to-end usage scenarios |
+| `docs/PLUGIN_ARCHITECTURE.md` | design, boundaries, and invariants |
+
+## 10. Versioning
+
+- `1.0.0` — 2026-11-06: default chat loop, explicit training modes, full
+  pipeline, 23 tools, `/nanlm` command, validation-ready manifest, dependency
+  fallback, complete documentation.
+
+License: MIT.

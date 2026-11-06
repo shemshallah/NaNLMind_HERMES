@@ -332,12 +332,29 @@ CURRICULUM_STAGES = (
 )
 
 
-def generate_curriculum(ctx, topic: str, records_per_stage: int = 12):
-    """Generate a balanced, multi-resolution language/logic corpus for Hermes."""
+def generate_curriculum(ctx, topic: str, records_per_stage: int = 12,
+                        stages: list[str] | tuple[str, ...] | None = None):
+    """Generate a balanced, multi-resolution language/logic corpus for Hermes.
+
+    ``stages`` is an optional ordered subset of CURRICULUM_STAGES names. The
+    default remains the complete twelve-stage curriculum.
+    """
     if not isinstance(topic, str) or not topic.strip():
         raise ValueError("topic is required")
     if isinstance(records_per_stage, bool) or not isinstance(records_per_stage, int) or not 1 <= records_per_stage <= 64:
         raise ValueError("records_per_stage must be between 1 and 64")
+    selected = list(CURRICULUM_STAGES)
+    if stages is not None:
+        if isinstance(stages, (str, bytes)) or not isinstance(stages, (list, tuple)):
+            raise ValueError("stages must be a list of curriculum stage names")
+        wanted = list(stages)
+        known = {name for name, _ in CURRICULUM_STAGES}
+        unknown = [name for name in wanted if name not in known]
+        if unknown:
+            raise ValueError("unknown curriculum stage(s): " + ", ".join(unknown))
+        if not wanted:
+            raise ValueError("stages cannot be empty")
+        selected = [(name, focus) for name, focus in CURRICULUM_STAGES if name in wanted]
     generated, stage_manifest = [], []
     stage_layers = {
         "boolean_inverses": 0, "deep_logic": 4, "story_saturation": 6,
@@ -346,7 +363,7 @@ def generate_curriculum(ctx, topic: str, records_per_stage: int = 12):
         "lexical_words": 3, "word_completion": 4, "sentence_choice": 5,
         "paragraph_structure": 6, "narrative": 6,
     }
-    for stage, focus in CURRICULUM_STAGES:
+    for stage, focus in selected:
         universe_context = _memory_context(ctx, layer=stage_layers[stage], limit=16)
         result = ctx.llm.complete(
             messages=[
@@ -394,9 +411,9 @@ def generate_curriculum(ctx, topic: str, records_per_stage: int = 12):
         "schema": "nanlm-curriculum-manifest/1",
         "created_at": datetime.now(timezone.utc).isoformat(),
         "corpus_sha256": digest, "record_count": info.unique_records,
-        "requested_records": records_per_stage * len(CURRICULUM_STAGES),
+        "requested_records": records_per_stage * len(selected),
         "topic": topic.strip(), "stages": stage_manifest,
-        "resolution_order": [stage for stage, _ in CURRICULUM_STAGES],
+        "resolution_order": [stage for stage, _ in selected],
     }
     path.with_suffix(".json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     return {"corpus_path": str(path), "sha256": digest,
@@ -405,9 +422,10 @@ def generate_curriculum(ctx, topic: str, records_per_stage: int = 12):
 
 
 def run_curriculum_experiment(ctx, topic: str, records_per_stage: int = 12,
-                               epochs: int = 3, max_samples_per_head: int = 4096):
+                               epochs: int = 3, max_samples_per_head: int = 4096,
+                               stages: list[str] | tuple[str, ...] | None = None):
     """Generate a staged corpus, train the native 256-head universe and record one experiment."""
-    corpus = generate_curriculum(ctx, topic, records_per_stage)
+    corpus = generate_curriculum(ctx, topic, records_per_stage, stages)
     training = math_train(ctx, corpus["corpus_path"], epochs, max_samples_per_head)
     _, _, universe = _paths(ctx)
     experiments = universe / "experiments"
@@ -431,6 +449,33 @@ def run_curriculum_experiment(ctx, topic: str, records_per_stage: int = 12,
     temp.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     os.replace(temp, manifest)
     result["manifest_path"] = str(manifest)
+    return result
+
+
+def run_training_session(ctx, topic: str, mode: str = "logic",
+                          records_per_stage: int = 12, epochs: int = 3,
+                          max_samples_per_head: int = 4096):
+    """Run one explicit training mode without changing the default chat path.
+
+    modes:
+      logic     Boolean inverses + deep logic
+      words     repetitive/lexical words + word completion
+      sentences sentence choice + narrative
+      pipeline  all twelve stages in canonical order
+    """
+    presets = {
+        "logic": ["boolean_inverses", "deep_logic"],
+        "words": ["repetitive_words", "lexical_words", "word_completion"],
+        "sentences": ["sentence_choice", "narrative"],
+        "pipeline": [name for name, _ in CURRICULUM_STAGES],
+    }
+    if mode not in presets:
+        raise ValueError("mode must be one of: " + ", ".join(sorted(presets)))
+    result = run_curriculum_experiment(
+        ctx, topic, records_per_stage, epochs, max_samples_per_head,
+        presets[mode])
+    result["mode"] = mode
+    result["stages_requested"] = presets[mode]
     return result
 
 

@@ -1,6 +1,6 @@
 [project]
 name = "nanlmind-hermes"
-version = "0.1.0"
+version = "1.0.0"
 description = "Hermes plugin for a local NaNLMind 256-head universe"
 requires-python = ">=3.10"
 dependencies = []

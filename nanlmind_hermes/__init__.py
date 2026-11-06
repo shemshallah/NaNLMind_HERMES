@@ -18,6 +18,46 @@ def register(ctx):
             ctx, params["topic"], params.get("records_per_stage", 12),
             params.get("epochs", 3), params.get("max_samples_per_head", 4096))
 
+    def handle_logic_session(params, **kwargs):
+        _require_scope("training:execute")
+        return tools.run_training_session(
+            ctx, params.get("topic", "logic"), "logic",
+            params.get("records_per_stage", 12),
+            params.get("epochs", 3),
+            params.get("max_samples_per_head", 4096))
+
+    def handle_word_session(params, **kwargs):
+        _require_scope("training:execute")
+        return tools.run_training_session(
+            ctx, params.get("topic", "words"), "words",
+            params.get("records_per_stage", 12),
+            params.get("epochs", 3),
+            params.get("max_samples_per_head", 4096))
+
+    def handle_sentence_session(params, **kwargs):
+        _require_scope("training:execute")
+        return tools.run_training_session(
+            ctx, params.get("topic", "sentences"), "sentences",
+            params.get("records_per_stage", 12),
+            params.get("epochs", 3),
+            params.get("max_samples_per_head", 4096))
+
+    def handle_training_pipeline(params, **kwargs):
+        _require_scope("training:execute")
+        mode = params.get("mode", "pipeline")
+        stages = params.get("stages")
+        if isinstance(stages, list) and stages:
+            return tools.run_curriculum_experiment(
+                ctx, params.get("topic", "logic and language"),
+                params.get("records_per_stage", 12),
+                params.get("epochs", 3),
+                params.get("max_samples_per_head", 4096), stages)
+        return tools.run_training_session(
+            ctx, params.get("topic", "logic and language"), mode,
+            params.get("records_per_stage", 12),
+            params.get("epochs", 3),
+            params.get("max_samples_per_head", 4096))
+
     def handle_chat(params, **kwargs):
         return tools.chat(ctx, params["message"], params.get("session_id", "default"),
                           params.get("system_prompt"), params.get("temperature", 0.7),
@@ -126,6 +166,32 @@ def register(ctx):
           "epochs": {"type": "integer", "minimum": 1, "maximum": 100, "default": 3},
           "max_samples_per_head": {"type": "integer", "minimum": 1, "maximum": 100000, "default": 4096}},
          ["topic"], handle_curriculum_experiment),
+        ("nanlm_logic_session", "Explicitly train the logic-only session: Boolean inverses and deep logic. Use only when the user asks for logic training; normal conversation uses nanlm_chat.",
+         {"topic": {"type": "string", "minLength": 1, "maxLength": 500},
+          "records_per_stage": {"type": "integer", "minimum": 1, "maximum": 64, "default": 12},
+          "epochs": {"type": "integer", "minimum": 1, "maximum": 100, "default": 3},
+          "max_samples_per_head": {"type": "integer", "minimum": 1, "maximum": 100000, "default": 4096}},
+         [], handle_logic_session),
+        ("nanlm_word_session", "Explicitly train the word-only session: repetitive words, lexical words and word completion.",
+         {"topic": {"type": "string", "minLength": 1, "maxLength": 500},
+          "records_per_stage": {"type": "integer", "minimum": 1, "maximum": 64, "default": 12},
+          "epochs": {"type": "integer", "minimum": 1, "maximum": 100, "default": 3},
+          "max_samples_per_head": {"type": "integer", "minimum": 1, "maximum": 100000, "default": 4096}},
+         [], handle_word_session),
+        ("nanlm_sentence_session", "Explicitly train the sentence/story session: sentence choice and narrative.",
+         {"topic": {"type": "string", "minLength": 1, "maxLength": 500},
+          "records_per_stage": {"type": "integer", "minimum": 1, "maximum": 64, "default": 12},
+          "epochs": {"type": "integer", "minimum": 1, "maximum": 100, "default": 3},
+          "max_samples_per_head": {"type": "integer", "minimum": 1, "maximum": 100000, "default": 4096}},
+         [], handle_sentence_session),
+        ("nanlm_training_pipeline", "Explicitly run the full training pipeline, a preset, or a custom ordered stage list. Normal conversation must use nanlm_chat instead.",
+         {"topic": {"type": "string", "minLength": 1, "maxLength": 500},
+          "mode": {"type": "string", "enum": ["pipeline", "logic", "words", "sentences"], "default": "pipeline"},
+          "stages": {"type": "array", "items": {"type": "string"}, "minItems": 1, "maxItems": 12},
+          "records_per_stage": {"type": "integer", "minimum": 1, "maximum": 64, "default": 12},
+          "epochs": {"type": "integer", "minimum": 1, "maximum": 100, "default": 3},
+          "max_samples_per_head": {"type": "integer", "minimum": 1, "maximum": 100000, "default": 4096}},
+         [], handle_training_pipeline),
         ("nanlm_generate_corpus", "Generate a bounded N16TXT/1 corpus using Hermes' active model.",
          {"topic": {"type": "string"}, "records": {"type": "integer", "minimum": 1, "maximum": 64, "default": 24}}, ["topic"], handle_generate),
         ("nanlm_train", "Run the native NaNLMind Context2 bootstrap trainer locally.",
@@ -170,4 +236,42 @@ def register(ctx):
             schema={"name": name, "description": description,
                     "parameters": {"type": "object", "properties": properties,
                                    "required": required, "additionalProperties": False}},
+        )
+
+    def handle_command(raw_args):
+        import shlex
+        try:
+            parts = shlex.split(raw_args or "")
+        except ValueError:
+            parts = (raw_args or "").split()
+        command = parts[0].lower() if parts else "chat"
+        rest = parts[1:]
+        if command in {"help", "?"}:
+            return {
+                "usage": "/nanlm [chat|logic|words|sentences|pipeline|status] ...",
+                "default": "chat",
+                "note": "Bare /nanlm text is treated as a chat message.",
+            }
+        if command == "status":
+            return handle_status({})
+        if command == "logic":
+            return handle_logic_session({"topic": " ".join(rest) or "logic"})
+        if command == "words":
+            return handle_word_session({"topic": " ".join(rest) or "words"})
+        if command == "sentences":
+            return handle_sentence_session({"topic": " ".join(rest) or "sentences"})
+        if command == "pipeline":
+            return handle_training_pipeline({"topic": " ".join(rest) or "logic and language", "mode": "pipeline"})
+        if command == "chat":
+            message = " ".join(rest)
+        else:
+            message = raw_args.strip()
+        if not message:
+            return {"response": "NaNLMind chat is ready. Use /nanlm <message> or /nanlm help."}
+        return handle_chat({"message": message})
+
+    if hasattr(ctx, "register_command"):
+        ctx.register_command(
+            "nanlm", handle_command,
+            description="NaNLMind default chat; explicit /nanlm logic|words|sentences|pipeline training modes.",
         )
