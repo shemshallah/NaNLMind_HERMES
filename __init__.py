@@ -13,7 +13,7 @@ def register(ctx):
     def handle_train(params, **kwargs):
         auth_tools.require_scope(ctx,"training:execute")
         return tools.train(ctx,params["corpus_path"],params.get("duration_minutes"))
-    def handle_evaluate(params, **kwargs): return tools.evaluate(ctx,params["corpus_path"])
+    def handle_evaluate(params, **kwargs):\n        auth_tools.require_scope(ctx,"universe:read")\n        return tools.evaluate(ctx,params["corpus_path"])
 
     specs=[
       ("nanlm_status","Inspect local NaNLMind universe status.",{},[],handle_status),
