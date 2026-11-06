@@ -34,6 +34,10 @@ def register(ctx):
         auth_tools.require_scope(ctx, "training:execute")
         return tools.memory_reorganize(ctx)
 
+    def handle_memory_merge(params, **kwargs):
+        auth_tools.require_scope(ctx, "training:execute")
+        return tools.memory_merge(ctx, params["records"])
+
     def handle_memory_query(params, **kwargs):
         auth_tools.require_scope(ctx, "universe:read")
         return tools.memory_query(ctx, params.get("subject"), params.get("head"),
@@ -59,6 +63,15 @@ def register(ctx):
           "layer": {"type": "integer", "minimum": 0, "maximum": 31}},
          ["discoveries", "source_digest"], handle_memory_ingest),
         ("nanlm_memory_reorganize", "Rebuild deterministic head/layer memory projections without deleting discoveries.", {}, [], handle_memory_reorganize),
+        ("nanlm_memory_merge", "Idempotently union peer discovery events into the local additive memory ledger.",
+         {"records": {"type": "array", "minItems": 1, "maxItems": 1000,
+                      "items": {"type": "object", "required": ["item", "source_digest"],
+                                "properties": {"item": {"type": "object"},
+                                               "source_digest": {"type": "string", "pattern": "^[0-9a-fA-F]{64}$"},
+                                               "head": {"type": "integer", "minimum": 0, "maximum": 255},
+                                               "layer": {"type": "integer", "minimum": 0, "maximum": 31}},
+                                "additionalProperties": False}}},
+         ["records"], handle_memory_merge),
         ("nanlm_memory_query", "Query active mathematical-memory records by subject, head or layer.",
          {"subject": {"type": "string"}, "head": {"type": "integer", "minimum": 0, "maximum": 255},
           "layer": {"type": "integer", "minimum": 0, "maximum": 31},
