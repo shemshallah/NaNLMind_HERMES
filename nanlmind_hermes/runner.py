@@ -44,8 +44,13 @@ def run_bounded(
     duration_minutes = validate_duration(duration_minutes)
     if not command or not all(isinstance(x, str) and x for x in command):
         raise RunnerError("runner_command is not configured as a non-empty argv list")
-    if checkpoint_interval_seconds < 5 or checkpoint_interval_seconds > 3600:
-        raise RunnerError("checkpoint interval must be between 5 and 3600 seconds")
+    if (
+        isinstance(checkpoint_interval_seconds, bool)
+        or not isinstance(checkpoint_interval_seconds, int)
+        or checkpoint_interval_seconds < 5
+        or checkpoint_interval_seconds > 3600
+    ):
+        raise RunnerError("checkpoint interval must be an integer between 5 and 3600 seconds")
     corpus_path = corpus_path.expanduser().resolve(strict=True)
     state_dir.mkdir(parents=True, exist_ok=True)
     lock_path = state_dir / "training.lock"
@@ -84,13 +89,15 @@ def run_bounded(
                     proc.kill()
                     proc.wait()
                 reason = "deadline_forced_stop"
-        elapsed = min(time.monotonic() - started, budget)
+        wall_elapsed = time.monotonic() - started
+        training_elapsed = min(wall_elapsed, budget)
         result = {
             "status": "ok" if proc.returncode == 0 else "runner_exit",
             "exit_code": proc.returncode,
             "stop_reason": reason,
             "duration_budget_seconds": budget,
-            "elapsed_seconds": round(elapsed, 3),
+            "training_elapsed_seconds": round(training_elapsed, 3),
+            "wall_elapsed_seconds": round(wall_elapsed, 3),
             "corpus_sha256": digest,
             "checkpoint_path": str(checkpoint) if checkpoint.exists() else None,
             "checkpoint_present": checkpoint.exists(),
