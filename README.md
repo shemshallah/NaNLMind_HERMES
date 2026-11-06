@@ -205,7 +205,7 @@ Settings live under `plugins.entries.nanlmind-hermes.settings`.
 | `runner_command` | list[str] | `[]` | absolute argv for the local `nanlm-universal` binary |
 | `chat_learning` | bool | `true` | allow free-form chat to update native heads/mirror pairs/hyperedges from explicit supervised relations |
 | `state_dir` | str | `~/.local/share/nanlmind-hermes` | universe, corpora, transcripts, runs |
-| `universe_layers` | int | `7` | logical memory projection layers L0–L6 |
+| `universe_layers` | int | `7` | logical memory projection layers L0–L9 |
 
 Example:
 
@@ -356,7 +356,7 @@ There are two stores:
    mirror pairs, temporal links and hyperedges at
    `universe/native/global_universe.nmg`, resumed by chat and training runs.
 2. **Additive discovery ledger** — immutable, content-addressed events, typed
-   edges, n-ary hyperedges, and deterministic L0–L6 projections.
+   edges, n-ary hyperedges, and deterministic L0–L9 projections.
 
 A merge is an idempotent set union followed by projection rebuild. Conflicting
 claims are retained and become contested; they are not averaged away. The
