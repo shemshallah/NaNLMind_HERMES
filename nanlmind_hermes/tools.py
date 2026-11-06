@@ -542,7 +542,7 @@ def _relation_corpus(ctx, records):
     counts = {"train": {}, "test": {}}
     test_lines = []
     rejected = 0
-    for index, record in enumerate(records):
+    ordered_records = sorted(records, key=lambda row: 0 if isinstance(row, dict) and row.get("split") == "train" else 1)\n    for index, record in enumerate(ordered_records):
         if not isinstance(record, dict):
             raise ValueError(f"relation record {index} must be an object")
         split = record.get("split")
