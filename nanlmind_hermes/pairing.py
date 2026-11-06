@@ -4,7 +4,7 @@ import hashlib, json, os, secrets, sqlite3, time, uuid
 from pathlib import Path
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
-from .auth import ALLOWED_SCOPES, AuthError, _b64, _unb64, _derive, _json_bytes, issue_token, derive_identity_private_key
+from .auth import ALLOWED_SCOPES, AuthError, _b64, _unb64, _derive, _json_bytes, issue_token, derive_identity_private_key, verify_request
 
 class PairingAuthority:
     def __init__(self, database: str | Path, master_key: bytes):
@@ -133,6 +133,28 @@ class PairingAuthority:
         self.register_identity(role, installation_id, now)
         token=issue_token(self._private_key(role, installation_id),installation_id,scopes,token_ttl_seconds,now,role=role)
         return {"token":token,"issuer_public_key":self.issuer_public_key(role, installation_id),"installation_id":installation_id,"scopes":scopes,"role":role,"expires_at":now+token_ttl_seconds}
+
+
+    def verify_signed_request(self, token: str, method: str, path: str, body: bytes,
+                              envelope: dict, now=None) -> dict:
+        """Verify an installation's Ed25519 request signature and consume its nonce."""
+        claims = self.verify_access_token(token, now=now)
+        stamp = int(time.time()) if now is None else int(now)
+        with sqlite3.connect(self.database) as db:
+            row = db.execute("SELECT public_key FROM installations WHERE installation_id=?",
+                             (claims["sub"],)).fetchone()
+        if not row:
+            raise AuthError("signed installation identity is not registered")
+        public = Ed25519PublicKey.from_public_bytes(_unb64(row[0]))
+        nonce = verify_request(public, method, path, body, envelope, now=stamp)
+        try:
+            with sqlite3.connect(self.database, timeout=10) as db:
+                db.execute("CREATE TABLE IF NOT EXISTS request_nonces (installation_id TEXT NOT NULL, nonce TEXT NOT NULL, seen_at INTEGER NOT NULL, PRIMARY KEY(installation_id,nonce))")
+                db.execute("DELETE FROM request_nonces WHERE seen_at<?", (stamp - 600,))
+                db.execute("INSERT INTO request_nonces VALUES (?,?,?)", (claims["sub"], nonce, stamp))
+        except sqlite3.IntegrityError as exc:
+            raise AuthError("replayed signed request nonce") from exc
+        return claims
 
     def revoke_token(self, token: str, now=None) -> dict:
         from .auth import verify_token
