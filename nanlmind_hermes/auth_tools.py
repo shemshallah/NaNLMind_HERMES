@@ -111,3 +111,22 @@ def auth_revoke(ctx):
         raise ValueError("NANNET token revocation failed") from exc
     token_path.unlink(missing_ok=True)
     return {"revoked":bool(result.get("revoked")),"installation_id":doc["installation_id"],"local_token_erased":True}
+
+def require_scope(ctx, required_scope):
+    """Enforce the paired token locally when the NANNET authority is configured."""
+    root=_universe_dir(ctx)
+    token_path=root/"nannet_token.json"
+    configured=bool(os.environ.get("NANNET_AUTH_URL") and os.environ.get("NANNET_ISSUER_PUBLIC_KEY"))
+    if not token_path.exists():
+        if configured: raise ValueError("this installation must pair with NANNET before this operation")
+        return False
+    if not os.environ.get("NANNET_ISSUER_PUBLIC_KEY"):
+        raise ValueError("NANNET_ISSUER_PUBLIC_KEY is required to validate the stored token")
+    doc,_=load_installation(root,_master_key())
+    envelope=json.loads(token_path.read_text(encoding="utf-8"))
+    token=decrypt_payload(_master_key(),envelope,("nannet-token-v1:"+doc["installation_id"]).encode()).decode()
+    from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
+    claims=verify_token(token,Ed25519PublicKey.from_public_bytes(_unb64(os.environ["NANNET_ISSUER_PUBLIC_KEY"])),required_scope=required_scope)
+    if claims.get("sub")!=doc["installation_id"]:
+        raise ValueError("NANNET token belongs to a different installation")
+    return True
