@@ -252,7 +252,7 @@ def memory_cross_resolution(ctx, limit: int = 1000):
     analysis = analyze_cross_resolution(rows)
     records = feedback_records(analysis)
     merge = store.merge(records) if records else {"accepted": 0, "duplicates": 0}
-    reorganization = store.reorganize() if records else None
+    reorganization = store.reorganize()
     return {
         "analysis": analysis,
         "derived_hyperedges": len(records),
