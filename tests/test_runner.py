@@ -139,10 +139,10 @@ class NativeHarnessTests(unittest.TestCase):
                 "mode, records, state = sys.argv[1:]\\n"
                 "p=pathlib.Path(state); p.parent.mkdir(parents=True,exist_ok=True)\\n"
                 "if p.exists():\\n"
-                " print('relation_train status=no_op train_events=0 duplicate_events=1 changed_heads=0 mirror_pair_updates=0 hyperedges_added=0 state_bytes=' + str(p.stat().st_size) + ' state_digest_before=' + 'a'*64 + ' state_digest_after=' + 'a'*64)\\n"
+                " print('relation_train status=no_op epochs=1 train_events=0 duplicate_events=1 changed_heads=0 mirror_pair_updates=0 hyperedges_added=0 state_bytes=' + str(p.stat().st_size) + ' state_digest_before=' + 'a'*64 + ' state_digest_after=' + 'a'*64)\\n"
                 "else:\\n"
                 " p.write_bytes(b'x')\\n"
-                " print('relation_train status=updated train_events=1 duplicate_events=0 changed_heads=3 mirror_pair_updates=3 hyperedges_added=1 state_bytes=1 state_digest_before=' + 'a'*64 + ' state_digest_after=' + 'b'*64)\\n"
+                " print('relation_train status=updated epochs=1 train_events=1 duplicate_events=0 changed_heads=3 mirror_pair_updates=3 hyperedges_added=1 state_bytes=1 state_digest_before=' + 'a'*64 + ' state_digest_after=' + 'b'*64)\\n"
                 " print('resolution_L5 train=1 test=1 before_accuracy=0.0 accuracy=1.0 delta=1.0 before_balanced_accuracy=0.0 balanced_accuracy=1.0 majority_baseline=0.0')\\n",
                 encoding="utf-8")
             command = [sys.executable, str(script)]
