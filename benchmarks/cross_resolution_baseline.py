@@ -37,12 +37,17 @@ def run_baselines():
         row("numeric-2", "known-ratio", "bit", 12),
         row("numeric-1", "known-ratio", "paragraph", 3),
     ]
+    permutation_fixture = (
+        [row(f"perm-a-{i}", "concept-a", name, 8) for i, name in enumerate(RESOLUTIONS)]
+        + [row(f"perm-b-{i}", "concept-b", name, 8, "refutes")
+           for i, name in enumerate(RESOLUTIONS)]
+    )
     cases = {
         "perfect_alignment": analyze_cross_resolution(aligned),
         "one_level_contradiction": analyze_cross_resolution(contradiction),
         "unrelated_negative_control": analyze_cross_resolution(unrelated),
         "numeric_ratio_control": discover_numeric_relations(numeric),
-        "permutation_negative_control": permutation_control(aligned, seed=1729),
+        "permutation_negative_control": permutation_control(permutation_fixture, seed=1729),
     }
     return {
         "schema": "nanlm-cross-resolution-baselines/1",
