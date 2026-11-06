@@ -478,3 +478,30 @@ and the limits of the experiment.
   fallback, complete documentation.
 
 License: MIT.
+
+
+---
+
+## CLOCKED mode and autonomous head reasoning
+
+A dedicated CLOCKED integration is being designed with the service implementation
+in [NaNLMind_CLOCKED](https://github.com/shemshallah/NaNLMind_CLOCKED). HERMES
+will select local or CLOCKED-assisted modes per task, gather multiple typed
+CLOCKED results into a revisioned scratch, submit that evidence through the
+NaNLMind NaN16/M0-M9 interface, and validate its answer draft through the
+existing Boolean-derived heads.
+
+The HERMES-side design is
+[docs/CLOCKED_AUTONOMOUS_HEAD_CORTEX.md](docs/CLOCKED_AUTONOMOUS_HEAD_CORTEX.md).
+The detailed cross-repository architecture is
+[HERMES Autonomous CLOCKED Cognition and NaN Head Cortex](https://github.com/shemshallah/NaNLMind_CLOCKED/blob/main/docs/HERMES_AUTONOMOUS_CLOCKED_HEAD_CORTEX.md).
+
+The upstream CLOCKED SDK and API key will remain in the CLOCKED service
+repository. HERMES will use a scoped gateway client; it will not import the
+upstream SDK or store the service key. NaNLMind retains its own receiving
+protocol, native heads and canonical learning pipeline. Self-modifying heads
+will operate on isolated candidate mutations; canonical changes still require
+the NaNLMind evaluator and six-runner promotion barrier.
+
+This is an architecture/design milestone, not a claim that the CLOCKED mode,
+scratch transport or head-cortex endpoint is already running.
