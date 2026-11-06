@@ -134,8 +134,7 @@ def train(ctx, corpus_path: str, duration_minutes=None):
     duration = validate_duration(configured if duration_minutes is None else duration_minutes)
     interval = int(_setting(ctx, "checkpoint_interval_seconds", 60))
     command = _setting(ctx, "runner_command", [])
-    _, _, universe = _paths(ctx)
-    _, corpora, _ = _paths(ctx)
+    _, corpora, universe = _paths(ctx)
     native_path = _native_corpus(info, corpora, 1000)
     result = run_bounded(command, native_path, universe, duration, interval)
     result["source_n16txt_path"] = str(Path(corpus_path).expanduser().resolve())
@@ -143,6 +142,9 @@ def train(ctx, corpus_path: str, duration_minutes=None):
     result["records_validated"] = info.unique_records
     result["universe_id"] = _universe_id(universe)
     result["codec"] = "N16TXT/1"
+    run_manifest = Path(result["artifact_dir"]) / "manifest.json"
+    run_manifest.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    (universe / "last_run.json").write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     return result
 
 
