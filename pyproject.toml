@@ -15,3 +15,7 @@ nannet-authority = "nanlmind_hermes.authority_cli:main"
 
 [tool.unittest]
 start-directory = "tests"
+
+[tool.setuptools.packages.find]
+include = ["nanlmind_hermes*"]
+exclude = ["experiments*", "tests*"]
