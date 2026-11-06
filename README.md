@@ -264,7 +264,7 @@ narrative
 Uses:
 
 ```text
-boolean_inverses + deep_logic
+boolean_inverses + deep_logic + exceptions (L0-L2)
 ```
 
 Tool: `nanlm_logic_session`.
@@ -278,7 +278,7 @@ Tool: `nanlm_logic_session`.
 Uses:
 
 ```text
-repetitive_words + lexical_words + word_completion
+repetitive_words + phonetic_pairs + morpheme_structure + lexical_words + word_completion (L3-L6)
 ```
 
 Tool: `nanlm_word_session`.
@@ -292,7 +292,7 @@ Tool: `nanlm_word_session`.
 Uses:
 
 ```text
-sentence_choice + narrative
+sentence_choice + paragraph_structure + narrative (L7-L9)
 ```
 
 Tool: `nanlm_sentence_session`.
@@ -311,17 +311,24 @@ Tool: `nanlm_sentence_session`.
 }
 ```
 
-Every training tool returns a reproducible manifest and merges native head
-discoveries into mathematical memory.
+Structured training generates N16REL/1 relation records, preserves a frozen
+challenge set per topic/resolution, and merges only training evidence into
+mathematical memory. Each resolution reports before/after held-out metrics and
+a cross-run delta only when its challenge digest is unchanged.
 
 ### What native training actually learns
 
-Before any language training, `nanlm_math_train` runs a mandatory native
-full-Boolean foundation: all 256 heads learn all 16 two-input functions
-(1,024 exact truth-table checks), composed gates, and a word-after-logic probe.
-A failed gate aborts training. The separate byte-bit `math-train` task is real,
-persistent native training, but its held-out accuracy is not general language
-competence. Chat reflection is symbolic evidence, not online gradient descent.
+Before structured relation training, Hermes runs the mandatory native
+full-Boolean foundation: all 1,024 truth-row checks, all 16 distinct learned
+functions, composed circuits and a persisted checkpoint. That checkpoint seeds
+the shared `native/global_universe.nmg` once.
+
+The new `relation-train` objective is separate from the legacy byte-bit
+`math-train` control. It updates routed heads, canonical mirror-pair cells,
+temporal links and provenance-bound hyperedges from typed L0-L9 relations.
+Free-form chat does the same online for explicit supported/refuted triples.
+Neither relation-polarity accuracy nor byte-bit accuracy is text-generation
+accuracy or independent fact verification.
 
 ---
 
@@ -346,8 +353,9 @@ The same actions are available as model tools. See
 
 There are two stores:
 
-1. **Native global topology** — serialized head/cell/scratchpad state at
-   `universe/native/global_universe.nmg`, resumed by later native runs.
+1. **Native global topology** — serialized head/cell/scratchpad state, canonical
+   mirror pairs, temporal links and hyperedges at
+   `universe/native/global_universe.nmg`, resumed by chat and training runs.
 2. **Additive discovery ledger** — immutable, content-addressed events, typed
    edges, n-ary hyperedges, and deterministic L0–L6 projections.
 
