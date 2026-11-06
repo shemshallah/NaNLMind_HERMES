@@ -57,6 +57,28 @@ class MemoryStoreTests(unittest.TestCase):
                           source_digest=self.source)
         self.assertEqual(self.store.status()["hyperedges"], 1)
 
+
+    def test_reorganization_preserves_native_head_and_promotes_conflicts(self):
+        self.store.ingest({"kind": "hypothesis", "subject": "transition-x",
+                           "polarity": "supports", "confidence": 0.8,
+                           "evidence": {"test_samples": 100},
+                           "provenance": {"native_head": 42}},
+                          source_digest=self.source, head=42, layer=0)
+        self.store.ingest({"kind": "hypothesis", "subject": "transition-x",
+                           "polarity": "refutes", "confidence": 0.7,
+                           "evidence": {"test_samples": 80},
+                           "provenance": {"native_head": 43}},
+                          source_digest=hashlib.sha256(b"other").hexdigest(), head=43, layer=0)
+        first = self.store.reorganize()
+        second = self.store.reorganize()
+        self.assertEqual(first, second)
+        self.assertEqual(first["contested_subjects"], 1)
+        assessment = self.store.query_assessments("transition-x")[0]
+        self.assertEqual(assessment["status"], "contested")
+        routes = self.store.query(subject="transition-x")
+        self.assertEqual({row["head"] for row in routes}, {42, 43})
+        self.assertEqual({row["layer"] for row in routes}, {6})
+
     def test_merge_order_independent_event_set(self):
         items = [
             {"kind": "entity", "subject": "alpha"},
