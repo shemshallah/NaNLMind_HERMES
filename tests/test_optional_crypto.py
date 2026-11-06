@@ -8,7 +8,11 @@ class OptionalCryptoImportTests(unittest.TestCase):
     def test_plugin_registers_without_crypto_package(self):
         code = r"""
 import importlib.abc
+import json
 import sys
+import tempfile
+from pathlib import Path
+from types import SimpleNamespace
 
 class BlockCrypto(importlib.abc.MetaPathFinder):
     def find_spec(self, fullname, path=None, target=None):
@@ -19,20 +23,41 @@ class BlockCrypto(importlib.abc.MetaPathFinder):
 sys.meta_path.insert(0, BlockCrypto())
 import nanlmind_hermes
 
-class Context:
-    def __init__(self):
-        self.tools = []
-    def get_config(self, key, default=None):
-        return default
-    def register_tool(self, **kwargs):
-        self.tools.append(kwargs["name"])
+class Provider:
+    def complete(self, **kwargs):
+        if kwargs.get("purpose") == "nanlmind-hermes-chat":
+            return SimpleNamespace(text="Hermes is ready.", provider="fake", model="test")
+        return SimpleNamespace(
+            text=json.dumps({"discoveries": [{
+                "kind": "hypothesis", "subject": "chat-is-learning",
+                "resolution": "sentence", "polarity": "neutral"
+            }]}),
+            provider="fake", model="reflect-test"
+        )
 
-ctx = Context()
-nanlmind_hermes.register(ctx)
-assert "nanlm_chat" in ctx.tools
-assert "nanlm_math_train" in ctx.tools
-assert "nanlm_auth_init" in ctx.tools
-print("registered", len(ctx.tools), "tools without cryptography")
+class Context:
+    def __init__(self, root):
+        self.tools = {}
+        self.llm = Provider()
+        self.root = root
+    def get_config(self, key, default=None):
+        return str(self.root) if key == "state_dir" else default
+    def register_tool(self, **kwargs):
+        self.tools[kwargs["name"]] = kwargs["handler"]
+
+with tempfile.TemporaryDirectory() as tmp:
+    ctx = Context(Path(tmp))
+    nanlmind_hermes.register(ctx)
+    assert "nanlm_chat" in ctx.tools
+    assert "nanlm_chat_history" in ctx.tools
+    assert "nanlm_math_train" in ctx.tools
+    assert "nanlm_auth_init" in ctx.tools
+    result = ctx.tools["nanlm_chat"]({"message": "Try an open-ended experiment."})
+    assert result["response"] == "Hermes is ready."
+    assert result["reflection"]["memory_merge"]["accepted"] == 1
+    history = ctx.tools["nanlm_chat_history"]({})
+    assert len(history["messages"]) == 2
+    print("registered", len(ctx.tools), "tools and completed chat without cryptography")
 """
         root = Path(__file__).resolve().parents[1]
         result = subprocess.run(
