@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
@@ -39,6 +40,28 @@ def _universe_id(universe: Path) -> str:
     return json.loads(identity.read_text(encoding="utf-8"))["universe_id"]
 
 
+def _native_corpus(info, corpora: Path, minimum_bytes: int) -> Path:
+    """Materialize canonical N16TXT records as plain UTF-8 for the native CLI.
+
+    The native bootstrap/byte commands consume plain text, not the N16TXT
+    framing header. Preserve record order and never pad or duplicate samples.
+    """
+    raw = ("\n".join(info.records) + "\n").encode("utf-8")
+    if len(raw) < minimum_bytes:
+        raise ValueError(
+            f"native corpus needs at least {minimum_bytes} UTF-8 bytes after N16TXT framing is removed; "
+            f"this corpus has {len(raw)} bytes. Generate more records or provide a larger corpus."
+        )
+    digest = hashlib.sha256(raw).hexdigest()
+    target = corpora / f"{digest}.native.txt"
+    corpora.mkdir(parents=True, exist_ok=True)
+    if not target.exists():
+        temp = target.with_suffix(".tmp")
+        temp.write_bytes(raw)
+        os.replace(temp, target)
+    return target
+
+
 def status(ctx):
     root, corpora, universe = _paths(ctx)
     last = universe / "last_run.json"
@@ -52,13 +75,15 @@ def status(ctx):
         "duration_min_minutes": 1,
         "duration_max_minutes": 360,
         "native_runner_configured": bool(configured),
+        "native_binary": configured[0] if configured else None,
+        "native_binary_exists": bool(configured and Path(str(configured[0])).expanduser().is_file()),
         "training_location": "local machine; Koyeb is control-plane only",
         "state_dir": str(root),
         "last_run": latest,
     }
 
 
-def generate_corpus(ctx, topic: str, records: int = 12):
+def generate_corpus(ctx, topic: str, records: int = 24):
     if not isinstance(topic, str) or not topic.strip():
         raise ValueError("topic is required")
     if isinstance(records, bool) or not isinstance(records, int) or not 1 <= records <= 64:
@@ -110,7 +135,11 @@ def train(ctx, corpus_path: str, duration_minutes=None):
     interval = int(_setting(ctx, "checkpoint_interval_seconds", 60))
     command = _setting(ctx, "runner_command", [])
     _, _, universe = _paths(ctx)
-    result = run_bounded(command, Path(corpus_path), universe, duration, interval)
+    _, corpora, _ = _paths(ctx)
+    native_path = _native_corpus(info, corpora, 1000)
+    result = run_bounded(command, native_path, universe, duration, interval)
+    result["source_n16txt_path"] = str(Path(corpus_path).expanduser().resolve())
+    result["source_n16txt_sha256"] = hashlib.sha256(Path(corpus_path).expanduser().read_bytes()).hexdigest()
     result["records_validated"] = info.unique_records
     result["universe_id"] = _universe_id(universe)
     result["codec"] = "N16TXT/1"
@@ -122,8 +151,11 @@ def evaluate(ctx, corpus_path: str):
     command = _setting(ctx, "runner_command", [])
     if not command:
         raise RunnerError("runner_command is not configured; set it to the local build/nanlm-universal executable")
-    _, _, universe = _paths(ctx)
-    result = evaluate_native(command, Path(corpus_path), universe)
+    _, corpora, universe = _paths(ctx)
+    native_path = _native_corpus(info, corpora, 100)
+    result = evaluate_native(command, native_path, universe)
+    result["source_n16txt_path"] = str(Path(corpus_path).expanduser().resolve())
+    result["source_n16txt_sha256"] = hashlib.sha256(Path(corpus_path).expanduser().read_bytes()).hexdigest()
     result["records_validated"] = info.unique_records
     result["universe_id"] = _universe_id(universe)
     return result
