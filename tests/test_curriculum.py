@@ -45,6 +45,33 @@ class CurriculumTests(unittest.TestCase):
             self.assertEqual(manifest["record_count"], 40)
             self.assertEqual(manifest["stages"][0]["provider"], "fake-provider")
 
+    def test_curriculum_experiment_connects_generation_to_shared_trainer(self):
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as tmp:
+            class Context:
+                def __init__(self):
+                    self.llm = CurriculumLLM()
+                def get_config(self, key, default=None):
+                    return str(tmp) if key == "state_dir" else default
+            ctx = Context()
+            observed = {}
+            def fake_train(context, corpus_path, epochs, max_samples_per_head):
+                observed["corpus"] = load_n16txt(corpus_path)
+                observed["epochs"] = epochs
+                observed["samples"] = max_samples_per_head
+                return {"status": "ok", "head_count": 256,
+                        "merge": {"accepted": 256}, "metrics": {"heldout_accuracy": 0.61}}
+            with patch("nanlmind_hermes.tools.math_train", side_effect=fake_train):
+                from nanlmind_hermes.tools import run_curriculum_experiment
+                result = run_curriculum_experiment(ctx, "logic and language", 2, 4, 128)
+            self.assertEqual(observed["corpus"].unique_records, 20)
+            self.assertEqual(observed["epochs"], 4)
+            self.assertEqual(observed["samples"], 128)
+            self.assertEqual(result["training"]["head_count"], 256)
+            self.assertTrue(Path(result["manifest_path"]).is_file())
+            saved = json.loads(Path(result["manifest_path"]).read_text())
+            self.assertEqual(saved["schema"], "nanlm-curriculum-experiment/1")
+
     def test_curriculum_rejects_unsafe_batch_sizes(self):
         with tempfile.TemporaryDirectory() as tmp:
             class Context:
