@@ -72,3 +72,18 @@ class PairingAuthority:
             scopes=json.loads(row[0])
         token=issue_token(self._private_key(),installation_id,scopes,token_ttl_seconds,now)
         return {"token":token,"issuer_public_key":self.issuer_public_key(),"installation_id":installation_id,"scopes":scopes,"expires_at":now+token_ttl_seconds}
+
+    def revoke_token(self, token: str, now=None) -> dict:
+        from .auth import verify_token
+        claims=verify_token(token,self._private_key().public_key(),now=now)
+        with sqlite3.connect(self.database) as db:
+            db.execute("CREATE TABLE IF NOT EXISTS revoked_tokens (jti TEXT PRIMARY KEY,revoked_at INTEGER NOT NULL)")
+            db.execute("INSERT OR IGNORE INTO revoked_tokens VALUES (?,?)",(claims["jti"],int(time.time()) if now is None else int(now)))
+        return {"revoked":True,"token_id":claims["jti"],"installation_id":claims["sub"]}
+
+    def verify_access_token(self, token: str, required_scope=None, now=None) -> dict:
+        from .auth import verify_token
+        with sqlite3.connect(self.database) as db:
+            db.execute("CREATE TABLE IF NOT EXISTS revoked_tokens (jti TEXT PRIMARY KEY,revoked_at INTEGER NOT NULL)")
+            revoked={row[0] for row in db.execute("SELECT jti FROM revoked_tokens")}
+        return verify_token(token,self._private_key().public_key(),required_scope,now,revoked)
