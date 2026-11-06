@@ -1,5 +1,5 @@
 """NaNLMind Hermes plugin entry point."""
-from . import tools, auth_tools
+from . import tools
 
 
 def register(ctx):
@@ -8,10 +8,25 @@ def register(ctx):
         result["mathematical_memory"] = tools.memory_status(ctx)
         return result
 
-    def handle_auth_init(params, **kwargs): return auth_tools.auth_init(ctx)
-    def handle_auth_status(params, **kwargs): return auth_tools.auth_status(ctx)
-    def handle_auth_pair(params, **kwargs): return auth_tools.auth_pair(ctx, params["pairing_code"])
-    def handle_auth_revoke(params, **kwargs): return auth_tools.auth_revoke(ctx)
+    # Load cryptography-backed NANNET handlers only when one is invoked.
+    # This keeps ordinary Hermes chat/training importable on Android/Termux.
+    def _auth_tools():
+        try:
+            from . import auth_tools
+            return auth_tools
+        except ImportError as exc:
+            if exc.name == "cryptography" or "cryptography" in str(exc):
+                raise RuntimeError(
+                    "NANNET cryptographic operations require the optional "
+                    "cryptography extra; install nanlmind-hermes[auth] on a "
+                    "supported platform. Chat and local training do not require it."
+                ) from exc
+            raise
+
+    def handle_auth_init(params, **kwargs): return _auth_tools().auth_init(ctx)
+    def handle_auth_status(params, **kwargs): return _auth_tools().auth_status(ctx)
+    def handle_auth_pair(params, **kwargs): return _auth_tools().auth_pair(ctx, params["pairing_code"])
+    def handle_auth_revoke(params, **kwargs): return _auth_tools().auth_revoke(ctx)
 
     def handle_generate(params, **kwargs):
         auth_tools.require_scope(ctx, "corpus:write")
