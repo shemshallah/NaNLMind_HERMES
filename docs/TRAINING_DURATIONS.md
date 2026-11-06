@@ -64,3 +64,33 @@ general remote training-job executor or model-artifact store.
 
 Never describe the current Context2 bootstrap as transformer fine-tuning or
 claim that its in-memory learned parameters survive process exit.
+
+## Resolution-aware relation training (implemented)
+
+The explicit structured sessions now use the native `relation-train` command,
+not the legacy byte-bit `math-train` objective. The Hermes adapter writes
+`N16REL/1` records with an explicit train/test split, resolution L0-L9,
+polarity, confidence, UTF-8 hex triple fields and source SHA-256.
+
+```sh
+nanlm-universal relation-train RECORDS.n16rel \
+  <state_dir>/native/global_universe.nmg [epochs]
+```
+
+The command restores the shared serialized topology, updates routed heads,
+canonical mirror-pair cells, temporal links and typed hyperedges, then commits
+the global ledger. It reports actual changed-head state hashes, pair updates,
+hyperedges, state digests and per-resolution held-out metrics before and after
+the update. Exact source-bound replay returns `no_op` and re-evaluates the
+frozen test set without changing state.
+
+The verified Boolean foundation checkpoint seeds
+`native/global_universe.nmg` once. Subsequent math, structured relation and
+free-form chat updates all extend that same native file. The immutable
+foundation receipt is reused; it is not retrained/reset every time.
+
+Structured curriculum generation stores a frozen challenge file per topic and
+resolution. Cross-run deltas are reported only when the test-set digest matches.
+The metrics are teacher-label relation-polarity prediction, not text-generation
+accuracy or independent fact verification. The legacy `math-train` byte task
+remains a separate control and is never substituted for L3-L9 metrics.
