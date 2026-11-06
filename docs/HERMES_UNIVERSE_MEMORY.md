@@ -99,3 +99,22 @@ The NANNET identity, signature, token and encrypted-payload commands require tha
 optional extra; they fail as unavailable functionality rather than preventing the
 Hermes chat/training plugin from importing. Do not replace cryptographic
 operations with homemade or unauthenticated substitutes on Android.
+
+## Shared routing for chat, extraction and native runners
+
+All producers append events to the same immutable memory ledger. Conversational
+reflection and corpus extraction may attach a linguistic `provenance.resolution`
+tag, which selects the corresponding language layer. Native 256-head runner
+discoveries retain their explicit native layer and head during reorganization;
+they are not silently collapsed to the semantic-kind default. When evidence
+for one subject conflicts, the review projection still promotes both sides to
+the highest review layer while preserving original head/layer provenance.
+
+The active Hermes model can now generate a ten-stage curriculum corpus through
+`nanlm_generate_curriculum`: Boolean inverses, deep logic, exceptions,
+repetitive/common words, phonetic/morpheme patterns, roots and affixes,
+word-completion alternatives, sentence choice, paragraph structure and short
+narratives. It writes canonical N16TXT/1 plus a content-addressed manifest.
+This creates training material; it does not by itself prove that the native
+256-head trainer has learned language. The native trainer remains responsible
+for its own measured held-out results and committed hyperedges.
