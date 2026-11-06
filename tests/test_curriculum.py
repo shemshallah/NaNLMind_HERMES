@@ -81,6 +81,27 @@ class CurriculumTests(unittest.TestCase):
             saved = json.loads(Path(result["manifest_path"]).read_text())
             self.assertEqual(saved["schema"], "nanlm-curriculum-experiment/1")
 
+    def test_shared_memory_context_bounds_large_expressions(self):
+        import hashlib
+        with tempfile.TemporaryDirectory() as tmp:
+            class Context:
+                def get_config(self, key, default=None):
+                    return str(tmp) if key == "state_dir" else default
+            ctx = Context()
+            from nanlmind_hermes.tools import _memory_store, _memory_context
+            store = _memory_store(ctx)
+            store.ingest(
+                {"kind": "hypothesis", "subject": "large-expression",
+                 "expression": {"blob": "z" * 5000},
+                 "provenance": {"resolution": "bit"}},
+                source_digest=hashlib.sha256(b"large").hexdigest(),
+            )
+            store.reorganize()
+            context = _memory_context(ctx, layer=0)
+            expression = context["claims"][0]["expression"]
+            self.assertTrue(expression["truncated"])
+            self.assertEqual(len(expression["preview"]), 1200)
+
     def test_curriculum_rejects_unsafe_batch_sizes(self):
         with tempfile.TemporaryDirectory() as tmp:
             class Context:
