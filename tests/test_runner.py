@@ -83,7 +83,7 @@ class NativeHarnessTests(unittest.TestCase):
             "'expression':{'op':'truth_table','head':h},'confidence':0.5,"
             "'polarity':'neutral','evidence':{'test_samples':10},'provenance':{}}\n"
             "  out.write(json.dumps(event)+'\\n')\n"
-            "print('trained_heads=256 resumed=' + str(bool(prior)))\n",
+            "print('trained_heads=256 resumed=' + str(bool(prior)) + ' heldout_accuracy=0.61 majority_baseline_accuracy=0.50')\n",
             encoding="utf-8",
         )
         return [sys.executable, str(script)]
@@ -97,6 +97,8 @@ class NativeHarnessTests(unittest.TestCase):
             first = run_math_train(command, corpus, root / "universe", epochs=2, max_samples_per_head=32)
             self.assertEqual(first["head_count"], 256)
             self.assertEqual(first["discoveries"], 256)
+            self.assertAlmostEqual(first["metrics"]["heldout_accuracy"], 0.61)
+            self.assertAlmostEqual(first["metrics"]["majority_baseline_accuracy"], 0.50)
             state = Path(first["native_state_path"])
             self.assertEqual(state.read_bytes(), b"x")
             second = run_math_train(command, corpus, root / "universe", epochs=1, max_samples_per_head=16)
