@@ -108,47 +108,63 @@ not substituted for native head or mirror-pair state.
 - NANNET authorizes and coordinates; it is not the local trainer or corpus store.
 
 
-## 3. CLOCKED structured-observation integration (design)
+## 3. Autonomous CLOCKED mode and NaN head cortex
 
-CLOCKED by Rezolve.ai is an external structured-reasoning API, not another NaNLMind model or a second semantic topology. Note that NaNLMind already has a class named `ClockedAdapter` in its staged training corpus pipeline; that existing adapter binds a session to the NaNLMind logical epoch/clock and is not the Rezolve.ai HTTP API client. Keep the new service adapter distinctly named (for example `ClockedApiAdapter`) and reuse the existing pipeline/conversation trainer where compatible. Its Decide, Extract, Fill, PII/Protect, Injection/Guard, Script/Inspect, Grounding/Verify, Compare, Rerank and Pipeline results should enter the same native `GlobalTopology` as typed, provenance-bound observations.
+CLOCKED by Rezolve.ai is an external structured-reasoning service. Its upstream
+SDK, API key, gateway, endpoint orchestration, idempotency and service tests
+belong in the dedicated
+[NaNLMind_CLOCKED repository](https://github.com/shemshallah/NaNLMind_CLOCKED).
+NaNLMind retains only its receiving-language schemas, NANNET evidence consumer,
+native Boolean heads, M0-M9 transforms, relation learner and canonical
+six-runner training/commit path.
 
-The canonical cross-repository design is maintained in
-[`NaNLMind/docs/CLOCKED_HERMES_BRAINSTORM.md](https://github.com/shemshallah/NaNLMind_CLOCKED/blob/main/docs/CLOCKED_HERMES_BRAINSTORM.md).
-That document defines the proposed NaNLMind_CLOCKED project, HW3/HW3:0 addressing,
-the M0–M9 CLOCKED profile, exact byte/span and mirror-pair mapping, scratch
-protocol, logic-first training, baselines/controls, CLI, authentication and
-Router/Runner Ring/Koyeb boundaries.
+Do not confuse the Rezolve.ai service with NaNLMind's existing
+`ClockedAdapter` in `runner/hermes_pipeline.py`, which binds a training
+session to the NaNLMind logical epoch/clock. They are separate systems and
+must have distinct adapter names and credentials.
 
-### Integration invariants
+HERMES remains the user-facing coordinator. It autonomously proposes a
+schema-bound mode/task plan, then a deterministic policy checks allowed
+endpoints, source ACLs, budgets, idempotency, credentials and approval. The
+default is approval; automatic CLOCKED calls require an explicit
+budgeted-auto policy. Ordinary local chat remains local.
 
-- HERMES chat remains the default; CLOCKED mode is a separate interface over
-  the same plugin adapter and scratch protocol.
-- HW3 is the CLOCKED service identity; HW3:0 is its NANNET interface. Router
-  node point 3, BSR wire IDs and internal head IDs remain distinct namespaces.
-- The CLOCKED adapter uses the official `clocked-sdk` contract behind one
-  narrow service boundary. NANNET credentials and CLOCKED API keys are
-  independent and must never be substituted for one another.
-- CLOCKED results are typed teacher observations. They are not automatically
-  independently verified facts and must not be flattened into generic text.
-- Preserve exact source bytes, byte offsets, field schemas, probability
-  distributions, evidence spans, response digests, SDK/API version and cost
-  metadata.
-- Use the existing 256-head topology, 8 MiB register chart, canonical mirror
-  pairs, temporal rails and M0–M9 mapping layers. Do not create a parallel
-  CLOCKED brain or a competing clock.
-- Logic foundation and frozen controls precede CLOCKED-specific training.
-  Report teacher imitation, independent correctness and calibration separately.
-- A shared scratch uses immutable revisions and writer-separated lanes. HERMES
-  authors prompts; CLOCKED appends results; NaNLMind appends its own response;
-  HERMES synthesizes and continues.
-- Router owns HW3 route/ACL generations and Koyeb volume bindings. Koyeb is
-  gateway/control/storage infrastructure, not the semantic learner.
-- The six-runner ring owns distributed head execution and commits one validated
-  global handoff. No partial runner state is promoted.
-- Sponsored demo access requires an explicitly authorized server-side CLOCKED
-  proxy and quotas. Otherwise users supply their own CLOCKED API key. NANNET
-  pairing alone does not grant CLOCKED credits.
+For multi-source tasks, HERMES uses separate typed CLOCKED calls, not a
+fictional parallel CLOCKED Pipeline. Each result keeps its endpoint-native
+type, source identity, digest, cost and provenance. A revisioned scratch
+stores writer-separated lanes for user input, HERMES plans, CLOCKED results,
+normalized evidence, conflict maps, NaN16 packages, head responses, synthesis
+drafts, answer validation and final output.
 
-This is a design-only integration point. It does not claim that HW3:0, the
-CLOCKED proxy, CLOCKED mode, the scratch bridge or CLOCKED-specific training
-has been implemented or deployed.
+The recommended answer cycle has two NaNLMind passes:
+
+1. Freeze the multi-source evidence scratch, encode it as a typed NaN16
+   package, and submit it through the existing NANNET/HW3:0 route. NaNLMind
+   processes it through M0-M9 and the existing Boolean-derived head/relation
+   learner.
+2. HERMES synthesizes a natural-language draft from the evidence and relation
+   graph, then submits that draft with its claim-to-source map for a second
+   head-validation pass before delivery.
+
+The HERMES head cortex is a lightweight scheduler/client over the existing
+256 NaNLMind logical head IDs. It reuses HeadView/HeadRunner, HeadGate,
+LogicSessionTrainer and N16REL relation learning. It does **not** clone the
+six-runner ring, leader election, leases, generation barriers, Koyeb volume
+administration or canonical checkpoints. HERMES's existing `runner.py`
+remains a narrow local native-process wrapper.
+
+Self-modification is candidate-only: heads may propose bounded Boolean-table,
+gate, relation-feature or routing-bias mutations in an isolated sandbox.
+Truth-table regressions, deep-logic circuits, held-out tasks, counterexamples,
+shuffled-label controls, no-CLOCKED baselines and replay checks must pass.
+Only the NaNLMind evaluator and six-runner generation barrier can promote a
+canonical mutation. CLOCKED agreement is not ground truth.
+
+The detailed HERMES implementation design is in
+[docs/CLOCKED_AUTONOMOUS_HEAD_CORTEX.md](CLOCKED_AUTONOMOUS_HEAD_CORTEX.md).
+The complete cross-repository specification, M0-M9 profile, scratch protocol,
+multi-source graph and service boundary are in
+[NaNLMind_CLOCKED/docs/HERMES_AUTONOMOUS_CLOCKED_HEAD_CORTEX.md](https://github.com/shemshallah/NaNLMind_CLOCKED/blob/main/docs/HERMES_AUTONOMOUS_CLOCKED_HEAD_CORTEX.md).
+
+This remains design-only: no CLOCKED mode, scratch bridge, head-cortex API or
+self-modifying mutation sandbox is claimed to be implemented or deployed.
