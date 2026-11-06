@@ -660,6 +660,8 @@ def generate_relation_curriculum(ctx, topic: str, records_per_stage: int = 12,
                                x["item"]["object"], x["item"]["polarity"]],
                               ensure_ascii=False, separators=(",", ":")) not in challenge_keys
             ]
+        if not train_candidates:
+            raise ValueError(f"teacher supplied no new training relations for {resolution}; frozen test set remains unchanged")
         for x in train_candidates:
             records.append({"item": x["item"], "source_digest": x["source_digest"], "split": "train"})
         for x in existing_challenge:
