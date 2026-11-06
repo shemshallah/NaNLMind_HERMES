@@ -295,3 +295,75 @@ def run_math_train(command: Sequence[str], corpus_path: Path, state_dir: Path,
         "head_count": len(seen_heads), "metrics": _metrics(result["output"]),
         "stdout": result["output"][-12000:], "records": records,
     }
+
+
+def run_relation_train(command: Sequence[str], records_path: Path, state_dir: Path,
+                       timeout_seconds: int = 300) -> dict:
+    """Apply typed L0-L9 relation events to the same persistent native universe.
+
+    N16REL/1 separates train and test rows. Only train rows mutate heads,
+    canonical mirror-pair cells, temporal links and native hyperedges.
+    """
+    base = _command(command)
+    records_path = records_path.expanduser().resolve(strict=True)
+    raw = records_path.read_bytes()
+    if not raw.startswith(b"N16REL/1\\n"):
+        raise RunnerError("relation corpus must use N16REL/1")
+    corpus_digest = hashlib.sha256(raw).hexdigest()
+    state_dir.mkdir(parents=True, exist_ok=True)
+    native_dir = state_dir / "native"
+    native_dir.mkdir(parents=True, exist_ok=True)
+    state_path = native_dir / "global_universe.nmg"
+    lock_path = state_dir / "native_math_train.lock"
+    before_sha = hashlib.sha256(state_path.read_bytes()).hexdigest() if state_path.is_file() else None
+    with lock_path.open("a+") as lock:
+        try:
+            fcntl.flock(lock.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as exc:
+            raise RunnerError("native mathematical universe already has an active training run") from exc
+        result = _run(base + ["relation-train", str(records_path), str(state_path)], timeout_seconds)
+    if result["exit_code"] != 0 or result["timed_out"]:
+        raise RunnerError("native relation-train failed: " + result["output"][-5000:])
+    if not state_path.is_file() or state_path.stat().st_size == 0:
+        raise RunnerError("native relation-train did not persist the global universe")
+    summary = re.search(
+        r"relation_train status=updated train_events=(\\d+) duplicate_events=(\\d+) "
+        r"changed_heads=(\\d+) mirror_pair_updates=(\\d+) hyperedges_added=(\\d+) "
+        r"state_bytes=(\\d+) state_digest_before=([0-9a-f]{64}) state_digest_after=([0-9a-f]{64})",
+        result["output"])
+    if not summary:
+        raise RunnerError("native relation-train omitted its mutation receipt: " + result["output"][-3000:])
+    train_events, duplicates, changed_heads, pair_updates, edges, state_bytes = map(
+        int, summary.groups()[:6])
+    digest_before, digest_after = summary.group(7), summary.group(8)
+    if not train_events or not changed_heads or not pair_updates or not edges:
+        raise RunnerError("native relation-train reported no effective head/mirror/hyperedge mutation")
+    if digest_before == digest_after:
+        raise RunnerError("native relation-train claimed updates but global state digest did not change")
+    if state_bytes != state_path.stat().st_size:
+        raise RunnerError("native relation-train state byte count does not match persisted file")
+    resolution_metrics = {}
+    for match in re.finditer(
+        r"resolution_L(\\d+) train=(\\d+) test=(\\d+) accuracy=([0-9.]+) "
+        r"balanced_accuracy=([0-9.]+) majority_baseline=([0-9.]+)", result["output"]):
+        resolution_metrics[int(match.group(1))] = {
+            "train": int(match.group(2)), "test": int(match.group(3)),
+            "relation_polarity_accuracy": float(match.group(4)),
+            "balanced_accuracy": float(match.group(5)),
+            "majority_baseline": float(match.group(6)),
+        }
+    after_sha = hashlib.sha256(state_path.read_bytes()).hexdigest()
+    return {
+        "schema": "nanlm-hermes-native-relation-run/1",
+        "status": "updated", "native_command": result["argv"],
+        "elapsed_seconds": result["elapsed_seconds"],
+        "corpus_sha256": corpus_digest, "records_path": str(records_path),
+        "native_state_path": str(state_path), "native_state_bytes": state_bytes,
+        "native_state_sha256_before": before_sha, "native_state_sha256_after": after_sha,
+        "state_digest_before": digest_before, "state_digest_after": digest_after,
+        "train_events": train_events, "duplicate_events": duplicates,
+        "changed_heads": changed_heads, "mirror_pair_updates": pair_updates,
+        "hyperedges_added": edges, "resolution_metrics": resolution_metrics,
+        "metric_scope": "binary relation-polarity prediction by declared resolution; not text-generation accuracy",
+        "stdout": result["output"][-12000:],
+    }
