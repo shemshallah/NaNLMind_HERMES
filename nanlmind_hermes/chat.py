@@ -72,15 +72,28 @@ def _append(path: Path, row: dict) -> None:
         stream.write(_canonical(row) + "\n")
 
 
-def _reflect(ctx, user_text: str, assistant_text: str, source_digest: str) -> dict:
+def _reflect(ctx, user_text: str, assistant_text: str, source_digest: str,
+             prior_context: list[dict] | None = None) -> dict:
     """Ask the active provider to propose inspectable multi-resolution discoveries."""
+    # Keep a bounded conversational window so later turns can test, qualify or
+    # contradict earlier discoveries without resending an unbounded transcript.
+    context = []
+    for row in (prior_context or [])[-8:]:
+        role, content = row.get("role"), row.get("content")
+        if role in {"user", "assistant"} and isinstance(content, str):
+            context.append({"role": role, "content": content[-4000:]})
     prompt = {
         "task": "Reflect on this conversation as language-learning evidence.",
         "rules": [
             "Return JSON only, with a discoveries array of at most 128 objects.",
             "Do not invent facts absent from the exchange; mark uncertainty explicitly.",
             "Cover applicable resolutions among: " + ", ".join(RESOLUTIONS),
-            "Treat bit/nibble/byte and phonetic/morpheme structures as hypotheses unless directly observable.",
+            "At bit/nibble/byte resolution, report only directly observable encodings or patterns; "
+            "do not pretend a semantic guess is a measured bit-level fact.",
+            "At phonetic/morpheme/lexical resolution, distinguish observed spelling from inferred sound or morphology.",
+            "At word-completion and sentence resolution, capture alternatives, context and next-unit choice when evidenced.",
+            "At paragraph/narrative resolution, capture discourse structure, story events, temporal order and exceptions.",
+            "Compare the current exchange with prior context; preserve both sides of contradictions as separate evidence.",
             "Do not emit raw hidden chain-of-thought. Emit concise inspectable features, not private reasoning.",
             "Stories, definitions, dialogue, logic and technical prose are all valid linguistic evidence.",
             "Each object: kind (entity|relation|operator|equation|constraint|observation|hypothesis|counterexample), "
@@ -88,6 +101,7 @@ def _reflect(ctx, user_text: str, assistant_text: str, source_digest: str) -> di
             "polarity (supports|refutes|neutral), confidence (0..1), evidence (object), provenance (object).",
         ],
         "source_sha256": source_digest,
+        "prior_context": context,
         "user_text": user_text,
         "assistant_text": assistant_text,
     }
@@ -186,7 +200,7 @@ def chat(ctx, message: str, session_id: str = "default", system_prompt: str = No
     reflection = {"records": [], "parse_ok": False, "error": None}
     merge = {"accepted": 0, "duplicates": 0}
     try:
-        reflection = _reflect(ctx, message, response_text, source_digest)
+        reflection = _reflect(ctx, message, response_text, source_digest, history)
         if reflection["records"]:
             from .tools import _memory_store
             store = _memory_store(ctx)
