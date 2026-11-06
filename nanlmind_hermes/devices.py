@@ -127,6 +127,8 @@ class DeviceRegistry:
             if updated.rowcount != 1:
                 raise ValueError("device lease changed during heartbeat")
             db.execute("UPDATE devices SET last_seen=? WHERE device_id=?", (now, device_id))
+        if self.authority is not None:
+            self.authority.revoke_token(token[4:])
         return {"lease_id": lease_id, "lease_expires_at": expires,
                 "address": f"nan://GM0:SC0:MC0:BS0:HW{slot}", "token": replacement}
 
@@ -136,6 +138,9 @@ class DeviceRegistry:
             row = self._active(db, token, now)
             address = f"nan://GM0:SC0:MC0:BS0:HW{row['hw_slot']}"
             db.execute("UPDATE device_leases SET hw_slot=NULL,released_at=? WHERE lease_id=?", (now, row["lease_id"]))
+            device_id = row["device_id"]
+        if self.authority is not None:
+            self.authority.revoke_token(token[4:])
         return {"released": True, "address": address}
 
     def rotate(self, token: str, now: int | None = None) -> dict:
@@ -153,6 +158,8 @@ class DeviceRegistry:
             if updated.rowcount != 1:
                 raise ValueError("device lease changed during token rotation")
             db.execute("UPDATE devices SET last_seen=? WHERE device_id=?", (now, device_id))
+        if self.authority is not None:
+            self.authority.revoke_token(token[4:])
         return {"lease_id": lease_id, "lease_expires_at": expires,
                 "address": f"nan://GM0:SC0:MC0:BS0:HW{slot}", "token": replacement}
 
