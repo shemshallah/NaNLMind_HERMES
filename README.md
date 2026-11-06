@@ -102,6 +102,6 @@ The language substrate has ten distinct resolution coordinates, not seven coarse
 | 8 | Paragraph | Discourse continuity and reference |
 | 9 | Narrative | Temporal, causal and story-level structure |
 
-`nanlm_memory_cross_resolution` computes a symmetric 10×10 co-occurrence matrix. It compares claims sharing a subject or explicit `alignment_id` / `concept_id`, measures polarity alignment and contradiction, computes a bounded consistency score and polarity entropy, and emits deterministic n-ary equation/hyperedge records linking the original event IDs. Derived records are routed to resolution channel 9 for review; original evidence is never overwritten.
+`nanlm_memory_cross_resolution` computes a symmetric 10×10 co-occurrence matrix plus separate fine-to-coarse and coarse-to-fine feedback matrices. It compares claims sharing a subject or explicit `alignment_id` / `concept_id`, measures polarity alignment, contradiction and content divergence, computes a bounded consistency score and polarity entropy, and emits deterministic n-ary equation/hyperedge records linking the original event IDs. Derived records are routed to resolution channel 9 for review; original evidence is never overwritten.
 
 The score is descriptive evidence, not a truth oracle: `(aligned - contradicted) / (aligned + contradicted)`, or zero when no support/refutation comparison exists. Neutral evidence is retained but does not inflate the score. The same operation is invoked by chat and native mathematical training, and is exposed directly as a Hermes tool for runners.
