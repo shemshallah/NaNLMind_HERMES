@@ -182,6 +182,27 @@ def _memory_store(ctx):
     return MemoryStore(universe / "mathematical_memory.sqlite3", heads=heads, layers=layers)
 
 
+def _memory_context(ctx, layer=None, limit: int = 24):
+    """Return a compact, read-only view of the same universe used by chat and runners."""
+    store = _memory_store(ctx)
+    rows = store.query(layer=layer, limit=limit) if layer is not None else store.query(limit=limit)
+    claims = []
+    for row in rows:
+        claims.append({
+            "kind": row.get("kind"), "subject": row.get("subject"),
+            "predicate": row.get("predicate"), "object": row.get("object"),
+            "expression": row.get("expression"), "polarity": row.get("polarity"),
+            "head": row.get("head"), "layer": row.get("layer"),
+        })
+    assessments = store.query_assessments(limit=min(limit, 24))
+    reviews = [{
+        "subject": row["subject"], "status": row["status"],
+        "support_weight": row["support_weight"], "refute_weight": row["refute_weight"],
+        "evidence_count": row["evidence_count"],
+    } for row in assessments]
+    return {"claims": claims, "assessments": reviews}
+
+
 def memory_ingest(ctx, discoveries: list, source_digest: str, head=None, layer: int = 0):
     """Append validated structured discoveries; each item remains independently auditable."""
     if not isinstance(discoveries, list) or not 1 <= len(discoveries) <= 1000:
