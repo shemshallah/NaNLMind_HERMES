@@ -135,6 +135,10 @@ class PairingAuthority:
         return {"token":token,"issuer_public_key":self.issuer_public_key(role, installation_id),"installation_id":installation_id,"scopes":scopes,"role":role,"expires_at":now+token_ttl_seconds}
 
 
+    def is_paired_installation(self, installation_id: str) -> bool:
+        with sqlite3.connect(self.database) as db:
+            return db.execute("SELECT 1 FROM installations WHERE installation_id=?", (installation_id,)).fetchone() is not None
+
     def verify_signed_request(self, token: str, method: str, path: str, body: bytes,
                               envelope: dict, now=None) -> dict:
         """Verify an installation's Ed25519 request signature and consume its nonce."""
