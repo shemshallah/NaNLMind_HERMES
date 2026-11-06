@@ -599,6 +599,8 @@ def _relation_corpus(ctx, records):
         raise ValueError("no trainable supported/refuted subject-predicate-object relations")
     # The native CLI trains first and evaluates second, independent of caller order.
     rows.sort(key=lambda row: 0 if row.startswith("train\t") else 1)
+    test_rows = [row for row in rows if row.startswith("test\t")]
+    test_sha256 = hashlib.sha256(("N16REL_TEST/1\n" + "\n".join(test_rows) + "\n").encode("utf-8")).hexdigest() if test_rows else None
     raw = ("N16REL/1\n" + "\n".join(rows) + "\n").encode("utf-8")
     digest = hashlib.sha256(raw).hexdigest()
     directory = corpora / "relations"
@@ -608,7 +610,7 @@ def _relation_corpus(ctx, records):
         temp = path.with_suffix(".tmp")
         temp.write_bytes(raw)
         os.replace(temp, path)
-    return {"path": path, "sha256": digest, "records": len(rows),
+    return {"path": path, "sha256": digest, "test_sha256": test_sha256, "records": len(rows),
             "rejected": rejected, "counts": counts}
 
 
@@ -619,8 +621,30 @@ def _native_relation_train(ctx, records, mode):
     if not command:
         raise RunnerError("runner_command is not configured; native relation learning cannot run")
     _, _, universe = _paths(ctx)
+    prior_manifest = universe / "last_relation_run.json"
+    try:
+        prior_result = json.loads(prior_manifest.read_text(encoding="utf-8")) if prior_manifest.exists() else None
+    except (OSError, ValueError):
+        prior_result = None
     result = run_relation_train(command, corpus["path"], universe)
     result["mode"] = mode
+    result["test_set_sha256"] = corpus["test_sha256"]
+    result["cross_run_comparison"] = {"comparable": False, "reason": "no matching frozen held-out set"}
+    if corpus["test_sha256"] and prior_result and prior_result.get("test_set_sha256") == corpus["test_sha256"]:
+        prior_metrics = prior_result.get("resolution_metrics", {})
+        deltas = {}
+        for resolution, current in result.get("resolution_metrics", {}).items():
+            previous = prior_metrics.get(str(resolution), prior_metrics.get(resolution))
+            if previous and "relation_polarity_accuracy" in previous:
+                deltas[str(resolution)] = {
+                    "previous_accuracy": previous["relation_polarity_accuracy"],
+                    "current_accuracy": current["relation_polarity_accuracy"],
+                    "delta": current["relation_polarity_accuracy"] - previous["relation_polarity_accuracy"],
+                }
+        result["cross_run_comparison"] = {
+            "comparable": bool(deltas), "test_set_sha256": corpus["test_sha256"],
+            "resolution_deltas": deltas,
+        }
     result["boolean_foundation"] = {
         "status": foundation.get("status"),
         "reused_checkpoint": foundation.get("reused_checkpoint", False),
@@ -628,6 +652,7 @@ def _native_relation_train(ctx, records, mode):
     }
     result["corpus"] = {
         "path": str(corpus["path"]), "sha256": corpus["sha256"],
+        "test_sha256": corpus["test_sha256"],
         "records": corpus["records"], "rejected": corpus["rejected"],
         "counts_by_split_and_resolution": corpus["counts"],
     }
