@@ -51,6 +51,22 @@ class HermesChatTests(unittest.TestCase):
             self.assertEqual(status(ctx)["mathematical_memory"]["events"], 1)
             self.assertEqual(len(ctx.llm.calls), 2)
 
+    def test_reflection_uses_bounded_prior_conversation_context(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            ctx = FakeContext(Path(tmp))
+            chat(ctx, "Earlier: a penguin cannot fly.", session_id="continuity")
+            chat(ctx, "Now compare that with a fictional flying penguin.", session_id="continuity")
+            reflection_calls = [
+                call for call in ctx.llm.calls
+                if call.get("purpose") == "nanlmind-hermes-multiresolution-reflection"
+            ]
+            self.assertEqual(len(reflection_calls), 2)
+            prompt = json.loads(reflection_calls[1]["messages"][1]["content"])
+            self.assertEqual(len(prompt["prior_context"]), 2)
+            self.assertIn("penguin cannot fly", prompt["prior_context"][0]["content"])
+            self.assertIn("fictional flying penguin", prompt["user_text"])
+            self.assertLessEqual(len(prompt["prior_context"][0]["content"]), 4000)
+
     def test_chat_survives_optional_reflection_failure(self):
         with tempfile.TemporaryDirectory() as tmp:
             ctx = FakeContext(Path(tmp))
