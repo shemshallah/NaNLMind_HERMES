@@ -561,8 +561,10 @@ def generate_relation_curriculum(ctx, topic: str, records_per_stage: int = 12,
                 raise ValueError(f"invalid frozen challenge set: {challenge_path}")
         avoid = []
         if existing_challenge:
+            # The teacher sees only the held-out input triples to avoid
+            # duplicates; the test polarity/answer is never sent back.
             avoid = [{"subject": x["item"]["subject"], "predicate": x["item"]["predicate"],
-                      "object": x["item"]["object"], "polarity": x["item"]["polarity"]}
+                      "object": x["item"]["object"]}
                      for x in existing_challenge]
         result = ctx.llm.complete(
             messages=[
