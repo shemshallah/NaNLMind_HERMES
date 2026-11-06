@@ -216,7 +216,9 @@ def memory_ingest(ctx, discoveries: list, source_digest: str, head=None, layer: 
     store = _memory_store(ctx)
     results = [store.ingest(item, source_digest=source_digest, head=head, layer=layer)
                for item in discoveries]
-    return {"ingested": len(results), "results": results, "memory": store.status()}
+    cross_resolution = memory_cross_resolution(ctx)
+    return {"ingested": len(results), "results": results,
+            "cross_resolution": cross_resolution, "memory": store.status()}
 
 
 def memory_reorganize(ctx):
@@ -267,7 +269,10 @@ def memory_merge(ctx, records: list):
     """Idempotently union peer discovery events into this local memory ledger."""
     if not isinstance(records, list) or not 1 <= len(records) <= 1000:
         raise ValueError("records must contain 1..1000 merge entries")
-    return _memory_store(ctx).merge(records)
+    merged = _memory_store(ctx).merge(records)
+    cross_resolution = memory_cross_resolution(ctx)
+    return {"merge": merged, "cross_resolution": cross_resolution,
+            "memory": _memory_store(ctx).status()}
 
 
 def math_train(ctx, corpus_path: str, epochs: int = 3, max_samples_per_head: int = 4096):
