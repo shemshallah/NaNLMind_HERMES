@@ -43,15 +43,15 @@ class CurriculumTests(unittest.TestCase):
             result = generate_curriculum(ctx, "English and mathematical reasoning", 4)
             self.assertIn("seeded-universe-claim", ctx.llm.calls[0]["messages"][1]["content"])
             info = load_n16txt(result["corpus_path"])
-            self.assertEqual(len(CURRICULUM_STAGES), 10)
-            self.assertEqual(len(ctx.llm.calls), 10)
+            self.assertEqual(len(CURRICULUM_STAGES), 11)
+            self.assertEqual(len(ctx.llm.calls), 11)
             self.assertEqual(info.unique_records, 4 * len(CURRICULUM_STAGES))
             self.assertEqual(result["records"], 4 * len(CURRICULUM_STAGES))
             self.assertEqual([x["stage"] for x in result["stages"]],
                              [x[0] for x in CURRICULUM_STAGES])
             self.assertEqual(result["stages"][-1]["stage"], "narrative")
             manifest = json.loads(Path(result["manifest_path"]).read_text())
-            self.assertEqual(manifest["record_count"], 40)
+            self.assertEqual(manifest["record_count"], 4 * len(CURRICULUM_STAGES))
             self.assertEqual(manifest["stages"][0]["provider"], "fake-provider")
 
     def test_curriculum_experiment_connects_generation_to_shared_trainer(self):
