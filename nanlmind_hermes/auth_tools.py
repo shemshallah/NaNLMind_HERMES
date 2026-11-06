@@ -63,8 +63,7 @@ def auth_pair(ctx,pairing_code):
         raise ValueError("issued token identity or scopes do not match pairing response")
     envelope=encrypt_payload(master,result["token"].encode(),("nannet-token-v1:"+doc["installation_id"]).encode())
     target=root/"nannet_token.json"; temp=target.with_suffix(".tmp")
-    temp.write_text(json.dumps(envelope,separators=(",",":"))+"
-",encoding="utf-8")
+    temp.write_text(json.dumps(envelope,separators=(",",":"))+"\n",encoding="utf-8")
     try: os.chmod(temp,0o600)
     except OSError: pass
     os.replace(temp,target)
