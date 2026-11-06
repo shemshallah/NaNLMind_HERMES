@@ -951,8 +951,20 @@ def ingest_conversation_relations(ctx, records):
     if not records:
         return {"status": "no_supervised_relations", "train_events": 0,
                 "changed_heads": 0, "mirror_pair_updates": 0, "hyperedges_added": 0}
+    chat_records = []
+    for record in records:
+        if not isinstance(record, dict) or not isinstance(record.get("item"), dict):
+            continue
+        normalized = dict(record)
+        item = dict(record["item"])
+        provenance = dict(item.get("provenance") or {})
+        provenance["source_type"] = "free_form_chat_reflection"
+        provenance["independently_fact_verified"] = False
+        item["provenance"] = provenance
+        normalized["item"] = item
+        chat_records.append(normalized)
     try:
-        return _native_relation_train(ctx, records, "free_form_chat")
+        return _native_relation_train(ctx, chat_records, "free_form_chat")
     except ValueError as exc:
         if "no trainable supported/refuted" in str(exc):
             return {"status": "no_supervised_relations", "train_events": 0,
