@@ -3,7 +3,7 @@ from __future__ import annotations
 import hashlib, json, os, secrets, sqlite3, time, uuid
 from pathlib import Path
 from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey, Ed25519PublicKey
 from .auth import ALLOWED_SCOPES, AuthError, _b64, _unb64, _derive, _json_bytes, issue_token, derive_identity_private_key, verify_request
 
 class PairingAuthority:
