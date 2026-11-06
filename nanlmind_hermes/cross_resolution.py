@@ -38,9 +38,10 @@ def analyze_cross_resolution(rows: list[dict]) -> dict:
         if resolution not in INDEX:
             continue
         coverage[resolution] += 1
-        subject = row.get("subject")
-        if isinstance(subject, str) and subject:
-            by_subject[subject][resolution].append(row)
+        provenance = row.get("provenance") or {}
+        alignment = provenance.get("alignment_id") or provenance.get("concept_id") or row.get("subject")
+        if isinstance(alignment, str) and alignment:
+            by_subject[alignment][resolution].append(row)
 
     feedback = []
     for subject in sorted(by_subject):
