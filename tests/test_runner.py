@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from nanlmind_hermes.runner import evaluate_native, run_bounded
+from nanlmind_hermes.runner import evaluate_native, run_bounded, run_math_train
 
 
 class NativeHarnessTests(unittest.TestCase):
@@ -63,6 +63,66 @@ class NativeHarnessTests(unittest.TestCase):
             from nanlmind_hermes.runner import RunnerError
             with self.assertRaises(RunnerError):
                 run_bounded([], corpus, root / "state", 1)
+
+
+    def _fake_math_cli(self, root):
+        script = root / "fake_math_cli.py"
+        script.write_text(
+            "import hashlib, json, pathlib, sys\n"
+            "mode, corpus, epochs, samples, state, trace = sys.argv[1:]\n"
+            "data = pathlib.Path(corpus).read_bytes()\n"
+            "digest = hashlib.sha256(data).hexdigest()\n"
+            "sp = pathlib.Path(state); sp.parent.mkdir(parents=True, exist_ok=True)\n"
+            "prior = sp.read_bytes() if sp.exists() else b''\n"
+            "sp.write_bytes(prior + b'x')\n"
+            "tp = pathlib.Path(trace); tp.parent.mkdir(parents=True, exist_ok=True)\n"
+            "with tp.open('w', encoding='utf-8') as out:\n"
+            " for h in range(256):\n"
+            "  event = {'schema':'nanlm-hermes-discovery/1','kind':'hypothesis',"
+            "'subject':'head-'+str(h),'head':h,'layer':0,'source_digest':digest,"
+            "'expression':{'op':'truth_table','head':h},'confidence':0.5,"
+            "'polarity':'neutral','evidence':{'test_samples':10},'provenance':{}}\n"
+            "  out.write(json.dumps(event)+'\\n')\n"
+            "print('trained_heads=256 resumed=' + str(bool(prior)))\n",
+            encoding="utf-8",
+        )
+        return [sys.executable, str(script)]
+
+    def test_math_train_exports_all_heads_and_resumes_global_state(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            corpus = root / "corpus.bin"
+            corpus.write_bytes(b"mathematical universe " * 100)
+            command = self._fake_math_cli(root)
+            first = run_math_train(command, corpus, root / "universe", epochs=2, max_samples_per_head=32)
+            self.assertEqual(first["head_count"], 256)
+            self.assertEqual(first["discoveries"], 256)
+            state = Path(first["native_state_path"])
+            self.assertEqual(state.read_bytes(), b"x")
+            second = run_math_train(command, corpus, root / "universe", epochs=1, max_samples_per_head=16)
+            self.assertEqual(second["head_count"], 256)
+            self.assertEqual(state.read_bytes(), b"xx")
+            self.assertEqual(second["corpus_sha256"], first["corpus_sha256"])
+
+    def test_math_train_rejects_incomplete_head_trace(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            corpus = root / "corpus.bin"
+            corpus.write_bytes(b"mathematical universe " * 100)
+            script = root / "partial.py"
+            script.write_text(
+                "import hashlib, json, pathlib, sys\n"
+                "_, corpus, epochs, samples, state, trace = sys.argv[1:]\n"
+                "data=pathlib.Path(corpus).read_bytes(); digest=hashlib.sha256(data).hexdigest()\n"
+                "pathlib.Path(state).parent.mkdir(parents=True,exist_ok=True); pathlib.Path(state).write_bytes(b'x')\n"
+                "pathlib.Path(trace).write_text(json.dumps({'schema':'nanlm-hermes-discovery/1',"
+                "'kind':'hypothesis','subject':'only-one','head':0,'layer':0,"
+                "'source_digest':digest,'confidence':0.5,'polarity':'neutral'})+'\\n')\n",
+                encoding="utf-8",
+            )
+            from nanlmind_hermes.runner import RunnerError
+            with self.assertRaises(RunnerError):
+                run_math_train([sys.executable, str(script)], corpus, root / "universe")
 
 
 if __name__ == "__main__":
