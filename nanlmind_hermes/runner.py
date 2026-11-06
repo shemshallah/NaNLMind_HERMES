@@ -158,3 +158,75 @@ def evaluate_native(command: Sequence[str], corpus_path: Path, state_dir: Path,
     state_dir.mkdir(parents=True, exist_ok=True)
     return {"corpus_sha256": digest, "evaluations": results,
             "comparison_note": "These are independent native CLI runs with the CLI's documented 80/20 split; compare BPC/top-1 on the same corpus, not across different splits."}
+
+
+def run_math_train(command: Sequence[str], corpus_path: Path, state_dir: Path,
+                   epochs: int = 3, max_samples_per_head: int = 4096) -> dict:
+    """Train all native heads, resume the serialized global object, and emit typed discoveries."""
+    if isinstance(epochs, bool) or not isinstance(epochs, int) or not 1 <= epochs <= 100:
+        raise RunnerError("math-train epochs must be between 1 and 100")
+    if isinstance(max_samples_per_head, bool) or not isinstance(max_samples_per_head, int) or not 1 <= max_samples_per_head <= 100000:
+        raise RunnerError("max_samples_per_head must be between 1 and 100000")
+    base = _command(command)
+    corpus_path = corpus_path.expanduser().resolve(strict=True)
+    corpus_digest = hashlib.sha256(corpus_path.read_bytes()).hexdigest()
+    state_dir.mkdir(parents=True, exist_ok=True)
+    native_dir = state_dir / "native"
+    native_dir.mkdir(parents=True, exist_ok=True)
+    traces = state_dir / "traces"
+    traces.mkdir(parents=True, exist_ok=True)
+    run_id = uuid.uuid4().hex
+    state_path = native_dir / "global_universe.nmg"
+    trace_path = traces / (run_id + ".jsonl")
+    lock_path = state_dir / "native_math_train.lock"
+    with lock_path.open("a+") as lock:
+        try:
+            fcntl.flock(lock.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as exc:
+            raise RunnerError("native mathematical universe already has an active training run") from exc
+        result = _run(base + ["math-train", str(corpus_path), str(epochs),
+                              str(max_samples_per_head), str(state_path), str(trace_path)],
+                      max(30.0, min(3600.0, epochs * 30.0)))
+    if result["exit_code"] != 0 or result["timed_out"]:
+        raise RunnerError("native math-train failed: " + result["output"][-4000:])
+    if not state_path.is_file() or state_path.stat().st_size == 0:
+        raise RunnerError("native math-train did not produce a serialized global universe")
+    if not trace_path.is_file():
+        raise RunnerError("native math-train did not produce a discovery trace")
+    records = []
+    seen_heads = set()
+    for line_no, line in enumerate(trace_path.read_text(encoding="utf-8").splitlines(), 1):
+        try:
+            event = json.loads(line)
+        except json.JSONDecodeError as exc:
+            raise RunnerError(f"invalid native discovery JSON at line {line_no}") from exc
+        if event.get("schema") != "nanlm-hermes-discovery/1":
+            raise RunnerError(f"unsupported native discovery schema at line {line_no}")
+        head = event.get("head")
+        layer = event.get("layer", 0)
+        if isinstance(head, bool) or not isinstance(head, int) or not 0 <= head < 256 or head in seen_heads:
+            raise RunnerError(f"invalid or duplicate native head at line {line_no}")
+        if isinstance(layer, bool) or not isinstance(layer, int) or not 0 <= layer < 7:
+            raise RunnerError(f"invalid native layer at line {line_no}")
+        if event.get("source_digest") != corpus_digest:
+            raise RunnerError(f"native discovery source digest mismatch at line {line_no}")
+        item = {key: event[key] for key in
+                ("kind", "subject", "expression", "evidence", "provenance", "confidence", "polarity")
+                if key in event}
+        item.setdefault("provenance", {})
+        item["provenance"]["native_address"] = event.get("address")
+        item["provenance"]["native_head"] = head
+        records.append({"item": item, "source_digest": corpus_digest,
+                        "head": head, "layer": layer})
+        seen_heads.add(head)
+    if seen_heads != set(range(256)):
+        raise RunnerError(f"native trace must include all 256 heads; received {len(seen_heads)}")
+    return {
+        "schema": "nanlm-hermes-native-math-run/1", "run_id": run_id,
+        "status": "ok", "native_command": result["argv"],
+        "elapsed_seconds": result["elapsed_seconds"], "corpus_sha256": corpus_digest,
+        "native_state_path": str(state_path), "native_state_bytes": state_path.stat().st_size,
+        "discovery_trace_path": str(trace_path), "discoveries": len(records),
+        "head_count": len(seen_heads), "stdout": result["output"][-12000:],
+        "records": records,
+    }
