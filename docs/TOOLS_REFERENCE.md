@@ -17,7 +17,9 @@ Parameters:
 
 Returns: response, provider/model, source digest, transcript count, surface
 measurements, reflection proposal count, memory merge counts,
-cross-resolution feedback.
+cross-resolution feedback, and a separate `native_learning` receipt. With
+`chat_learning: true`, explicit supported/refuted triples update native heads,
+mirror pairs and hyperedges. Neutral/incomplete reflections do not train.
 
 ### `nanlm_chat_history`
 Read the durable transcript.
@@ -73,6 +75,23 @@ multiplexer and depth-8 circuits, and a word-after-logic probe. A failed gate
 aborts the run. It then writes a resumable topology and emits one discovery per
 head.
 
+### `nanlm_structured_relation_train`
+Train the shared native 256-head topology from caller-supplied typed relations.
+
+- `records` (array, 2–10000): each record contains `split` (`train` or
+  `test`), a stable 64-hex `source_digest`, and `item`.
+- `item` requires `subject`, `predicate`, `object`, `polarity`
+  (`supports` or `refutes`), `confidence`, `evidence`, and
+  `provenance.resolution` (bit, nibble, byte, phonetic, morpheme, lexical,
+  word_completion, sentence, paragraph or narrative).
+- `epochs` (1–100, default 1).
+
+Only train rows mutate state. Test rows are evaluated before and after
+training. Every accepted event updates routed heads, three canonical mirror
+pairs, temporal links and a provenance-bound hyperedge. Exact replay is a
+reported no-op. Metrics are binary relation-polarity metrics, not text
+generation accuracy.
+
 ### `nanlm_train`
 Legacy in-memory Context2 bootstrap.
 
@@ -87,8 +106,10 @@ Run topology-byte, Kneser–Ney order-2, and Context2 controls.
 - `corpus_path` (string, required)
 
 ### `nanlm_curriculum_experiment`
-Generate all twelve stages, run native math training, merge discoveries, and
-save an experiment manifest.
+Generate teacher-labeled typed relations for the selected stages, train the
+native relation-polarity objective, evaluate frozen per-resolution challenges
+before and after training, merge training evidence, and save an experiment
+manifest.
 
 - `topic` (string, required)
 - `records_per_stage` (integer, 1–64, default 12)
@@ -96,9 +117,9 @@ save an experiment manifest.
 - `max_samples_per_head` (integer, 1–100000, default 4096)
 
 ### `nanlm_logic_session`
-Explicit logic-only session: Boolean inverses + deep logic. The native
-full-Boolean foundation gate is mandatory before the generated logic corpus is
-trained.
+Explicit logic-only session: Boolean inverses, deep logic and exceptions,
+mapped to L0 bit, L1 nibble and L2 byte relation channels. The exact native
+full-Boolean foundation gate is mandatory before structured training.
 
 - `topic` (string, optional; default `logic`)
 - `records_per_stage` (1–64, default 12)
@@ -106,17 +127,21 @@ trained.
 - `max_samples_per_head` (1–100000, default 4096)
 
 ### `nanlm_word_session`
-Explicit word session: repeated words + lexical words + word completion.
+Explicit word session: phonetic, morphemic, lexical and word-completion relation
+channels (L3-L6).
 
 Parameters are the same as `nanlm_logic_session`; default topic `words`.
 
 ### `nanlm_sentence_session`
-Explicit sentence/story session: sentence choice + narrative.
+Explicit sentence/story session: sentence, paragraph and narrative relation
+channels (L7-L9).
 
 Parameters are the same; default topic `sentences`.
 
 ### `nanlm_training_pipeline`
-Run a preset or custom ordered list of curriculum stages.
+Run a preset or custom ordered list of teacher-generated structured relation
+stages. Every populated resolution has an independent frozen held-out set and
+before/after metric.
 
 - `topic` (string, optional; default `logic and language`)
 - `mode` (`pipeline|logic|words|sentences`, default `pipeline`)
