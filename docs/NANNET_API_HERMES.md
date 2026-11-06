@@ -14,7 +14,7 @@ Allowed scopes: corpus:write, training:execute, universe:read, snapshot:read, sn
 
 ## Pairing HTTP endpoint
 
-The optional stdlib HTTP service exposes POST /v1/pair. It must be deployed behind HTTPS; plain HTTP is accepted only for loopback development. The client pins NANNET_ISSUER_PUBLIC_KEY before trusting the returned token. The token is saved encrypted under the installation master key.
+The optional stdlib HTTP service exposes POST /v1/pair and POST /v1/revoke. Revocation accepts the token's bearer credential, records its token ID, and causes subsequent authority-side validation to reject it. It must be deployed behind HTTPS; plain HTTP is accepted only for loopback development. The client pins NANNET_ISSUER_PUBLIC_KEY before trusting the returned token. The token is saved encrypted under the installation master key.
 
 For subsequent API requests, send the bearer token and Ed25519 request signature over method, exact path, timestamp, nonce, and SHA-256 body digest. The API must verify token signature, issuer, audience, expiry, scope, installation key, and five-minute clock skew, then atomically consume the nonce. Token revocation is persisted by TokenRegistry.
 
@@ -28,4 +28,4 @@ Payload encryption uses AES-256-GCM with HKDF-SHA256 domain separation and authe
 4. Installation pairs over HTTPS and verifies the issuer against its pinned public key.
 5. The demo uses the issued token, then revokes it and demonstrates rejection.
 
-The local authority, one-time code store, token issuer, HTTP pairing endpoint, and client pairing handler are implemented as source components. A public hosted deployment, TLS certificate/operations, and authenticated training/snapshot API endpoints remain deployment/integration work; do not claim a live hosted NANNET service until those pieces are deployed and tested.
+The local authority, one-time code store, token issuer, HTTP pairing and self-revocation endpoints, client pairing/revocation handlers, encrypted token storage, and authority-side token validation are implemented as source components. A public hosted deployment, TLS certificate/operations, and authenticated training/snapshot API endpoints remain deployment/integration work; do not claim a live hosted NANNET service until those pieces are deployed and tested.
