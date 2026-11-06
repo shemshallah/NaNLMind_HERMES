@@ -220,9 +220,11 @@ def memory_ingest(ctx, discoveries: list, source_digest: str, head=None, layer: 
 
 
 def memory_reorganize(ctx):
-    """Rebuild deterministic head/layer views without mutating discovery history."""
+    """Run cross-resolution feedback, then rebuild deterministic shared-universe views."""
+    cross_resolution = memory_cross_resolution(ctx)
     store = _memory_store(ctx)
-    return {"reorganization": store.reorganize(), "memory": store.status()}
+    return {"cross_resolution": cross_resolution,
+            "reorganization": store.reorganize(), "memory": store.status()}
 
 
 def memory_query(ctx, subject: str = None, head: int = None, layer: int = None, limit: int = 100):
