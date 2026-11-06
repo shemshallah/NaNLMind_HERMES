@@ -579,19 +579,19 @@ def _relation_corpus(ctx, records):
             obj.strip().encode("utf-8").hex(),
             digest.lower(),
         ]
-        line = "\\t".join(fields)
+        line = "\t".join(fields)
         lines.append(line)
         if split == "test":
             test_lines.append(line)
         counts[split][resolution] = counts[split].get(resolution, 0) + 1
-    raw = ("\\n".join(lines) + "\\n").encode("utf-8")
+    raw = ("\n".join(lines) + "\n").encode("utf-8")
     digest = hashlib.sha256(raw).hexdigest()
     path = corpora / (digest + ".n16rel")
     if not path.exists():
         temp = path.with_suffix(".tmp")
         temp.write_bytes(raw)
         os.replace(temp, path)
-    test_digest = hashlib.sha256(("\\n".join(test_lines) + ("\\n" if test_lines else "")).encode("utf-8")).hexdigest() if test_lines else None
+    test_digest = hashlib.sha256(("\n".join(test_lines) + ("\n" if test_lines else "")).encode("utf-8")).hexdigest() if test_lines else None
     return {
         "path": path, "sha256": digest, "test_sha256": test_digest,
         "records": len(lines) - 1, "rejected": rejected, "counts": counts,
@@ -908,7 +908,7 @@ def run_curriculum_experiment(ctx, topic: str = "logic and language",
     }
     root, corpora, universe = _paths(ctx)
     manifest = universe / "last_curriculum_experiment.json"
-    manifest.write_text(json.dumps(result, indent=2, sort_keys=True) + "\\n", encoding="utf-8")
+    manifest.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     result["manifest_path"] = str(manifest)
     return result
 
