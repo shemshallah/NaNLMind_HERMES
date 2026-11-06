@@ -270,21 +270,44 @@ def chat(ctx, message: str, session_id: str = "default", system_prompt: str = No
 
     reflection = {"records": [], "parse_ok": False, "error": None}
     merge = {"accepted": 0, "duplicates": 0}
+    surface_records = _surface_measurements(message, response_text, source_digest)
+    surface_merge = {"accepted": 0, "duplicates": 0}
+    surface_error = None
+    try:
+        from .tools import _memory_store
+        store = _memory_store(ctx)
+        surface_merge = store.merge(surface_records)
+    except Exception as exc:
+        surface_error = type(exc).__name__ + ": " + str(exc)[:500]
+
     try:
         reflection = _reflect(ctx, message, response_text, source_digest, history)
         if reflection["records"]:
             from .tools import _memory_store
             store = _memory_store(ctx)
             merge = store.merge(reflection["records"])
-            store.reorganize()
     except Exception as exc:
         # Chat must remain usable if the optional reflection provider call fails.
         reflection["error"] = type(exc).__name__ + ": " + str(exc)[:500]
+
+    try:
+        from .tools import _memory_store
+        store = _memory_store(ctx)
+        store.reorganize()
+    except Exception as exc:
+        if surface_error is None:
+            surface_error = type(exc).__name__ + ": " + str(exc)[:500]
 
     return {
         "session_id": session_id, "response": response_text,
         "provider": getattr(answer, "provider", None), "model": getattr(answer, "model", None),
         "source_sha256": source_digest, "history_messages": len(history) + 2,
+        "surface_measurements": {
+            "records": len(surface_records),
+            "resolutions": ["bit", "nibble", "byte", "lexical", "sentence", "paragraph"],
+            "memory_merge": surface_merge,
+            "error": surface_error,
+        },
         "reflection": {
             "parse_ok": reflection.get("parse_ok", False),
             "provider": reflection.get("provider"), "model": reflection.get("model"),
