@@ -136,18 +136,18 @@ class HermesChatTests(unittest.TestCase):
             root = Path(tmp)
             fake = root / "fake_native.py"
             fake.write_text(
-                "import pathlib, sys\\n"
-                "mode = sys.argv[1]\\n"
-                "if mode == 'logic-train':\\n"
-                " state=pathlib.Path(sys.argv[4]); state.parent.mkdir(parents=True,exist_ok=True); state.write_bytes(b'gate')\\n"
-                " print('stage=boolean_foundation passed=yes correct=1024/1024 accuracy=1 detail=distinct_rules=16 failed_heads=0')\\n"
-                " print('stage=deep_logic_circuits passed=yes correct=32/32 accuracy=1 detail=circuits')\\n"
-                " print('stage=words_after_logic passed=yes correct=10/10 accuracy=1 detail=words')\\n"
-                " print('state_bytes=4 state_digest=' + 'a'*64)\\n"
-                " print('result=PASS')\\n"
-                "else:\\n"
-                " records, state = sys.argv[2], pathlib.Path(sys.argv[3]); state.parent.mkdir(parents=True,exist_ok=True); state.write_bytes(b'native')\\n"
-                " print('relation_train status=updated train_events=1 duplicate_events=0 changed_heads=3 mirror_pair_updates=3 hyperedges_added=1 state_bytes=6 state_digest_before=' + 'b'*64 + ' state_digest_after=' + 'c'*64)\\n",
+                "import pathlib, sys\n"
+                "mode = sys.argv[1]\n"
+                "if mode == 'logic-train':\n"
+                " state=pathlib.Path(sys.argv[4]); state.parent.mkdir(parents=True,exist_ok=True); state.write_bytes(b'gate')\n"
+                " print('stage=boolean_foundation passed=yes correct=1024/1024 accuracy=1 detail=distinct_rules=16 failed_heads=0')\n"
+                " print('stage=deep_logic_circuits passed=yes correct=32/32 accuracy=1 detail=circuits')\n"
+                " print('stage=words_after_logic passed=yes correct=10/10 accuracy=1 detail=words')\n"
+                " print('state_bytes=4 state_digest=' + 'a'*64)\n"
+                " print('result=PASS')\n"
+                "else:\n"
+                " records, state = sys.argv[2], pathlib.Path(sys.argv[3]); state.parent.mkdir(parents=True,exist_ok=True); state.write_bytes(b'native')\n"
+                " print('relation_train status=updated train_events=1 duplicate_events=0 changed_heads=3 mirror_pair_updates=3 hyperedges_added=1 state_bytes=6 state_digest_before=' + 'b'*64 + ' state_digest_after=' + 'c'*64)\n",
                 encoding="utf-8",
             )
             class LearningLLM:
