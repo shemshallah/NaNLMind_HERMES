@@ -145,5 +145,36 @@ class CrossResolutionTests(unittest.TestCase):
         self.assertEqual(sum(map(sum, result["cooccurrence_matrix"])), 0)
 
 
+    def test_numeric_equation_is_emitted_as_a_review_hyperedge(self):
+        rows = [
+            {"event_id": "e12", "object": 12, "units": "meters",
+             "provenance": {"resolution": "bit", "alignment_id": "length:known"}},
+            {"event_id": "e3", "object": 3, "units": "meters",
+             "provenance": {"resolution": "narrative", "alignment_id": "length:known"}},
+        ]
+        analysis = analyze_cross_resolution(rows)
+        self.assertEqual(analysis["numeric_relations"]["relation_count"], 1)
+        records = feedback_records(analysis)
+        numeric = [r for r in records if r["item"].get("predicate") == "verified_numeric_relation"]
+        self.assertEqual(len(numeric), 1)
+        self.assertEqual(numeric[0]["item"]["expression"]["result"], 4.0)
+        self.assertEqual(numeric[0]["layer"], 9)
+
+    def test_synthetic_baselines_have_known_answer_and_negative_control(self):
+        from benchmarks.cross_resolution_baseline import run_baselines
+        result = run_baselines()
+        self.assertEqual(result["resolution_count"], 10)
+        self.assertEqual(result["pairwise_level_pairs"], 45)
+        cases = result["cases"]
+        aligned = cases["perfect_alignment"]["feedback"][0]
+        self.assertEqual(aligned["pair_count"], 45)
+        self.assertEqual(aligned["consistency_score"], 1.0)
+        negative = cases["unrelated_negative_control"]
+        self.assertEqual(negative["concepts_compared"], 0)
+        ratio = cases["numeric_ratio_control"]["relations"][0]
+        self.assertEqual(ratio["relation"], "ratio")
+        self.assertEqual(ratio["result"], 4.0)
+
+
 if __name__ == "__main__":
     unittest.main()
