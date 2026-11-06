@@ -21,6 +21,11 @@ def register(ctx):
         auth_tools.require_scope(ctx, "training:execute")
         return tools.train(ctx, params["corpus_path"], params.get("duration_minutes"))
 
+    def handle_math_train(params, **kwargs):
+        auth_tools.require_scope(ctx, "training:execute")
+        return tools.math_train(ctx, params["corpus_path"], params.get("epochs", 3),
+                                params.get("max_samples_per_head", 4096))
+
     def handle_evaluate(params, **kwargs):
         auth_tools.require_scope(ctx, "universe:read")
         return tools.evaluate(ctx, params["corpus_path"])
@@ -52,8 +57,12 @@ def register(ctx):
         ("nanlm_auth_revoke", "Revoke this installation token and erase its local encrypted copy.", {}, [], handle_auth_revoke),
         ("nanlm_generate_corpus", "Generate a bounded N16TXT/1 corpus using Hermes' active model.",
          {"topic": {"type": "string"}, "records": {"type": "integer", "minimum": 1, "maximum": 64, "default": 24}}, ["topic"], handle_generate),
-        ("nanlm_train", "Run the native NaNLMind bootstrap trainer locally; native Context2 parameters remain in-memory.",
+        ("nanlm_train", "Run the native NaNLMind Context2 bootstrap trainer locally.",
          {"corpus_path": {"type": "string"}, "duration_minutes": {"type": "integer", "minimum": 1, "maximum": 360}}, ["corpus_path"], handle_train),
+        ("nanlm_math_train", "Train all 256 native heads, resume the serialized global topology, export structured discoveries, and merge them into additive memory.",
+         {"corpus_path": {"type": "string"}, "epochs": {"type": "integer", "minimum": 1, "maximum": 100, "default": 3},
+          "max_samples_per_head": {"type": "integer", "minimum": 1, "maximum": 100000, "default": 4096}},
+         ["corpus_path"], handle_math_train),
         ("nanlm_evaluate", "Run native topology-byte, Kneser-Ney and Context2 controls locally on the same corpus.",
          {"corpus_path": {"type": "string"}}, ["corpus_path"], handle_evaluate),
         ("nanlm_memory_ingest", "Append structured mathematical discoveries to the durable additive universe memory.",
