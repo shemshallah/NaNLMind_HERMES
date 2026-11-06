@@ -1,10 +1,10 @@
 """Single-writer, wall-clock-bounded native runner supervisor.
 
 The native executable is an adapter boundary. It must accept:
-  train --corpus PATH --duration-seconds N --checkpoint PATH
-        --checkpoint-interval-seconds N
-  evaluate --corpus PATH
-and handle SIGINT by completing its current bounded unit and atomically
+  <runner argv> train --corpus PATH --duration-seconds N --checkpoint PATH
+      --checkpoint-interval-seconds N
+  <runner argv> evaluate --corpus PATH
+and handle SIGINT by finishing its current bounded unit and atomically
 publishing the checkpoint. The core repository's CLI is not assumed to expose
 this adapter until that protocol is implemented there.
 """
@@ -61,6 +61,7 @@ def run_bounded(
         started = time.monotonic()
         deadline = started + budget
         argv = list(command) + [
+            "train",
             "--corpus", str(corpus_path),
             "--duration-seconds", str(budget),
             "--checkpoint", str(checkpoint),
@@ -69,8 +70,7 @@ def run_bounded(
         proc = subprocess.Popen(argv, cwd=str(state_dir))
         reason = "completed"
         try:
-            remaining = max(0.0, deadline - time.monotonic())
-            proc.wait(timeout=remaining)
+            proc.wait(timeout=max(0.0, deadline - time.monotonic()))
         except subprocess.TimeoutExpired:
             reason = "deadline"
             proc.send_signal(signal.SIGINT)
