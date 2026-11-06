@@ -109,8 +109,9 @@ class HermesChatTests(unittest.TestCase):
     def test_large_plain_text_is_not_forced_through_n16txt(self):
         with tempfile.TemporaryDirectory() as tmp:
             ctx = FakeContext(Path(tmp))
-            result = chat(ctx, "A long ordinary text passage. " * 1000, session_id="plain")
+            result = chat(ctx, "x" * (1024 * 1024), session_id="plain")
             self.assertTrue(result["response"])
+            self.assertEqual(result["surface_measurements"]["records"], 6)
             self.assertEqual(len(chat_history(ctx, "plain")["messages"]), 2)
 
 
