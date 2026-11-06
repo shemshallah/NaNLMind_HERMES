@@ -205,7 +205,7 @@ Settings live under `plugins.entries.nanlmind-hermes.settings`.
 | `runner_command` | list[str] | `[]` | absolute argv for the local `nanlm-universal` binary |
 | `chat_learning` | bool | `true` | allow free-form chat to update native heads/mirror pairs/hyperedges from explicit supervised relations |
 | `state_dir` | str | `~/.local/share/nanlmind-hermes` | universe, corpora, transcripts, runs |
-| `universe_layers` | int | `7` | logical memory projection layers L0–L9 |
+| `universe_layers` | int | `10` | logical memory projection layers L0–L9 |
 
 Example:
 
@@ -216,7 +216,7 @@ plugins:
       enabled: true
       settings:
         state_dir: ~/.local/share/nanlmind-hermes
-        universe_layers: 7
+        universe_layers: 10
         runner_command: ["/opt/NaNLMind/build/nanlm-universal"]
 ```
 
@@ -426,13 +426,31 @@ python -m unittest discover -s tests -v
 
 ---
 
-## 9. Vision and larger system
+
+## 9. CLOCKED integration (architecture in progress)
+
+CLOCKED by Rezolve.ai is being designed as a first-class capability of this
+plugin, with a dedicated CLOCKED mode and a shared, revisioned scratch loop.
+The target design uses HW3 as the CLOCKED service identity and HW3:0 as its
+NANNET interface, while preserving the distinction between Router node point
+3, BSR wire identities and NaNLMind's internal 256 heads.
+
+The architecture and implementation boundaries are documented in
+[NaNLMind CLOCKED/HERMES brainstorm](https://github.com/shemshallah/NaNLMind/blob/main/docs/CLOCKED_HERMES_BRAINSTORM.md).
+This is a design specification, not a claim that CLOCKED mode, HW3:0 or the
+service proxy is already implemented.
+
+CLOCKED credentials are separate from NANNET identity. The official SDK uses
+a CLOCKED API key; a sponsored HERMES demo requires an explicitly authorized
+server-side proxy and quota policy. Otherwise users provide their own key.
+
+## 10. Vision and larger system
 
 See [HACKATHON_NOTE.md](HACKATHON_NOTE.md) for the architecture/manifesto: the
 c(256,2) universe, layered learning, NANNET, merge model, distributed hierarchy,
 and the limits of the experiment.
 
-## 10. Repository map
+## 11. Repository map
 
 | path | contents |
 |---|---|
@@ -445,12 +463,12 @@ and the limits of the experiment.
 | `nanlmind_hermes/crypto_compat.py` | dependency-free Ed25519/AES-GCM/HKDF |
 | `docs/TOOLS_REFERENCE.md` | complete tool/option reference |
 | `docs/WALKTHROUGHS.md` | end-to-end usage scenarios |
-| `docs/PLUGIN_ARCHITECTURE.md` | design, boundaries, and invariants |
+| `docs/PLUGIN_ARCHITECTURE.md` | design, boundaries, and invariants |\n| CLOCKED architecture | [NaNLMind/docs/CLOCKED_HERMES_BRAINSTORM.md](https://github.com/shemshallah/NaNLMind/blob/main/docs/CLOCKED_HERMES_BRAINSTORM.md) |
 | `docs/NAN16DE.md` | raw NaN16 double-endian route protocol |
 | `docs/BASELINE_1.0.1.md` | model-planned logic/words/sentences baseline results |
 | `docs/TEACHER_LOOP.md` | teacher → validator → student → feedback protocol |
 
-## 11. Versioning
+## 12. Versioning
 
 - `1.0.1` — 2026-11-06: mandatory full-Boolean foundation gate, architecture-aware
   model planning, chat checkpoints after logic/words/sentences rounds, baseline
