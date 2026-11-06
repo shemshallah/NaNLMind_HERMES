@@ -570,7 +570,7 @@ def _relation_corpus(ctx, records):
             source_digest = hashlib.sha256(json.dumps(
                 {"record": record, "index": index}, ensure_ascii=False,
                 sort_keys=True, separators=(",", ":")).encode("utf-8")).hexdigest()
-        row = "\\t".join((
+        row = "\t".join((
             split, str(_RELATION_RESOLUTIONS[resolution]),
             "+" if polarity == "supports" else "-",
             str(confidence_q16), subject.encode("utf-8").hex(),
@@ -579,9 +579,9 @@ def _relation_corpus(ctx, records):
         ))
         rows.append(row)
         counts[split][resolution] = counts[split].get(resolution, 0) + 1
-    if not any(row.startswith("train\\t") for row in rows):
+    if not any(row.startswith("train\t") for row in rows):
         raise ValueError("no trainable supported/refuted subject-predicate-object relations")
-    raw = ("N16REL/1\\n" + "\\n".join(rows) + "\\n").encode("utf-8")
+    raw = ("N16REL/1\n" + "\n".join(rows) + "\n").encode("utf-8")
     digest = hashlib.sha256(raw).hexdigest()
     directory = corpora / "relations"
     directory.mkdir(parents=True, exist_ok=True)
@@ -610,7 +610,7 @@ def _native_relation_train(ctx, records, mode):
     result["universe_id"] = _universe_id(universe)
     manifest = universe / "last_relation_run.json"
     temp = manifest.with_suffix(".tmp")
-    temp.write_text(json.dumps(result, indent=2, sort_keys=True) + "\\n", encoding="utf-8")
+    temp.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     os.replace(temp, manifest)
     return result
 
