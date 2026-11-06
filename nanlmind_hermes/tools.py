@@ -991,6 +991,7 @@ def ingest_conversation_relations(ctx, records):
         if not isinstance(record, dict) or not isinstance(record.get("item"), dict):
             continue
         normalized = dict(record)
+        normalized["split"] = "train"  # live chat supervision is train-only; never self-test
         item = dict(record["item"])
         existing_provenance = item.get("provenance")
         provenance = dict(existing_provenance) if isinstance(existing_provenance, dict) else {}
