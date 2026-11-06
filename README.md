@@ -7,7 +7,7 @@ See docs/NANNET_API_HERMES.md for the installation identity and authorization pr
 
 ## Local pairing authority
 
-Install the project, provision an independent 32-byte base64url `NANNET_AUTHORITY_MASTER_KEY` in the authority host's secret store, then:
+Install the project. Generate independent 256-bit base64url secrets with `python -c 'from nanlmind_hermes.auth import generate_master_key; print(generate_master_key())'`; provision one as `NANNET_AUTHORITY_MASTER_KEY` on the authority host and a different one as `NANNET_MASTER_KEY` on each installation. Keep both in the host secret store, never in Git. Then:
 
 ```sh
 nannet-authority public-key
