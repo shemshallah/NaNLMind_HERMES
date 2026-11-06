@@ -118,7 +118,7 @@ class NativeHarnessTests(unittest.TestCase):
                 "data=pathlib.Path(corpus).read_bytes(); digest=hashlib.sha256(data).hexdigest()\n"
                 "pathlib.Path(state).parent.mkdir(parents=True,exist_ok=True); pathlib.Path(state).write_bytes(b'x')\n"
                 "pathlib.Path(trace).write_text(json.dumps({'schema':'nanlm-hermes-discovery/1',"
-                "'kind':'hypothesis','subject':'only-one','head':0,'layer':0,"
+                "'kind':'hypothesis','subject':'only-one','head':0,'layer':0,'hyperedge_id':1,'hyperedge_label':0,"
                 "'source_digest':digest,'confidence':0.5,'polarity':'neutral'})+'\\n')\n",
                 encoding="utf-8",
             )
