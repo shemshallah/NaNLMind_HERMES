@@ -72,6 +72,77 @@ def _append(path: Path, row: dict) -> None:
         stream.write(_canonical(row) + "\n")
 
 
+def _surface_measurements(user_text: str, assistant_text: str,
+                         source_digest: str) -> list[dict]:
+    """Create exact, non-semantic UTF-8 and orthographic measurements."""
+    from collections import Counter
+
+    combined = user_text + "\n" + assistant_text
+    raw = combined.encode("utf-8")
+    bit_ones = sum(byte.bit_count() for byte in raw)
+    nibble_counts = [0] * 16
+    byte_counts = [0] * 256
+    for byte in raw:
+        byte_counts[byte] += 1
+        nibble_counts[byte >> 4] += 1
+        nibble_counts[byte & 0x0F] += 1
+    tokens = re.findall(r"[^\\W_]+(?:['’][^\\W_]+)*", combined.casefold(), flags=re.UNICODE)
+    frequencies = Counter(tokens)
+    sentences = [part for part in re.split(r"(?<=[.!?])\\s+", combined) if part.strip()]
+    paragraphs = [part for part in re.split(r"\\n\\s*\\n", combined) if part.strip()]
+
+    measurements = [
+        ("bit", "bit-profile", {
+            "op": "utf8_bit_profile", "bit_length": len(raw) * 8,
+            "zero_bits": len(raw) * 8 - bit_ones, "one_bits": bit_ones,
+        }),
+        ("nibble", "nibble-profile", {
+            "op": "utf8_nibble_histogram", "nibble_count": len(raw) * 2,
+            "counts_0_to_f": nibble_counts,
+        }),
+        ("byte", "byte-profile", {
+            "op": "utf8_byte_histogram", "byte_count": len(raw),
+            "distinct_byte_values": sum(1 for count in byte_counts if count),
+            "counts_0_to_ff": byte_counts,
+        }),
+        ("lexical", "orthographic-profile", {
+            "op": "token_frequency", "token_count": len(tokens),
+            "unique_tokens": len(frequencies),
+            "top_tokens": [[word, count] for word, count in
+                           sorted(frequencies.items(), key=lambda pair: (-pair[1], pair[0]))[:32]],
+        }),
+        ("sentence", "sentence-profile", {
+            "op": "sentence_segmentation", "sentence_count": len(sentences),
+            "token_count": len(tokens),
+        }),
+        ("paragraph", "paragraph-profile", {
+            "op": "paragraph_segmentation", "paragraph_count": len(paragraphs),
+            "sentence_count": len(sentences),
+        }),
+    ]
+    records = []
+    for resolution, label, expression in measurements:
+        records.append({
+            "item": {
+                "kind": "observation",
+                "subject": f"surface:{label}:{source_digest[:20]}",
+                "predicate": "measured_from_utf8",
+                "expression": expression,
+                "polarity": "neutral",
+                "confidence": 1.0,
+                "evidence": {"source_sha256": source_digest, "utf8_bytes": len(raw)},
+                "provenance": {
+                    "resolution": resolution,
+                    "measurement": "deterministic-surface/1",
+                    "source": "user-assistant-exchange",
+                },
+                "tags": ["surface-measurement", "non-semantic"],
+            },
+            "source_digest": source_digest,
+        })
+    return records
+
+
 def _reflect(ctx, user_text: str, assistant_text: str, source_digest: str,
              prior_context: list[dict] | None = None) -> dict:
     """Ask the active provider to propose inspectable multi-resolution discoveries."""
