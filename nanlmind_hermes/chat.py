@@ -200,8 +200,11 @@ def _reflect(ctx, user_text: str, assistant_text: str, source_digest: str,
             "Do not emit raw hidden chain-of-thought. Emit concise inspectable features, not private reasoning.",
             "Stories, definitions, dialogue, logic and technical prose are all valid linguistic evidence.",
             "Each object: kind (entity|relation|operator|equation|constraint|observation|hypothesis|counterexample), "
-            "subject, predicate (optional), object (optional), expression (optional), resolution, "
+            "subject, predicate, object, expression (optional), resolution, "
             "polarity (supports|refutes|neutral), confidence (0..1), evidence (object), provenance (object).",
+            "For a claim that can supervise native relation learning, provide explicit non-empty subject, predicate and object. "
+            "Use supports/refutes only when the exchange supplies evidence for a binary label; otherwise use neutral. "
+            "Never invent a binary label to force a native update.",
         ],
         "source_sha256": source_digest,
         "prior_context": context,
@@ -339,6 +342,19 @@ def chat(ctx, message: str, session_id: str = "default", system_prompt: str = No
         except Exception:
             pass
 
+    native_learning = {"status": "disabled"}
+    try:
+        chat_learning = ctx.get_config("chat_learning", default=True)
+    except Exception:
+        chat_learning = True
+    if chat_learning:
+        try:
+            from .tools import ingest_conversation_relations
+            native_learning = ingest_conversation_relations(ctx, reflection.get("records", []))
+        except Exception as exc:
+            native_learning = {"status": "native_update_failed",
+                               "error": type(exc).__name__ + ": " + str(exc)[:1000]}
+
     return {
         "session_id": session_id, "response": response_text,
         "provider": getattr(answer, "provider", None), "model": getattr(answer, "model", None),
@@ -356,7 +372,8 @@ def chat(ctx, message: str, session_id: str = "default", system_prompt: str = No
             "memory_merge": merge, "error": reflection.get("error"),
         },
         "cross_resolution_feedback": cross_resolution,
-        "memory_note": "Structured reflection proposals and derived cross-resolution equations are additive evidence, not learned neural weights.",
+        "native_learning": native_learning,
+        "memory_note": "Structured reflection and cross-resolution equations remain additive evidence. Native learning is reported separately and only counts when the 256-head runner commits head, mirror-pair and hyperedge updates.",
     }
 
 
