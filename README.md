@@ -25,7 +25,7 @@ The native bootstrap command currently trains Context2Model in process memory an
 
 ## NANNET identity
 
-Provision an independent random 256-bit base64url NANNET_MASTER_KEY in the host secret store. Provision NANNET_AUTH_URL and the pinned NANNET_ISSUER_PUBLIC_KEY for the trusted authority. The installation private key is encrypted at rest with HKDF-SHA256 + AES-256-GCM. Pair using a one-time guest pairing code from the authority operator.
+Provision an independent random 256-bit base64url NANNET_MASTER_KEY in the host secret store. Provision NANNET_AUTH_URL and the pinned NANNET_ISSUER_PUBLIC_KEY for the trusted authority. The installation private key is encrypted at rest with HKDF-SHA256 + AES-256-GCM. Pair using a one-time guest pairing code from the authority operator. After nanlm_auth_init, give the operator only the non-secret installation UUID. The operator computes the exact per-installation issuer pin with nannet-authority public-key --role guest --identity INSTALLATION_UUID and returns that public key over a trusted channel. Set it as NANNET_ISSUER_PUBLIC_KEY before pairing; do not use the legacy global public key for a newly paired identity.
 
 When authority mode is configured, corpus generation, training and evaluation fail closed unless the stored token has the required scope and the authority confirms it online. Paired installation requests to /v1/authorize and /v1/revoke are Ed25519-signed over method, exact path, timestamp, nonce and body digest; the authority consumes each nonce once. The authority master key never leaves the authority host.
 
