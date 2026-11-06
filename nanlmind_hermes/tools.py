@@ -826,7 +826,10 @@ def _relation_corpus(ctx, records):
         confidence = item.get("confidence", 0.5)
         if isinstance(confidence, bool) or not isinstance(confidence, (int, float)):
             confidence = 0.5
-        confidence_q16 = max(0, min(65535, int(round(float(confidence) * 65535))))
+        confidence_value = float(confidence)
+        if not 0.0 <= confidence_value <= 1.0:
+            raise ValueError("relation confidence must be finite and between 0 and 1")
+        confidence_q16 = int(round(confidence_value * 65535.0))
         source_digest = record.get("source_digest")
         if not isinstance(source_digest, str) or len(source_digest) != 64 or any(c not in "0123456789abcdef" for c in source_digest.lower()):
             source_digest = hashlib.sha256(json.dumps(
