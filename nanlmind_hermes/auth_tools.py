@@ -2,7 +2,7 @@
 from __future__ import annotations
 import base64, json, os, urllib.parse, urllib.request, hmac
 from pathlib import Path
-from .auth import create_installation, load_installation, _unb64, _b64, encrypt_payload, decrypt_payload, verify_token
+from .auth import create_installation, load_installation, _unb64, _b64, encrypt_payload, decrypt_payload, verify_token, sign_request
 
 def _universe_dir(ctx):
     try: configured=ctx.get_config("state_dir",default="~/.local/share/nanlmind-hermes")
@@ -47,6 +47,16 @@ def auth_status(ctx):
         except Exception:
             result["token_valid"]=False
     return result
+
+def _signed_headers(private_key, method, path, body):
+    envelope = sign_request(private_key, method, path, body)
+    return {
+        "X-NANNET-Timestamp": str(envelope["timestamp"]),
+        "X-NANNET-Nonce": envelope["nonce"],
+        "X-NANNET-Body-SHA256": envelope["body_sha256"],
+        "X-NANNET-Signature": envelope["signature"],
+    }
+
 
 def auth_pair(ctx,pairing_code):
     """Pair against a trusted authority and pin its issuer before accepting its token."""
@@ -103,7 +113,11 @@ def auth_revoke(ctx):
     except ValueError: loopback=(parsed.hostname or "").lower()=="localhost"
     if parsed.scheme!="https" and not (parsed.scheme=="http" and loopback):
         raise ValueError("token revocation requires HTTPS except for loopback development")
-    req=urllib.request.Request(base+"/v1/revoke",data=b"{}",headers={"Authorization":"Bearer "+token,"Content-Type":"application/json","Cache-Control":"no-store"},method="POST")
+    _, private = load_installation(root, master)
+    body = b"{}"
+    headers = {"Authorization":"Bearer "+token,"Content-Type":"application/json","Cache-Control":"no-store"}
+    headers.update(_signed_headers(private, "POST", "/v1/revoke", body))
+    req=urllib.request.Request(base+"/v1/revoke",data=body,headers=headers,method="POST")
     try:
         with urllib.request.urlopen(req,timeout=15) as response:
             result=json.loads(response.read(8192))
@@ -138,9 +152,12 @@ def require_scope(ctx, required_scope):
         except ValueError: loopback=(parsed.hostname or "").lower()=="localhost"
         if parsed.scheme!="https" and not (parsed.scheme=="http" and loopback):
             raise ValueError("online scope verification requires HTTPS except for loopback development")
+        body = json.dumps({"scope":required_scope}, separators=(",", ":")).encode()
+        _, private = load_installation(root, _master_key())
+        headers = {"Authorization":"Bearer "+token,"Content-Type":"application/json","Cache-Control":"no-store"}
+        headers.update(_signed_headers(private, "POST", "/v1/authorize", body))
         request=urllib.request.Request(authority_url+"/v1/authorize",
-            data=json.dumps({"scope":required_scope}).encode(),
-            headers={"Authorization":"Bearer "+token,"Content-Type":"application/json","Cache-Control":"no-store"},method="POST")
+            data=body, headers=headers, method="POST")
         try:
             with urllib.request.urlopen(request,timeout=10) as response:
                 remote=json.loads(response.read(8192))
