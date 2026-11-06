@@ -10,8 +10,9 @@ class PairingAuthority:
     def __init__(self, database: str | Path, master_key: bytes):
         self.database=str(database); self.master_key=master_key
         Path(self.database).parent.mkdir(parents=True,exist_ok=True)
-        try: os.chmod(Path(self.database).parent,0o700)
-        except OSError: pass
+        if Path(self.database).parent != Path("."):
+            try: os.chmod(Path(self.database).parent,0o700)
+            except OSError: pass
         with sqlite3.connect(self.database) as db:
             db.execute("CREATE TABLE IF NOT EXISTS authority_meta (key TEXT PRIMARY KEY,value TEXT NOT NULL)")
             db.execute("CREATE TABLE IF NOT EXISTS pairing_codes (code_hash TEXT PRIMARY KEY,scopes TEXT NOT NULL,expires_at INTEGER NOT NULL,used_at INTEGER)")
