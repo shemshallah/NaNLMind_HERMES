@@ -83,17 +83,44 @@ def register(ctx):
                 ) from exc
             raise
 
+    def _device_scope(scope):
+        """Android-style scoped device bearer, validated by NANNET."""
+        token = os.environ.get("NANLM_DEVICE_TOKEN", "")
+        base = (os.environ.get("NANNET_AUTH_URL") or
+                os.environ.get("NANLM_INTAKE_URL", "")).rstrip("/")
+        if not token or not base:
+            return False
+        import json as _json
+        import urllib.request
+        body = _json.dumps({"scope": scope}).encode()
+        request = urllib.request.Request(
+            base + "/v1/authorize", data=body,
+            headers={"Authorization": "Bearer " + token,
+                     "Content-Type": "application/json"},
+            method="POST")
+        try:
+            with urllib.request.urlopen(request, timeout=20) as response:
+                result = _json.load(response)
+        except Exception as exc:
+            raise RuntimeError("NANNET device authorization failed; log in again") from exc
+        if not result.get("authorized") or result.get("scope") != scope:
+            raise RuntimeError("NANNET device token lacks the required scope")
+        return True
+
     def _require_scope(scope):
         # NANNET login is required for chat and training. The only bypass is an
         # explicit test flag; production/local interactive use must pair first.
         if os.environ.get("NANLM_AUTH_TEST_BYPASS") == "1":
             return False
+        if _device_scope(scope):
+            return True
         if not (os.environ.get("NANNET_AUTH_URL") and
                 os.environ.get("NANNET_ISSUER_PUBLIC_KEY")):
             raise RuntimeError(
                 "NANNET login is required before chat or training. "
                 "Configure NANNET_AUTH_URL, NANNET_ISSUER_PUBLIC_KEY and pair "
-                "the installation with nanlm_auth_init/nanlm_auth_pair."
+                "the installation with nanlm_auth_init/nanlm_auth_pair, or "
+                "provide a scoped NANLM_DEVICE_TOKEN/NANLM_INTAKE_URL."
             )
         return _auth_tools().require_scope(ctx, scope)
 

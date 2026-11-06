@@ -9,6 +9,10 @@ hermes plugins install shemshallah/NaNLMind_HERMES --yes-deps --enable
 # Validate the manifest and registration
 hermes plugins doctor /path/to/NaNLMind_HERMES --ci
 
+# First: NANNET login is mandatory
+# Ask Hermes to run nanlm_auth_init, then complete nanlm_auth_pair.
+# Android-style nodes may instead export NANLM_DEVICE_TOKEN + NANLM_INTAKE_URL.
+
 # Default: chat
 /nanlm Hello. What can you do?
 
@@ -24,7 +28,9 @@ hermes plugins doctor /path/to/NaNLMind_HERMES --ci
 
 NANNET login is required for chat and training. Pair first with
 `nanlm_auth_init` and `nanlm_auth_pair`, then set `NANNET_AUTH_URL` and the
-pinned issuer key. The plugin fails closed without a paired token.
+pinned issuer key. Android-style nodes may provide a scoped
+`NANLM_DEVICE_TOKEN` plus `NANLM_INTAKE_URL`; the portal validates the scope.
+The plugin fails closed without one of these credentials.
 
 Native training requires the local binary:
 
