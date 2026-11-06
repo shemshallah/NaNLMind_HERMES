@@ -146,6 +146,11 @@ class PairingAuthority:
     def _decode_claims(token):
         try:
             payload = token.split(".")[1]
-            return json.loads(_unb64(payload))
+            claims = json.loads(_unb64(payload))
+            if not isinstance(claims, dict) or not isinstance(claims.get("sub"), str) or not claims["sub"] or len(claims["sub"]) > 256:
+                raise AuthError("invalid NANNET token claims")
+            if claims.get("role", "guest") not in ("admin", "guest"):
+                raise AuthError("invalid NANNET token role")
+            return claims
         except (IndexError, ValueError, TypeError, json.JSONDecodeError) as exc:
             raise AuthError("invalid NANNET token") from exc
