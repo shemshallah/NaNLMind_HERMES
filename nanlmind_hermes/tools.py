@@ -711,18 +711,8 @@ def run_curriculum_experiment(ctx, topic: str, records_per_stage: int = 12,
     """Train the task-specific relation objective, never relabel byte-bit accuracy as language learning."""
     corpus = generate_relation_curriculum(ctx, topic, records_per_stage, stages)
     training = _native_relation_train(ctx, corpus["records"], "structured_teacher_training", epochs)
-    train_records = [
-        {"item": row["item"], "source_digest": row["source_digest"]}
-        for row in corpus["records"] if row.get("split") == "train"
-    ]
-    store = _memory_store(ctx)
-    merge = store.merge(train_records) if train_records else {"accepted": 0, "duplicates": 0}
-    cross_resolution = memory_cross_resolution(ctx, limit=1000)
-    reorganization = store.reorganize()
-    training["merge"] = merge
-    training["cross_resolution"] = cross_resolution
-    training["reorganization"] = reorganization
-    training["memory"] = store.status()
+    memory_result = _merge_relation_memory(ctx, corpus["records"], train_only=True)
+    training.update(memory_result)
     _, _, universe = _paths(ctx)
     experiments = universe / "experiments"
     experiments.mkdir(parents=True, exist_ok=True)
@@ -877,6 +867,32 @@ def _relation_corpus(ctx, records):
             "rejected": rejected, "counts": counts}
 
 
+def _merge_relation_memory(ctx, records, train_only=False):
+    """Merge relation evidence into the additive ledger at its actual resolution."""
+    memory_records = []
+    for record in records:
+        if not isinstance(record, dict) or not isinstance(record.get("item"), dict):
+            continue
+        if train_only and record.get("split") != "train":
+            continue
+        item = record["item"]
+        provenance = item.get("provenance")
+        provenance = provenance if isinstance(provenance, dict) else {}
+        resolution = provenance.get("resolution", item.get("resolution", "lexical"))
+        layer = _RELATION_RESOLUTIONS.get(resolution, _RELATION_RESOLUTIONS["lexical"])
+        memory_records.append({
+            "item": item, "source_digest": record.get("source_digest"), "layer": layer,
+        })
+    store = _memory_store(ctx)
+    merge = store.merge(memory_records) if memory_records else {"accepted": 0, "duplicates": 0}
+    cross_resolution = memory_cross_resolution(ctx, limit=1000)
+    reorganization = store.reorganize()
+    return {
+        "merge": merge, "cross_resolution": cross_resolution,
+        "reorganization": reorganization, "memory": store.status(),
+    }
+
+
 def _native_relation_train(ctx, records, mode, epochs=1):
     corpus = _relation_corpus(ctx, records)
     foundation = ensure_boolean_foundation(ctx)
@@ -986,4 +1002,6 @@ def structured_relation_train(ctx, records, epochs=1):
         raise ValueError("epochs must be between 1 and 100")
     if not any(isinstance(x, dict) and x.get("split") == "test" for x in records):
         raise ValueError("structured relation training requires explicit held-out test records")
-    return _native_relation_train(ctx, records, "structured_teacher_training", epochs)
+    result = _native_relation_train(ctx, records, "structured_teacher_training", epochs)
+    result.update(_merge_relation_memory(ctx, records, train_only=True))
+    return result
