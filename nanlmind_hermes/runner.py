@@ -298,13 +298,15 @@ def run_math_train(command: Sequence[str], corpus_path: Path, state_dir: Path,
 
 
 def run_relation_train(command: Sequence[str], records_path: Path, state_dir: Path,
-                       timeout_seconds: int = 300) -> dict:
+                       epochs: int = 1, timeout_seconds: int = 300) -> dict:
     """Apply typed L0-L9 relation events to the same persistent native universe.
 
     N16REL/1 separates train and test rows. Only train rows mutate heads,
     canonical mirror-pair cells, temporal links and native hyperedges.
     """
     base = _command(command)
+    if isinstance(epochs, bool) or not isinstance(epochs, int) or not 1 <= epochs <= 100:
+        raise RunnerError("relation-train epochs must be between 1 and 100")
     records_path = records_path.expanduser().resolve(strict=True)
     raw = records_path.read_bytes()
     if not raw.startswith(b"N16REL/1\n"):
@@ -321,22 +323,27 @@ def run_relation_train(command: Sequence[str], records_path: Path, state_dir: Pa
             fcntl.flock(lock.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError as exc:
             raise RunnerError("native mathematical universe already has an active training run") from exc
-        result = _run(base + ["relation-train", str(records_path), str(state_path)], timeout_seconds)
+        argv = base + ["relation-train", str(records_path), str(state_path)]
+        if epochs != 1:
+            argv.append(str(epochs))
+        result = _run(argv, timeout_seconds)
     if result["exit_code"] != 0 or result["timed_out"]:
         raise RunnerError("native relation-train failed: " + result["output"][-5000:])
     if not state_path.is_file() or state_path.stat().st_size == 0:
         raise RunnerError("native relation-train did not persist the global universe")
     summary = re.search(
-        r"relation_train status=(updated|no_op) train_events=(\d+) duplicate_events=(\d+) "
+        r"relation_train status=(updated|no_op) epochs=(\d+) train_events=(\d+) duplicate_events=(\d+) "
         r"changed_heads=(\d+) mirror_pair_updates=(\d+) hyperedges_added=(\d+) "
         r"state_bytes=(\d+) state_digest_before=([0-9a-f]{64}) state_digest_after=([0-9a-f]{64})",
         result["output"])
     if not summary:
         raise RunnerError("native relation-train omitted its mutation receipt: " + result["output"][-3000:])
     status = summary.group(1)
-    train_events, duplicates, changed_heads, pair_updates, edges, state_bytes = map(
-        int, summary.groups()[1:7])
+    reported_epochs, train_events, duplicates, changed_heads, pair_updates, edges, state_bytes = map(
+        int, summary.groups()[1:8])
     digest_before, digest_after = summary.group(8), summary.group(9)
+    if reported_epochs != epochs:
+        raise RunnerError("native relation-train epoch receipt does not match request")
     if state_bytes != state_path.stat().st_size:
         raise RunnerError("native relation-train state byte count does not match persisted file")
     if status == "no_op":
@@ -350,7 +357,7 @@ def run_relation_train(command: Sequence[str], records_path: Path, state_dir: Pa
             "native_state_sha256_before": before_sha,
             "native_state_sha256_after": hashlib.sha256(state_path.read_bytes()).hexdigest(),
             "state_digest_before": digest_before, "state_digest_after": digest_after,
-            "train_events": 0, "duplicate_events": duplicates, "changed_heads": 0,
+            "epochs": reported_epochs, "train_events": 0, "duplicate_events": duplicates, "changed_heads": 0,
             "mirror_pair_updates": 0, "hyperedges_added": 0, "resolution_metrics": {},
             "metric_scope": "idempotent replay; no new learning event",
             "stdout": result["output"][-12000:],
@@ -382,7 +389,7 @@ def run_relation_train(command: Sequence[str], records_path: Path, state_dir: Pa
         "native_state_path": str(state_path), "native_state_bytes": state_bytes,
         "native_state_sha256_before": before_sha, "native_state_sha256_after": after_sha,
         "state_digest_before": digest_before, "state_digest_after": digest_after,
-        "train_events": train_events, "duplicate_events": duplicates,
+        "epochs": reported_epochs, "train_events": train_events, "duplicate_events": duplicates,
         "changed_heads": changed_heads, "mirror_pair_updates": pair_updates,
         "hyperedges_added": edges, "resolution_metrics": resolution_metrics,
         "metric_scope": "binary relation-polarity prediction by declared resolution; not text-generation accuracy",
