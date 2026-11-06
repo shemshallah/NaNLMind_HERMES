@@ -67,3 +67,35 @@ The native trace is now a stable structured-discovery stream for the Boolean tra
 9. Every future native hypergraph mutation is represented in the global ledger.
 
 Do not describe the current Boolean transition task as general symbolic mathematics or claim that seven-layer feedback training is complete.
+
+## Resolution-aware routing (shared by chat and runners)
+
+Every accepted discovery may carry `provenance.resolution`. Reorganization maps
+that resolution into the same seven-layer projection for every producer:
+
+| Layer | Resolution(s) |
+|---|---|
+| 0 | bit, nibble, byte |
+| 1 | phonetic |
+| 2 | morpheme |
+| 3 | lexical (roots, prefixes, suffixes, word identity) |
+| 4 | word completion |
+| 5 | sentence |
+| 6 | paragraph, narrative/story |
+
+The resolution tag is routing metadata, not a claim that the native Boolean
+trainer has learned every linguistic scale. The append-only event and its source
+provenance remain unchanged; only the deterministic active projection is rebuilt.
+Unknown or absent resolution tags retain the semantic-kind default. Contradictions
+still move to the highest review layer while retaining their origin head.
+
+## Android / Termux dependency profile
+
+The base package intentionally has no third-party runtime dependencies. Chat,
+N16TXT processing, SQLite mathematical memory, corpus generation and the local
+runner adapter use the Python standard library. Install `cryptography` only on a
+platform where its wheel/build is supported, using `pip install -e ".[auth]"`.
+The NANNET identity, signature, token and encrypted-payload commands require that
+optional extra; they fail as unavailable functionality rather than preventing the
+Hermes chat/training plugin from importing. Do not replace cryptographic
+operations with homemade or unauthenticated substitutes on Android.
