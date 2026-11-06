@@ -57,3 +57,21 @@ Large-text conversation does not require N16TXT framing. The active provider
 selection is whatever the host Hermes runtime configures; multi-provider
 experimentation requires configuring/selecting additional providers at the host
 integration layer.
+
+## Android / Termux installation
+
+The base plugin has no third-party Python runtime dependencies. On Termux, install
+the editable package without the optional NANNET cryptography stack:
+
+    python -m pip install -e .
+
+This enables plugin registration, `nanlm_chat`, `nanlm_chat_history`, SQLite
+mathematical memory, corpus handling and local runner integration. The NANNET
+identity/pairing/signature/encryption tools remain registered but require the
+optional `auth` extra on a platform with a supported cryptography wheel:
+
+    python -m pip install -e ".[auth]"
+
+Do not attempt to substitute pure-Python homemade cryptography. In standalone
+local mode the runner does not require NANNET cryptography; configure the
+authority URL and pinned issuer key only when using paired authority mode.
