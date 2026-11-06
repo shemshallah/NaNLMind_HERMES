@@ -55,6 +55,19 @@ def make_server(authority: PairingAuthority, host="127.0.0.1", port=8765, tls_ce
                     return self._reply(200, {"authorized": True, "installation_id": claims["sub"], "scope": scope, "expires_at": claims["exp"]})
                 except AuthError: return self._reply(401, {"error": "token_invalid_or_scope_denied"})
                 except (ValueError, TypeError, json.JSONDecodeError): return self._reply(400, {"error": "invalid_request"})
+            if self.path == "/v1/admin/identities/revoke":
+                token = self._bearer()
+                if not token: return self._reply(401, {"error": "bearer_required"})
+                try:
+                    claims = authority.verify_access_token(token, required_scope="installation:admin")
+                    if claims.get("role") != "admin": return self._reply(403, {"error": "admin_role_required"})
+                    payload = self._body(4096)
+                    role, identity = payload.get("role"), payload.get("identity")
+                    if role not in ("admin", "guest") or not isinstance(identity, str):
+                        return self._reply(400, {"error": "invalid_identity_target"})
+                    return self._reply(200, authority.revoke_identity(role, identity))
+                except AuthError: return self._reply(401, {"error": "token_invalid_or_scope_denied"})
+                except (ValueError, TypeError, json.JSONDecodeError): return self._reply(400, {"error": "invalid_request"})
             if self.path == "/v1/revoke":
                 token = self._bearer()
                 if not token: return self._reply(401, {"error": "bearer_required"})
