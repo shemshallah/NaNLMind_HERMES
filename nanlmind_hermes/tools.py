@@ -294,13 +294,29 @@ def ensure_boolean_foundation(ctx):
     command = _setting(ctx, "runner_command", [])
     if not command:
         raise RunnerError("runner_command is not configured; Boolean foundation cannot run")
-    result = run_logic_train(command, universe / "boolean_foundation.nmg")
+    checkpoint = universe / "boolean_foundation.nmg"
+    receipt_path = universe / "boolean_foundation.json"
+    if checkpoint.is_file() and checkpoint.stat().st_size > 0 and receipt_path.is_file():
+        try:
+            receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+            current_sha = hashlib.sha256(checkpoint.read_bytes()).hexdigest()
+            stages = receipt.get("stages", [])
+            boolean = next((x for x in stages if x.get("name") == "boolean_foundation"), None)
+            if (receipt.get("status") == "passed" and receipt.get("state_sha256") == current_sha
+                    and boolean and boolean.get("passed") is True
+                    and boolean.get("correct") == boolean.get("total") == 1024
+                    and boolean.get("distinct_rules") == 16):
+                receipt["reused_checkpoint"] = True
+                return receipt
+        except (OSError, ValueError, TypeError):
+            pass
+    result = run_logic_train(command, checkpoint)
     result["created_at"] = datetime.now(timezone.utc).isoformat()
     result["universe_id"] = _universe_id(universe)
-    path = universe / "boolean_foundation.json"
-    temp = path.with_suffix(".tmp")
+    result["reused_checkpoint"] = False
+    temp = receipt_path.with_suffix(".tmp")
     temp.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    os.replace(temp, path)
+    os.replace(temp, receipt_path)
     return result
 
 
