@@ -17,22 +17,18 @@ Expected:
 Validation passed.
 ```
 
-## 2. First conversation
+## 2. First conversation and online learning
 
 ```text
-/nanlm Hello. Tell me what you can do.
+/nanlm Penguins can swim. They are birds.
 ```
 
-or use the normal Hermes chat with `nanlm_chat` selected.
-
-Every turn writes a transcript under:
-
-```text
-<state_dir>/conversations/<session_id>.jsonl
-```
-
-and proposes symbolic discoveries to mathematical memory. A reflection failure
-does not prevent the answer.
+Every turn writes a transcript and proposes structured evidence. With
+`chat_learning: true` (default), explicit supported/refuted subject-predicate-
+object relations are sent to the native relation learner. A chat result reports
+whether heads, mirror pairs and hyperedges actually changed. Neutral or
+incomplete reflections remain symbolic evidence only. Set `chat_learning:
+false` to disable native updates while retaining normal chat.
 
 ## 3. Configure the native trainer
 
