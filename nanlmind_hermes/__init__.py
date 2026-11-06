@@ -10,6 +10,9 @@ def register(ctx):
         result["mathematical_memory"] = tools.memory_status(ctx)
         return result
 
+    def handle_curriculum(params, **kwargs):
+        return tools.generate_curriculum(ctx, params["topic"], params.get("records_per_stage", 12))
+
     def handle_chat(params, **kwargs):
         return tools.chat(ctx, params["message"], params.get("session_id", "default"),
                           params.get("system_prompt"), params.get("temperature", 0.7),
@@ -104,6 +107,10 @@ def register(ctx):
         ("nanlm_auth_pair", "Pair this installation using a one-time code from the trusted NANNET authority.",
          {"pairing_code": {"type": "string", "minLength": 12, "maxLength": 256}}, ["pairing_code"], handle_auth_pair),
         ("nanlm_auth_revoke", "Revoke this installation token and erase its local encrypted copy.", {}, [], handle_auth_revoke),
+        ("nanlm_generate_curriculum", "Generate a balanced 10-stage logic-to-language curriculum corpus, including Boolean inverses, deep relations, exceptions, word choice, sentences, paragraphs and stories.",
+         {"topic": {"type": "string", "minLength": 1, "maxLength": 500},
+          "records_per_stage": {"type": "integer", "minimum": 1, "maximum": 64, "default": 12}},
+         ["topic"], handle_curriculum),
         ("nanlm_generate_corpus", "Generate a bounded N16TXT/1 corpus using Hermes' active model.",
          {"topic": {"type": "string"}, "records": {"type": "integer", "minimum": 1, "maximum": 64, "default": 24}}, ["topic"], handle_generate),
         ("nanlm_train", "Run the native NaNLMind Context2 bootstrap trainer locally.",
