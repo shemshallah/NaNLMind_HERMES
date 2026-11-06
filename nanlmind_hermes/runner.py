@@ -361,13 +361,17 @@ def run_relation_train(command: Sequence[str], records_path: Path, state_dir: Pa
         raise RunnerError("native relation-train claimed updates but global state digest did not change")
     resolution_metrics = {}
     for match in re.finditer(
-        r"resolution_L(\d+) train=(\d+) test=(\d+) accuracy=([0-9.]+) "
+        r"resolution_L(\d+) train=(\d+) test=(\d+) before_accuracy=([0-9.]+) "
+        r"accuracy=([0-9.]+) delta=(-?[0-9.]+) before_balanced_accuracy=([0-9.]+) "
         r"balanced_accuracy=([0-9.]+) majority_baseline=([0-9.]+)", result["output"]):
         resolution_metrics[int(match.group(1))] = {
             "train": int(match.group(2)), "test": int(match.group(3)),
-            "relation_polarity_accuracy": float(match.group(4)),
-            "balanced_accuracy": float(match.group(5)),
-            "majority_baseline": float(match.group(6)),
+            "before_relation_polarity_accuracy": float(match.group(4)),
+            "relation_polarity_accuracy": float(match.group(5)),
+            "within_run_accuracy_delta": float(match.group(6)),
+            "before_balanced_accuracy": float(match.group(7)),
+            "balanced_accuracy": float(match.group(8)),
+            "majority_baseline": float(match.group(9)),
         }
     after_sha = hashlib.sha256(state_path.read_bytes()).hexdigest()
     return {
