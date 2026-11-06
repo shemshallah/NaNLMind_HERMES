@@ -315,7 +315,8 @@ class MemoryStore:
             contested = db.execute("SELECT COUNT(*) FROM assessments WHERE status='contested'").fetchone()[0]
             routes = db.execute("SELECT COUNT(*) FROM projections WHERE active=1").fetchone()[0]
         return {"schema": SCHEMA, "path": str(self.path), "heads": self.heads,
-                "layers": self.layers, "events": events, "graph_edges": edges,
+                "layers": self.layers, "resolution_channels": dict(RESOLUTION_INDEX),
+                "events": events, "graph_edges": edges,
                 "hyperedges": hyperedges, "assessments": assessments,
                 "contested_subjects": contested,
                 "active_routes": routes, "append_only": True,
