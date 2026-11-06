@@ -23,9 +23,13 @@ class PairingHttpTests(unittest.TestCase):
                 with urllib.request.urlopen(req,timeout=5) as response: result=json.loads(response.read())
                 self.assertEqual(result["scopes"],["training:execute"])
                 self.assertEqual(result["issuer_public_key"],authority.issuer_public_key())
+                auth_req=urllib.request.Request("http://127.0.0.1:%d/v1/authorize"%server.server_address[1],data=b'{"scope":"training:execute"}',headers={"Authorization":"Bearer "+result["token"],"Content-Type":"application/json"},method="POST")
+                with urllib.request.urlopen(auth_req,timeout=5) as response: self.assertTrue(json.loads(response.read())["authorized"])
                 revoke_req=urllib.request.Request("http://127.0.0.1:%d/v1/revoke"%server.server_address[1],data=b"{}",headers={"Authorization":"Bearer "+result["token"],"Content-Type":"application/json"},method="POST")
                 with urllib.request.urlopen(revoke_req,timeout=5) as response: revoked=json.loads(response.read())
                 self.assertTrue(revoked["revoked"])
+                with self.assertRaises(urllib.error.HTTPError):
+                    urllib.request.urlopen(auth_req,timeout=5)
                 with self.assertRaises(Exception): authority.verify_access_token(result["token"])
             finally:
                 server.shutdown(); server.server_close(); thread.join(timeout=2)
