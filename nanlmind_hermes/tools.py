@@ -524,7 +524,8 @@ RESOLUTION_FOCUS = {
 
 
 def generate_relation_curriculum(ctx, topic: str, records_per_stage: int = 12,
-                                 stages: list[str] | tuple[str, ...] | None = None):
+                                 stages: list[str] | tuple[str, ...] | None = None,
+                                 feedback: dict | None = None):
     """Generate teacher-labeled relation examples with a frozen per-topic held-out set."""
     if not isinstance(topic, str) or not topic.strip():
         raise ValueError("topic is required")
@@ -582,7 +583,9 @@ def generate_relation_curriculum(ctx, topic: str, records_per_stage: int = 12,
                     f"Focus: {stage_text}\nGenerate exactly {records_per_stage} distinct relation records.\n"
                     f"Resolution guidance: {RESOLUTION_FOCUS[resolution]}\n"
                     "Do not repeat these frozen evaluation triples: " + json.dumps(avoid, ensure_ascii=False) +
-                    "\nShared universe context (evidence only): " + json.dumps(context, ensure_ascii=False)
+                    "\nShared universe context (evidence only): " + json.dumps(context, ensure_ascii=False) +
+                    "\nPrevious native-student feedback (aggregate only; no held-out answers): " +
+                    json.dumps(feedback or {}, ensure_ascii=False)
                 )},
             ],
             temperature=0.35, max_tokens=6000, timeout=180,
