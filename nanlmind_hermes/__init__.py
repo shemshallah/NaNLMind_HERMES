@@ -41,7 +41,7 @@ def register(ctx):
         if not (os.environ.get("NANNET_AUTH_URL") or
                 os.environ.get("NANNET_ISSUER_PUBLIC_KEY")):
             return False
-        return _require_scope( scope)
+        return _auth_tools().require_scope(ctx, scope)
 
     def handle_auth_init(params, **kwargs): return _auth_tools().auth_init(ctx)
     def handle_auth_status(params, **kwargs): return _auth_tools().auth_status(ctx)
@@ -49,42 +49,42 @@ def register(ctx):
     def handle_auth_revoke(params, **kwargs): return _auth_tools().auth_revoke(ctx)
 
     def handle_generate(params, **kwargs):
-        _require_scope( "corpus:write")
+        _require_scope("corpus:write")
         return tools.generate_corpus(ctx, params.get("topic", ""), params.get("records", 12))
 
     def handle_train(params, **kwargs):
-        _require_scope( "training:execute")
+        _require_scope("training:execute")
         return tools.train(ctx, params["corpus_path"], params.get("duration_minutes"))
 
     def handle_math_train(params, **kwargs):
-        _require_scope( "training:execute")
+        _require_scope("training:execute")
         return tools.math_train(ctx, params["corpus_path"], params.get("epochs", 3),
                                 params.get("max_samples_per_head", 4096))
 
     def handle_evaluate(params, **kwargs):
-        _require_scope( "universe:read")
+        _require_scope("universe:read")
         return tools.evaluate(ctx, params["corpus_path"])
 
     def handle_memory_ingest(params, **kwargs):
-        _require_scope( "training:execute")
+        _require_scope("training:execute")
         return tools.memory_ingest(ctx, params["discoveries"], params["source_digest"],
                                    params.get("head"), params.get("layer", 0))
 
     def handle_memory_reorganize(params, **kwargs):
-        _require_scope( "training:execute")
+        _require_scope("training:execute")
         return tools.memory_reorganize(ctx)
 
     def handle_memory_merge(params, **kwargs):
-        _require_scope( "training:execute")
+        _require_scope("training:execute")
         return tools.memory_merge(ctx, params["records"])
 
     def handle_memory_query(params, **kwargs):
-        _require_scope( "universe:read")
+        _require_scope("universe:read")
         return tools.memory_query(ctx, params.get("subject"), params.get("head"),
                                   params.get("layer"), params.get("limit", 100))
 
     def handle_memory_assessments(params, **kwargs):
-        _require_scope( "universe:read")
+        _require_scope("universe:read")
         return tools.memory_assessments(ctx, params.get("subject"), params.get("limit", 100))
 
     specs = [
