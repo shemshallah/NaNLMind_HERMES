@@ -8,7 +8,7 @@ Build the core repository and configure Hermes `runner_command` as an argv array
 
     ["/absolute/path/to/NaNLMind/build/nanlm-universal"]
 
-Use `nanlm_math_train` for the new path. It invokes the native `math-train` command, trains the 256 palindromic heads in the shared global topology, evaluates a held-out corpus split, writes a resumable serialized global topology, validates the 256-record JSONL discovery trace, and merges the discoveries into the additive memory ledger.
+Use `nanlm_math_train` for the new path. It invokes the native `math-train` command, trains the 256 palindromic heads in the shared global topology, evaluates a held-out corpus split, writes a resumable serialized global topology, adds one learned hyperedge per head to the native global hypergraph (with a ledger commit), validates the 256-record JSONL discovery trace against those hyperedge IDs, and merges the discoveries into the additive memory ledger.
 
 This first native trainer is deliberately scoped: it learns per-head Boolean truth-table rules for byte-bit transition tasks. It is a real persistent native training path, but it is not yet a general symbolic mathematics solver, a language model, or the complete multi-layer self-reorganizing trainer. Its held-out accuracy is an evaluation metric, not proof of broad mathematical reasoning.
 
