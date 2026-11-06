@@ -957,7 +957,8 @@ def ingest_conversation_relations(ctx, records):
             continue
         normalized = dict(record)
         item = dict(record["item"])
-        provenance = dict(item.get("provenance") or {})
+        existing_provenance = item.get("provenance")
+        provenance = dict(existing_provenance) if isinstance(existing_provenance, dict) else {}
         provenance["source_type"] = "free_form_chat_reflection"
         provenance["independently_fact_verified"] = False
         item["provenance"] = provenance
