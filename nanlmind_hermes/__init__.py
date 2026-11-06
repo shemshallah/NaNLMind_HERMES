@@ -82,6 +82,10 @@ def register(ctx):
         _require_scope("training:execute")
         return tools.memory_reorganize(ctx)
 
+    def handle_memory_cross_resolution(params, **kwargs):
+        _require_scope("training:execute")
+        return tools.memory_cross_resolution(ctx, params.get("limit", 1000))
+
     def handle_memory_merge(params, **kwargs):
         _require_scope("training:execute")
         return tools.memory_merge(ctx, params["records"])
@@ -112,11 +116,11 @@ def register(ctx):
         ("nanlm_auth_pair", "Pair this installation using a one-time code from the trusted NANNET authority.",
          {"pairing_code": {"type": "string", "minLength": 12, "maxLength": 256}}, ["pairing_code"], handle_auth_pair),
         ("nanlm_auth_revoke", "Revoke this installation token and erase its local encrypted copy.", {}, [], handle_auth_revoke),
-        ("nanlm_generate_curriculum", "Generate a balanced 10-stage logic-to-language curriculum corpus, including Boolean inverses, deep relations, exceptions, word choice, sentences, paragraphs and stories.",
+        ("nanlm_generate_curriculum", "Generate a balanced 12-stage logic-to-language curriculum corpus, including Boolean inverses, deep relations, exceptions, word choice, sentences, paragraphs and stories.",
          {"topic": {"type": "string", "minLength": 1, "maxLength": 500},
           "records_per_stage": {"type": "integer", "minimum": 1, "maximum": 64, "default": 12}},
          ["topic"], handle_curriculum),
-        ("nanlm_curriculum_experiment", "Generate the balanced 10-stage corpus, train the native 256-head universe, and merge discoveries into shared mathematical memory.",
+        ("nanlm_curriculum_experiment", "Generate the balanced 12-stage corpus, train the native 256-head universe, and merge discoveries into shared mathematical memory.",
          {"topic": {"type": "string", "minLength": 1, "maxLength": 500},
           "records_per_stage": {"type": "integer", "minimum": 1, "maximum": 64, "default": 12},
           "epochs": {"type": "integer", "minimum": 1, "maximum": 100, "default": 3},
@@ -139,6 +143,9 @@ def register(ctx):
           "layer": {"type": "integer", "minimum": 0, "maximum": 31}},
          ["discoveries", "source_digest"], handle_memory_ingest),
         ("nanlm_memory_reorganize", "Rebuild deterministic head/layer memory projections without deleting discoveries.", {}, [], handle_memory_reorganize),
+        ("nanlm_memory_cross_resolution", "Compute the ten-by-ten linguistic resolution interaction matrix, compare aligned evidence, preserve contradictions, and merge derived mathematical hyperedges into the shared universe.",
+         {"limit": {"type": "integer", "minimum": 1, "maximum": 1000, "default": 1000}},
+         [], handle_memory_cross_resolution),
         ("nanlm_memory_merge", "Idempotently union peer discovery events into the local additive memory ledger.",
          {"records": {"type": "array", "minItems": 1, "maxItems": 1000,
                       "items": {"type": "object", "required": ["item", "source_digest"],
