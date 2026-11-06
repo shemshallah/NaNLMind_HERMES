@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.venv/
+.env
+*.token
+*.pat
+*.checkpoint
+*.snapshot
+local/
+state/
+*.n16txt
+*.jsonl
