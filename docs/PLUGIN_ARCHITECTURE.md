@@ -107,3 +107,48 @@ not substituted for native head or mirror-pair state.
   failure; it never fabricates a successful update.
 - NANNET authorizes and coordinates; it is not the local trainer or corpus store.
 
+
+## 3. CLOCKED structured-observation integration (design)
+
+CLOCKED is an external structured-reasoning API, not another NaNLMind model or a second semantic topology. Its Decide, Extract, Fill, PII/Protect, Injection/Guard, Script/Inspect, Grounding/Verify, Compare, Rerank and Pipeline results should enter the same native `GlobalTopology` as typed, provenance-bound observations.
+
+The canonical cross-repository design is maintained in
+[`NaNLMind/docs/CLOCKED_HERMES_BRAINSTORM.md](https://github.com/shemshallah/NaNLMind/blob/main/docs/CLOCKED_HERMES_BRAINSTORM.md).
+That document defines the proposed NaNLMind_CLOCKED project, HW3/HW3:0 addressing,
+the M0–M9 CLOCKED profile, exact byte/span and mirror-pair mapping, scratch
+protocol, logic-first training, baselines/controls, CLI, authentication and
+Router/Runner Ring/Koyeb boundaries.
+
+### Integration invariants
+
+- HERMES chat remains the default; CLOCKED mode is a separate interface over
+  the same plugin adapter and scratch protocol.
+- HW3 is the CLOCKED service identity; HW3:0 is its NANNET interface. Router
+  node point 3, BSR wire IDs and internal head IDs remain distinct namespaces.
+- The CLOCKED adapter uses the official `clocked-sdk` contract behind one
+  narrow service boundary. NANNET credentials and CLOCKED API keys are
+  independent and must never be substituted for one another.
+- CLOCKED results are typed teacher observations. They are not automatically
+  independently verified facts and must not be flattened into generic text.
+- Preserve exact source bytes, byte offsets, field schemas, probability
+  distributions, evidence spans, response digests, SDK/API version and cost
+  metadata.
+- Use the existing 256-head topology, 8 MiB register chart, canonical mirror
+  pairs, temporal rails and M0–M9 mapping layers. Do not create a parallel
+  CLOCKED brain or a competing clock.
+- Logic foundation and frozen controls precede CLOCKED-specific training.
+  Report teacher imitation, independent correctness and calibration separately.
+- A shared scratch uses immutable revisions and writer-separated lanes. HERMES
+  authors prompts; CLOCKED appends results; NaNLMind appends its own response;
+  HERMES synthesizes and continues.
+- Router owns HW3 route/ACL generations and Koyeb volume bindings. Koyeb is
+  gateway/control/storage infrastructure, not the semantic learner.
+- The six-runner ring owns distributed head execution and commits one validated
+  global handoff. No partial runner state is promoted.
+- Sponsored demo access requires an explicitly authorized server-side CLOCKED
+  proxy and quotas. Otherwise users supply their own CLOCKED API key. NANNET
+  pairing alone does not grant CLOCKED credits.
+
+This is a design-only integration point. It does not claim that HW3:0, the
+CLOCKED proxy, CLOCKED mode, the scratch bridge or CLOCKED-specific training
+has been implemented or deployed.
