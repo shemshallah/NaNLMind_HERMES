@@ -1,146 +1,115 @@
-# Teacher loop
+# Teacher and conversational learning loops
 
-Hermes chat is the **orchestrator and explainer**. It is not automatically the
-student, and its prose is not a weight update.
+Hermes has two distinct learning paths that share the same native 256-head
+universe. Structured training is explicit and teacher-driven. Free-form chat
+learns online from validated evidence in ordinary back-and-forth conversation.
 
-The useful pattern is:
-
-```text
-teacher model (Gemma/Qwen/other)
-        |
-        | structured examples, not self-graded claims
-        v
-deterministic validator + held-out split
-        |
-        | accepted N16TXT / typed records
-        v
-NaNLMind student (native heads + memory)
-        |
-        | exact Boolean gate, held-out language metrics
-        v
-feedback report: errors, deltas, rejected examples
-        |
-        v
-teacher proposes the next small round
-```
-
-## 1. Teacher output must be data
-
-Ask the teacher for a schema, not free-form praise:
-
-```json
-{
-  "task": "boolean_truth",
-  "op": 6,
-  "a": 1,
-  "b": 0,
-  "target": 1,
-  "reason": "XOR of 1 and 0 is 1"
-}
-```
-
-For language:
-
-```json
-{
-  "task": "word_relation",
-  "subject": "penguin",
-  "predicate": "can",
-  "object": "swim",
-  "label": true,
-  "source": "curriculum"
-}
-```
-
-The validator must use a deterministic oracle where one exists:
-
-- Boolean labels are checked against all 16 truth tables.
-- Arithmetic is recomputed.
-- Word relations are checked against an explicit fact store or source corpus.
-- A teacher's confidence is metadata, never a pass signal.
-
-Reject invalid labels instead of training on them. The rejection count is part
-of the lesson.
-
-## 2. Keep train, validation, and test separate
+## 1. Structured teacher training
 
 ```text
-teacher round 1 -> train.jsonl
-teacher round 2 -> validation.jsonl
-frozen challenge -> test.jsonl
+active teacher
+  -> JSON relation records
+  -> deterministic schema / source / split validation
+  -> frozen challenge set per topic and resolution
+  -> N16REL/1
+  -> native relation-train with requested epochs
+  -> held-out evaluation before and after training
+  -> per-resolution feedback and cross-run deltas
+  -> teacher proposes a focused next round
 ```
 
-The native `math-train` path already has an internal 80/20 split for its byte
-task. That is **not** a substitute for a separate teacher/held-out set. The
-Boolean foundation has a different rule: it is a finite coverage gate, so all
-1,024 truth rows must be checked, and the population must contain all 16
-distinct learned functions. Its failure signal is incomplete observations,
-failed heads, or collapsed diversity.
+The teacher proposes data; it does not declare success. The native runner owns
+the student state and evaluator. Teacher labels are recorded as
+`teacher_distillation` with `independently_fact_verified: false` unless an
+independent source verifier actually establishes the fact.
 
-## 3. Feedback must contain errors, not answers
+The generator requests explicit triples:
+`subject`, `predicate`, `object`, `polarity`, `confidence`, and
+`evidence`. Unsupported neutral claims are not converted into binary targets.
+The deterministic validator rejects incomplete triples, malformed confidence,
+unknown resolutions, invalid labels and duplicate examples.
 
-Send the teacher a compact report:
+## 2. Ten independent resolution channels
 
-```json
-{
-  "round": 3,
-  "gate": {"passed": true, "distinct_rules": 16},
-  "heldout": {"accuracy": 0.63, "majority": 0.63, "bpc": 5.2},
-  "errors": [
-    {"task": "word_relation", "subject": "penguin", "expected": false,
-     "student": "unknown", "count": 7}
-  ],
-  "rejected": 2,
-  "instruction": "Propose a focused round that addresses these errors. Do not repeat the test items."
-}
-```
+| Resolution | Focus | Held-out measurement |
+|---|---|---|
+| L0 bit | Boolean/value relations | relation-polarity accuracy and balanced accuracy |
+| L1 nibble | four-bit composition | relation-polarity accuracy and balanced accuracy |
+| L2 byte | byte identity/composition | relation-polarity accuracy and balanced accuracy |
+| L3 phonetic | grapheme/phoneme/syllable | relation-polarity accuracy and balanced accuracy |
+| L4 morpheme | stem/affix/inflection | relation-polarity accuracy and balanced accuracy |
+| L5 lexical | word/sense/semantic relation | relation-polarity accuracy and balanced accuracy |
+| L6 word completion | context/continuation | relation-polarity accuracy and balanced accuracy |
+| L7 sentence | syntax/agreement/order | relation-polarity accuracy and balanced accuracy |
+| L8 paragraph | cohesion/reference/topic | relation-polarity accuracy and balanced accuracy |
+| L9 narrative | event/time/causality | relation-polarity accuracy and balanced accuracy |
 
-Do not send the test answers. Do not let the teacher declare the student
-passed. The deterministic gate and held-out evaluator own that decision.
+These are **binary relation-polarity** measurements, not text-generation
+accuracy. The old `math-train` byte-bit score remains a separate control and
+must never be presented as a lexical or sentence metric.
 
-## 4. Stop rules
+Every resolution reports sample counts, pre-training accuracy,
+post-training accuracy, within-run delta, balanced accuracy and majority
+baseline. Each topic/resolution gets a frozen challenge set stored locally.
+Reusing the same challenge digest enables a meaningful cross-run delta. A new
+test digest is marked non-comparable. Replaying the same event still evaluates
+the unchanged challenge set and returns `no_op` for mutation.
 
-Stop or roll back when:
+## 3. Boolean foundation gate
 
-- the Boolean gate fails;
-- held-out loss/BPC does not improve for a fixed number of rounds;
-- validation and test diverge;
-- a teacher round largely duplicates previously rejected records;
-- the model changes only its prose, not its measured behavior.
+The native Boolean foundation is a finite coverage gate, not a generalization
+claim. It requires all 1,024 row checks, all 16 distinct learned functions,
+composed circuits and a persisted checkpoint. The gate is cached after a
+verified pass; it is not reset on every language or chat turn.
 
-## 5. ChatGPT/Hermes wiring
+The foundation checkpoint seeds the shared `native/global_universe.nmg`
+exactly once. Math, structured relation training and conversational learning
+then extend that same serialized state.
 
-The default `nanlm_chat` path must remain a chat path. A teacher round belongs
-behind an explicit command or tool, for example:
+## 4. Free-form conversational learning
 
-```text
-/nanlm teach logic 3 rounds
-```
+Normal `nanlm_chat` remains open-ended. With `chat_learning: true` (default),
+each user/assistant exchange is reflected into candidate evidence. Explicit
+supported/refuted triples are sent to the native `relation-train` path; neutral
+or incomplete claims remain in symbolic memory without a native update.
 
-That tool would:
+For each accepted event, the native learner:
+1. routes subject, predicate and object to distinct heads within the declared
+   resolution partition;
+2. updates the routed heads' Boolean rule score tables;
+3. mutates the canonical mirror-pair cells, preserving complementary rails;
+4. adds temporal links between participating heads and pair cells;
+5. appends a provenance-bound n-ary hyperedge for the relation/event;
+6. commits and serializes the shared topology;
+7. returns changed-head, pair-update, hyperedge and state-digest receipts.
 
-1. ask the active teacher for structured examples;
-2. validate and deduplicate them;
-3. write an N16TXT corpus with a separate held-out set;
-4. call the native trainer, which enforces the full-Boolean gate;
-5. evaluate and store the result;
-6. feed only the error report back to the teacher;
-7. stop at the configured budget.
+A repeated identical source-bound event is idempotent and reports `no_op`.
+A later conversational turn has a different source digest and can add new
+evidence. Contradictions remain separate events rather than overwriting prior
+claims. The chat answer is never blocked by reflection or native-update failure;
+the result reports those stages separately.
 
-This is a feedback loop over **data and measurements**, not over the teacher's
-hidden states. That is why it works across different pretrained providers.
+## 5. Feedback and stop rules
 
-## 6. Current boundary
+Send the teacher a compact report containing:
+- exact Boolean gate result and checkpoint reuse status;
+- each resolution's train/test counts, before/after score, delta, balanced
+  accuracy and majority baseline;
+- whether the frozen test digest matches the previous round;
+- changed heads, mirror pairs, hyperedges, duplicates and state digests;
+- rejected records and representative errors.
 
-Today Hermes already has the pieces for a manual loop:
+Do not send frozen test answers to the teacher. Stop or revise a curriculum when
+held-out metrics do not improve, balanced accuracy collapses, a resolution has
+insufficient coverage, or teacher proposals duplicate the frozen challenge set.
 
-- `nanlm_generate_curriculum` — teacher-generated records;
-- `nanlm_training_pipeline` / `nanlm_logic_session` — explicit training;
-- `nanlm_math_train` — mandatory full-Boolean gate, then native byte-bit
-  training;
-- `nanlm_status` — checkpoints and memory;
-- `nanlm_chat` — explanation and reflection.
+## 6. Explicit structured tool
 
-It does **not** yet automatically run the validate → train → evaluate → ask
-teacher loop. The next implementation should add that orchestration with a
-strict schema and held-out evaluator, not let chat silently train.
+`nanlm_structured_relation_train` accepts typed records with a `split` field
+(`train` or `test`), a stable 64-hex `source_digest`, and an `item`
+containing a complete triple, polarity, confidence, evidence and resolution.
+Only train rows mutate the student. Test rows are evaluated before and after
+training. The tool is the manual entry point for user-supplied or externally
+verified examples; `nanlm_training_pipeline` generates teacher-labeled batches
+and frozen challenge sets automatically.
+
