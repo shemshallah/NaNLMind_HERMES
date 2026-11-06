@@ -465,6 +465,200 @@ def generate_curriculum(ctx, topic: str, records_per_stage: int = 12,
             "manifest_path": str(path.with_suffix(".json"))}
 
 
+
+STAGE_RESOLUTIONS = {
+    "boolean_inverses": ("bit", "nibble"),
+    "deep_logic": ("byte",),
+    "story_saturation": ("paragraph", "narrative"),
+    "exceptions": ("byte",),
+    "repetitive_words": ("lexical",),
+    "phonetic_pairs": ("phonetic",),
+    "morpheme_structure": ("morpheme",),
+    "lexical_words": ("lexical",),
+    "word_completion": ("word_completion",),
+    "sentence_choice": ("sentence",),
+    "paragraph_structure": ("paragraph",),
+    "narrative": ("narrative",),
+}
+
+RESOLUTION_FOCUS = {
+    "bit": "Boolean input/output relations, truth values, inverse and counterexample cases.",
+    "nibble": "Four-bit grouping, nibble identity, bit composition and reconstruction.",
+    "byte": "Byte identity, byte composition, encoding relations and exact counterexamples.",
+    "phonetic": "Explicit grapheme/phoneme, onset/rime and syllable relations; distinguish evidence from uncertain pronunciation.",
+    "morpheme": "Stem, affix, inflection and derivation relations; include productive and exceptional forms.",
+    "lexical": "Word senses, definitions, semantic relations, taxonomy and contextual distinctions.",
+    "word_completion": "Context-to-next-word relations with plausible alternatives and a single evidence-supported preferred continuation.",
+    "sentence": "Sentence syntax, agreement, ordering, reference and continuation relations.",
+    "paragraph": "Paragraph topic continuity, cohesion, reference tracking, transitions and causal links.",
+    "narrative": "Narrative entities, events, temporal order, causality, dialogue and character continuity.",
+}
+
+
+def generate_relation_curriculum(ctx, topic: str, records_per_stage: int = 12,
+                                 stages: list[str] | tuple[str, ...] | None = None):
+    """Generate teacher-labeled relation examples with a frozen per-topic held-out set."""
+    if not isinstance(topic, str) or not topic.strip():
+        raise ValueError("topic is required")
+    if isinstance(records_per_stage, bool) or not isinstance(records_per_stage, int) or not 2 <= records_per_stage <= 64:
+        raise ValueError("structured relation training needs 2..64 records per stage")
+    selected = list(CURRICULUM_STAGES)
+    if stages is not None:
+        if isinstance(stages, (str, bytes)) or not isinstance(stages, (list, tuple)) or not stages:
+            raise ValueError("stages must be a non-empty list of curriculum stage names")
+        known = {name for name, _ in CURRICULUM_STAGES}
+        unknown = [name for name in stages if name not in known]
+        if unknown:
+            raise ValueError("unknown curriculum stage(s): " + ", ".join(unknown))
+        selected = [(name, focus) for name, focus in CURRICULUM_STAGES if name in stages]
+    resolution_stages = {}
+    for stage, focus in selected:
+        for resolution in STAGE_RESOLUTIONS[stage]:
+            resolution_stages.setdefault(resolution, []).append((stage, focus))
+    root, corpora, universe = _paths(ctx)
+    challenge_dir = universe / "challenges"
+    challenge_dir.mkdir(parents=True, exist_ok=True)
+    topic_key = hashlib.sha256(topic.strip().casefold().encode("utf-8")).hexdigest()[:24]
+    records, stage_manifest = [], []
+    for resolution in sorted(resolution_stages, key=lambda name: _RELATION_RESOLUTIONS[name]):
+        stage_focus = resolution_stages[resolution]
+        stage_text = "; ".join(f"{name}: {focus}" for name, focus in stage_focus)
+        layer = _RELATION_RESOLUTIONS[resolution]
+        context = _memory_context(ctx, layer=layer, limit=16)
+        challenge_path = challenge_dir / f"{topic_key}_L{layer}.json"
+        existing_challenge = None
+        if challenge_path.is_file():
+            existing_challenge = json.loads(challenge_path.read_text(encoding="utf-8"))
+            if not isinstance(existing_challenge, list) or not existing_challenge:
+                raise ValueError(f"invalid frozen challenge set: {challenge_path}")
+        avoid = []
+        if existing_challenge:
+            avoid = [{"subject": x["item"]["subject"], "predicate": x["item"]["predicate"],
+                      "object": x["item"]["object"], "polarity": x["item"]["polarity"]}
+                     for x in existing_challenge]
+        result = ctx.llm.complete(
+            messages=[
+                {"role": "system", "content": (
+                    "You are a data teacher generating schema-bound relation examples for a small native student. "
+                    "Return JSON only: {\"records\":[...]}. No markdown and no explanations. "
+                    "Each record must have non-empty string subject, predicate, object; polarity supports or refutes; "
+                    "confidence from 0 to 1; and non-empty evidence. Every example must belong to the requested "
+                    "resolution. Include balanced positive and negative examples where the topic permits. "
+                    "Do not invent measurements, pronunciations, etymologies or facts. Mark uncertain evidence by "
+                    "lower confidence or omit the example. Do not output hidden chain-of-thought."
+                )},
+                {"role": "user", "content": (
+                    f"Topic: {topic.strip()}\nResolution: L{layer} ({resolution})\n"
+                    f"Focus: {stage_text}\nGenerate exactly {records_per_stage} distinct relation records.\n"
+                    f"Resolution guidance: {RESOLUTION_FOCUS[resolution]}\n"
+                    "Do not repeat these frozen evaluation triples: " + json.dumps(avoid, ensure_ascii=False) +
+                    "\nShared universe context (evidence only): " + json.dumps(context, ensure_ascii=False)
+                )},
+            ],
+            temperature=0.35, max_tokens=6000, timeout=180,
+            purpose=f"nanlmind-relation-teacher-L{layer}",
+        )
+        raw_text = result.text.strip()
+        if raw_text.startswith("```"):
+            raw_text = "\n".join(x for x in raw_text.splitlines() if not x.strip().startswith("```"))
+        try:
+            payload = json.loads(raw_text)
+        except json.JSONDecodeError as exc:
+            raise ValueError(f"teacher returned invalid JSON for resolution {resolution}") from exc
+        proposed = payload.get("records") if isinstance(payload, dict) else None
+        if not isinstance(proposed, list):
+            raise ValueError(f"teacher omitted records array for resolution {resolution}")
+        batch_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        valid, rejected = [], {}
+        seen = set()
+        for item in proposed[:records_per_stage]:
+            if not isinstance(item, dict):
+                rejected["not_object"] = rejected.get("not_object", 0) + 1
+                continue
+            subject, predicate, obj = item.get("subject"), item.get("predicate"), item.get("object")
+            polarity = item.get("polarity")
+            evidence = item.get("evidence")
+            confidence = item.get("confidence", 0.5)
+            if not all(isinstance(x, str) and x.strip() for x in (subject, predicate, obj)):
+                rejected["incomplete_triple"] = rejected.get("incomplete_triple", 0) + 1
+                continue
+            if polarity not in {"supports", "refutes"}:
+                rejected["non_binary_label"] = rejected.get("non_binary_label", 0) + 1
+                continue
+            if not isinstance(confidence, (int, float)) or isinstance(confidence, bool) or not 0 <= confidence <= 1:
+                rejected["invalid_confidence"] = rejected.get("invalid_confidence", 0) + 1
+                continue
+            if not isinstance(evidence, (str, dict, list)) or not evidence:
+                rejected["missing_evidence"] = rejected.get("missing_evidence", 0) + 1
+                continue
+            key = json.dumps([subject, predicate, obj, polarity], ensure_ascii=False, separators=(",", ":"))
+            if key in seen:
+                rejected["duplicate_record"] = rejected.get("duplicate_record", 0) + 1
+                continue
+            seen.add(key)
+            record_item = {
+                "kind": "relation", "subject": subject.strip(), "predicate": predicate.strip(),
+                "object": obj.strip(), "polarity": polarity, "confidence": float(confidence),
+                "evidence": evidence if isinstance(evidence, dict) else {"teacher_evidence": evidence},
+                "provenance": {
+                    "resolution": resolution, "teacher_distillation": True,
+                    "independently_fact_verified": False, "teacher_provider": getattr(result, "provider", None),
+                    "teacher_model": getattr(result, "model", None), "topic_key": topic_key,
+                },
+            }
+            valid.append({"item": record_item, "source_digest": batch_digest})
+        if len(valid) < 2:
+            raise ValueError(f"teacher supplied fewer than two valid relation examples for {resolution}: {rejected}")
+        if existing_challenge is None:
+            ranked = sorted(valid, key=lambda x: hashlib.sha256(
+                json.dumps(x["item"], ensure_ascii=False, sort_keys=True).encode("utf-8")).hexdigest())
+            test_count = max(1, min(len(ranked) - 1, len(ranked) // 5))
+            existing_challenge = ranked[:test_count]
+            temp = challenge_path.with_suffix(".tmp")
+            temp.write_text(json.dumps(existing_challenge, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+                            encoding="utf-8")
+            os.replace(temp, challenge_path)
+            train_candidates = ranked[test_count:]
+        else:
+            challenge_keys = {
+                json.dumps([x["item"]["subject"], x["item"]["predicate"],
+                            x["item"]["object"], x["item"]["polarity"]],
+                           ensure_ascii=False, separators=(",", ":"))
+                for x in existing_challenge
+            }
+            train_candidates = [
+                x for x in valid
+                if json.dumps([x["item"]["subject"], x["item"]["predicate"],
+                               x["item"]["object"], x["item"]["polarity"]],
+                              ensure_ascii=False, separators=(",", ":")) not in challenge_keys
+            ]
+        for x in train_candidates:
+            records.append({"item": x["item"], "source_digest": x["source_digest"], "split": "train"})
+        for x in existing_challenge:
+            records.append({"item": x["item"], "source_digest": x["source_digest"], "split": "test"})
+        challenge_digest = hashlib.sha256(json.dumps(
+            existing_challenge, ensure_ascii=False, sort_keys=True, separators=(",", ":")
+        ).encode("utf-8")).hexdigest()
+        stage_manifest.append({
+            "resolution": resolution, "layer": layer, "stages": [x[0] for x in stage_focus],
+            "generated": len(valid), "train": len(train_candidates),
+            "frozen_test": len(existing_challenge), "rejected": rejected,
+            "challenge_sha256": challenge_digest,
+            "provider": getattr(result, "provider", "active-hermes-provider"),
+            "model": getattr(result, "model", "active-hermes-model"),
+            "teacher_labels_independently_verified": False,
+        })
+    if not records:
+        raise ValueError("structured teacher produced no new train examples")
+    return {
+        "schema": "nanlm-structured-relation-curriculum/1",
+        "topic": topic.strip(), "topic_key": topic_key,
+        "records": records, "stages": stage_manifest,
+        "resolution_order": [x["resolution"] for x in stage_manifest],
+        "frozen_challenge_sets": len(stage_manifest),
+    }
+
+
 def run_curriculum_experiment(ctx, topic: str, records_per_stage: int = 12,
                                epochs: int = 3, max_samples_per_head: int = 4096,
                                stages: list[str] | tuple[str, ...] | None = None):
