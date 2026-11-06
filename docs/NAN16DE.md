@@ -60,6 +60,13 @@ The signature covers SHA-256 of the body. The server verifies:
 4. ±300-second timestamp window;
 5. one-time nonce replay table.
 
+## Hermes hardware identity
+
+`HW_HERMES_API` is the preferred bearer for Hermes chat/training. If absent,
+Hermes registers one `hwh_` key at `/v1/hermes/register`, stores it under
+`<state_dir>/hw_hermes_api.json` with mode `0600`, and reuses it. Android device
+tokens (`nnt_`) are a separate namespace and are not reused by Hermes.
+
 ## Portal route
 
 ```http

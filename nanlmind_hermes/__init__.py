@@ -83,6 +83,18 @@ def register(ctx):
                 ) from exc
             raise
 
+    def _hardware_scope(scope):
+        portal = os.environ.get("NANNET_AUTH_URL", "").strip()
+        if not portal:
+            return False
+        from .hw_hermes import authorize, ensure_hardware_key
+        try:
+            state = str(ctx.get_config("state_dir", "~/.local/share/nanlmind-hermes"))
+        except Exception:
+            state = "~/.local/share/nanlmind-hermes"
+        key = ensure_hardware_key(portal, state)
+        return authorize(portal, scope, key)
+
     def _device_scope(scope):
         """Android-style scoped device bearer, validated by NANNET."""
         token = os.environ.get("NANLM_DEVICE_TOKEN", "")
@@ -112,17 +124,15 @@ def register(ctx):
         # explicit test flag; production/local interactive use must pair first.
         if os.environ.get("NANLM_AUTH_TEST_BYPASS") == "1":
             return False
-        if _device_scope(scope):
+        if _hardware_scope(scope):
             return True
-        if not (os.environ.get("NANNET_AUTH_URL") and
-                os.environ.get("NANNET_ISSUER_PUBLIC_KEY")):
+        if not os.environ.get("NANNET_AUTH_URL"):
             raise RuntimeError(
                 "NANNET login is required before chat or training. "
-                "Configure NANNET_AUTH_URL, NANNET_ISSUER_PUBLIC_KEY and pair "
-                "the installation with nanlm_auth_init/nanlm_auth_pair, or "
-                "provide a scoped NANLM_DEVICE_TOKEN/NANLM_INTAKE_URL."
+                "Set NANNET_AUTH_URL, and optionally HW_HERMES_API; Hermes will "
+                "register one hardware key if no system key is present."
             )
-        return _auth_tools().require_scope(ctx, scope)
+        raise RuntimeError("NANNET hardware registration or authorization failed")
 
     def handle_auth_init(params, **kwargs): return _auth_tools().auth_init(ctx)
     def handle_auth_status(params, **kwargs): return _auth_tools().auth_status(ctx)

@@ -26,6 +26,25 @@ hermes plugins doctor /path/to/NaNLMind_HERMES --ci
 /nanlm status
 ```
 
+## Hermes hardware key
+
+Hermes uses a dedicated `HW_HERMES_API` hardware identity. Priority:
+
+1. `HW_HERMES_API` from the host/system key store;
+2. the persisted key in `<state_dir>/hw_hermes_api.json`;
+3. automatic registration of exactly one `hwh_` key at
+   `POST /v1/hermes/register`.
+
+The key is stored mode `0600`, is separate from Android’s `NANLM_DEVICE_TOKEN`
+test namespace, and is tagged `hardware_kind=hermes` at the portal so a later
+router can send the identity to the correct kernel. If a system key is present,
+Hermes does not register another one.
+
+```sh
+export NANNET_AUTH_URL=https://your-nannet-portal
+export HW_HERMES_API=hwh_...        # optional; otherwise auto-register
+```
+
 NANNET login is required for chat and training. Pair first with
 `nanlm_auth_init` and `nanlm_auth_pair`, then set `NANNET_AUTH_URL` and the
 pinned issuer key. Android-style nodes may provide a scoped
