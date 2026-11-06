@@ -350,15 +350,18 @@ def run_relation_train(command: Sequence[str], records_path: Path, state_dir: Pa
     for match in re.finditer(
         r"resolution_L(\d+) train=(\d+) test=(\d+) before_accuracy=([0-9.]+) "
         r"accuracy=([0-9.]+) delta=(-?[0-9.]+) before_balanced_accuracy=([0-9.]+) "
-        r"balanced_accuracy=([0-9.]+) majority_baseline=([0-9.]+)", result["output"]):
+        r"before_balanced_accuracy_valid=(yes|no) balanced_accuracy=([0-9.]+) "
+        r"balanced_accuracy_valid=(yes|no) majority_baseline=([0-9.]+)", result["output"]):
         resolution_metrics[int(match.group(1))] = {
             "train": int(match.group(2)), "test": int(match.group(3)),
             "before_relation_polarity_accuracy": float(match.group(4)),
             "relation_polarity_accuracy": float(match.group(5)),
             "within_run_accuracy_delta": float(match.group(6)),
             "before_balanced_accuracy": float(match.group(7)),
-            "balanced_accuracy": float(match.group(8)),
-            "majority_baseline": float(match.group(9)),
+            "before_balanced_accuracy_valid": match.group(8) == "yes",
+            "balanced_accuracy": float(match.group(9)),
+            "balanced_accuracy_valid": match.group(10) == "yes",
+            "majority_baseline": float(match.group(11)),
         }
     if status == "no_op":
         if train_events or changed_heads or pair_updates or edges or digest_before != digest_after:
