@@ -21,7 +21,7 @@ The state file includes the global topology and serialized universe/head scratch
 - `nanlm_train` — run the legacy Context2 bootstrap trainer (its parameters remain in-memory).
 - `nanlm_math_train` — run native 256-head training, resume the global topology, validate discoveries, merge, and reorganize.
 - `nanlm_evaluate` — compare topology-byte, Kneser-Ney order-2 and Context2 controls.
-- `nanlm_memory_ingest`, `nanlm_memory_query`, `nanlm_memory_reorganize`, `nanlm_memory_merge` — manage durable additive mathematical memory.
+- `nanlm_memory_ingest`, `nanlm_memory_query`, `nanlm_memory_assessments`, `nanlm_memory_reorganize`, `nanlm_memory_merge` — manage durable additive mathematical memory and evidence review.
 - `nanlm_auth_init`, `nanlm_auth_pair`, `nanlm_auth_status`, `nanlm_auth_revoke` — manage the local NANNET installation identity.
 
 ## What persists
