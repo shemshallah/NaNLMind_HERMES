@@ -32,7 +32,16 @@ class CurriculumTests(unittest.TestCase):
                     return str(tmp) if key == "state_dir" else default
 
             ctx = Context()
+            import hashlib
+            from nanlmind_hermes.tools import _memory_store
+            _memory_store(ctx).ingest(
+                {"kind": "hypothesis", "subject": "seeded-universe-claim",
+                 "provenance": {"resolution": "bit"}},
+                source_digest=hashlib.sha256(b"seed-memory").hexdigest(),
+            )
+            _memory_store(ctx).reorganize()
             result = generate_curriculum(ctx, "English and mathematical reasoning", 4)
+            self.assertIn("seeded-universe-claim", ctx.llm.calls[0]["messages"][1]["content"])
             info = load_n16txt(result["corpus_path"])
             self.assertEqual(len(CURRICULUM_STAGES), 10)
             self.assertEqual(len(ctx.llm.calls), 10)
