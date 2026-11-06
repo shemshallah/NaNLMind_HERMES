@@ -332,6 +332,36 @@ def generate_curriculum(ctx, topic: str, records_per_stage: int = 12):
             "manifest_path": str(path.with_suffix(".json"))}
 
 
+def run_curriculum_experiment(ctx, topic: str, records_per_stage: int = 12,
+                               epochs: int = 3, max_samples_per_head: int = 4096):
+    """Generate a staged corpus, train the native 256-head universe and record one experiment."""
+    corpus = generate_curriculum(ctx, topic, records_per_stage)
+    training = math_train(ctx, corpus["corpus_path"], epochs, max_samples_per_head)
+    _, _, universe = _paths(ctx)
+    experiments = universe / "experiments"
+    experiments.mkdir(parents=True, exist_ok=True)
+    experiment_id = uuid.uuid4().hex
+    result = {
+        "schema": "nanlm-curriculum-experiment/1",
+        "experiment_id": experiment_id,
+        "topic": topic.strip(),
+        "corpus": corpus,
+        "training": training,
+        "interpretation": (
+            "This experiment combines language-model-generated curriculum examples "
+            "with the native 256-head Boolean learner and shared additive memory. "
+            "Native held-out metrics apply only to the native task and do not establish "
+            "general language competence."
+        ),
+    }
+    manifest = experiments / (experiment_id + ".json")
+    temp = manifest.with_suffix(".tmp")
+    temp.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    os.replace(temp, manifest)
+    result["manifest_path"] = str(manifest)
+    return result
+
+
 def chat(ctx, message: str, session_id: str = "default", system_prompt: str = None,
          temperature: float = 0.7, max_tokens: int = 2048):
     """Answer an open-ended user turn, then reflect it into multiresolution memory."""
