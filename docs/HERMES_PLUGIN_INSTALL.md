@@ -14,12 +14,17 @@ hermes tools
 ```
 
 The plugin must register the tools declared in `plugin.yaml`. The current
-manifest declares 24 tools, including:
+manifest declares 25 tools, including:
 
 ```text
-nanlm_chat, nanlm_chat_history, nanlm_curriculum_experiment,
-nanlm_math_train, nanlm_memory_* and the NANNET auth tools
+nanlm_chat, nanlm_structured_relation_train, nanlm_chat_history,
+nanlm_curriculum_experiment, nanlm_math_train, nanlm_memory_* and NANNET auth tools
 ```
+
+Free-form chat learning is enabled by default through `chat_learning: true`.
+It requires the `training:execute` scope when enabled. Set it to false for
+chat-only sessions that retain symbolic reflection without native head,
+mirror-pair or hyperedge updates.
 
 ## Repository/catalog install
 
