@@ -146,7 +146,7 @@ def evaluate_native(command: Sequence[str], corpus_path: Path, state_dir: Path,
             # Score the topology line only; taking the final bpc silently
             # reports the weaker order-0 baseline as the model's result.
             topology_lines = [line for line in metric_output.splitlines()
-                              if re.search(r"^\\s*topology\\b", line, re.IGNORECASE)]
+                              if line.lstrip().lower().startswith("topology ")]
             if topology_lines:
                 metric_output = topology_lines[-1]
         results[name]["metrics"] = _metrics(metric_output)
