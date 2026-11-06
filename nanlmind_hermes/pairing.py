@@ -21,6 +21,7 @@ class PairingAuthority:
                 db.execute("ALTER TABLE pairing_codes ADD COLUMN role TEXT NOT NULL DEFAULT 'guest'")
             db.execute("CREATE TABLE IF NOT EXISTS installations (installation_id TEXT PRIMARY KEY,public_key TEXT NOT NULL,paired_at INTEGER NOT NULL)")
             db.execute("CREATE TABLE IF NOT EXISTS identity_status (identity TEXT NOT NULL,role TEXT NOT NULL,created_at INTEGER NOT NULL,last_seen INTEGER NOT NULL DEFAULT 0,revoked_at INTEGER,PRIMARY KEY(identity,role))")
+            db.execute("CREATE TABLE IF NOT EXISTS oidc_jti (jti TEXT PRIMARY KEY,identity TEXT NOT NULL,expires_at INTEGER NOT NULL,consumed_at INTEGER NOT NULL)")
             identity_columns = {row[1] for row in db.execute("PRAGMA table_info(identity_status)")}
             if "last_seen" not in identity_columns:
                 db.execute("ALTER TABLE identity_status ADD COLUMN last_seen INTEGER NOT NULL DEFAULT 0")
@@ -60,6 +61,17 @@ class PairingAuthority:
     def issuer_public_key(self, role="guest", identity="legacy") -> str:
         return _b64(self._private_key(role, identity).public_key().public_bytes(serialization.Encoding.Raw,serialization.PublicFormat.Raw))
 
+    def consume_oidc_jti(self, jti: str, identity: str, expires_at: int, now=None) -> None:
+        if not isinstance(jti, str) or not jti or len(jti) > 256 or not isinstance(identity, str) or not identity:
+            raise AuthError("invalid OIDC token identity")
+        stamp = int(time.time()) if now is None else int(now)
+        try:
+            with sqlite3.connect(self.database) as db:
+                db.execute("INSERT INTO oidc_jti VALUES (?,?,?,?)", (jti, identity, int(expires_at), stamp))
+                db.execute("DELETE FROM oidc_jti WHERE expires_at<=?", (stamp,))
+        except sqlite3.IntegrityError as exc:
+            raise AuthError("OIDC token has already been consumed") from exc
+
     def register_identity(self, role: str, identity: str, now=None) -> None:
         from .auth import IDENTITY_DOMAINS
         if role not in IDENTITY_DOMAINS or not isinstance(identity, str) or not identity or len(identity) > 256:
@@ -79,6 +91,15 @@ class PairingAuthority:
             if cur.rowcount != 1:
                 raise AuthError("identity not found or already revoked")
         return {"revoked": True, "identity": identity, "role": role}
+
+    def issue_identity_token(self, role: str, identity: str, scopes, ttl_seconds=3600, now=None) -> dict:
+        from .auth import identity_scope_ceiling
+        requested = sorted(set(scopes))
+        if role not in ("admin", "guest") or not requested or not set(requested) <= identity_scope_ceiling(role):
+            raise AuthError("identity token scopes exceed role ceiling")
+        self.register_identity(role, identity, now)
+        token = issue_token(self._private_key(role, identity), identity, requested, ttl_seconds, now, role=role)
+        return {"token": token, "role": role, "identity": identity, "scopes": requested}
 
     def create_pairing_code(self, scopes, ttl_seconds=600, now=None, role="guest") -> dict:
         from .auth import identity_scope_ceiling
