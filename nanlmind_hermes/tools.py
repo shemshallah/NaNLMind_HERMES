@@ -711,7 +711,7 @@ def run_curriculum_experiment(ctx, topic: str, records_per_stage: int = 12,
     """Train the task-specific relation objective, never relabel byte-bit accuracy as language learning."""
     corpus = generate_relation_curriculum(ctx, topic, records_per_stage, stages)
     training = _native_relation_train(ctx, corpus["records"], "structured_teacher_training", epochs)
-    memory_result = _merge_relation_memory(ctx, corpus["records"], train_only=True)
+    memory_result = _merge_relation_memory(ctx, corpus["records"], train_only=True, reorganize=True)
     training.update(memory_result)
     _, _, universe = _paths(ctx)
     experiments = universe / "experiments"
@@ -867,7 +867,7 @@ def _relation_corpus(ctx, records):
             "rejected": rejected, "counts": counts}
 
 
-def _merge_relation_memory(ctx, records, train_only=False):
+def _merge_relation_memory(ctx, records, train_only=False, reorganize=False):
     """Merge relation evidence into the additive ledger at its actual resolution."""
     memory_records = []
     for record in records:
@@ -885,6 +885,8 @@ def _merge_relation_memory(ctx, records, train_only=False):
         })
     store = _memory_store(ctx)
     merge = store.merge(memory_records) if memory_records else {"accepted": 0, "duplicates": 0}
+    if not reorganize:
+        return {"merge": merge}
     cross_resolution = memory_cross_resolution(ctx, limit=1000)
     reorganization = store.reorganize()
     return {
@@ -1003,5 +1005,5 @@ def structured_relation_train(ctx, records, epochs=1):
     if not any(isinstance(x, dict) and x.get("split") == "test" for x in records):
         raise ValueError("structured relation training requires explicit held-out test records")
     result = _native_relation_train(ctx, records, "structured_teacher_training", epochs)
-    result.update(_merge_relation_memory(ctx, records, train_only=True))
+    result.update(_merge_relation_memory(ctx, records, train_only=True, reorganize=True))
     return result
