@@ -646,6 +646,13 @@ def ingest_conversation_relations(ctx, records):
                 "changed_heads": 0, "mirror_pair_updates": 0, "hyperedges_added": 0}
     try:
         return _native_relation_train(ctx, records, "free_form_chat")
+    except ValueError as exc:
+        if "no trainable supported/refuted" in str(exc):
+            return {"status": "no_supervised_relations", "train_events": 0,
+                    "changed_heads": 0, "mirror_pair_updates": 0,
+                    "hyperedges_added": 0, "note": "reflection contained no explicit supervised triples"}
+        return {"status": "native_update_failed",
+                "error": type(exc).__name__ + ": " + str(exc)[:1000]}
     except Exception as exc:
         return {"status": "native_update_failed",
                 "error": type(exc).__name__ + ": " + str(exc)[:1000]}
