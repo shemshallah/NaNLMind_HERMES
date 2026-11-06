@@ -23,7 +23,7 @@ class AuthToolTests(unittest.TestCase):
             (root/"nannet_token.json").write_text(__import__("json").dumps(envelope))
             encoded=__import__("base64").urlsafe_b64encode(master).rstrip(b"=").decode()
             issuer_encoded=__import__("base64").urlsafe_b64encode(public).rstrip(b"=").decode()
-            with patch.dict(os.environ,{"NANNET_MASTER_KEY":encoded,"NANNET_ISSUER_PUBLIC_KEY":issuer_encoded,"NANNET_AUTH_URL":"https://auth.example"}):
+            with patch.dict(os.environ,{"NANNET_MASTER_KEY":encoded,"NANNET_ISSUER_PUBLIC_KEY":issuer_encoded}):
                 ctx=FakeContext(Path(tmp))
                 self.assertTrue(require_scope(ctx,"training:execute"))
                 with self.assertRaises(ValueError): require_scope(ctx,"snapshot:write")
