@@ -45,8 +45,8 @@ class CurriculumTests(unittest.TestCase):
             info = load_n16txt(result["corpus_path"])
             self.assertEqual(len(CURRICULUM_STAGES), 10)
             self.assertEqual(len(ctx.llm.calls), 10)
-            self.assertEqual(info.unique_records, 40)
-            self.assertEqual(result["records"], 40)
+            self.assertEqual(info.unique_records, 4 * len(CURRICULUM_STAGES))
+            self.assertEqual(result["records"], 4 * len(CURRICULUM_STAGES))
             self.assertEqual([x["stage"] for x in result["stages"]],
                              [x[0] for x in CURRICULUM_STAGES])
             self.assertEqual(result["stages"][-1]["stage"], "narrative")
@@ -73,7 +73,7 @@ class CurriculumTests(unittest.TestCase):
             with patch("nanlmind_hermes.tools.math_train", side_effect=fake_train):
                 from nanlmind_hermes.tools import run_curriculum_experiment
                 result = run_curriculum_experiment(ctx, "logic and language", 2, 4, 128)
-            self.assertEqual(observed["corpus"].unique_records, 20)
+            self.assertEqual(observed["corpus"].unique_records, 2 * len(CURRICULUM_STAGES))
             self.assertEqual(observed["epochs"], 4)
             self.assertEqual(observed["samples"], 128)
             self.assertEqual(result["training"]["head_count"], 256)
