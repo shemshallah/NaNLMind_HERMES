@@ -6,6 +6,7 @@ The repository is a native `plugin.yaml` + `register(ctx)` plugin.
 
 ```sh
 hermes plugins install /path/to/NaNLMind_HERMES --enable
+export HERMES_GATEWAY_NO_SUPERVISE=1
 hermes plugins validate /path/to/NaNLMind_HERMES --install-deps
 hermes plugins doctor /path/to/NaNLMind_HERMES --ci
 hermes plugins list

@@ -9,9 +9,10 @@ hermes plugins install shemshallah/NaNLMind_HERMES --yes-deps --enable
 # Validate the manifest and registration
 hermes plugins doctor /path/to/NaNLMind_HERMES --ci
 
-# First: NANNET login is mandatory
-# Ask Hermes to run nanlm_auth_init, then complete nanlm_auth_pair.
-# Android-style nodes may instead export NANLM_DEVICE_TOKEN + NANLM_INTAKE_URL.
+# First: NANNET login is mandatory.
+# Hermes uses HW_HERMES_API, or auto-registers one hwh_ key.
+# Android test nodes use NANLM_DEVICE_TOKEN + NANLM_INTAKE_URL instead.
+# For one-shot/CI runs, export HERMES_GATEWAY_NO_SUPERVISE=1.
 
 # Default: chat
 /nanlm Hello. What can you do?
@@ -55,6 +56,7 @@ take HW2/HW3.
 ```sh
 export NANNET_AUTH_URL=https://your-nannet-portal
 export HW_HERMES_API=hwh_...        # optional; otherwise auto-register
+export HERMES_GATEWAY_NO_SUPERVISE=1 # recommended for one-shot/CI runs
 ```
 
 NANNET login is required for chat and training. Pair first with
