@@ -48,6 +48,10 @@ def register(ctx):
         return tools.memory_query(ctx, params.get("subject"), params.get("head"),
                                   params.get("layer"), params.get("limit", 100))
 
+    def handle_memory_assessments(params, **kwargs):
+        auth_tools.require_scope(ctx, "universe:read")
+        return tools.memory_assessments(ctx, params.get("subject"), params.get("limit", 100))
+
     specs = [
         ("nanlm_status", "Inspect local NaNLMind universe and durable mathematical-memory status.", {}, [], handle_status),
         ("nanlm_auth_init", "Create this installation's encrypted NANNET identity.", {}, [], handle_auth_init),
@@ -86,6 +90,9 @@ def register(ctx):
           "layer": {"type": "integer", "minimum": 0, "maximum": 31},
           "limit": {"type": "integer", "minimum": 1, "maximum": 1000}},
          [], handle_memory_query),
+        ("nanlm_memory_assessments", "Inspect evidence-weighted support/refutation assessments; contested claims are promoted to the highest review layer.",
+         {"subject": {"type": "string"}, "limit": {"type": "integer", "minimum": 1, "maximum": 1000}},
+         [], handle_memory_assessments),
     ]
     for name, description, properties, required, handler in specs:
         ctx.register_tool(
