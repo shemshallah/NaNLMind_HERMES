@@ -147,7 +147,7 @@ class HermesChatTests(unittest.TestCase):
                 " print('result=PASS')\n"
                 "else:\n"
                 " records, state = sys.argv[2], pathlib.Path(sys.argv[3]); state.parent.mkdir(parents=True,exist_ok=True); state.write_bytes(b'native')\n"
-                " print('relation_train status=updated train_events=1 duplicate_events=0 changed_heads=3 mirror_pair_updates=3 hyperedges_added=1 state_bytes=6 state_digest_before=' + 'b'*64 + ' state_digest_after=' + 'c'*64)\n",
+                " print('relation_train status=updated epochs=1 train_events=1 duplicate_events=0 changed_heads=3 mirror_pair_updates=3 hyperedges_added=1 state_bytes=6 state_digest_before=' + 'b'*64 + ' state_digest_after=' + 'c'*64)\n",
                 encoding="utf-8",
             )
             class LearningLLM:
