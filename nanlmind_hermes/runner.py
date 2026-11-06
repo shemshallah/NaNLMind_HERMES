@@ -211,12 +211,20 @@ def run_math_train(command: Sequence[str], corpus_path: Path, state_dir: Path,
             raise RunnerError(f"invalid native layer at line {line_no}")
         if event.get("source_digest") != corpus_digest:
             raise RunnerError(f"native discovery source digest mismatch at line {line_no}")
+        hyperedge_id = event.get("hyperedge_id")
+        hyperedge_label = event.get("hyperedge_label")
+        if isinstance(hyperedge_id, bool) or not isinstance(hyperedge_id, int) or hyperedge_id <= 0:
+            raise RunnerError(f"native discovery lacks a valid committed hyperedge at line {line_no}")
+        if isinstance(hyperedge_label, bool) or not isinstance(hyperedge_label, int) or not 0 <= hyperedge_label < 2**64:
+            raise RunnerError(f"native discovery has an invalid hyperedge label at line {line_no}")
         item = {key: event[key] for key in
                 ("kind", "subject", "expression", "evidence", "provenance", "confidence", "polarity")
                 if key in event}
         item.setdefault("provenance", {})
         item["provenance"]["native_address"] = event.get("address")
         item["provenance"]["native_head"] = head
+        item["provenance"]["native_hyperedge_id"] = hyperedge_id
+        item["provenance"]["native_hyperedge_label"] = hyperedge_label
         records.append({"item": item, "source_digest": corpus_digest,
                         "head": head, "layer": layer})
         seen_heads.add(head)
