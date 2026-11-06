@@ -230,15 +230,26 @@ def register(ctx):
          {"subject": {"type": "string"}, "limit": {"type": "integer", "minimum": 1, "maximum": 1000}},
          [], handle_memory_assessments),
     ]
+    import json
+
+    def tool_handler(handler):
+        # Hermes tool handlers must return a JSON string. Internal helpers stay
+        # Python-native so they can be composed and tested.
+        def wrapped(params, **kwargs):
+            return json.dumps(handler(params, **kwargs), sort_keys=True,
+                              ensure_ascii=False, default=str)
+        return wrapped
+
     for name, description, properties, required, handler in specs:
         ctx.register_tool(
-            name=name, toolset="nanlmind", handler=handler,
+            name=name, toolset="nanlmind", handler=tool_handler(handler),
             schema={"name": name, "description": description,
                     "parameters": {"type": "object", "properties": properties,
                                    "required": required, "additionalProperties": False}},
         )
 
     def handle_command(raw_args):
+        import json as _json
         import shlex
         try:
             parts = shlex.split(raw_args or "")
@@ -247,11 +258,11 @@ def register(ctx):
         command = parts[0].lower() if parts else "chat"
         rest = parts[1:]
         if command in {"help", "?"}:
-            return {
+            return _json.dumps({
                 "usage": "/nanlm [chat|logic|words|sentences|pipeline|status] ...",
                 "default": "chat",
                 "note": "Bare /nanlm text is treated as a chat message.",
-            }
+            }, sort_keys=True)
         if command == "status":
             return handle_status({})
         if command == "logic":
@@ -267,8 +278,8 @@ def register(ctx):
         else:
             message = raw_args.strip()
         if not message:
-            return {"response": "NaNLMind chat is ready. Use /nanlm <message> or /nanlm help."}
-        return handle_chat({"message": message})
+            return _json.dumps({"response": "NaNLMind chat is ready. Use /nanlm <message> or /nanlm help."})
+        return _json.dumps(handle_chat({"message": message}), sort_keys=True, default=str)
 
     if hasattr(ctx, "register_command"):
         ctx.register_command(

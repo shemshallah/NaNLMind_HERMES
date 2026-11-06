@@ -54,10 +54,10 @@ with tempfile.TemporaryDirectory() as tmp:
     assert "nanlm_generate_curriculum" in ctx.tools
     assert "nanlm_curriculum_experiment" in ctx.tools
     assert "nanlm_auth_init" in ctx.tools
-    result = ctx.tools["nanlm_chat"]({"message": "Try an open-ended experiment."})
+    result = json.loads(ctx.tools["nanlm_chat"]({"message": "Try an open-ended experiment."}))
     assert result["response"] == "Hermes is ready."
     assert result["reflection"]["memory_merge"]["accepted"] == 1
-    history = ctx.tools["nanlm_chat_history"]({})
+    history = json.loads(ctx.tools["nanlm_chat_history"]({}))
     assert len(history["messages"]) == 2
     print("registered", len(ctx.tools), "tools and completed chat without cryptography")
 """
