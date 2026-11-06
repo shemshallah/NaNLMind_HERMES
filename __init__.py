@@ -23,9 +23,9 @@ def register(ctx):
       ("nanlm_auth_status","Inspect local NANNET identity and pairing status without revealing secrets.",{},[],handle_auth_status),
       ("nanlm_auth_pair","Pair this installation using a one-time code from the trusted NANNET authority.",{"pairing_code":{"type":"string","minLength":12,"maxLength":256}},["pairing_code"],handle_auth_pair),
       ("nanlm_auth_revoke","Revoke this installation token and erase its local encrypted copy.",{},[],handle_auth_revoke),
-      ("nanlm_generate_corpus","Generate a bounded N16TXT/1 corpus using Hermes' active model.",{"topic":{"type":"string"},"records":{"type":"integer","minimum":1,"maximum":64,"default":12}},["topic"],handle_generate),
-      ("nanlm_train","Train this local universe for a bounded duration of at most six hours.",{"corpus_path":{"type":"string"},"duration_minutes":{"type":"integer","minimum":1,"maximum":360}},["corpus_path"],handle_train),
-      ("nanlm_evaluate","Evaluate a corpus using the configured local runner.",{"corpus_path":{"type":"string"}},["corpus_path"],handle_evaluate),
+      ("nanlm_generate_corpus","Generate a bounded N16TXT/1 corpus using Hermes' active model.",{"topic":{"type":"string"},"records":{"type":"integer","minimum":1,"maximum":64,"default":24}},["topic"],handle_generate),
+      ("nanlm_train","Run the native NaNLMind bootstrap trainer locally with a strict wall-clock limit; artifacts are reproducibility logs, not resumable weights.",{"corpus_path":{"type":"string"},"duration_minutes":{"type":"integer","minimum":1,"maximum":360}},["corpus_path"],handle_train),
+      ("nanlm_evaluate","Run native topology-byte, Kneser-Ney and Context2 controls locally on the same corpus.",{"corpus_path":{"type":"string"}},["corpus_path"],handle_evaluate),
     ]
     for name,description,properties,required,handler in specs:
       ctx.register_tool(name=name,toolset="nanlmind",handler=handler,schema={"name":name,"description":description,"parameters":{"type":"object","properties":properties,"required":required,"additionalProperties":False}})
