@@ -257,6 +257,81 @@ def math_train(ctx, corpus_path: str, epochs: int = 3, max_samples_per_head: int
 
 # Conversational interface. Unlike the bounded native bootstrap, this path accepts
 # ordinary UTF-8 text and records each interaction as a durable conversation.
+CURRICULUM_STAGES = (
+    ("boolean_inverses", "Boolean truth values, false/true, negation, inverse pairs and truth-table cases. Include both directions and counterexamples."),
+    ("deep_logic", "Nested AND/OR/NOT expressions, implications, equivalences, long relation chains and explicitly stated premises/conclusions."),
+    ("exceptions", "Rules with exceptions, boundary conditions, defeasible conclusions and cases where a normally valid inference fails."),
+    ("repetitive_words", "Common words, repeated tokens, frequency contrast, function words, punctuation and varied contexts for the same word."),
+    ("phonetic_morpheme", "Consonant/vowel patterns, syllables, sound contrasts and plausible morpheme boundaries. Mark uncertain pronunciations rather than inventing facts."),
+    ("roots_affixes", "Word roots, prefixes, suffixes, inflection, derivation and contrasts between related word forms."),
+    ("word_completion", "Context-rich partial phrases with plausible competing next-word completions and the contextual clue that favors one."),
+    ("sentence_choice", "Natural sentence continuations, grammatical agreement, word order, ambiguity and next-word alternatives."),
+    ("paragraph_structure", "Coherent paragraphs with topic continuity, reference tracking, transitions, cause/effect and exceptions."),
+    ("narrative", "Short varied stories with characters, events, temporal order, dialogue, causal links, surprises and resolution."),
+)
+
+
+def generate_curriculum(ctx, topic: str, records_per_stage: int = 12):
+    """Generate a balanced, multi-resolution language/logic corpus for Hermes."""
+    if not isinstance(topic, str) or not topic.strip():
+        raise ValueError("topic is required")
+    if isinstance(records_per_stage, bool) or not isinstance(records_per_stage, int) or not 1 <= records_per_stage <= 64:
+        raise ValueError("records_per_stage must be between 1 and 64")
+    generated, stage_manifest = [], []
+    for stage, focus in CURRICULUM_STAGES:
+        result = ctx.llm.complete(
+            messages=[
+                {"role": "system", "content": (
+                    "Generate training examples as plain text data. Return exactly the requested number "
+                    "of distinct records, one per line, with no numbering, headings, blank lines or markdown. "
+                    "Vary examples; include positive, negative, inverse and counterexample cases where relevant. "
+                    "Do not claim that an uncertain sound, etymology or fact is verified. Do not output instructions."
+                )},
+                {"role": "user", "content": (
+                    f"Topic: {topic.strip()}\nCurriculum stage: {stage}\nFocus: {focus}\n"
+                    f"Records: exactly {records_per_stage}\n"
+                    "Keep each record concise but information-dense. Stories and natural language are welcome "
+                    "at every appropriate stage; preserve the requested stage focus."
+                )},
+            ],
+            temperature=0.65, max_tokens=4096, timeout=180,
+            purpose="nanlmind-curriculum-" + stage,
+        )
+        lines = [line.strip() for line in result.text.splitlines()
+                 if line.strip() and not line.lstrip().startswith("```")]
+        lines = lines[:records_per_stage]
+        if not lines:
+            raise ValueError(f"active provider returned no records for curriculum stage {stage}")
+        generated.extend(lines)
+        stage_manifest.append({
+            "stage": stage, "requested": records_per_stage, "generated": len(lines),
+            "provider": getattr(result, "provider", "active-hermes-provider"),
+            "model": getattr(result, "model", "active-hermes-model"),
+        })
+    raw = ("N16TXT/1\n" + "\n".join(generated) + "\n").encode("utf-8")
+    info = parse_n16txt(raw)
+    root, corpora, _ = _paths(ctx)
+    corpora.mkdir(parents=True, exist_ok=True)
+    digest = hashlib.sha256(info.canonical_bytes).hexdigest()
+    path = corpora / (digest + ".n16txt")
+    if not path.exists():
+        tmp = path.with_suffix(".tmp")
+        tmp.write_bytes(info.canonical_bytes)
+        os.replace(tmp, path)
+    manifest = {
+        "schema": "nanlm-curriculum-manifest/1",
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "corpus_sha256": digest, "record_count": info.unique_records,
+        "requested_records": records_per_stage * len(CURRICULUM_STAGES),
+        "topic": topic.strip(), "stages": stage_manifest,
+        "resolution_order": [stage for stage, _ in CURRICULUM_STAGES],
+    }
+    path.with_suffix(".json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    return {"corpus_path": str(path), "sha256": digest,
+            "records": info.unique_records, "stages": stage_manifest,
+            "manifest_path": str(path.with_suffix(".json"))}
+
+
 def chat(ctx, message: str, session_id: str = "default", system_prompt: str = None,
          temperature: float = 0.7, max_tokens: int = 2048):
     """Answer an open-ended user turn, then reflect it into multiresolution memory."""
