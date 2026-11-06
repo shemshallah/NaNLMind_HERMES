@@ -78,3 +78,22 @@ python experiments/baseline_experiment.py \
   --out experiments/baseline_1.0.1_high.json \
   --records 12 --epochs 3 --samples 512
 ```
+
+
+## Measurement boundary after resolution-aware trainer
+
+This 1.0.1 table is a historical byte-bit `math-train` baseline. It is not a
+word, lexical, sentence, paragraph or narrative score. The near-majority values
+and small round-to-round deltas were a central reason to add the separate
+`relation-train` objective.
+
+New structured sessions report L0-L9 relation-polarity metrics on frozen
+topic-specific challenge sets, including pre-training score, post-training
+score, within-run delta, balanced accuracy, majority baseline and cross-run
+delta when the test digest matches. Free-form chat reports native mutation
+receipts (changed heads, mirror-pair updates, hyperedges and state digests);
+it does not fabricate held-out accuracy when no test examples are present.
+
+Do not compare the historical byte metric directly with the new
+resolution-specific relation metrics. They are different objectives and
+different evaluators.
