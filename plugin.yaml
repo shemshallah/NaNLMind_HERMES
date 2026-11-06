@@ -1,25 +1,25 @@
 name: nanlmind-hermes
-version: 0.1.0
+version: 0.2.0
 manifest_version: 2
 api_version: 1
-description: Train and inspect one local NaNLMind 256-head universe through Hermes.
+description: Local NaNLMind training, reproducible evaluation and NANNET-connected universe operations through Hermes.
 license: MIT
 homepage: https://github.com/shemshallah/NaNLMind_HERMES
-tags: [nanlmind, training, corpus, local-runner]
+tags: [nanlmind, training, corpus, local-runner, nannet]
 config_schema:
   duration_minutes:
     type: int
     default: 30
-    description: Default training wall-clock budget in minutes (1–360).
+    description: Wall-clock budget in minutes for the local native bootstrap run (1–360).
   checkpoint_interval_seconds:
     type: int
     default: 60
-    description: Requested checkpoint cadence for the native runner.
+    description: Reserved for native checkpoint support; current bootstrap artifacts are reproducibility manifests, not resumable model weights.
   runner_command:
     type: list
     default: []
-    description: Local native runner argv; empty disables training until configured.
+    description: Local native executable argv, e.g. ["/path/to/NaNLMind/build/nanlm-universal"].
   state_dir:
     type: str
     default: ~/.local/share/nanlmind-hermes
-    description: Per-installation local universe and corpus state directory.
+    description: Per-installation local universe, corpus, run logs and manifests.
