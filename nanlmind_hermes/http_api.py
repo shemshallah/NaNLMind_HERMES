@@ -11,7 +11,7 @@ def make_server(authority: PairingAuthority, host="127.0.0.1", port=8765, tls_ce
     except ValueError: loopback=host.lower()=="localhost"
     if not loopback and not (tls_cert and tls_key):
         raise ValueError("non-loopback pairing listener requires TLS certificate and private key")
-    devices = DeviceRegistry(authority.database)
+    devices = DeviceRegistry(authority.database, authority=authority)
     class Handler(BaseHTTPRequestHandler):
         server_version="NANNET-HERMES/1"
         def log_message(self, fmt, *args): return
