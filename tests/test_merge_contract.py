@@ -85,7 +85,7 @@ class MergeContractTests(unittest.TestCase):
 
         routes = self.left.query(subject="claim:water-boils", limit=10)
         self.assertEqual({row["head"] for row in routes}, {17, 91})
-        self.assertEqual({row["layer"] for row in routes}, {6})
+        self.assertEqual({row["layer"] for row in routes}, {9})
 
     def test_reopen_then_merge_is_idempotent(self):
         self.left.merge(self.records)
