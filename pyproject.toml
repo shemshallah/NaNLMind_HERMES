@@ -5,5 +5,8 @@ description = "Hermes plugin for a local NaNLMind 256-head universe"
 requires-python = ">=3.10"
 dependencies = ["cryptography"]
 
+[project.scripts]
+nannet-authority = "nanlmind_hermes.authority_cli:main"
+
 [tool.unittest]
 start-directory = "tests"
