@@ -98,9 +98,19 @@ def validate_task_plan(plan: dict, budget: dict | None = None) -> dict:
                 or len(deps) != len(set(deps))
                 or any(dep not in seen for dep in deps)):
             raise ValueError("dependencies must uniquely reference earlier tasks")
+        source_id = task.get("source_id")
+        if source_id is not None and (
+            not isinstance(source_id, str) or len(source_id) > 128
+        ):
+            raise ValueError("source_id must be a string of at most 128 characters")
         options = task.get("options", {})
         if not isinstance(options, dict):
             raise ValueError("task options must be an object")
+        claims_from = options.get("claims_from")
+        if claims_from is not None and (
+            not isinstance(claims_from, str) or claims_from not in seen
+        ):
+            raise ValueError("claims_from must reference an earlier task")
         try:
             options_size = len(json.dumps(options, sort_keys=True, separators=(",", ":"),
                                           ensure_ascii=False).encode("utf-8"))
