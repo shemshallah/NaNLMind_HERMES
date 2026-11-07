@@ -132,7 +132,7 @@ def register(ctx):
                 raise RuntimeError(
                     "NANNET cryptographic operations require the optional "
                     "cryptography extra; install nanlmind-hermes[auth] on a "
-                    "supported platform. Chat and local training do not require it."
+                    "supported platform. Protected NANNET operations require it."
                 ) from exc
             raise
 
