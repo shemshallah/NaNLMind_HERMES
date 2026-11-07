@@ -101,6 +101,6 @@ maintainers control verified/official tiers).
 - Hermes Plugin Doctor `hermes plugins doctor . --ci`: **PASS**. Runtime discovery, manifest parsing, import and registration passed; **33 tools, 0 hooks**.
 - Release package: wheel and sdist both built; Twine checks passed; required source files were present; wheel and sdist each installed and imported; SHA256 checksums for both distributions were generated and verified.
 - Release artifact: [nanlmind-hermes-python-distributions](https://github.com/shemshallah/NaNLMind_HERMES/actions/runs/42346913559/artifacts/13563454894).
-- GitGuardian: 121 commits scanned; no secrets detected.
+- GitGuardian: 123 commits scanned; no secrets detected.
 - Live CLOCKED/NANNET/production-native endpoint integration is not exercised by CI and remains a deployment smoke-test gate.
 - Upstream catalog admission is still separate: submit the catalog PR with the exact 40-character source SHA, then obtain maintainer review and merge.
