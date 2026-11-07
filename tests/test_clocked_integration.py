@@ -1,5 +1,6 @@
 import tempfile
 import unittest
+from pathlib import Path
 
 from nanlmind_hermes.scratch import Scratch, RevisionConflict, ScratchError, ZERO
 from nanlmind_hermes.evidence import build_evidence_package
