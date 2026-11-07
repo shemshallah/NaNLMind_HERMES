@@ -290,7 +290,7 @@ def register(ctx):
           "head_index": {"type": "integer", "minimum": 0, "maximum": 255},
           "patch_mask": {"type": "integer", "minimum": 1, "maximum": 65535},
           "base_topology_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
-          "approved": {"type": "boolean", "default": false},
+          "approved": {"type": "boolean", "default": False},
           "scratch_id": {"type": "string", "maxLength": 80}},
          ["mutation_id", "head_index", "patch_mask", "base_topology_digest", "approved"],
          handle_head_candidate),
