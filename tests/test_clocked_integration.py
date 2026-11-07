@@ -105,8 +105,12 @@ class ScratchTests(unittest.TestCase):
                 "promotion_allowed": False, "canonical_state_modified": False,
                 "baseline": {"accuracy": 0.5}, "candidate": {"accuracy": 0.75},
             }
-            result = clocked_tools.head_candidate_evaluate(
-                self.ctx, "candidate-1", records, True, "candidate-eval")
+            with tempfile.TemporaryDirectory() as tmp:
+                class Context:
+                    def get_config(self, key, default=None):
+                        return tmp if key == "state_dir" else default
+                result = clocked_tools.head_candidate_evaluate(
+                    Context(), "candidate-1", records, True, "candidate-eval")
         self.assertEqual(result["evaluation"]["recommendation"], "review_candidate")
         self.assertFalse(result["evaluation"]["promotion_allowed"])
         self.assertEqual(result["scratch"]["entries"][-1]["lane"], "learning_proposal")
