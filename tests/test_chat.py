@@ -53,6 +53,22 @@ class HermesChatTests(unittest.TestCase):
             self.assertEqual(status(ctx)["mathematical_memory"]["events"], 7)
             self.assertEqual(len(ctx.llm.calls), 2)
 
+    def test_chat_autonomously_proposes_clocked_mode_without_transmitting_sources(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            ctx = FakeContext(Path(tmp))
+            result = chat(ctx, "Compare these source documents.",
+                          session_id="clocked-proposal",
+                          sources=[{"id": "spec-a", "text": "The system uses NaN16."},
+                                   {"id": "spec-b", "text": "The system uses Boolean heads."}])
+            self.assertEqual(result["clocked_mode"]["mode_plan"]["mode"], "CLOCKED_MULTI_SOURCE")
+            self.assertEqual(result["clocked_mode"]["task_plan"]["schema"],
+                             "nanlm.clocked-task-plan/1")
+            self.assertEqual(len(result["clocked_mode"]["approval_digest"]), 64)
+            self.assertTrue(result["clocked_mode"]["mode_plan"]["requires_approval"])
+            self.assertTrue(result["clocked_scratch_id"].startswith("chat-"))
+            self.assertIn("approval_digest", ctx.llm.calls[0]["messages"][1]["content"])
+            self.assertEqual(len(chat_history(ctx, "clocked-proposal")["messages"]), 2)
+
     def test_chat_system_prompt_includes_architecture_context(self):
         with tempfile.TemporaryDirectory() as tmp:
             ctx = FakeContext(Path(tmp))
