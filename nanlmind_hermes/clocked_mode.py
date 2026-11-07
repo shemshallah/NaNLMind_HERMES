@@ -130,7 +130,7 @@ def make_task_plan(sources: list[dict], question: str,
             elif endpoint == "grounding":
                 options = {"claims_from": "extract-" + source_id}
             elif endpoint == "pii":
-                options = {"redact": False}
+                options = {}
             tasks.append({"id": task_id, "source_id": source_id,
                           "endpoint": endpoint, "text": source["text"],
                           "options": options, "depends_on": previous[:]})
