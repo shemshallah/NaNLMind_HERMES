@@ -128,13 +128,24 @@ def preflight(package: dict) -> dict:
                        {"projected_entries": len(feature_rows),
                         "feature_schema": "canonical-payload-surface.v1"}))
 
-    revisions = [entry.get("revision") for entry in entries]
-    valid_revisions = [x for x in revisions if isinstance(x, int) and not isinstance(x, bool)]
-    if valid_revisions != sorted(valid_revisions):
-        raise ValueError("M4 scratch revisions are not monotonic")
-    temporal = [{"entry_id": str(entry.get("entry_id") or i),
-                 "revision": entry.get("revision", i)}
-                for i, entry in enumerate(entries)]
+    sequences = [
+        entry.get("sequence", index + 1) for index, entry in enumerate(entries)
+    ]
+    if (any(isinstance(x, bool) or not isinstance(x, int) or x < 1
+            for x in sequences)
+            or sequences != sorted(sequences)
+            or len(sequences) != len(set(sequences))):
+        raise ValueError("M4 scratch sequence is not strictly monotonic")
+    for entry in entries:
+        revision = entry.get("revision")
+        if revision is not None and (
+                not isinstance(revision, str) or not HEX64.fullmatch(revision)):
+            raise ValueError("M4 scratch revision digest is invalid")
+    temporal = [{
+        "entry_id": str(entry.get("entry_id") or index),
+        "sequence": sequences[index],
+        "revision": entry.get("revision"),
+    } for index, entry in enumerate(entries)]
     trace.append(_pass("M4", "temporal_mapper", package_digest, temporal,
                        {"ordered_entries": len(temporal),
                         "revision_monotonic": True}))
