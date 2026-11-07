@@ -114,8 +114,16 @@ class HeadCortexClient:
     def create_learning_candidate(self, request: dict) -> dict:
         if not isinstance(request, dict) or request.get("schema") != "nanlm.head-learning-candidate-request/1":
             raise ValueError("unsupported head-learning candidate request")
+        if request.get("teacher_outputs_are_ground_truth") is not False or request.get("split") != "train":
+            raise ValueError("learning request must mark CLOCKED as weak supervision on the train split")
+        digest = request.get("base_topology_digest")
+        if (not isinstance(digest, str) or len(digest) != 64
+                or any(ch not in "0123456789abcdef" for ch in digest.lower())):
+            raise ValueError("learning request requires a hexadecimal base topology digest")
         body = json.dumps(request, sort_keys=True, separators=(",", ":"),
                           ensure_ascii=False).encode("utf-8")
+        if len(body) > 1_048_576:
+            raise ValueError("learning candidate request exceeds 1 MiB")
         call = Request(
             self.endpoint + "/v1/head-cortex/candidate/learn", data=body,
             headers={"Authorization": "Bearer " + self.token,
@@ -131,13 +139,13 @@ class HeadCortexClient:
         except HTTPError as exc:
             raise HeadCortexError("NaNLMind learning candidate returned HTTP %d" % exc.code) from exc
         except (URLError, TimeoutError, OSError) as exc:
-            if isinstance(exc, HeadCortexError):
-                raise
             raise HeadCortexError("NaNLMind learning candidate endpoint is unavailable") from exc
         except (UnicodeError, json.JSONDecodeError) as exc:
             raise HeadCortexError("NaNLMind learning candidate returned invalid JSON") from exc
         if not isinstance(result, dict) or result.get("schema") != "nanlm.head-learning-candidate-response/1":
             raise HeadCortexError("unsupported NaNLMind learning candidate response")
-        if result.get("teacher_outputs_are_ground_truth") is not False or result.get("promotion_allowed") is not False:
-            raise HeadCortexError("learning candidate violated weak-supervision policy")
+        if (result.get("teacher_outputs_are_ground_truth") is not False
+                or result.get("promotion_allowed") is not False
+                or result.get("canonical_state_modified") is not False):
+            raise HeadCortexError("learning candidate violated weak-supervision isolation policy")
         return result
