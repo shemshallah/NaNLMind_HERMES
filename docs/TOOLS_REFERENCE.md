@@ -202,7 +202,7 @@ No parameters. Reports identity presence, pairing state, key availability.
 ### `nanlm_auth_pair`
 - `pairing_code` (string, 12–256 characters, required)
 
-Requires `NANNET_AUTH_URL` and pinned `NANNET_ISSUER_PUBLIC_KEY`.
+Requires the `nannet_auth_url` and `nannet_issuer_public_key` plugin settings plus the masked `NANNET_MASTER_KEY` Hermes secret.
 
 ### `nanlm_auth_revoke`
 No parameters. Revokes the stored token and removes its encrypted local copy.
