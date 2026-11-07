@@ -274,14 +274,17 @@ class ScratchTests(unittest.TestCase):
     def test_head_candidate_requires_approval_and_never_promotes(self):
         with self.assertRaises(PermissionError):
             clocked_tools.head_candidate(None, "candidate-1", 42, 1, "a" * 64, False)
-        with patch("nanlmind_hermes.clocked_tools.get_secret", return_value="scoped-training-token"), patch("nanlmind_hermes.clocked_tools.HeadCortexClient") as client:
+        with tempfile.TemporaryDirectory() as tmp, patch("nanlmind_hermes.clocked_tools.get_secret", return_value="scoped-training-token"), patch("nanlmind_hermes.clocked_tools.HeadCortexClient") as client:
+            class Context:
+                def get_config(self, key, default=None):
+                    return {"state_dir": tmp, "nanlm_head_cortex_url": "https://nanlmind.example"}.get(key, default)
             client.return_value.create_candidate.return_value = {
                 "schema": "nanlm.head-candidate-response/1",
                 "status": "candidate_only", "canonical_state_modified": False,
                 "promotion_allowed": False,
             }
             result = clocked_tools.head_candidate(
-                None, "candidate-1", 42, 1, "a" * 64, True)
+                Context(), "candidate-1", 42, 1, "a" * 64, True)
         self.assertEqual(result["candidate"]["status"], "candidate_only")
         self.assertFalse(result["candidate"]["canonical_state_modified"])
         self.assertFalse(result["candidate"]["promotion_allowed"])
