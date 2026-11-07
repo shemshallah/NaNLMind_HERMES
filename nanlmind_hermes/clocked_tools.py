@@ -25,9 +25,76 @@ def _scratch(ctx, scratch_id):
     return Scratch(root / "clocked_scratch", scratch_id)
 
 
+
+def choose_clocked_mode(ctx, question, sources=None):
+    """Let HERMES reason over the task intent, then constrain its choice to policy."""
+    sources = sources or []
+    fallback = propose_mode(question, sources)
+    if not sources:
+        return {**fallback, "decision_method": "local_no_sources"}
+    allowed = {
+        "CLOCKED_PRIVACY_AUDIT": ["pii"],
+        "CLOCKED_INJECTION_AUDIT": ["injection", "script"],
+        "CLOCKED_COMPARE": ["extract", "grounding", "compare"],
+        "CLOCKED_VERIFY": ["extract", "grounding"],
+        "CLOCKED_MULTI_SOURCE": ["extract", "grounding", "compare"],
+        "CLOCKED_EXTRACT": ["extract", "grounding"],
+    }
+    try:
+        descriptors = []
+        for index, source in enumerate(sources):
+            descriptors.append({
+                "id": str(source.get("id") or ("source-%d" % (index + 1)))
+                    if isinstance(source, dict) else ("source-%d" % (index + 1)),
+                "type": str(source.get("type") or "text")
+                    if isinstance(source, dict) else "text",
+            })
+        response = ctx.llm.complete(
+            messages=[
+                {"role": "system", "content": (
+                    "Choose the best CLOCKED mode for the user's task. Return only JSON "
+                    "with keys mode and reason. Allowed modes: CLOCKED_PRIVACY_AUDIT, "
+                    "CLOCKED_INJECTION_AUDIT, CLOCKED_COMPARE, CLOCKED_VERIFY, "
+                    "CLOCKED_MULTI_SOURCE, CLOCKED_EXTRACT. Use COMPARE for explicit "
+                    "cross-source agreement/conflict questions, VERIFY for verification, "
+                    "PRIVACY_AUDIT for PII/redaction, INJECTION_AUDIT for prompt attacks, "
+                    "EXTRACT for one ordinary source, MULTI_SOURCE for multiple sources "
+                    "without a comparison request. Never request endpoints outside the "
+                    "mode's fixed policy mapping."
+                )},
+                {"role": "user", "content": json.dumps({
+                    "question": question, "sources": descriptors,
+                    "source_count": len(sources),
+                    "deterministic_initial_recommendation": fallback["mode"],
+                }, ensure_ascii=False, sort_keys=True)},
+            ],
+            temperature=0.0, max_tokens=256, timeout=45,
+            purpose="nanlm-hermes-clocked-mode-selection",
+        )
+        raw = getattr(response, "text", "")
+        decision = json.loads(raw)
+        mode = decision.get("mode") if isinstance(decision, dict) else None
+        reason = decision.get("reason") if isinstance(decision, dict) else None
+        if mode not in allowed or not isinstance(reason, str) or not reason.strip():
+            raise ValueError("invalid mode decision")
+        if mode == "CLOCKED_COMPARE" and len(sources) < 2:
+            raise ValueError("comparison mode requires multiple sources")
+        if mode == "CLOCKED_MULTI_SOURCE" and len(sources) < 2:
+            raise ValueError("multi-source mode requires multiple sources")
+        return {
+            "schema": "nanlm.hermes-mode-plan/1",
+            "mode": mode, "reason": reason[:512],
+            "selected_endpoints": allowed[mode],
+            "requires_approval": True, "source_count": len(sources),
+            "policy": "approval", "autonomous": True,
+            "decision_method": "llm_policy_constrained",
+        }
+    except Exception:
+        return {**fallback, "decision_method": "deterministic_fallback"}
+
 def clocked_plan(ctx, question, sources=None, scratch_id="default"):
     sources = sources or []
-    mode = propose_mode(question, sources)
+    mode = choose_clocked_mode(ctx, question, sources)
     scratch = _scratch(ctx, scratch_id)
     snap = scratch.snapshot()
     if not snap["entry_count"]:
