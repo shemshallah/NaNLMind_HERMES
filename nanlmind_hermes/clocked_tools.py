@@ -12,6 +12,7 @@ from .evidence import build_evidence_package
 from .head_cortex import HeadCortexClient
 from .scratch import Scratch
 from .hermes_secrets import get_secret
+from .transform_chain import preflight as transform_preflight, postflight as transform_postflight
 
 
 def _setting(ctx, key, default=None):
@@ -185,13 +186,21 @@ def head_process(ctx, question, scratch_id="default", purpose="EVIDENCE_COGNITIO
         })
     snapshot = scratch.snapshot()
     package = build_evidence_package(snapshot, question, purpose)
+    prepared = transform_preflight(package)
     scratch.append("nan16_package", "hermes", {
         "schema": package["schema"], "purpose": purpose,
         "package_sha256": package["package_sha256"],
         "scratch_revision": package["scratch_revision"],
         "evidence_entry_count": len(package["evidence_entries"]),
     })
+    scratch.append("transform_trace", "hermes", {
+        "package_sha256": package["package_sha256"],
+        "passes": prepared["passes"],
+        "relation_counts": prepared["relation_counts"],
+    })
     result = _head_client(ctx).process(package)
+    transformation_trace = transform_postflight(package, result, prepared)
+    scratch.append("transform_trace", "nanlmind", transformation_trace)
     scratch.append("head_response", "nanlmind", result)
     if purpose == "ANSWER_VALIDATION":
         scratch.append("head_validation", "nanlmind", {
@@ -202,7 +211,8 @@ def head_process(ctx, question, scratch_id="default", purpose="EVIDENCE_COGNITIO
             "provenance": result.get("provenance", {}),
         })
     return {"package_sha256": package["package_sha256"],
-            "head_response": result, "scratch": scratch.snapshot()}
+            "head_response": result, "transformation_trace": transformation_trace,
+            "scratch": scratch.snapshot()}
 
 
 def clocked_synthesize(ctx, question, scratch_id="default", max_tokens=2048):
