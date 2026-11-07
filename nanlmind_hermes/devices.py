@@ -1,8 +1,9 @@
 """Consent-based NANNET device leases and issue reporting.
 
 Device identity is a random client-held secret, never a MAC/IMEI/serial.
-A copied credential cannot obtain a second simultaneous lease. Each lease is a
-participant identity attached to the one HW0::BS0 universe; no HW slot is allocated.
+A copied credential cannot obtain a second simultaneous lease. HW9+ addresses
+identify scoped participants attached to the one HW0::BS0 universe; they are not
+independent model universes.
 """
 from __future__ import annotations
 import hashlib, json, secrets, sqlite3, time, uuid
@@ -159,7 +160,7 @@ class DeviceRegistry:
         now = int(time.time()) if now is None else int(now)
         with self._connect() as db:
             row = self._active(db, token, now)
-            lease_id, device_id = row["lease_id"], row["device_id"]
+            lease_id, device_id, slot = row["lease_id"], row["device_id"], row["hw_slot"]
         replacement = self._new_token(device_id)
         expires = now + self.lease_seconds
         with self._connect() as db:
