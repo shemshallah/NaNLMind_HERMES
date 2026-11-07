@@ -35,6 +35,12 @@ def register(ctx):
         return clocked_tools.clocked_synthesize(ctx, params["question"],
             params.get("scratch_id", "default"), params.get("max_tokens", 2048))
 
+    def handle_head_candidate(params, **kwargs):
+        _require_scope("training:execute")
+        return clocked_tools.head_candidate(ctx, params["mutation_id"],
+            params["head_index"], params["patch_mask"],
+            params["base_topology_digest"], params.get("approved", False))
+
     def handle_status(params, **kwargs):
         result = tools.status(ctx)
         result["mathematical_memory"] = tools.memory_status(ctx)
@@ -278,6 +284,14 @@ def register(ctx):
           "scratch_id": {"type": "string", "maxLength": 80},
           "max_tokens": {"type": "integer", "minimum": 1, "maximum": 8192, "default": 2048}},
          ["question"], handle_clocked_synthesize),
+        ("nanlm_head_candidate", "Create an isolated Boolean-mask mutation candidate for one NaNLMind head. Requires explicit approval and training:execute scope; never changes canonical state.",
+         {"mutation_id": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,64}$"},
+          "head_index": {"type": "integer", "minimum": 0, "maximum": 255},
+          "patch_mask": {"type": "integer", "minimum": 1, "maximum": 65535},
+          "base_topology_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "approved": {"type": "boolean", "default": false}},
+         ["mutation_id", "head_index", "patch_mask", "base_topology_digest", "approved"],
+         handle_head_candidate),
         ("nanlm_status", "Inspect local NaNLMind universe and durable mathematical-memory status.", {}, [], handle_status),
         ("nanlm_chat", "Open-ended Hermes conversation; reflect evidence and, when explicit supervised relations are present, update native heads, mirror pairs and hyperedges in the shared universe.",
          {"message": {"type": "string", "minLength": 1, "maxLength": 1048576},
