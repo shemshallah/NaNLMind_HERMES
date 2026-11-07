@@ -52,8 +52,12 @@ class ManifestRegistrationTests(unittest.TestCase):
     def test_package_and_manifest_versions_match(self):
         manifest = (ROOT / "plugin.yaml").read_text(encoding="utf-8")
         project = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
-        manifest_version = re.search(r"(?m)^version:\s*['\"]?([0-9]+\.[0-9]+\.[0-9]+)", manifest)
-        project_version = re.search(r'(?m)^version\s*=\s*"([0-9]+\.[0-9]+\.[0-9]+)"', project)
+        manifest_version = re.search(
+            r"(?m)^version:\\s*['\\"]?([0-9]+\\.[0-9]+\\.[0-9]+)", manifest
+        )
+        project_version = re.search(
+            r'(?m)^version\\s*=\\s*"([0-9]+\\.[0-9]+\\.[0-9]+)"', project
+        )
         self.assertIsNotNone(manifest_version, "plugin.yaml version is missing")
         self.assertIsNotNone(project_version, "pyproject.toml version is missing")
         self.assertEqual(manifest_version.group(1), project_version.group(1))
@@ -63,17 +67,7 @@ class ManifestRegistrationTests(unittest.TestCase):
         project = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
         license_text = (ROOT / "LICENSE").read_text(encoding="utf-8")
         self.assertRegex(manifest, r"(?m)^license:\\s*Apache-2\\.0\\s*$")
-        self.assertRegex(project, r'(?m)^license\\s*=\\s*"Apache-2\\.0"\\s*        manifest = (ROOT / "plugin.yaml").read_text(encoding="utf-8")
-        expected = {"CLOCKED_GATEWAY_TOKEN", "NANLM_DEVICE_TOKEN", "NANNET_MASTER_KEY"}
-        declared = set(re.findall(r"(?m)^\s+env:\s*([A-Z][A-Z0-9_]*)\s*$", manifest))
-        self.assertEqual(declared, expected)
-        self.assertEqual(len(re.findall(r"(?m)^\s+env:\s*[A-Z][A-Z0-9_]*\s*$", manifest)),
-                         len(expected))
-
-
-if __name__ == "__main__":
-    unittest.main()
-)
+        self.assertRegex(project, r'(?m)^license\\s*=\\s*"Apache-2\\.0"\\s*$')
         self.assertIn("Apache License", license_text)
         self.assertIn("[build-system]", project)
         self.assertIn('build-backend = "setuptools.build_meta"', project)
@@ -81,10 +75,12 @@ if __name__ == "__main__":
     def test_secret_environment_names_are_unique_and_masked(self):
         manifest = (ROOT / "plugin.yaml").read_text(encoding="utf-8")
         expected = {"CLOCKED_GATEWAY_TOKEN", "NANLM_DEVICE_TOKEN", "NANNET_MASTER_KEY"}
-        declared = set(re.findall(r"(?m)^\s+env:\s*([A-Z][A-Z0-9_]*)\s*$", manifest))
+        declared = set(re.findall(r"(?m)^\\s+env:\\s*([A-Z][A-Z0-9_]*)\\s*$", manifest))
         self.assertEqual(declared, expected)
-        self.assertEqual(len(re.findall(r"(?m)^\s+env:\s*[A-Z][A-Z0-9_]*\s*$", manifest)),
-                         len(expected))
+        self.assertEqual(
+            len(re.findall(r"(?m)^\\s+env:\\s*[A-Z][A-Z0-9_]*\\s*$", manifest)),
+            len(expected),
+        )
 
 
 if __name__ == "__main__":
