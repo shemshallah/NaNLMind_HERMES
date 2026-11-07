@@ -158,6 +158,7 @@ class ScratchTests(unittest.TestCase):
                     "schema": "nanlm.head-learning-candidate-response/1",
                     "status": "candidate_only", "teacher_outputs_are_ground_truth": False,
                     "promotion_allowed": False, "candidate_digest": "e" * 64,
+                    "canonical_state_modified": False,
                 }
                 result = clocked_tools.head_learn_candidate(
                     ctx, "learned-heads-1", None, True, "learn-turn", 1)
