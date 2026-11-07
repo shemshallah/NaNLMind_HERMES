@@ -9,9 +9,9 @@ hermes plugins install shemshallah/NaNLMind_HERMES --yes-deps --enable
 # Validate the manifest and registration
 hermes plugins doctor /path/to/NaNLMind_HERMES --ci
 
-# First: NANNET login is mandatory.
-# Hermes uses HW_HERMES_API, or auto-registers one hwh_ key.
-# Android test nodes use NANLM_DEVICE_TOKEN + NANLM_INTAKE_URL instead.
+# First: configure NANNET authority URL + pinned issuer key in plugin settings.
+# Configure NANNET_MASTER_KEY in the masked Hermes secret field.
+# Run nanlm_auth_init, then nanlm_auth_pair with an authority-issued pairing code.
 # For one-shot/CI runs, export HERMES_GATEWAY_NO_SUPERVISE=1.
 
 # Default: chat
@@ -27,19 +27,23 @@ hermes plugins doctor /path/to/NaNLMind_HERMES --ci
 /nanlm status
 ```
 
-## Hermes hardware key
+## NANNET identity and pairing
 
-Hermes uses a dedicated `HW_HERMES_API` hardware identity. Priority:
+The plugin uses one encrypted installation identity and an authority-issued,
+scoped pairing token. It does not auto-register a hardware key, allocate a
+second universe, or accept a local authorization bypass.
 
-1. `HW_HERMES_API` from the host/system key store;
-2. the persisted key in `<state_dir>/hw_hermes_api.json`;
-3. automatic registration of exactly one `hwh_` key at
-   `POST /v1/hermes/register`.
+Configure these values under Hermes **Settings → Plugins → NaNLMind Hermes**:
 
-The key is stored mode `0600`, is separate from Android’s `NANLM_DEVICE_TOKEN`
-test namespace, and is tagged `hardware_kind=hermes` at the portal so a later
-router can send the identity to the correct kernel. If a system key is present,
-Hermes does not register another one.
+- `nannet_auth_url`: HTTPS NANNET authority URL (HTTP only for loopback development).
+- `nannet_issuer_public_key`: pinned base64url Ed25519 issuer public key.
+- `nannet_master_key`: an independently generated random 256-bit key, entered in the masked secret field.
+
+Then run `nanlm_auth_init` once and `nanlm_auth_pair` with a pairing code issued by
+the authority. The private installation identity and paired token are encrypted
+at rest under the configured master key. Protected operations verify the local
+token and request online scope authorization; unavailable authority means
+fail-closed behavior.
 
 Topology and routing policy:
 
@@ -58,16 +62,13 @@ execution workers over that same object, not separate universes. Device/guest
 leases are scoped access identities and must not imply a new universe.
 
 ```sh
-export NANNET_AUTH_URL=https://your-nannet-portal
-export HW_HERMES_API=hwh_...        # optional; otherwise auto-register
 export HERMES_GATEWAY_NO_SUPERVISE=1 # recommended for one-shot/CI runs
 ```
 
 NANNET login is required for chat and training. Pair first with
-`nanlm_auth_init` and `nanlm_auth_pair`, then set `NANNET_AUTH_URL` and the
-pinned issuer key. Android-style nodes may provide a scoped
-`NANLM_DEVICE_TOKEN` plus `NANLM_INTAKE_URL`; the portal validates the scope.
-The plugin fails closed without one of these credentials.
+`nanlm_auth_init` and `nanlm_auth_pair`; the plugin uses the configured
+authority URL and pinned issuer key. CLOCKED and head-cortex credentials are
+separate masked Hermes secrets, not interchangeable NANNET installation keys.
 
 Native training requires the local binary:
 
@@ -400,9 +401,8 @@ nanlm_auth_revoke
 ```
 
 Chat and training through Hermes require NANNET login and fail closed when
-authority credentials are missing or invalid. The test-only
-`NANLM_AUTH_TEST_BYPASS=1` switch exists for the local test suite and must not be
-used in a live installation. See `docs/NANNET_API_HERMES.md`.
+authority credentials are missing or invalid. No production authorization
+bypass exists. See `docs/NANNET_API_HERMES.md`.
 
 ---
 
@@ -415,7 +415,7 @@ used in a live installation. See `docs/NANNET_API_HERMES.md`.
 | no native training | configure `runner_command` to the local binary |
 | `nanlm-universal` not found | build NaNLMind and use an absolute path |
 | chat unavailable | configure the Hermes provider with `hermes model` |
-| authority errors | check `NANNET_AUTH_URL` and pinned issuer key |
+| authority errors | check `nannet_auth_url`, pinned issuer key, paired token and Hermes-managed master-key secret |
 | Alpine `fchdir` error | use `proot-distro login --minimal` |
 | state not resumable | native math runner writes the serialized topology; legacy bootstrap does not |
 
@@ -572,10 +572,11 @@ The same flow is available from the CLI using a JSON request file:
 ```
 
 The approved request JSON includes the exact `plan_sha256` returned by the
-plan step. Configure `CLOCKED_GATEWAY_URL` and `CLOCKED_GATEWAY_TOKEN` for
-the participant gateway. Configure `NANLM_HEAD_CORTEX_URL` and a NANNET
-`NANLM_DEVICE_TOKEN` for the NaNLMind receiving service. Neither service
-credential is the privileged upstream `CLOCKED_API_KEY`.
+plan step. Configure `clocked_gateway_url` and the masked `CLOCKED_GATEWAY_TOKEN`
+Hermes secret for the participant gateway. Configure `nanlm_head_cortex_url`
+and the masked `NANLM_DEVICE_TOKEN` Hermes secret for the NaNLMind receiving
+service. Neither service credential is the privileged upstream
+`CLOCKED_API_KEY`.
 
 
 ### CLOCKED weak-supervision candidate CLI
