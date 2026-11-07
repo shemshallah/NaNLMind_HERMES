@@ -1,6 +1,7 @@
 """HERMES tool handlers for CLOCKED planning, scratch and NaN head-cortex calls."""
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -227,9 +228,14 @@ def head_candidate_evaluate(ctx, mutation_id, records, approved=False,
         raise ValueError("records must contain 1..512 held-out relations")
     if not os.environ.get("NANLM_HEAD_CORTEX_URL") or not os.environ.get("NANLM_DEVICE_TOKEN"):
         raise RuntimeError("configure NANLM_HEAD_CORTEX_URL and a NANNET training:execute device token")
+    dataset_sha256 = hashlib.sha256(json.dumps(
+        records, sort_keys=True, separators=(",", ":"), ensure_ascii=False
+    ).encode("utf-8")).hexdigest()
     request = {
         "schema": "nanlm.head-candidate-evaluation-request/1",
         "mutation_id": mutation_id,
+        "split": "test",
+        "dataset_sha256": dataset_sha256,
         "records": records,
     }
     result = HeadCortexClient().evaluate_candidate(request)
