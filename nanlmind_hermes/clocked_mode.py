@@ -102,7 +102,7 @@ def make_task_plan(sources: list[dict], question: str) -> dict:
                           "named_entities": "Named organizations, systems and products"}},
                       "depends_on": []})
         tasks.append({"id": "ground-" + source_id, "source_id": source_id, "endpoint": "grounding",
-                      "text": text, "options": {"claims": []},
+                      "text": text, "options": {"claims_from": "extract-" + source_id},
                       "depends_on": ["extract-" + source_id]})
     if len(sources) > 1:
         joined = "\n\n".join(s["text"] for s in sources)
