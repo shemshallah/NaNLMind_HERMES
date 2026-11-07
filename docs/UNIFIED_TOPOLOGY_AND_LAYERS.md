@@ -93,6 +93,24 @@ Execution order is M0 through M9. A transformation receipt records its pass
 identifier (M0–M9), while each relation/event retains its canonical resolution
 (L0–L9). Never put M pass IDs into the memory projection's `layer` field.
 
+### Runtime integration status
+
+This table defines the target processing contract; it does not claim all ten
+passes already execute in production. The current Hermes head-cortex adapter
+sends a typed evidence package to NaNLMind's read-only `relation-eval` path.
+Candidate learning is isolated behind a separate `relation-train` candidate
+endpoint. A live CLOCKED-to-M0–M9 execution trace has not yet been proven
+end-to-end.
+
+There is a naming collision to resolve before wiring the chain: the core
+router's `runner/nannet_router/macro.py` calls its ten address/bin mapping
+labels `MAPPING_LAYERS` (bit-to-head through meta-policy). Those are routing-map
+stages, not this evidence-processing chain. Do not reinterpret their numeric
+IDs as these M0–M9 operations or as L0–L9 memory resolutions. The existing core
+`runner/training_pipeline.py` and `runner/hermes_pipeline.py` remain
+authoritative; this integration must call them rather than replace their
+training lifecycle.
+
 ## 4. Curriculum-to-resolution routing
 
 The twelve curriculum stages route to the same fixed L0–L9 index. Multiple
