@@ -5,6 +5,31 @@ from . import tools
 
 
 def register(ctx):
+    from . import clocked_tools
+
+    def handle_clocked_plan(params, **kwargs):
+        _require_scope("universe:read")
+        return clocked_tools.clocked_plan(ctx, params["question"],
+            params.get("sources", []), params.get("scratch_id", "default"))
+
+    def handle_clocked_execute(params, **kwargs):
+        _require_scope("universe:read")
+        return clocked_tools.clocked_execute(ctx, params["question"],
+            params["sources"], params.get("scratch_id", "default"),
+            params.get("approved", False), params.get("max_requests", 16),
+            params.get("max_bytes", 1048576))
+
+    def handle_clocked_scratch(params, **kwargs):
+        _require_scope("universe:read")
+        return clocked_tools.scratch_show(ctx, params.get("scratch_id", "default"),
+                                          params.get("lane"))
+
+    def handle_head_process(params, **kwargs):
+        _require_scope("universe:read")
+        return clocked_tools.head_process(ctx, params["question"],
+            params.get("scratch_id", "default"), params.get("purpose", "EVIDENCE_COGNITION"),
+            params.get("draft"))
+
     def handle_status(params, **kwargs):
         result = tools.status(ctx)
         result["mathematical_memory"] = tools.memory_status(ctx)
@@ -215,6 +240,33 @@ def register(ctx):
         return tools.memory_assessments(ctx, params.get("subject"), params.get("limit", 100))
 
     specs = [
+        ("nanlm_clocked_plan", "Propose an autonomous local/CLOCKED mode and record a bounded multi-source plan without transmitting source text.",
+         {"question": {"type": "string", "minLength": 1, "maxLength": 65536},
+          "sources": {"type": "array", "maxItems": 8, "items": {"type": "object",
+             "required": ["text"], "properties": {"id": {"type": "string", "maxLength": 80},
+             "text": {"type": "string", "minLength": 1, "maxLength": 65536}}}},
+          "scratch_id": {"type": "string", "maxLength": 80}},
+         ["question"], handle_clocked_plan),
+        ("nanlm_clocked_execute", "Execute a reviewed multi-source CLOCKED task plan through the scoped CLOCKED gateway. Requires explicit approved=true.",
+         {"question": {"type": "string", "minLength": 1, "maxLength": 65536},
+          "sources": {"type": "array", "minItems": 1, "maxItems": 8, "items": {"type": "object",
+             "required": ["text"], "properties": {"id": {"type": "string", "maxLength": 80},
+             "text": {"type": "string", "minLength": 1, "maxLength": 65536}}}},
+          "scratch_id": {"type": "string", "maxLength": 80},
+          "approved": {"type": "boolean", "default": false},
+          "max_requests": {"type": "integer", "minimum": 1, "maximum": 16, "default": 16},
+          "max_bytes": {"type": "integer", "minimum": 1, "maximum": 1048576, "default": 1048576}},
+         ["question", "sources"], handle_clocked_execute),
+        ("nanlm_clocked_scratch", "Inspect a revisioned HERMES scratch or one writer-owned lane.",
+         {"scratch_id": {"type": "string", "maxLength": 80},
+          "lane": {"type": "string", "enum": ["user", "hermes_plan", "clocked_request", "clocked_result", "evidence_atoms", "conflict_map", "nan16_package", "head_response", "hermes_synthesis", "head_validation", "final", "learning_proposal"]}},
+         [], handle_clocked_scratch),
+        ("nanlm_head_process", "Submit a frozen typed evidence package or answer draft to the NaNLMind head-cortex interface; HERMES never owns canonical head state.",
+         {"question": {"type": "string", "minLength": 1, "maxLength": 65536},
+          "scratch_id": {"type": "string", "maxLength": 80},
+          "purpose": {"type": "string", "enum": ["EVIDENCE_COGNITION", "ANSWER_VALIDATION"]},
+          "draft": {"type": "string", "maxLength": 65536}},
+         ["question"], handle_head_process),
         ("nanlm_status", "Inspect local NaNLMind universe and durable mathematical-memory status.", {}, [], handle_status),
         ("nanlm_chat", "Open-ended Hermes conversation; reflect evidence and, when explicit supervised relations are present, update native heads, mirror pairs and hyperedges in the shared universe.",
          {"message": {"type": "string", "minLength": 1, "maxLength": 1048576},
