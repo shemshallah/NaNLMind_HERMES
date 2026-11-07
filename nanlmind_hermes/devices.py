@@ -120,7 +120,7 @@ class DeviceRegistry:
         now = int(time.time()) if now is None else int(now)
         with self._connect() as db:
             row = self._active(db, token, now)
-            lease_id, device_id, slot = row["lease_id"], row["device_id"], row["hw_slot"]
+            lease_id, device_id = row["lease_id"], row["device_id"]
         expires = now + self.lease_seconds
         replacement = self._new_token(device_id)
         with self._connect() as db:
@@ -152,7 +152,7 @@ class DeviceRegistry:
         now = int(time.time()) if now is None else int(now)
         with self._connect() as db:
             row = self._active(db, token, now)
-            lease_id, device_id, slot = row["lease_id"], row["device_id"], row["hw_slot"]
+            lease_id, device_id = row["lease_id"], row["device_id"]
         replacement = self._new_token(device_id)
         expires = now + self.lease_seconds
         with self._connect() as db:
@@ -165,7 +165,8 @@ class DeviceRegistry:
         if self.authority is not None:
             self.authority.revoke_token(token[4:])
         return {"lease_id": lease_id, "lease_expires_at": expires,
-                "address": f"nan://GM0:SC0:MC0:BS0:HW{slot}", "token": replacement}
+                "participant_id": device_id,
+                "address": "nan://GM0:SC0:MC0:HW0:BS0", "token": replacement}
 
     def report(self, token: str, payload: dict, now: int | None = None) -> dict:
         now = int(time.time()) if now is None else int(now)
