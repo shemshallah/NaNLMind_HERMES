@@ -457,7 +457,7 @@ def register(ctx):
             if sub == "head" and len(rest) >= 2:
                 data = _json.loads(_Path(rest[1]).expanduser().read_text(encoding="utf-8"))
                 return _json.dumps(_clocked.head_process(ctx, data["question"], data.get("scratch_id", "default"), data.get("purpose", "EVIDENCE_COGNITION"), data.get("draft")), sort_keys=True, default=str)
-            return _json.dumps({"usage": "/nanlm clocked [plan <request.json>|run <request.json> --approved --plan-sha256 <digest>|scratch [id]|head <request.json>]", "request_file": {"question": "string", "sources": [{"id": "source-a", "text": "source text"}], "scratch_id": "optional-id"}, "note": "Plan does not transmit source text. Run requires the explicit --approved flag."})
+            return _json.dumps({"usage": "/nanlm clocked [plan <request.json>|run <request.json> --approved (request.json includes plan_sha256)|scratch [id]|head <request.json>]", "request_file": {"question": "string", "sources": [{"id": "source-a", "text": "source text"}], "scratch_id": "optional-id"}, "note": "Plan does not transmit source text. Run requires the explicit --approved flag."})
         if command == "chat":
             message = " ".join(rest)
         else:
