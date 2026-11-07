@@ -95,9 +95,15 @@ def make_task_plan(sources: list[dict], question: str) -> dict:
         source_id = str(source.get("id") or ("source-%d" % (index + 1)))
         text = source["text"]
         tasks.append({"id": "extract-" + source_id, "source_id": source_id, "endpoint": "extract",
-                      "text": text, "depends_on": []})
+                      "text": text, "options": {"fields": {
+                          "claims": "Short factual claims explicitly stated in the source",
+                          "dates": "Dates explicitly stated in the source",
+                          "quantities": "Measurements and numeric values explicitly stated",
+                          "named_entities": "Named organizations, systems and products"}},
+                      "depends_on": []})
         tasks.append({"id": "ground-" + source_id, "source_id": source_id, "endpoint": "grounding",
-                      "text": text, "depends_on": ["extract-" + source_id]})
+                      "text": text, "options": {"claims": []},
+                      "depends_on": ["extract-" + source_id]})
     if len(sources) > 1:
         joined = "\n\n".join(s["text"] for s in sources)
         tasks.append({"id": "compare-sources", "endpoint": "compare",
