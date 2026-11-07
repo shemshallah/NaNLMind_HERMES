@@ -144,42 +144,131 @@ def preflight(package: dict) -> dict:
         "clocked_observations": sum(e.get("lane") == "clocked_result" for e in entries),
     }
     relations, by_source = [], {}
+
+    def add_relation(entry, atom, default_resolution=5, kind="evidence"):
+        if not all(isinstance(atom.get(k), str) and atom[k].strip()
+                   for k in ("subject", "predicate", "object")):
+            return
+        resolution = atom.get("resolution", default_resolution)
+        if isinstance(resolution, bool) or not isinstance(resolution, int) or not 0 <= resolution <= 9:
+            return
+        digest = atom.get("source_digest")
+        if not isinstance(digest, str) or not HEX64.fullmatch(digest.lower()):
+            digest = _digest(entry)
+        relation = {
+            "relation_id": _digest([entry.get("entry_id"), len(relations),
+                                    atom["subject"], atom["predicate"], atom["object"]])[:24],
+            "entry_id": str(entry.get("entry_id") or ""),
+            "kind": kind,
+            "resolution": resolution,
+            "subject": atom["subject"].strip()[:512],
+            "predicate": atom["predicate"].strip()[:256],
+            "object": atom["object"].strip()[:2048],
+            "source_digest": digest.lower(),
+        }
+        relations.append(relation)
+        by_source.setdefault(digest.lower(), []).append(relation["relation_id"])
+
     for entry in entries:
-        if entry.get("lane") not in {"evidence_atoms", "conflict_map"}:
-            continue
-        payload = entry.get("payload")
+        lane, payload = entry.get("lane"), entry.get("payload")
         if not isinstance(payload, dict):
             continue
-        candidates = []
-        if all(isinstance(payload.get(k), str) and payload[k].strip()
-               for k in ("subject", "predicate", "object")):
-            candidates.append(payload)
-        for key in ("relations", "atoms", "conflicts"):
-            values = payload.get(key, [])
-            if isinstance(values, list):
-                candidates.extend(x for x in values if isinstance(x, dict))
-        for atom in candidates:
-            if not all(isinstance(atom.get(k), str) and atom[k].strip()
-                       for k in ("subject", "predicate", "object")):
-                continue
-            resolution = atom.get("resolution", payload.get("resolution", 5))
-            if isinstance(resolution, bool) or not isinstance(resolution, int) or not 0 <= resolution <= 9:
-                continue
-            digest = atom.get("source_digest") or payload.get("source_digest")
+        if lane == "evidence_atoms":
+            candidates = [payload]
+            for key in ("relations", "atoms"):
+                values = payload.get(key, [])
+                if isinstance(values, list):
+                    candidates.extend(x for x in values if isinstance(x, dict))
+            for atom in candidates:
+                add_relation(entry, atom, 5, "evidence_atom")
+        elif lane == "conflict_map":
+            provenance = payload.get("provenance", {})
+            digest = provenance.get("input_sha256") if isinstance(provenance, dict) else None
             if not isinstance(digest, str) or not HEX64.fullmatch(digest.lower()):
                 digest = _digest(entry)
-            relation = {
-                "relation_id": _digest([entry.get("entry_id"), len(relations),
-                                        atom["subject"], atom["predicate"], atom["object"]])[:24],
-                "entry_id": str(entry.get("entry_id") or ""),
-                "resolution": resolution,
-                "subject": atom["subject"].strip(),
-                "predicate": atom["predicate"].strip(),
-                "object": atom["object"].strip(),
-                "source_digest": digest.lower(),
-            }
-            relations.append(relation)
-            by_source.setdefault(digest.lower(), []).append(relation["relation_id"])
+            items = payload.get("conflicts", [])
+            if isinstance(items, str):
+                items = [items]
+            if not isinstance(items, list):
+                items = []
+            if not items and isinstance(payload.get("verdict"), str):
+                items = [payload["verdict"]]
+            for item in items[:64]:
+                if isinstance(item, dict):
+                    item = json.dumps(item, sort_keys=True, ensure_ascii=False)
+                if isinstance(item, str) and item.strip():
+                    add_relation(entry, {
+                        "subject": "cross_source",
+                        "predicate": "sources_conflict",
+                        "object": item,
+                        "resolution": 7,
+                        "source_digest": digest,
+                    }, 7, "conflict")
+        elif lane == "clocked_result":
+            endpoint = payload.get("endpoint")
+            if not isinstance(endpoint, str) or not re.fullmatch(r"[a-z_]{2,24}", endpoint):
+                endpoint = "unknown"
+            result_data = payload.get("result", {})
+            if not isinstance(result_data, dict):
+                result_data = {}
+            nested = result_data.get("result")
+            if isinstance(nested, dict):
+                result_data = nested
+            fields = result_data.get("fields", {})
+            if not isinstance(fields, dict):
+                fields = {}
+            safe_keys = {
+                "decide": ("decision", "label", "confidence", "verdict"),
+                "extract": ("claims", "dates", "quantities", "named_entities"),
+                "fill": ("filled_fields", "missing_fields", "status"),
+                "grounding": ("verdict", "grounded", "unsupported", "score", "claim_count"),
+                "compare": ("verdict", "agreement", "conflicts", "similarity", "relations"),
+                "rerank": ("ranking", "scores", "order"),
+                "pii": ("detected", "count", "types", "categories", "redacted"),
+                "injection": ("verdict", "risk", "categories", "detected", "count"),
+                "script": ("verdict", "matched", "patterns", "count", "risk"),
+                "pipeline": ("status", "steps", "verdict"),
+            }.get(endpoint, ())
+            summary = {}
+            for key in safe_keys:
+                value = fields.get(key, result_data.get(key))
+                if value is None:
+                    continue
+                if isinstance(value, (str, int, float, bool)):
+                    summary[key] = value if not isinstance(value, str) else value[:512]
+                elif isinstance(value, list):
+                    summary[key] = value[:32]
+                elif isinstance(value, dict):
+                    summary[key] = {str(k): str(v)[:128] for k, v in list(value.items())[:16]
+                                    if isinstance(v, (str, int, float, bool))}
+            provenance = payload.get("provenance", {})
+            digest = provenance.get("input_sha256") if isinstance(provenance, dict) else None
+            if not isinstance(digest, str) or not HEX64.fullmatch(digest.lower()):
+                digest = _digest(entry)
+            source_id = str(payload.get("source_id") or "cross_source")[:128]
+            add_relation(entry, {
+                "subject": source_id,
+                "predicate": "clocked_" + endpoint + "_observation",
+                "object": json.dumps({
+                    "endpoint": endpoint, "status": str(payload.get("status", "unknown"))[:32],
+                    "result_type": str(payload.get("result_type", endpoint))[:32],
+                    "signals": summary,
+                }, sort_keys=True, ensure_ascii=False),
+                "resolution": 5, "source_digest": digest,
+            }, 5, "clocked_observation")
+        elif lane == "hermes_synthesis" and package.get("purpose") == "ANSWER_VALIDATION":
+            draft = payload.get("draft")
+            if isinstance(draft, str) and draft.strip():
+                draft_digest = _digest(draft.encode("utf-8"))
+                for sentence in re.split(r"(?<=[.!?])\\s+", draft)[:128]:
+                    sentence = sentence.strip()
+                    if sentence:
+                        add_relation(entry, {
+                            "subject": "hermes_answer", "predicate": "asserts_claim",
+                            "object": sentence, "resolution": 7,
+                            "source_digest": draft_digest,
+                        }, 7, "answer_claim")
+
     hyperedges = [
         {"source_digest": source, "members": sorted(members)}
         for source, members in sorted(by_source.items()) if len(members) > 1
