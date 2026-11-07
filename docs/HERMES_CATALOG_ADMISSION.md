@@ -13,6 +13,7 @@ prove from steps that only the upstream catalog maintainer can complete.
 | Bounded dependencies | PASS | `cryptography>=42,<47`; no unbounded plugin dependency. |
 | Secret handling | PASS | NANNET, CLOCKED and head-cortex secrets use `agent.secret_scope.get_secret()`; secret fields are declared in `config_schema`. |
 | No process-environment credential reads | PASS | `tests/test_credential_policy.py` scans all plugin Python modules. |
+| Manifest/runtime parity | PASS (regression test added) | `tests/test_manifest_registration.py` compares the exact registered tool names, package/manifest versions, and masked secret environment names. |
 | No external credential-store scraping | PASS | No reads of `.env`, `auth.json`, browser profiles, vendor CLI stores or keychains. |
 | Authorization and approvals | PASS | Protected operations fail closed; candidate learning and CLOCKED execution retain explicit approval gates. No production auth bypass. |
 | No implicit hardware auto-registration | PASS | The former auto-registration module is removed; NANNET pairing is explicit. |
@@ -95,8 +96,9 @@ maintainers control verified/official tiers).
 
 - Plugin version: **1.2.0** in both `plugin.yaml` and `pyproject.toml`.
 - Local Python tests: passing on the current branch head.
-- Hermes Agent v0.23.0 admission validator and Plugin Doctor: passed on
-  `30d264a766d6219c2a23142ffb4b4e97bfbe9b03`; rerun is in progress for later
-  topology/state-directory commits.
+- Hermes Agent v0.23.0 admission validator and Plugin Doctor: previously passed on
+  `30d264a766d6219c2a23142ffb4b4e97bfbe9b03`. This is not a validation result
+  for the current PR head; rerun both checks after the final code changes and
+  record the exact resulting commit SHA and outputs.
 - A passing local validator is not catalog admission. The upstream catalog PR,
   immutable SHA pin, maintainer review and merge are still required.
