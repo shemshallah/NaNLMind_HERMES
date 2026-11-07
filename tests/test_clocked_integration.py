@@ -221,6 +221,16 @@ class ScratchTests(unittest.TestCase):
                 "status": "ok", "provenance": {"input_sha256": "c" * 64},
                 "result": {"fields": {"detected": True, "values": ["PRIVATE-SSN-DO-NOT-LEARN"]}},
             })
+            scratch.append("clocked_result", "clocked", {
+                "task_id": "extract-unknown", "endpoint": "extract", "source_id": "source-c",
+                "status": "ok", "provenance": {"input_sha256": "1" * 64},
+                "result": {"fields": {"claims": ["UNKNOWN-PII-DO-NOT-LEARN"]}},
+            })
+            scratch.append("clocked_result", "clocked", {
+                "task_id": "pii-unknown", "endpoint": "pii", "source_id": "source-c",
+                "status": "error", "provenance": {"input_sha256": "2" * 64},
+                "result": {"fields": {"detected": None}},
+            })
             scratch.append("head_response", "nanlmind", {
                 "provenance": {"state_digest": "d" * 64},
             })
@@ -243,6 +253,8 @@ class ScratchTests(unittest.TestCase):
             self.assertFalse(request["teacher_outputs_are_ground_truth"])
             self.assertGreaterEqual(len(request["records"]), 5)
             self.assertFalse(any("PRIVATE-SSN-DO-NOT-LEARN" in row["object"]
+                                 for row in request["records"]))
+            self.assertFalse(any("UNKNOWN-PII-DO-NOT-LEARN" in row["object"]
                                  for row in request["records"]))
             self.assertTrue(any(row["object"] == "The river flows."
                                 for row in request["records"]))
