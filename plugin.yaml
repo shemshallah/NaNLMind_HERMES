@@ -3,6 +3,8 @@ version: 1.2.0
 manifest_version: 2
 api_version: 1
 requires_hermes: ">=0.23.0"
+python_dependencies:
+  - "cryptography>=42,<47"
 description: Local NaNLMind conversational learning, explicit staged training, reproducible evaluation and NANNET-connected universe operations through Hermes.
 license: MIT
 homepage: https://github.com/shemshallah/NaNLMind_HERMES
