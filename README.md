@@ -439,10 +439,13 @@ Boolean-head receiving interface, and composes a final answer while preserving
 UNKNOWN and CONFLICT.
 
 The NaNLMind head-cortex client is separate from the CLOCKED service adapter.
-HERMES also exposes approval-gated isolated Boolean-head candidate creation
-and held-out candidate evaluation. Candidate evaluation compares the
-candidate with the immutable base topology and records metrics in scratch; it
-cannot promote or alter canonical state.
+HERMES also exposes approval-gated CLOCKED weak-supervision learning: typed
+endpoint observations in scratch are converted into bounded N16REL teacher
+records and trained against an isolated clone of the native topology. It can
+then evaluate the candidate against the immutable base on a caller-declared
+test split, with overlap checks and metrics recorded in scratch. CLOCKED
+outputs are never treated as ground truth; neither learning nor evaluation
+can promote or alter canonical state.
 
 The architecture and repository boundary are documented in
 [NaNLMind CLOCKED/HERMES brainstorm](https://github.com/shemshallah/NaNLMind_CLOCKED/blob/main/docs/CLOCKED_HERMES_BRAINSTORM.md).
