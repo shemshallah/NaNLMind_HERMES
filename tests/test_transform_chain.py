@@ -70,6 +70,7 @@ class TransformChainTests(unittest.TestCase):
         prepared = preflight(value)
         response = {
             "request_sha256": value["package_sha256"],
+            "truth_state": "UNKNOWN",
             "relations": [{"truth_state": "UNKNOWN", "head_id": 0}],
             "abstentions": [],
             "provenance": {"read_only": True, "source_entry_ids": []},
