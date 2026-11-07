@@ -42,6 +42,12 @@ def register(ctx):
             params["base_topology_digest"], params.get("approved", False),
             params.get("scratch_id", "default"))
 
+    def handle_head_learn_candidate(params, **kwargs):
+        _require_scope("training:execute")
+        return clocked_tools.head_learn_candidate(ctx, params["mutation_id"],
+            params.get("base_topology_digest"), params.get("approved", False),
+            params.get("scratch_id", "default"), params.get("epochs", 1))
+
     def handle_head_candidate_evaluate(params, **kwargs):
         _require_scope("training:execute")
         return clocked_tools.head_candidate_evaluate(ctx, params["mutation_id"],
@@ -306,6 +312,13 @@ def register(ctx):
           "scratch_id": {"type": "string", "maxLength": 80}},
          ["mutation_id", "head_index", "patch_mask", "base_topology_digest", "approved"],
          handle_head_candidate),
+        ("nanlm_head_learn_candidate", "Transform CLOCKED observations in revisioned scratch into a weak-supervision training set and train an isolated NaNLMind candidate topology. Requires explicit approval and training:execute; CLOCKED is not ground truth and canonical state is never modified.",
+         {"mutation_id": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,64}$"},
+          "base_topology_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "scratch_id": {"type": "string", "maxLength": 80},
+          "epochs": {"type": "integer", "minimum": 1, "maximum": 8, "default": 1},
+          "approved": {"type": "boolean", "default": false}},
+         ["mutation_id", "approved"], handle_head_learn_candidate),
         ("nanlm_head_candidate_evaluate", "Evaluate an isolated Boolean-head candidate against explicit held-out N16REL rows and record baseline/candidate metrics. Requires approval and training:execute; never promotes.",
          {"mutation_id": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,64}$"},
           "records": {"type": "array", "minItems": 1, "maxItems": 512},
