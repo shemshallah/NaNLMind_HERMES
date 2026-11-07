@@ -385,6 +385,7 @@ def postflight(package: dict, response: dict, prepared: dict) -> dict:
         "passes": trace,
         "truth_state": consensus,
         "decision": decision,
+        "hard_abstention_count": len(hard_abstentions),
         "canonical_mutation_allowed": False,
         "promotion_allowed": False,
     }
