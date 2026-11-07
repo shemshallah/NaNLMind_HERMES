@@ -47,6 +47,24 @@ class ScratchTests(unittest.TestCase):
         self.assertEqual(propose_mode("compare", [{"text": "A"}, {"text": "B"}])["mode"],
                          "CLOCKED_MULTI_SOURCE")
 
+    def test_head_candidate_requires_approval_and_never_promotes(self):
+        with self.assertRaises(PermissionError):
+            clocked_tools.head_candidate(None, "candidate-1", 42, 1, "a" * 64, False)
+        with patch.dict("os.environ", {
+            "NANLM_HEAD_CORTEX_URL": "https://nanlmind.example",
+            "NANLM_DEVICE_TOKEN": "scoped-training-token",
+        }), patch("nanlmind_hermes.clocked_tools.HeadCortexClient") as client:
+            client.return_value.create_candidate.return_value = {
+                "schema": "nanlm.head-candidate-response/1",
+                "status": "candidate_only", "canonical_state_modified": False,
+                "promotion_allowed": False,
+            }
+            result = clocked_tools.head_candidate(
+                None, "candidate-1", 42, 1, "a" * 64, True)
+        self.assertEqual(result["status"], "candidate_only")
+        self.assertFalse(result["canonical_state_modified"])
+        self.assertFalse(result["promotion_allowed"])
+
     def test_two_pass_synthesis_submits_draft_and_appends_final(self):
         class Result:
             def __init__(self, text):
