@@ -40,8 +40,11 @@ Ran 65 tests in 22.230s
 OK
 ```
 
-This includes the dependency-free Ed25519/AES-GCM/HKDF/RSA fallback, chat loop,
-memory, native runner harness, pairing, auth, device routes, and HTTP API tests.
+This includes the cryptography-backed and compatibility crypto paths, chat loop,
+memory, native runner harness, pairing, auth, HW9+ lease migration, device
+routes, and HTTP API tests. The production manifest declares
+`cryptography>=42,<47`; the compatibility fallback remains available for
+isolated constrained-host tests.
 
 The Termux-built `nanlm-universal` binary targets Android/bionic and is not
 directly executable inside Alpine/musl. Build the native core inside Alpine or
