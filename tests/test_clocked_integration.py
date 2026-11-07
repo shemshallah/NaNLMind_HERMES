@@ -219,6 +219,7 @@ class ScratchTests(unittest.TestCase):
             "schema": "nanlm.head-candidate-evaluation-response/1",
             "status": "evaluated_candidate", "utility_delta": 0.1,
             "recommendation": "review_candidate", "promotion_allowed": False,
+            "canonical_state_modified": False,
         }
         with tempfile.TemporaryDirectory() as tmp, patch.dict("os.environ", {
             "NANLM_HEAD_CORTEX_URL": "https://nanlmind.example",
