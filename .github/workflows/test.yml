@@ -19,3 +19,16 @@ jobs:
         run: python -m pip install -e ".[auth]"
       - name: Run policy, runner, and auth tests
         run: python -m unittest discover -s tests -v
+
+  hermes-admission:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Hermes Agent v0.23.0
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/NousResearch/hermes-agent/v0.23.0/scripts/install.sh | bash
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - name: Validate catalog admission contract
+        run: hermes plugins validate . --install-deps
+      - name: Validate plugin registration in isolation
+        run: hermes plugins doctor . --ci
