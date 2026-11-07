@@ -301,15 +301,13 @@ def head_candidate_evaluate(ctx, mutation_id, records, approved=False,
     if not isinstance(records, list) or not 1 <= len(records) <= 512:
         raise ValueError("records must contain 1..512 held-out relations")
     required = {"resolution", "polarity", "subject", "predicate", "object", "source_digest"}
-    allowed_resolutions = {
-        "bit", "nibble", "byte", "phonetic", "morpheme",
-        "lexical", "word_completion", "sentence", "paragraph", "narrative",
-    }
+    allowed_resolutions = set(range(10))
     for index, record in enumerate(records):
         if not isinstance(record, dict) or not required.issubset(record):
             raise ValueError("invalid held-out relation at index %d" % index)
-        if record["resolution"] not in allowed_resolutions:
-            raise ValueError("held-out relation %d has unsupported resolution" % index)
+        resolution = record["resolution"]
+        if isinstance(resolution, bool) or not isinstance(resolution, int) or resolution not in allowed_resolutions:
+            raise ValueError("held-out relation %d has unsupported N16REL resolution" % index)
         for field in ("polarity", "subject", "predicate", "object"):
             if not isinstance(record[field], str) or not record[field].strip():
                 raise ValueError("held-out relation %d has invalid %s" % (index, field))
