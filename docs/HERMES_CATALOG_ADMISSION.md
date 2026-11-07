@@ -35,6 +35,62 @@ prove from steps that only the upstream catalog maintainer can complete.
 | Scanner warnings reviewed | PENDING | Keep the upstream `hermes plugins validate` output clean; review any caution-level warnings rather than suppressing them. |
 | Human review and merge | PENDING | Requires upstream maintainer review; this repository cannot self-approve catalog admission. |
 
+## Prepared upstream catalog capability block
+
+Use this exact capability declaration in the eventual
+`NousResearch/hermes-agent/plugin-catalog/nanlmind-hermes.yaml` entry. Keep it
+synchronized with `plugin.yaml` and `register(ctx)` at the pinned SHA.
+
+```yaml
+capabilities:
+  provides_tools:
+    - nanlm_status
+    - nanlm_chat
+    - nanlm_chat_history
+    - nanlm_auth_init
+    - nanlm_auth_status
+    - nanlm_auth_pair
+    - nanlm_auth_revoke
+    - nanlm_generate_curriculum
+    - nanlm_curriculum_experiment
+    - nanlm_logic_session
+    - nanlm_word_session
+    - nanlm_sentence_session
+    - nanlm_training_pipeline
+    - nanlm_nan16de_route
+    - nanlm_generate_corpus
+    - nanlm_train
+    - nanlm_math_train
+    - nanlm_structured_relation_train
+    - nanlm_evaluate
+    - nanlm_memory_ingest
+    - nanlm_memory_reorganize
+    - nanlm_memory_cross_resolution
+    - nanlm_memory_merge
+    - nanlm_memory_query
+    - nanlm_memory_assessments
+    - nanlm_clocked_plan
+    - nanlm_clocked_execute
+    - nanlm_clocked_scratch
+    - nanlm_head_process
+    - nanlm_clocked_synthesize
+    - nanlm_head_candidate
+    - nanlm_head_candidate_evaluate
+    - nanlm_head_learn_candidate
+  provides_hooks: []
+  provides_middleware: []
+  requires_env:
+    - CLOCKED_GATEWAY_TOKEN
+    - NANLM_DEVICE_TOKEN
+    - NANNET_MASTER_KEY
+```
+
+The upstream entry must also set `name: nanlmind-hermes`,
+`repo: https://github.com/shemshallah/NaNLMind_HERMES`,
+`requires_hermes: ">=0.23.0"`, `version: "1.2.0"`, and a full 40-character
+SHA for the reviewed release commit. Use the community tier (the catalog
+maintainers control verified/official tiers).
+
 ## Validation record
 
 - Plugin version: **1.2.0** in both `plugin.yaml` and `pyproject.toml`.
