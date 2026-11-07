@@ -121,11 +121,11 @@ def preflight(package: dict) -> dict:
             ),
         })
     trace.append(_pass("M2", "type_head_router", package_digest, routes,
-                       {"routed_entries": len(routes),
+                       {"routed_entries": len(routes), "routing_mode": "advisory_only",
                         "logical_heads": sorted({r["logical_head_hint"] for r in routes})}))
     trace.append(_pass("M3", "feature_projector", package_digest, feature_rows,
                        {"projected_entries": len(feature_rows),
-                        "feature_schema": "surface-byte-counts.v1"}))
+                        "feature_schema": "canonical-payload-surface.v1"}))
 
     revisions = [entry.get("revision") for entry in entries]
     valid_revisions = [x for x in revisions if isinstance(x, int) and not isinstance(x, bool)]
@@ -143,11 +143,58 @@ def preflight(package: dict) -> dict:
         "conflict_maps": sum(e.get("lane") == "conflict_map" for e in entries),
         "clocked_observations": sum(e.get("lane") == "clocked_result" for e in entries),
     }
-    trace.append(_pass("M5", "relation_hypergraph_builder", package_digest, counts,
-                       counts))
+    relations, by_source = [], {}
+    for entry in entries:
+        if entry.get("lane") not in {"evidence_atoms", "conflict_map"}:
+            continue
+        payload = entry.get("payload")
+        if not isinstance(payload, dict):
+            continue
+        candidates = []
+        if all(isinstance(payload.get(k), str) and payload[k].strip()
+               for k in ("subject", "predicate", "object")):
+            candidates.append(payload)
+        for key in ("relations", "atoms", "conflicts"):
+            values = payload.get(key, [])
+            if isinstance(values, list):
+                candidates.extend(x for x in values if isinstance(x, dict))
+        for atom in candidates:
+            if not all(isinstance(atom.get(k), str) and atom[k].strip()
+                       for k in ("subject", "predicate", "object")):
+                continue
+            resolution = atom.get("resolution", payload.get("resolution", 5))
+            if isinstance(resolution, bool) or not isinstance(resolution, int) or not 0 <= resolution <= 9:
+                continue
+            digest = atom.get("source_digest") or payload.get("source_digest")
+            if not isinstance(digest, str) or not HEX64.fullmatch(digest.lower()):
+                digest = _digest(entry)
+            relation = {
+                "relation_id": _digest([entry.get("entry_id"), len(relations),
+                                        atom["subject"], atom["predicate"], atom["object"]])[:24],
+                "entry_id": str(entry.get("entry_id") or ""),
+                "resolution": resolution,
+                "subject": atom["subject"].strip(),
+                "predicate": atom["predicate"].strip(),
+                "object": atom["object"].strip(),
+                "source_digest": digest.lower(),
+            }
+            relations.append(relation)
+            by_source.setdefault(digest.lower(), []).append(relation["relation_id"])
+    hyperedges = [
+        {"source_digest": source, "members": sorted(members)}
+        for source, members in sorted(by_source.items()) if len(members) > 1
+    ]
+    relation_summary = {
+        **counts, "typed_relations": len(relations),
+        "nary_hyperedges": len(hyperedges), "candidate_only": True,
+    }
+    trace.append(_pass("M5", "relation_hypergraph_builder", package_digest,
+                       {"relations": relations, "hyperedges": hyperedges},
+                       relation_summary))
     return {"package_sha256": package_digest, "passes": trace,
             "routes": routes, "features": feature_rows, "temporal": temporal,
-            "relation_counts": counts}
+            "relations": relations, "hyperedges": hyperedges,
+            "relation_counts": relation_summary}
 
 
 def postflight(package: dict, response: dict, prepared: dict) -> dict:
