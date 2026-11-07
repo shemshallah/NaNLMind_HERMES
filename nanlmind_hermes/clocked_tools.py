@@ -25,9 +25,76 @@ def _scratch(ctx, scratch_id):
     return Scratch(root / "clocked_scratch", scratch_id)
 
 
+
+def choose_clocked_mode(ctx, question, sources=None):
+    """Let HERMES reason over the task intent, then constrain its choice to policy."""
+    sources = sources or []
+    fallback = propose_mode(question, sources)
+    if not sources:
+        return {**fallback, "decision_method": "local_no_sources"}
+    allowed = {
+        "CLOCKED_PRIVACY_AUDIT": ["pii"],
+        "CLOCKED_INJECTION_AUDIT": ["injection", "script"],
+        "CLOCKED_COMPARE": ["extract", "grounding", "compare"],
+        "CLOCKED_VERIFY": ["extract", "grounding"],
+        "CLOCKED_MULTI_SOURCE": ["extract", "grounding", "compare"],
+        "CLOCKED_EXTRACT": ["extract", "grounding"],
+    }
+    try:
+        descriptors = []
+        for index, source in enumerate(sources):
+            descriptors.append({
+                "id": str(source.get("id") or ("source-%d" % (index + 1)))
+                    if isinstance(source, dict) else ("source-%d" % (index + 1)),
+                "type": str(source.get("type") or "text")
+                    if isinstance(source, dict) else "text",
+            })
+        response = ctx.llm.complete(
+            messages=[
+                {"role": "system", "content": (
+                    "Choose the best CLOCKED mode for the user's task. Return only JSON "
+                    "with keys mode and reason. Allowed modes: CLOCKED_PRIVACY_AUDIT, "
+                    "CLOCKED_INJECTION_AUDIT, CLOCKED_COMPARE, CLOCKED_VERIFY, "
+                    "CLOCKED_MULTI_SOURCE, CLOCKED_EXTRACT. Use COMPARE for explicit "
+                    "cross-source agreement/conflict questions, VERIFY for verification, "
+                    "PRIVACY_AUDIT for PII/redaction, INJECTION_AUDIT for prompt attacks, "
+                    "EXTRACT for one ordinary source, MULTI_SOURCE for multiple sources "
+                    "without a comparison request. Never request endpoints outside the "
+                    "mode's fixed policy mapping."
+                )},
+                {"role": "user", "content": json.dumps({
+                    "question": question, "sources": descriptors,
+                    "source_count": len(sources),
+                    "deterministic_initial_recommendation": fallback["mode"],
+                }, ensure_ascii=False, sort_keys=True)},
+            ],
+            temperature=0.0, max_tokens=256, timeout=45,
+            purpose="nanlm-hermes-clocked-mode-selection",
+        )
+        raw = getattr(response, "text", "")
+        decision = json.loads(raw)
+        mode = decision.get("mode") if isinstance(decision, dict) else None
+        reason = decision.get("reason") if isinstance(decision, dict) else None
+        if mode not in allowed or not isinstance(reason, str) or not reason.strip():
+            raise ValueError("invalid mode decision")
+        if mode == "CLOCKED_COMPARE" and len(sources) < 2:
+            raise ValueError("comparison mode requires multiple sources")
+        if mode == "CLOCKED_MULTI_SOURCE" and len(sources) < 2:
+            raise ValueError("multi-source mode requires multiple sources")
+        return {
+            "schema": "nanlm.hermes-mode-plan/1",
+            "mode": mode, "reason": reason[:512],
+            "selected_endpoints": allowed[mode],
+            "requires_approval": True, "source_count": len(sources),
+            "policy": "approval", "autonomous": True,
+            "decision_method": "llm_policy_constrained",
+        }
+    except Exception:
+        return {**fallback, "decision_method": "deterministic_fallback"}
+
 def clocked_plan(ctx, question, sources=None, scratch_id="default"):
     sources = sources or []
-    mode = propose_mode(question, sources)
+    mode = choose_clocked_mode(ctx, question, sources)
     scratch = _scratch(ctx, scratch_id)
     snap = scratch.snapshot()
     if not snap["entry_count"]:
@@ -195,12 +262,15 @@ def head_candidate(ctx, mutation_id, head_index, patch_mask,
                    base_topology_digest, approved=False, scratch_id="default"):
     if approved is not True:
         raise PermissionError("candidate head mutation requires explicit approved=true")
+    if not isinstance(mutation_id, str) or not mutation_id or len(mutation_id) > 64:
+        raise ValueError("mutation_id must be 1..64 characters")
     if isinstance(head_index, bool) or not isinstance(head_index, int) or not 0 <= head_index <= 255:
         raise ValueError("head_index must be 0..255")
     if isinstance(patch_mask, bool) or not isinstance(patch_mask, int) or not 1 <= patch_mask <= 65535:
         raise ValueError("patch_mask must be 1..65535")
-    if not isinstance(base_topology_digest, str) or len(base_topology_digest) != 64:
-        raise ValueError("base_topology_digest must be a SHA-256 digest")
+    if (not isinstance(base_topology_digest, str) or len(base_topology_digest) != 64
+            or any(c not in "0123456789abcdef" for c in base_topology_digest.lower())):
+        raise ValueError("base_topology_digest must be a hexadecimal SHA-256 digest")
     if not os.environ.get("NANLM_HEAD_CORTEX_URL") or not os.environ.get("NANLM_DEVICE_TOKEN"):
         raise RuntimeError("configure NANLM_HEAD_CORTEX_URL and a NANNET training:execute device token")
     request = {
@@ -220,36 +290,53 @@ def head_candidate(ctx, mutation_id, head_index, patch_mask,
     })
     return {"candidate": result, "scratch": scratch.snapshot()}
 
+
 def head_candidate_evaluate(ctx, mutation_id, records, approved=False,
                             scratch_id="default"):
+    """Compare an isolated candidate with baseline using declared held-out rows."""
     if approved is not True:
-        raise PermissionError("held-out candidate evaluation requires explicit approved=true")
+        raise PermissionError("candidate evaluation requires explicit approved=true")
     if not isinstance(mutation_id, str) or not mutation_id or len(mutation_id) > 64:
-        raise ValueError("invalid mutation_id")
+        raise ValueError("mutation_id must be 1..64 characters")
     if not isinstance(records, list) or not 1 <= len(records) <= 512:
         raise ValueError("records must contain 1..512 held-out relations")
     required = {"resolution", "polarity", "subject", "predicate", "object", "source_digest"}
+    allowed_resolutions = {
+        "bit", "nibble", "byte", "phonetic", "morpheme",
+        "lexical", "word_completion", "sentence", "paragraph", "narrative",
+    }
     for index, record in enumerate(records):
         if not isinstance(record, dict) or not required.issubset(record):
             raise ValueError("invalid held-out relation at index %d" % index)
+        if record["resolution"] not in allowed_resolutions:
+            raise ValueError("held-out relation %d has unsupported resolution" % index)
+        for field in ("polarity", "subject", "predicate", "object"):
+            if not isinstance(record[field], str) or not record[field].strip():
+                raise ValueError("held-out relation %d has invalid %s" % (index, field))
+        digest = record["source_digest"]
+        if (not isinstance(digest, str) or len(digest) != 64
+                or any(c not in "0123456789abcdef" for c in digest.lower())):
+            raise ValueError("held-out relation %d has invalid source_digest" % index)
     if not os.environ.get("NANLM_HEAD_CORTEX_URL") or not os.environ.get("NANLM_DEVICE_TOKEN"):
         raise RuntimeError("configure NANLM_HEAD_CORTEX_URL and a NANNET training:execute device token")
     dataset_sha256 = hashlib.sha256(json.dumps(
         records, sort_keys=True, separators=(",", ":"), ensure_ascii=False
     ).encode("utf-8")).hexdigest()
-    request = {
+    result = HeadCortexClient().evaluate_candidate({
         "schema": "nanlm.head-candidate-evaluation-request/1",
         "mutation_id": mutation_id,
         "split": "test",
         "dataset_sha256": dataset_sha256,
         "records": records,
-    }
-    result = HeadCortexClient().evaluate_candidate(request)
+    })
     scratch = _scratch(ctx, scratch_id)
-    scratch.append("learning_proposal", "hermes", {
+    scratch.append("learning_proposal", "nanlmind", {
         "kind": "boolean_head_candidate_evaluation",
         "mutation_id": mutation_id,
+        "dataset_sha256": dataset_sha256,
+        "split": "test",
         "evaluation": result,
         "promotion_allowed": False,
+        "canonical_state_modified": False,
     })
     return {"evaluation": result, "scratch": scratch.snapshot()}
