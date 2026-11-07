@@ -422,6 +422,12 @@ def head_learn_candidate(ctx, mutation_id, base_topology_digest,
             if isinstance(detected, bool):
                 add_record(observation, entry, "contains_pii", "detected" if detected else "not_detected",
                            "+" if detected else "-", 9)
+        elif endpoint == "pii":
+            detected = fields.get("detected", result_data.get("detected"))
+            if isinstance(detected, bool):
+                add_record(observation, entry, "contains_pii",
+                           "detected" if detected else "not_detected",
+                           "+" if detected else "-", 9)
         elif endpoint == "injection":
             detected = fields.get("detected", result_data.get("detected"))
             verdict = fields.get("verdict", result_data.get("verdict"))
