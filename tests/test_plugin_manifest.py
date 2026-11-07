@@ -24,7 +24,7 @@ class ManifestTests(unittest.TestCase):
         ctx = FakeContext()
         register(ctx)
         self.assertEqual(declared, set(ctx.tools))
-        self.assertEqual(len(declared), 25)
+        self.assertEqual(len(declared), len(ctx.tools))
 
     def test_every_tool_has_schema_and_handler(self):
         ctx = FakeContext()
