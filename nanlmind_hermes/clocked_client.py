@@ -60,7 +60,10 @@ class ClockedGatewayClient:
         req = Request(self.base_url + path, data=data, headers=headers, method=method)
         try:
             with urlopen(req, timeout=self.timeout) as response:
-                result = json.loads(response.read(1_048_577).decode("utf-8"))
+                raw = response.read(4_194_305)
+                if len(raw) > 4_194_304:
+                    raise ClockedGatewayError("CLOCKED gateway response exceeds 4 MiB")
+                result = json.loads(raw.decode("utf-8"))
         except HTTPError as exc:
             retryable = exc.code in (409, 429) or exc.code >= 500
             raise ClockedGatewayError("CLOCKED gateway returned HTTP %d" % exc.code,
