@@ -4,6 +4,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import math
 from pathlib import Path
 
 from .clocked_client import ClockedGatewayClient
@@ -351,8 +352,9 @@ def head_learn_candidate(ctx, mutation_id, base_topology_digest,
             if isinstance(digest, str) and len(digest) == 64:
                 base_topology_digest = digest
                 break
-    if not isinstance(base_topology_digest, str) or len(base_topology_digest) != 64:
-        raise ValueError("base_topology_digest must be supplied or present in the latest head response")
+    if (not isinstance(base_topology_digest, str) or len(base_topology_digest) != 64
+            or any(ch not in "0123456789abcdef" for ch in base_topology_digest.lower())):
+        raise ValueError("base_topology_digest must be a hexadecimal SHA-256 digest")
     if isinstance(epochs, bool) or not isinstance(epochs, int) or not 1 <= epochs <= 8:
         raise ValueError("epochs must be between 1 and 8")
     if not os.environ.get("NANLM_HEAD_CORTEX_URL") or not os.environ.get("NANLM_DEVICE_TOKEN"):
@@ -367,7 +369,8 @@ def head_learn_candidate(ctx, mutation_id, base_topology_digest,
         if not isinstance(provenance, dict):
             provenance = {}
         source_digest = provenance.get("input_sha256")
-        if not isinstance(source_digest, str) or len(source_digest) != 64:
+        if (not isinstance(source_digest, str) or len(source_digest) != 64
+                or any(ch not in "0123456789abcdef" for ch in source_digest.lower())):
             source_digest = hashlib.sha256(json.dumps(
                 observation, sort_keys=True, separators=(",", ":"),
                 ensure_ascii=False).encode("utf-8")).hexdigest()
@@ -376,8 +379,11 @@ def head_learn_candidate(ctx, mutation_id, base_topology_digest,
         if not safe_id:
             safe_id = hashlib.sha256(observation_id.encode("utf-8")).hexdigest()[:32]
         confidence = 1
-        if isinstance(observation.get("confidence"), (int, float)) and not isinstance(observation.get("confidence"), bool):
-            confidence = max(1, min(65535, int(float(observation["confidence"]) * 65535)))
+        raw_confidence = observation.get("confidence")
+        if (isinstance(raw_confidence, (int, float))
+                and not isinstance(raw_confidence, bool)
+                and math.isfinite(float(raw_confidence))):
+            confidence = max(1, min(65535, int(float(raw_confidence) * 65535)))
         text_value = str(obj).strip()[:2048]
         if not text_value:
             return
@@ -436,12 +442,6 @@ def head_learn_candidate(ctx, mutation_id, base_topology_digest,
             detected = fields.get("detected", result_data.get("detected"))
             if isinstance(detected, bool):
                 add_record(observation, entry, "contains_pii", "detected" if detected else "not_detected",
-                           "+" if detected else "-", 9)
-        elif endpoint == "pii":
-            detected = fields.get("detected", result_data.get("detected"))
-            if isinstance(detected, bool):
-                add_record(observation, entry, "contains_pii",
-                           "detected" if detected else "not_detected",
                            "+" if detected else "-", 9)
         elif endpoint == "injection":
             detected = fields.get("detected", result_data.get("detected"))
