@@ -100,7 +100,7 @@ class HeadCortexEvaluationTests(unittest.TestCase):
 class CandidateInputTests(unittest.TestCase):
     def setUp(self):
         self.row = {
-            "resolution": "lexical", "polarity": "supports",
+            "resolution": 5, "polarity": "+",
             "subject": "source", "predicate": "supports", "object": "claim",
             "source_digest": "a" * 64,
         }
@@ -112,7 +112,7 @@ class CandidateInputTests(unittest.TestCase):
     def test_rejects_bad_relation_fields_and_digest(self):
         for update, message in [
             ({"source_digest": "bad"}, "source_digest"),
-            ({"resolution": "mystery"}, "resolution"),
+            ({"resolution": "mystery"}, "N16REL resolution"),
             ({"subject": ""}, "subject"),
         ]:
             row = dict(self.row, **update)
