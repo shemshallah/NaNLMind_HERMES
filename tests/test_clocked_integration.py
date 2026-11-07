@@ -114,6 +114,11 @@ class ScratchTests(unittest.TestCase):
         self.assertEqual(result["evaluation"]["recommendation"], "review_candidate")
         self.assertFalse(result["evaluation"]["promotion_allowed"])
         self.assertEqual(result["scratch"]["entries"][-1]["lane"], "learning_proposal")
+        sent = client.return_value.evaluate_candidate.call_args.args[0]
+        self.assertEqual(sent["split"], "test")
+        self.assertEqual(sent["dataset_sha256"], __import__("hashlib").sha256(
+            __import__("json").dumps(records, sort_keys=True, separators=(",", ":"),
+                                     ensure_ascii=False).encode("utf-8")).hexdigest())
 
     def test_candidate_evaluation_records_metrics_without_promotion(self):
         class Context:
