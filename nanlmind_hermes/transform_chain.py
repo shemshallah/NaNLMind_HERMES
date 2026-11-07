@@ -209,7 +209,7 @@ def postflight(package: dict, response: dict, prepared: dict) -> dict:
                        {"read_only": True, "provenance_bound": True,
                         "validated_relations": len(relations)}))
 
-    if "TRUE" in states and "FALSE" in states:
+    if "CONFLICT" in states or ("TRUE" in states and "FALSE" in states):
         consensus = "CONFLICT"
     elif not states or "UNKNOWN" in states:
         consensus = "UNKNOWN"
