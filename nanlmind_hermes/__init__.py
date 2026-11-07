@@ -121,6 +121,17 @@ def register(ctx):
         return tools.chat_history(ctx, params.get("session_id", "default"),
                                   params.get("limit", 40))
 
+    def handle_phone_call(params, **kwargs):
+        _require_scope("universe:read")
+        try:
+            learning_enabled = ctx.get_config("chat_learning", default=True)
+        except Exception:
+            learning_enabled = True
+        if learning_enabled:
+            _require_scope("training:execute")
+        from . import phone_call
+        return phone_call.handle(ctx, params)
+
     # Load cryptography-backed NANNET handlers only when one is invoked.
     # This keeps ordinary Hermes chat/training importable on Android/Termux.
     def _auth_tools():
@@ -236,7 +247,7 @@ def register(ctx):
          ["question", "approved", "plan_sha256"], handle_clocked_execute),
         ("nanlm_clocked_scratch", "Inspect a revisioned HERMES scratch or one writer-owned lane.",
          {"scratch_id": {"type": "string", "maxLength": 80},
-          "lane": {"type": "string", "enum": ["user", "hermes_plan", "clocked_request", "clocked_result", "evidence_atoms", "conflict_map", "nan16_package", "head_response", "hermes_synthesis", "head_validation", "final", "learning_proposal"]}},
+          "lane": {"type": "string", "enum": ["user", "hermes_plan", "clocked_request", "clocked_result", "evidence_atoms", "conflict_map", "nan16_package", "head_response", "hermes_synthesis", "head_validation", "final", "learning_proposal", "phone_user", "phone_hermes", "phone_nanlm", "phone_event"]}},
          [], handle_clocked_scratch),
         ("nanlm_head_process", "Submit a frozen typed evidence package or answer draft to the NaNLMind head-cortex interface; HERMES never owns canonical head state.",
          {"question": {"type": "string", "minLength": 1, "maxLength": 65536},
@@ -285,6 +296,14 @@ def register(ctx):
          {"session_id": {"type": "string", "maxLength": 80},
           "limit": {"type": "integer", "minimum": 1, "maximum": 200}},
          [], handle_chat_history),
+        ("nanlm_phone_call", "Three-way phone-call chat: user -> Hermes -> NaNLM -> user + Hermes. The shared scratch journal is the call window; user can address Hermes or NaNLM and interrupt between runs. The routing kernel is a raw NaN16 program.",
+         {"session_id": {"type": "string", "maxLength": 64},
+          "action": {"type": "string", "enum": ["start", "say", "run", "status", "end"]},
+          "message": {"type": "string", "maxLength": 65536},
+          "addressee": {"type": "string", "enum": ["hermes", "nanlm", "both"]},
+          "rounds": {"type": "integer", "minimum": 1, "maximum": 64},
+          "clocked": {"type": "boolean", "default": False}},
+         [], handle_phone_call),
         ("nanlm_auth_init", "Create this installation's encrypted NANNET identity.", {}, [], handle_auth_init),
         ("nanlm_auth_status", "Inspect local NANNET identity and pairing status without revealing secrets.", {}, [], handle_auth_status),
         ("nanlm_auth_pair", "Pair this installation using a one-time code from the trusted NANNET authority.",
@@ -432,7 +451,7 @@ def register(ctx):
         rest = parts[1:]
         if command in {"help", "?"}:
             return _json.dumps({
-                "usage": "/nanlm [chat|logic|words|sentences|pipeline|clocked|route|status] ...",
+                "usage": "/nanlm [chat|call|logic|words|sentences|pipeline|clocked|route|status] ...",
                 "default": "chat",
                 "note": "Bare /nanlm text is treated as a chat message.",
             }, sort_keys=True)
@@ -478,6 +497,29 @@ def register(ctx):
                 question = " ".join(rest[1:])
                 return _json.dumps(_clocked.clocked_synthesize(ctx, question), sort_keys=True, default=str)
             return _json.dumps({"usage": "/nanlm clocked [plan <request.json>|run <request.json> --approved|scratch [id]|head <request.json>|learn <request.json> --approved|evaluate <request.json> --approved|synthesize <question>]", "request_file": {"question": "string", "sources": [{"id": "source-a", "text": "source text"}], "scratch_id": "optional-id"}, "note": "Plan does not transmit source text. Run requires the explicit --approved flag."})
+        if command == "call":
+            from . import phone_call as _phone
+            clocked = "--clocked" in rest
+            rest = [token for token in rest if not token.startswith("--")]
+            extra = {"clocked": True} if clocked else {}
+            sub = rest[0].lower() if rest else "status"
+            try:
+                if sub == "start":
+                    return _json.dumps(_phone.handle(ctx, {"action": "start", "message": " ".join(rest[1:]) or "Hello.", "addressee": "hermes", **extra}), sort_keys=True, default=str)
+                if sub == "say":
+                    return _json.dumps(_phone.handle(ctx, {"action": "say", "message": " ".join(rest[1:]) or "Hello.", "addressee": "hermes", **extra}), sort_keys=True, default=str)
+                if sub in ("@hermes", "@nanlm", "@both"):
+                    return _json.dumps(_phone.handle(ctx, {"action": "say", "message": " ".join(rest[1:]), "addressee": sub[1:], **extra}), sort_keys=True, default=str)
+                if sub == "run":
+                    rounds = int(rest[1]) if len(rest) > 1 and rest[1].isdigit() else 1
+                    return _json.dumps(_phone.handle(ctx, {"action": "run", "rounds": rounds}), sort_keys=True, default=str)
+                if sub == "status":
+                    return _json.dumps(_phone.handle(ctx, {"action": "status"}), sort_keys=True, default=str)
+                if sub == "end":
+                    return _json.dumps(_phone.handle(ctx, {"action": "end"}), sort_keys=True, default=str)
+                return _json.dumps({"usage": "/nanlm call [--clocked] [start <message>|say <message>|@hermes <message>|@nanlm <message>|@both <message>|run <rounds>|status|end]"})
+            except Exception as exc:
+                return _json.dumps({"error": type(exc).__name__ + ": " + str(exc)[:300]}, sort_keys=True)
         if command == "chat":
             message = " ".join(rest)
         else:

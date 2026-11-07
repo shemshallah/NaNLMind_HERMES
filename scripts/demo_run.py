@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run the 1.2.3 demo against every registered tool and write a results report.
+"""Run the 1.3.0 demo against every registered tool and write a results report.
 
 The demo is local and deterministic. It starts a real NANNET pairing authority
 over loopback HTTP, local CLOCKED and head-cortex stubs, and uses the real
@@ -290,6 +290,12 @@ def main(argv=None):
         # Chat and transcripts.
         call("nanlm_chat", {"message": "Hello from the demo", "session_id": "demo"})
         call("nanlm_chat_history", {"session_id": "demo"})
+        call("nanlm_phone_call", {
+            "action": "start", "session_id": "demo-phone",
+            "message": "A river is water.", "addressee": "hermes"})
+        call("nanlm_phone_call", {
+            "action": "say", "session_id": "demo-phone",
+            "message": "What is a river?", "addressee": "nanlm"})
 
         # Corpus generation and curriculum generation.
         _, corpus = call("nanlm_generate_corpus", {"topic": "river valley", "records": 64})
@@ -405,7 +411,7 @@ def main(argv=None):
     passed = sum(1 for row in results if row["status"] == "pass")
     report = {
         "schema": "nanlmind-hermes-demo/1",
-        "version": "1.2.3",
+        "version": "1.3.0",
         "generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "native_binary": "nanlm-universal",
         "tools_total": len(ctx.tools),

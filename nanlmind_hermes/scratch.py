@@ -15,6 +15,7 @@ LANES = {
     "user", "hermes_plan", "clocked_request", "clocked_result",
     "evidence_atoms", "conflict_map", "nan16_package", "head_response",
     "hermes_synthesis", "head_validation", "final", "learning_proposal", "transform_trace",
+    "phone_user", "phone_hermes", "phone_nanlm", "phone_event",
 }
 ZERO = "0" * 64
 
@@ -98,6 +99,10 @@ class Scratch:
             "final": {"hermes"},
             "learning_proposal": {"hermes", "nanlmind"},
             "transform_trace": {"hermes", "nanlmind"},
+            "phone_user": {"user"},
+            "phone_hermes": {"hermes"},
+            "phone_nanlm": {"nanlmind"},
+            "phone_event": {"hermes", "nanlmind"},
         }
         if writer not in allowed_writers[lane]:
             raise ScratchError("writer is not authorized for this scratch lane")

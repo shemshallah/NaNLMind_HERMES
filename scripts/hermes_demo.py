@@ -11,7 +11,8 @@ chat is the default; no language-model provider is required. The real native
       --nannet-url https://nannet.apps.mistral.run \
       --pairing-code nnh_... \
       --clocked-token-file ~/.config/nanlmind/clocked-token \
-      --llm-url http://127.0.0.1:8085/v1/chat/completions \
+      --llm-url http://127.0.0.1:11434/v1/chat/completions \
+      --llm-model gemma4:31b-cloud \
       --output docs/HERMES_DEMO.md
 
 The JSON evidence is written next to the Markdown report.
@@ -39,10 +40,10 @@ from nanlmind_hermes import register  # noqa: E402
 from nanlmind_hermes import auth_tools, clocked_tools, hermes_secrets  # noqa: E402
 
 
-class LlamaProvider:
-    """Minimal OpenAI-compatible local chat provider."""
+class OpenAICompatProvider:
+    """Minimal OpenAI-compatible chat provider, including Ollama cloud models."""
 
-    def __init__(self, url: str, model: str = "local"):
+    def __init__(self, url: str, model: str = "gemma4:31b-cloud"):
         self.url = url
         self.model = model
 
@@ -67,7 +68,7 @@ class LlamaProvider:
 class HybridProvider:
     """Real chat model; deterministic structured teacher for reproducible training."""
 
-    def __init__(self, chat: LlamaProvider):
+    def __init__(self, chat: OpenAICompatProvider):
         self.chat = chat
 
     def complete(self, messages, **kwargs):
@@ -163,7 +164,8 @@ def main(argv=None):
     parser.add_argument("--nannet-url", default="https://nannet.apps.mistral.run")
     parser.add_argument("--pairing-code", required=True)
     parser.add_argument("--clocked-token-file", required=True)
-    parser.add_argument("--llm-url", default="http://127.0.0.1:8085/v1/chat/completions")
+    parser.add_argument("--llm-url", default="http://127.0.0.1:11434/v1/chat/completions")
+    parser.add_argument("--llm-model", default="gemma4:31b-cloud")
     parser.add_argument("--chat-mode", default="native", choices=["native", "auto", "provider"])
     parser.add_argument("--output", default=str(ROOT / "docs/HERMES_DEMO.md"))
     args = parser.parse_args(argv)
@@ -189,7 +191,7 @@ def main(argv=None):
         "chat_mode": args.chat_mode,
     }
     ctx = DemoContext(config)
-    ctx.llm = HybridProvider(LlamaProvider(args.llm_url))
+    ctx.llm = HybridProvider(OpenAICompatProvider(args.llm_url, args.llm_model))
     register(ctx)
 
     # Register a scoped Hermes device for live head-cortex calls.
@@ -197,7 +199,7 @@ def main(argv=None):
     registered = post_json(base + "/v1/hermes/register", {
         "device_secret": device_secret, "consent": True,
         "terms_version": "nannet-device-registration-v1",
-        "system_report": {"platform": "Hermes", "app_version": "1.2.3"},
+        "system_report": {"platform": "Hermes", "app_version": "1.3.0"},
     })
     device_token = registered["token"]
     secrets_map = {
@@ -283,7 +285,50 @@ def main(argv=None):
             "note": "Round 1 made the structural updates. Later rounds reuse the same deterministic teacher data, so changed_heads=0 is expected.",
         }
 
-        # 3. CLOCKED plan -> execute -> live head cortex -> isolated candidate.
+        # 3. Three-way phone call: user -> Hermes -> NaNLM -> user + Hermes.
+        # The call routing kernel is a raw NaN16 program (nan/phone_call.nan).
+        # clocked=True routes Hermes turns through the CLOCKED gateway mid-call.
+        call("nanlm_phone_call", {
+            "action": "start", "session_id": "phone-demo",
+            "message": "A river is water.", "addressee": "hermes", "rounds": 1,
+            "clocked": True})
+        call("nanlm_phone_call", {
+            "action": "say", "session_id": "phone-demo",
+            "message": "What is a river?", "addressee": "nanlm"})
+        phone = call("nanlm_phone_call", {
+            "action": "run", "session_id": "phone-demo", "rounds": 2})
+        call_window = call("nanlm_clocked_scratch", {
+            "scratch_id": phone.get("scratch_id", "call-phone-demo")})
+        lanes: dict[str, int] = {}
+        for entry in call_window.get("entries", []):
+            lane = entry.get("lane", "")
+            lanes[lane] = lanes.get(lane, 0) + 1
+        clocked_window = call("nanlm_clocked_scratch", {
+            "scratch_id": phone.get("scratch_id", "call-phone-demo"),
+            "lane": "clocked_result"})
+        clocked_results = []
+        for entry in clocked_window.get("entries", [])[-3:]:
+            payload = entry.get("payload", {})
+            clocked_results.append({
+                "endpoint": payload.get("endpoint"),
+                "status": payload.get("status"),
+                "result_type": payload.get("result_type"),
+                "result_excerpt": json.dumps(payload.get("result"), sort_keys=True)[:280],
+            })
+        transcript["phone"] = {
+            "session_id": phone.get("session_id"),
+            "status": phone.get("status"),
+            "turn": phone.get("turn"),
+            "scratch_id": phone.get("scratch_id"),
+            "default_path": phone.get("default_path"),
+            "clocked": phone.get("clocked"),
+            "kernel": phone.get("kernel"),
+            "call_window_lanes": dict(sorted(lanes.items())),
+            "clocked_results": clocked_results,
+            "history": phone.get("history", []),
+        }
+
+        # 4. CLOCKED plan -> execute -> live head cortex -> isolated candidate.
         pii_sources = [{"id": "source-a", "text": "Contact demo@example.com for details."}]
         pii_plan = call("nanlm_clocked_plan", {
             "question": "Check PII handling in the source", "sources": pii_sources,
@@ -337,12 +382,13 @@ def main(argv=None):
 
     report = {
         "schema": "nanlmind-hermes-demo-transcript/1",
-        "version": "1.2.3",
+        "version": "1.3.0",
         "generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "nannet_url": base,
         "native_binary": "nanlm-universal",
         "chat_mode": args.chat_mode,
         "llm_url": args.llm_url,
+        "llm_model": args.llm_model,
         "transcript": transcript,
     }
     json_path = Path(args.output).with_name("hermes-demo.json")
@@ -351,9 +397,10 @@ def main(argv=None):
     lines = [
         "# Hermes demo transcript",
         "",
-        "Generated by `scripts/hermes_demo.py` at **1.2.3**. Chat runs through",
-        "NaNLMind's native parser/synthesizer (`chat_mode=%s`); no language" % args.chat_mode,
-        "provider is required. Training uses the real `nanlm-universal` binary;",
+        "Generated by `scripts/hermes_demo.py` at **1.3.0**. NaNLM chat runs through",
+        "its native parser/synthesizer (`chat_mode=%s`); no language provider is" % args.chat_mode,
+        "required for that path. The three-way call uses `%s` as the Hermes" % args.llm_model,
+        "bridge when reachable. Training uses the real `nanlm-universal` binary;",
         "CLOCKED and head-cortex calls use the deployed `%s` service." % base,
         "",
         "## 1. Native chat and online relation learning",
@@ -396,7 +443,20 @@ def main(argv=None):
         compact(transcript["training"], 4000),
         "```",
         "",
-        "## 3. CLOCKED and live head cortex",
+        "## 3. Three-way phone call: User ↔ Hermes ↔ NaNLM",
+        "",
+        "Default path: `user -> Hermes -> NaNLM -> user + Hermes`. The call",
+        "routing kernel is a raw NaN16 program (`nan/phone_call.nan`), executed",
+        "on the NaNVM0 boundary; the transcript below records the kernel plan in",
+        "the `phone_event` lane. `clocked` was enabled, so Hermes turns ran",
+        "through the CLOCKED gateway and the `hermes_plan` / `clocked_result` /",
+        "`evidence_atoms` lanes share the same call window.",
+        "",
+        "```json",
+        compact(transcript["phone"], 6000),
+        "```",
+        "",
+        "## 4. CLOCKED and live head cortex",
         "",
         "`nanlm_clocked_plan` → `nanlm_clocked_execute` → `nanlm_head_process` →",
         "isolated candidate creation, weak-supervision learning, and held-out",
@@ -425,7 +485,8 @@ def main(argv=None):
                       "training_status": transcript["training"].get("boolean_foundation", {}).get("status")
                       if isinstance(transcript["training"].get("boolean_foundation"), dict) else None,
                       "clocked_lanes": transcript["clocked"].get("scratch_lanes"),
-                      "head_truth_state": transcript["clocked"].get("head_truth_state")}, indent=2))
+                      "head_truth_state": transcript["clocked"].get("head_truth_state"),
+                      "phone_turns": transcript["phone"].get("turn")}, indent=2))
     return 0
 
 

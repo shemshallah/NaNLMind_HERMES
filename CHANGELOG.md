@@ -1,5 +1,27 @@
 # Changelog
 
+## 1.3.0 — 2026-11-07
+
+- Added native chat parsing/synthesis as the default `chat_mode: native`; no
+  Hermes language-model provider is required.
+- Added the shared-scratch three-way phone call: user -> Hermes -> NaNLM ->
+  user + Hermes, with arbitrary autonomous rounds and user interjection.
+- Added `nanlm_phone_call` (34 registered tools) with `start`, `say`, `run`,
+  `status` and `end`, plus `/nanlm call ...` commands.
+- Added the raw NaN16 call kernel (`nan/phone_call.nan`): validation,
+  addressee routing, round loops, event-plan emission and turn accounting run
+  as 99 hand-assembled 0xNaN words on a thin NaNVM0 boundary (`nanvm.py`).
+  The kernel is word-for-word verified against the native nan0s C VM core
+  across an eight-case routing matrix.
+- Added CLOCKED support inside the three-way call (`clocked: true`): Hermes
+  turns run extract -> grounding -> decide over the call window, and the
+  `hermes_plan`, `clocked_request`, `clocked_result` and `evidence_atoms`
+  lanes share the same call scratch journal as the `phone_*` lanes.
+- Added phone-call transcript evidence using `gemma4:31b-cloud` as the Hermes
+  bridge and native NaNLM synthesis, including 12 call turns and 12 CLOCKED
+  results in the call window.
+- Test suite grew to 154 tests (18 NaN16 boundary and call-kernel tests).
+
 ## 1.2.3 — 2026-11-07
 
 - Moved the head-cortex service into the single deployed `nannet-portal`
