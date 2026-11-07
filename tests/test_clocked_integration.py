@@ -96,6 +96,15 @@ class TaskPlanValidationTests(unittest.TestCase):
 
 
 
+    def test_rejects_serialized_envelope_over_gateway_limit(self):
+        tasks = [
+            {"id": "task-%02d" % index, "endpoint": "extract",
+             "text": "x" * 65536, "depends_on": []}
+            for index in range(16)
+        ]
+        with self.assertRaisesRegex(ValueError, "serialized CLOCKED request"):
+            validate_task_plan(self.plan(tasks))
+
 
 class ScratchTests(unittest.TestCase):
     def test_hash_chain_and_expected_revision(self):
