@@ -377,7 +377,8 @@ def head_learn_candidate(ctx, mutation_id, base_topology_digest,
         if not isinstance(fields, dict):
             fields = {}
         detected = fields.get("detected", result_data.get("detected"))
-        if detected is True:
+        # Fail closed: only an explicit negative PII verdict permits content learning.
+        if detected is not False:
             pii_sources.add(str(observation.get("source_id") or "cross_source"))
 
     def add_record(observation, entry, predicate, obj, polarity="+", resolution=5):
