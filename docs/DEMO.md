@@ -25,17 +25,23 @@ plugins:
       settings:
         state_dir: ~/.local/share/nanlmind-hermes
         runner_command: ["/absolute/path/to/NaNLMind/build/nanlm-universal"]
+        chat_mode: native
 ```
 
 In a Hermes session:
 
 ```text
-/nanlm Hello. What can you do?
+/nanlm A river is water.
+/nanlm What is a river?
 /nanlm logic Boolean inverses and nested implications
 /nanlm status
 ```
 
-Expected: the chat reply is stored in the session transcript; the training
+Expected: the first chat stores `A river is water` as a supervised relation
+and updates the native state; the second retrieves it as
+`I recall these learned relations: A river is water.` The reply and the shared
+scratch window are stored under `state_dir`. No language-model provider is
+required in `native` mode. The training
 reply reports the Boolean foundation result and native run manifest; `status`
 shows the one `HW0::BS0` state directory and the last run. A failed Boolean
 gate stops before language stages.

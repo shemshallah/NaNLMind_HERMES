@@ -9,8 +9,10 @@ identity/authorization boundary and CLOCKED is an evidence service.
 
 ## What it does
 
-- **Chat** — the default `/nanlm <message>` path, with durable transcripts and
-  optional online relation learning from explicit supported/refuted claims.
+- **Native chat** — the default `/nanlm <message>` path parses explicit
+  relations, updates memory and native state, and synthesizes a reply from the
+  learned relation set. It does not require a language-model provider. Set
+  `chat_mode: auto` or `provider` to use a Hermes model instead.
 - **Training** — native `logic`, `words`, `sentences`, and ordered `pipeline`
   sessions. A full 256-head Boolean foundation gate must pass before language
   training. Training runs through the local `nanlm-universal` binary.
@@ -46,6 +48,7 @@ hermes plugins doctor /path/to/NaNLMind_HERMES --ci
 
 # 3. Configure the plugin in Hermes Settings → Plugins → NaNLMind Hermes:
 #    - state_dir
+#    - chat_mode: native (the default; no LLM required)
 #    - runner_command: ["/absolute/path/to/NaNLMind/build/nanlm-universal"]
 #    - nannet_auth_url and nannet_issuer_public_key
 #    - NANNET_MASTER_KEY in the masked secret field
@@ -57,8 +60,9 @@ hermes plugins doctor /path/to/NaNLMind_HERMES --ci
 nanlm_auth_init
 nanlm_auth_pair  # pairing_code: "nnh_..."
 
-# 5. Use it
-/nanlm Hello. What can you do?
+# 5. Use it: teach a relation, then ask for it back
+/nanlm A river is water.
+/nanlm What is a river?
 /nanlm logic Boolean inverses and nested implications
 /nanlm words common words and next-word choice
 /nanlm sentences short stories and sentence continuations
@@ -100,6 +104,7 @@ Settings live under `plugins.entries.nanlmind-hermes.settings`.
 | `runner_command` | list[str] | `[]` | absolute argv for the local `nanlm-universal` binary |
 | `duration_minutes` | int | `30` | wall budget for native bootstrap runs, 1–360 |
 | `chat_learning` | bool | `true` | allow explicit supervised claims to update native heads |
+| `chat_mode` | str | `native` | `native` (NaNLMind parses/synthesizes), `auto` (use provider if present), or `provider` (LLM-authored reply) |
 | `nannet_auth_url` | str | `""` | HTTPS NANNET authority (HTTP only for loopback) |
 | `nannet_issuer_public_key` | str | `""` | pinned base64url Ed25519 issuer key |
 | `clocked_gateway_url` | str | `""` | HTTPS CLOCKED participant gateway |
@@ -168,13 +173,13 @@ Report security issues privately as described in [SECURITY.md](SECURITY.md).
 
 ## Verification
 
-- 134 unit/integration tests pass locally; CI runs Python 3.10, 3.11, and 3.12.
+- 135 unit/integration tests pass locally; CI runs Python 3.10, 3.11, and 3.12.
 - Hermes Agent v0.23.0 `plugins validate` and `plugins doctor` pass in CI.
 - Wheel and source distribution builds, metadata checks, installation/import,
   and SHA-256 checksums pass in CI.
 - The exhaustive demo passed 36/36 calls across all 33 registered tools.
-- A separate transcript demo ran real local chat, native training, live
-  CLOCKED, and the live head-cortex service. Live smoke passed 11/11 checks
+- A separate transcript demo ran native chat without an LLM provider, native
+  training, live CLOCKED, and the live head-cortex service. Live smoke passed 11/11 checks
   against the single deployed `nannet.apps.mistral.run` service.
 - Exact commits, commands, and evidence are recorded in
   [docs/HERMES_CATALOG_ADMISSION.md](docs/HERMES_CATALOG_ADMISSION.md).

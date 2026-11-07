@@ -6,20 +6,24 @@ Tool schemas reject unknown properties unless stated otherwise.
 ## Default conversation
 
 ### `nanlm_chat`
-Open-ended Hermes conversation. This is the default interaction path.
+Native conversation by default. NaNLMind parses explicit relations from the
+input, updates additive memory and native state, synthesizes a reply from the
+learned relation set, and writes the turn to the shared scratch window.
+No language-model provider is required when `chat_mode: native`.
 
 Parameters:
 - `message` (string, required, 1 byte–1 MiB)
 - `session_id` (string, default `default`, ≤80 safe characters)
-- `system_prompt` (string, optional)
-- `temperature` (number, 0–2, default 0.7)
-- `max_tokens` (integer, 1–8192, default 2048)
+- `system_prompt` (string, optional; provider modes only)
+- `temperature` (number, 0–2, default 0.7; provider modes only)
+- `max_tokens` (integer, 1–8192, default 2048; provider modes only)
 
 Returns: response, provider/model, source digest, transcript count, surface
-measurements, reflection proposal count, memory merge counts,
-cross-resolution feedback, and a separate `native_learning` receipt. With
-`chat_learning: true`, explicit supported/refuted triples update native heads,
-mirror pairs and hyperedges. Neutral/incomplete reflections do not train.
+measurements, parsed discoveries, memory merge counts, cross-resolution
+feedback, `native_learning`, and `native_synthesis`. With `chat_learning: true`,
+explicit supported/refuted triples update native heads, mirror pairs and
+hyperedges. Native replies are template retrieval from learned relations, not
+LLM output; quality is bounded by the relation set.
 
 ### `nanlm_chat_history`
 Read the durable transcript.

@@ -1,12 +1,15 @@
 {
-  "chat_provider": "http://127.0.0.1:8085/v1/chat/completions",
-  "generated_at": "2026-11-07T18:44:54Z",
+  "chat_mode": "native",
+  "generated_at": "2026-11-07T19:08:18Z",
+  "llm_url": "http://127.0.0.1:8085/v1/chat/completions",
   "nannet_url": "https://nannet.apps.mistral.run",
   "native_binary": "nanlm-universal",
   "schema": "nanlmind-hermes-demo-transcript/1",
   "transcript": {
     "chat": {
-      "model": "qwen2.5-0.5b-instruct-q4_k_m.gguf",
+      "ask_response": "I recall these learned relations: A river is water.",
+      "mode": "native",
+      "model": "relation-memory/1",
       "native_learning": {
         "boolean_foundation_status": "passed",
         "changed_heads": 3,
@@ -14,12 +17,26 @@
         "metric_scope": "binary relation-polarity prediction by declared resolution; not text-generation accuracy",
         "mirror_pair_updates": 3,
         "records": 1,
-        "state_sha256_after": "bec396ea9270d343727c0654824fc3e9e72ddb92f3be0c6bc94f79e34ac702d8",
-        "state_sha256_before": "c30fc1f251a6fd916dd55ce1bc9bc129aabed31930c5a06555d18013fc4c8d5a"
+        "state_sha256_after": "fbd0adf38454a600b4e015baf8ac43240dbc1eea4ad17b24a4656c9f5f960ac5",
+        "state_sha256_before": "c30fc1f251a6fd916dd55ce1bc9bc129aabed31930c5a06555d18013fc4c8d5a",
+        "status": "updated"
       },
-      "provider": "llama.cpp",
-      "response": "A 256-head Boolean learner is a computational model designed to process a bounded number of binary inputs efficiently. It can handle a total of 1,024 exact truth-table checks for its two-input functions (256 x 4 = 1,024). This capacity makes it suitable for tasks such as data analysis, artificial intelligence, and machine learning that require processing large amounts of binary data. The learner can be trained to recognize patterns and make decisions based on a bounded set of inputs, making it a valuable tool for researchers and developers working on complex problem-solving tasks.",
-      "transcript_count": 2
+      "native_synthesis": {
+        "matched_records": 1,
+        "memory_records": 1,
+        "synthesis": "native_relation_memory_template/1",
+        "text": "I recall these learned relations: A river is water.",
+        "tokens": [
+          "river"
+        ]
+      },
+      "provider": "nanlm-native",
+      "scratch": {
+        "entries": 5,
+        "scratch_id": "chat-hermes-demo"
+      },
+      "teach_response": "I recall these learned relations: A river is water.",
+      "transcript_count": 4
     },
     "clocked": {
       "candidate": {
@@ -31,13 +48,13 @@
         "candidate_digest": "a65aaf9ae9c4450bb243825f8f62091eec818bd626b0f6c5eb4f121fe6dd7be0",
         "canonical_state_modified": false,
         "head_index": 42,
-        "mutation_id": "demo-candidate-74f718ae",
+        "mutation_id": "demo-candidate-5595bf00",
         "patch_mask": 1,
         "promotion_allowed": false,
         "schema": "nanlm.head-candidate-response/1",
         "status": "candidate_only"
       },
-      "claim_plan_digest": "2f52605a12fe6ddf7148aa4109c62e6a319438237b8f4ac14326f95753d45e07",
+      "claim_plan_digest": "b98df178b03c14aaffdec69fd92bc5636176c16c9eb0a5ed0adfb37658e0dbfb",
       "claim_result_count": 3,
       "evaluation": {
         "balanced_accuracy_nonregression": true,
@@ -90,7 +107,7 @@
         "canonical_state_modified": false,
         "dataset_sha256": "e60c76e7b449540ae6e4435608dddc491aae28472df9c4edfca6f482992de75f",
         "evaluation_policy": "caller_declared_test_split_no_automatic_promotion",
-        "mutation_id": "demo-candidate-74f718ae",
+        "mutation_id": "demo-candidate-5595bf00",
         "promotion_allowed": false,
         "recommendation": "retain_baseline",
         "schema": "nanlm.head-candidate-evaluation-response/1",
@@ -105,7 +122,7 @@
         "candidate_digest": "4e0bf0e58204a84d29121cd19426236673fbd3d758611186162a23fea6b640b4",
         "canonical_state_modified": false,
         "kind": "learned_candidate",
-        "mutation_id": "demo-learn-3a29634a",
+        "mutation_id": "demo-learn-5912d5f8",
         "promotion_allowed": false,
         "schema": "nanlm.head-learning-candidate-response/1",
         "status": "candidate_only",
@@ -118,7 +135,7 @@
           "train_events": 7
         }
       },
-      "pii_plan_digest": "1e7b575865f85a9e9e612d300464e1b556592f6de80ffa2287044aaf35c1773b",
+      "pii_plan_digest": "c8238db71bf2b45a65d8a192e22f50b2ea74eed25d2f46d0377434458fd071e5",
       "pii_result_count": 2,
       "scratch_lanes": [
         "clocked_request",
@@ -131,12 +148,12 @@
     "nannet": {
       "identity_present": true,
       "identity_unlocked": true,
-      "installation_id": "499e4084-4d5a-47cd-b604-f8feb887c32e",
+      "installation_id": "97ace560-da0a-4734-8c8e-b53ba09a911a",
       "master_key_present": true,
       "paired_token_present": true,
       "pairing_authority_configured": true,
-      "public_key": "E5EBKRFWGTAyM9_jfnPjCGIioQGayqRtLPPfoO9GSHU",
-      "token_expires_at": 1794077962,
+      "public_key": "e-pF_1GuAEZEOdbYcgDJNS9gX61vPnZP3jHY9umrd7s",
+      "token_expires_at": 1794079381,
       "token_scopes": [
         "corpus:write",
         "training:execute",
@@ -151,7 +168,7 @@
         "status": "passed"
       },
       "corpus_records": 9,
-      "final_state_digest": "7e56ea4b53b91709a359ff0d1621494c7fa2a43fa634043b320b0194b320585d",
+      "final_state_digest": "4b47e568022f57d9626885b8bf34e5550469457c95191373979cba4b192b25a5",
       "mode": "logic",
       "note": "Round 1 made the structural updates. Later rounds reuse the same deterministic teacher data, so changed_heads=0 is expected.",
       "rounds": [

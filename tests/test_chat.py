@@ -29,14 +29,37 @@ class FakeLLM:
 
 class FakeContext:
     def __init__(self, root):
-        self.config = {"state_dir": str(root)}
+        self.config = {"state_dir": str(root), "chat_mode": "provider"}
         self.llm = FakeLLM()
 
     def get_config(self, key, default=None):
         return self.config.get(key, default)
 
 
+class NativeChatContext:
+    def __init__(self, root):
+        self.config = {"state_dir": str(root), "chat_learning": False, "chat_mode": "native"}
+
+    def get_config(self, key, default=None):
+        return self.config.get(key, default)
+
+
 class HermesChatTests(unittest.TestCase):
+    def test_native_chat_without_a_language_provider_parses_updates_and_synthesizes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            ctx = NativeChatContext(Path(tmp))
+            first = chat(ctx, "A river is water.", session_id="native-demo")
+            self.assertEqual(first["provider"], "nanlm-native")
+            self.assertEqual(first["native_synthesis"]["synthesis"],
+                             "native_relation_memory_template/1")
+            self.assertGreaterEqual(first["reflection"]["proposed_discoveries"], 1)
+            self.assertTrue(first["scratch"]["scratch_id"].startswith("chat-"))
+            self.assertEqual(len(chat_history(ctx, "native-demo")["messages"]), 2)
+            second = chat(ctx, "What is a river?", session_id="native-demo")
+            self.assertEqual(second["provider"], "nanlm-native")
+            self.assertIn("river", second["response"].lower())
+            self.assertGreaterEqual(second["native_synthesis"]["matched_records"], 1)
+
     def test_open_ended_chat_persists_transcript_and_reflects_memory(self):
         with tempfile.TemporaryDirectory() as tmp:
             ctx = FakeContext(Path(tmp))

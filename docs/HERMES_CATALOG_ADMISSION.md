@@ -31,8 +31,8 @@ prove from steps that only the upstream catalog maintainer can complete.
 
 - Plugin version: **1.2.3** in `plugin.yaml` and `pyproject.toml`; license
   **Apache-2.0** in both.
-- Unit/integration suite: **134 tests passed** locally and in CI on Python
-  3.10, 3.11 and 3.12 (402 successful test executions).
+- Unit/integration suite: **135 tests passed** locally and in CI on Python
+  3.10, 3.11 and 3.12 (405 successful test executions).
 - Hermes Agent v0.23.0 `hermes plugins validate . --install-deps`: **PASS**.
   Manifest, compatibility floor, config schema, required secret names,
   tool/hook/middleware parity, collision scan, security scan and no-core-override
