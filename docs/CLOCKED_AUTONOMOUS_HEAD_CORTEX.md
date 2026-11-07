@@ -293,6 +293,7 @@ Existing `/nanlm` chat and training modes remain unchanged. CLOCKED mode is an a
 - NaN16 evidence-package codec and HERMES head-cortex client.
 - Two-pass HERMES synthesis tool: draft -> NaNLMind answer-validation request -> final synthesis.
 - NaNLMind native read-only `relation-eval` command and authenticated head-cortex HTTP adapter, with NANNET scope authorization support.
+- Native `head-candidate` command that applies `HeadView::self_modify_boolean` to an isolated topology copy, records before/after digests, and refuses to overwrite canonical state.
 - Shared JSON schemas for evidence packages, scratch entries and head-cortex responses.
 
 **Not yet deployed or end-to-end verified:**
@@ -300,7 +301,7 @@ Existing `/nanlm` chat and training modes remain unchanged. CLOCKED mode is an a
 - NANNET-authorized head-cortex service deployment and route registration through the live Router/Koyeb topology.
 - Live CLOCKED SDK calls for each direct endpoint method (CI uses fakes/fixtures; no paid API calls).
 - Production multi-source scratch transport between devices/services.
-- Candidate self-modification experiments, mutation review and six-runner promotion integration.
+- Automated candidate mutation search, multi-control regression scoring, mutation review UI and six-runner promotion integration. The native candidate-only Boolean-mask mutation primitive exists, but promotion is not implemented.
 
 The native `relation-eval` path is read-only: it evaluates relation records against an existing serialized topology and does not train or mutate canonical state. The service currently returns Boolean-head relation predictions and provenance; it is not yet a full general-purpose semantic reasoning endpoint.
 
