@@ -38,6 +38,7 @@ provides_tools:
   - nanlm_head_process
   - nanlm_clocked_synthesize
   - nanlm_head_candidate
+  - nanlm_head_candidate_evaluate
 config_schema:
   duration_minutes:
     type: int
