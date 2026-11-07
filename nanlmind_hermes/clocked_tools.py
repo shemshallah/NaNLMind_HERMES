@@ -61,7 +61,7 @@ def clocked_execute(ctx, question, sources, scratch_id="default",
         raise PermissionError("CLOCKED execution requires explicit approved=true after reviewing the plan")
     if not isinstance(plan_sha256, str) or len(plan_sha256) != 64:
         raise ValueError("the exact reviewed approval_digest is required")
-    if not os.environ.get("CLOCKED_GATEWAY_URL") or not os.environ.get("CLOCKED_GATEWAY_TOKEN"):
+    if not (_setting(ctx, "clocked_gateway_url", None) or os.environ.get("CLOCKED_GATEWAY_URL")) or not os.environ.get("CLOCKED_GATEWAY_TOKEN"):
         raise RuntimeError("configure CLOCKED_GATEWAY_URL and CLOCKED_GATEWAY_TOKEN for the scoped participant gateway")
     scratch = _scratch(ctx, scratch_id)
     plan_rows = scratch.lane("hermes_plan")
