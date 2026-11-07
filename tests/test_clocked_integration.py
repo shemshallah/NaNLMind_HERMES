@@ -61,9 +61,10 @@ class ScratchTests(unittest.TestCase):
             }
             result = clocked_tools.head_candidate(
                 None, "candidate-1", 42, 1, "a" * 64, True)
-        self.assertEqual(result["status"], "candidate_only")
-        self.assertFalse(result["canonical_state_modified"])
-        self.assertFalse(result["promotion_allowed"])
+        self.assertEqual(result["candidate"]["status"], "candidate_only")
+        self.assertFalse(result["candidate"]["canonical_state_modified"])
+        self.assertFalse(result["candidate"]["promotion_allowed"])
+        self.assertEqual(result["scratch"]["entries"][-1]["lane"], "learning_proposal")
 
     def test_two_pass_synthesis_submits_draft_and_appends_final(self):
         class Result:
