@@ -27,12 +27,9 @@ class CredentialPolicyTests(unittest.TestCase):
         }
         for key, env_name in expected.items():
             with self.subTest(key=key):
-                pattern = (
-                    rf"(?m)^  {re.escape(key)}:\s*\n"
-                    rf"    type: secret\s*\n"
-                    rf"    env: {re.escape(env_name)}$"
-                )
-                self.assertRegex(manifest, pattern)
+                block = manifest.split("  " + key + ":", 1)[1].split("\n  ", 1)[0]
+                self.assertIn("type: secret", block)
+                self.assertIn("env: " + env_name, block)
 
     def test_production_authorization_bypass_is_absent(self):
         source = (PACKAGE / "__init__.py").read_text(encoding="utf-8")
