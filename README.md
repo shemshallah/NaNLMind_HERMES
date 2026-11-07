@@ -451,8 +451,11 @@ The architecture and repository boundary are documented in
 [NaNLMind CLOCKED/HERMES brainstorm](https://github.com/shemshallah/NaNLMind_CLOCKED/blob/main/docs/CLOCKED_HERMES_BRAINSTORM.md).
 The code paths and tests are implemented, but production CLOCKED proxy
 deployment, real service credentials, live upstream end-to-end verification,
-automated mutation search and six-runner candidate promotion remain separate
-deployment/integration work.
+full M0-M9 execution across every result type, automated mutation search and
+six-runner candidate promotion remain separate deployment/integration work.
+The current head-cortex relation path is tested; it is not yet proof that every
+M0-M9 transformation is active end-to-end through the live HW3:0 Router/Koyeb
+route.
 
 CLOCKED credentials are separate from NANNET identity. A sponsored HERMES
 demo requires an explicitly authorized server-side proxy and quota policy;
