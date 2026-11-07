@@ -194,12 +194,16 @@ def head_candidate(ctx, mutation_id, head_index, patch_mask,
                    base_topology_digest, approved=False, scratch_id="default"):
     if approved is not True:
         raise PermissionError("candidate head mutation requires explicit approved=true")
+    if not isinstance(mutation_id, str) or not mutation_id or len(mutation_id) > 64:
+        raise ValueError("mutation_id must be 1..64 characters")
     if isinstance(head_index, bool) or not isinstance(head_index, int) or not 0 <= head_index <= 255:
         raise ValueError("head_index must be 0..255")
     if isinstance(patch_mask, bool) or not isinstance(patch_mask, int) or not 1 <= patch_mask <= 65535:
         raise ValueError("patch_mask must be 1..65535")
     if not isinstance(base_topology_digest, str) or len(base_topology_digest) != 64:
         raise ValueError("base_topology_digest must be a SHA-256 digest")
+    if any(c not in "0123456789abcdef" for c in base_topology_digest.lower()):
+        raise ValueError("base_topology_digest must be hexadecimal")
     if not os.environ.get("NANLM_HEAD_CORTEX_URL") or not os.environ.get("NANLM_DEVICE_TOKEN"):
         raise RuntimeError("configure NANLM_HEAD_CORTEX_URL and a NANNET training:execute device token")
     request = {
@@ -219,41 +223,27 @@ def head_candidate(ctx, mutation_id, head_index, patch_mask,
     })
     return {"candidate": result, "scratch": scratch.snapshot()}
 
-def head_candidate_evaluate(ctx, mutation_id, records, approved=False,
-                            scratch_id="default"):
-    if approved is not True:
-        raise PermissionError("held-out candidate evaluation requires explicit approved=true")
-    if not isinstance(records, list) or not 1 <= len(records) <= 512:
-        raise ValueError("records must contain 1..512 held-out relations")
-    if not os.environ.get("NANLM_HEAD_CORTEX_URL") or not os.environ.get("NANLM_DEVICE_TOKEN"):
-        raise RuntimeError("configure NANLM_HEAD_CORTEX_URL and a NANNET training:execute device token")
-    request = {
-        "schema": "nanlm.head-candidate-evaluation-request/1",
-        "mutation_id": mutation_id,
-        "records": records,
-    }
-    result = HeadCortexClient().evaluate_candidate(request)
-    scratch = _scratch(ctx, scratch_id)
-    scratch.append("learning_proposal", "hermes", {
-        "kind": "boolean_head_candidate_evaluation",
-        "mutation_id": mutation_id,
-        "evaluation": result,
-        "promotion_allowed": False,
-    })
-    return {"evaluation": result, "scratch": scratch.snapshot()}
 
 def head_candidate_evaluate(ctx, mutation_id, records, approved=False,
                             scratch_id="default"):
+    """Evaluate one isolated candidate against caller-supplied held-out N16REL rows."""
     if approved is not True:
         raise PermissionError("candidate evaluation requires explicit approved=true")
     if not isinstance(mutation_id, str) or not mutation_id or len(mutation_id) > 64:
-        raise ValueError("invalid mutation_id")
+        raise ValueError("mutation_id must be 1..64 characters")
     if not isinstance(records, list) or not 1 <= len(records) <= 512:
         raise ValueError("records must contain 1..512 held-out relations")
     required = {"resolution", "polarity", "subject", "predicate", "object", "source_digest"}
     for index, record in enumerate(records):
         if not isinstance(record, dict) or not required.issubset(record):
             raise ValueError("invalid held-out relation at index %d" % index)
+        for field in ("resolution", "subject", "predicate", "object"):
+            if not isinstance(record[field], str) or not record[field].strip():
+                raise ValueError("held-out relation %d has invalid %s" % (index, field))
+        digest = record["source_digest"]
+        if (not isinstance(digest, str) or len(digest) != 64
+                or any(c not in "0123456789abcdef" for c in digest.lower())):
+            raise ValueError("held-out relation %d has invalid source_digest" % index)
     if not os.environ.get("NANLM_HEAD_CORTEX_URL") or not os.environ.get("NANLM_DEVICE_TOKEN"):
         raise RuntimeError("configure NANLM_HEAD_CORTEX_URL and a NANNET training:execute device token")
     result = HeadCortexClient().evaluate_candidate({
@@ -261,11 +251,13 @@ def head_candidate_evaluate(ctx, mutation_id, records, approved=False,
         "mutation_id": mutation_id,
         "records": records,
     })
+    # The client independently enforces both non-promotion invariants.
     scratch = _scratch(ctx, scratch_id)
     scratch.append("learning_proposal", "nanlmind", {
         "kind": "boolean_head_candidate_evaluation",
         "mutation_id": mutation_id,
         "evaluation": result,
         "promotion_allowed": False,
+        "canonical_state_modified": False,
     })
     return {"evaluation": result, "scratch": scratch.snapshot()}
