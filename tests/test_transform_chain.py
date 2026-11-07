@@ -10,15 +10,15 @@ def package(entries=None):
         "revision": 4,
         "entries": entries or [
             {"entry_id": "u1", "lane": "user", "writer": "user",
-             "revision": 1, "payload": {"question": "What happened?"}},
+             "sequence": 1, "revision": "d" * 64, "payload": {"question": "What happened?"}},
             {"entry_id": "c1", "lane": "clocked_result", "writer": "clocked",
-             "revision": 2, "payload": {
+             "sequence": 2, "revision": "e" * 64, "payload": {
                  "endpoint": "extract", "status": "ok",
                  "provenance": {"input_sha256": "a" * 64},
                  "result": {"fields": {"claims": ["A claim"]}},
              }},
             {"entry_id": "e1", "lane": "evidence_atoms", "writer": "hermes",
-             "revision": 3, "payload": {
+             "sequence": 3, "revision": "f" * 64, "payload": {
                  "subject": "source", "predicate": "supports",
                  "object": "claim", "source_digest": "b" * 64,
                  "resolution": 5,
@@ -108,8 +108,8 @@ class TransformChainTests(unittest.TestCase):
 
     def test_m4_rejects_non_monotonic_scratch_revisions(self):
         value = package([
-            {"entry_id": "a", "lane": "user", "revision": 2, "payload": {}},
-            {"entry_id": "b", "lane": "clocked_result", "revision": 1, "payload": {}},
+            {"entry_id": "a", "lane": "user", "sequence": 2, "revision": "a" * 64, "payload": {}},
+            {"entry_id": "b", "lane": "clocked_result", "sequence": 1, "revision": "b" * 64, "payload": {}},
         ])
         with self.assertRaisesRegex(ValueError, "M4"):
             preflight(value)
