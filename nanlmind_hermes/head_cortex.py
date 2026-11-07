@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import json
-import os
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlparse
 from urllib.request import Request, urlopen
@@ -17,14 +16,14 @@ class HeadCortexClient:
 
     def __init__(self, endpoint: str | None = None, token: str | None = None,
                  timeout: int = 90):
-        endpoint = endpoint or os.environ.get("NANLM_HEAD_CORTEX_URL", "")
+        endpoint = endpoint or ""
         parsed = urlparse(endpoint)
         if parsed.scheme not in ("https", "http") or not parsed.netloc:
             raise ValueError("NANLM_HEAD_CORTEX_URL must be an HTTP(S) URL")
         if parsed.scheme != "https" and parsed.hostname not in ("localhost", "127.0.0.1", "::1"):
             raise ValueError("head cortex requires HTTPS except on localhost")
         self.endpoint = endpoint.rstrip("/")
-        self.token = token if token is not None else os.environ.get("NANLM_DEVICE_TOKEN", "")
+        self.token = token or ""
         if not self.token or len(self.token) > 512:
             raise ValueError("NANLM_DEVICE_TOKEN is missing or invalid")
         if not 1 <= timeout <= 300:
