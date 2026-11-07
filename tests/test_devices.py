@@ -1,4 +1,4 @@
-import json, tempfile, threading, unittest, urllib.request, urllib.error
+import json, sqlite3, tempfile, threading, unittest, urllib.request, urllib.error
 from pathlib import Path
 from nanlmind_hermes.auth import _unb64, generate_master_key
 from nanlmind_hermes.pairing import PairingAuthority
@@ -15,6 +15,10 @@ class DeviceLeaseTests(unittest.TestCase):
             registry=DeviceRegistry(Path(tmp)/"authority.sqlite")
             first=registry.register(payload("a"*43),now=1000)
             self.assertEqual(first["address"],"nan://GM0:SC0:MC0:HW0:BS0")
+            with sqlite3.connect(Path(tmp)/"authority.sqlite") as db:
+                self.assertIsNone(db.execute(
+                    "SELECT hw_slot FROM device_leases WHERE lease_id=?",
+                    (first["lease_id"],)).fetchone()[0])
             with self.assertRaisesRegex(ValueError,"active lease"):
                 registry.register(payload("a"*43),now=1001)
             hb=registry.heartbeat(first["token"],now=1100)
