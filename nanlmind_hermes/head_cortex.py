@@ -54,3 +54,27 @@ class HeadCortexClient:
         if not isinstance(result, dict) or result.get("schema") != "nanlm.head-cortex-response":
             raise HeadCortexError("unsupported NaNLMind head-cortex response")
         return result
+
+    def create_candidate(self, request: dict) -> dict:
+        if not isinstance(request, dict) or request.get("schema") != "nanlm.head-candidate-request/1":
+            raise ValueError("unsupported head-candidate request")
+        body = json.dumps(request, sort_keys=True, separators=(",", ":"),
+                          ensure_ascii=False).encode("utf-8")
+        call = Request(
+            self.endpoint + "/v1/head-cortex/candidate", data=body,
+            headers={"Authorization": "Bearer " + self.token,
+                     "Content-Type": "application/json", "Accept": "application/json"},
+            method="POST",
+        )
+        try:
+            with urlopen(call, timeout=self.timeout) as response:
+                result = json.loads(response.read(65537).decode("utf-8"))
+        except HTTPError as exc:
+            raise HeadCortexError("NaNLMind candidate endpoint returned HTTP %d" % exc.code) from exc
+        except (URLError, TimeoutError, OSError) as exc:
+            raise HeadCortexError("NaNLMind candidate endpoint is unavailable") from exc
+        except (UnicodeError, json.JSONDecodeError) as exc:
+            raise HeadCortexError("NaNLMind candidate endpoint returned invalid JSON") from exc
+        if not isinstance(result, dict) or result.get("schema") != "nanlm.head-candidate-response/1":
+            raise HeadCortexError("unsupported NaNLMind candidate response")
+        return result
