@@ -44,9 +44,9 @@ separate core-repository change; Hermes does not fabricate a checkpoint.
 
 ## NANNET
 
-When `NANNET_AUTH_URL` and the pinned issuer key are configured, the Hermes
-tool entry points require online authority validation for their requested
-scopes. The local native process remains local. The portal currently provides
+When `nannet_auth_url`, `nannet_issuer_public_key`, and the masked
+`NANNET_MASTER_KEY` Hermes secret are configured, Hermes tool entry points
+require online authority validation for their requested scopes. The local native process remains local. The portal currently provides
 identity/pairing/device lease and head/route-delta merge APIs; it is not a
 general remote training-job executor or model-artifact store.
 
