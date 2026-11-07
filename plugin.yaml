@@ -36,6 +36,7 @@ provides_tools:
   - nanlm_clocked_execute
   - nanlm_clocked_scratch
   - nanlm_head_process
+  - nanlm_clocked_synthesize
 config_schema:
   duration_minutes:
     type: int
