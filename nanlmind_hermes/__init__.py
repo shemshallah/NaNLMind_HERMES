@@ -15,7 +15,7 @@ def register(ctx):
     def handle_clocked_execute(params, **kwargs):
         _require_scope("universe:read")
         return clocked_tools.clocked_execute(ctx, params["question"],
-            params["sources"], params.get("scratch_id", "default"),
+            params.get("sources", []), params.get("scratch_id", "default"),
             params.get("approved", False), params.get("plan_sha256", ""),
             params.get("max_requests", 16), params.get("max_bytes", 1048576))
 
@@ -254,7 +254,7 @@ def register(ctx):
          ["question"], handle_clocked_plan),
         ("nanlm_clocked_execute", "Execute a reviewed multi-source CLOCKED task plan through the scoped CLOCKED gateway. Requires explicit approved=true.",
          {"question": {"type": "string", "minLength": 1, "maxLength": 65536},
-          "sources": {"type": "array", "minItems": 1, "maxItems": 8, "items": {"type": "object",
+          "sources": {"type": "array", "maxItems": 7, "items": {"type": "object",
              "required": ["text"], "properties": {"id": {"type": "string", "maxLength": 80},
              "text": {"type": "string", "minLength": 1, "maxLength": 65536}}}},
           "scratch_id": {"type": "string", "maxLength": 80},
@@ -262,7 +262,7 @@ def register(ctx):
           "plan_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
           "max_requests": {"type": "integer", "minimum": 1, "maximum": 16, "default": 16},
           "max_bytes": {"type": "integer", "minimum": 1, "maximum": 1048576, "default": 1048576}},
-         ["question", "sources", "approved", "plan_sha256"], handle_clocked_execute),
+         ["question", "approved", "plan_sha256"], handle_clocked_execute),
         ("nanlm_clocked_scratch", "Inspect a revisioned HERMES scratch or one writer-owned lane.",
          {"scratch_id": {"type": "string", "maxLength": 80},
           "lane": {"type": "string", "enum": ["user", "hermes_plan", "clocked_request", "clocked_result", "evidence_atoms", "conflict_map", "nan16_package", "head_response", "hermes_synthesis", "head_validation", "final", "learning_proposal"]}},
