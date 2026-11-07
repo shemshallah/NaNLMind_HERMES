@@ -22,8 +22,7 @@ universe. It supersedes assumptions that HW4–HW8 instantiate additional univer
    HW1 phone         HW2 Hermes         HW3 CLOCKED
       endpoint          endpoint           endpoint
 
-HW4–HW8: intentionally unallocated
-HW9+: scoped participant addresses attached to HW0::BS0
+HW4+: allocatable participant addresses attached to HW0::BS0
 ```
 
 - **MC0 is MC0Link.** It is the link/transport interface, not the six-runner
@@ -35,11 +34,12 @@ HW9+: scoped participant addresses attached to HW0::BS0
   training state, evidence and canonical generations belong to this one object.
 - **HW1, HW2 and HW3 are endpoints/demos.** They attach to the shared universe;
   they do not create model copies.
-- **HW4–HW8 are intentionally unallocated.** They are not runner identities,
-  model slots or universe instances.
-- **HW9+ are scoped participant addresses only.** A lease identifies an external
-  participant attached to the shared HW0::BS0 universe; it does not allocate
-  model state, a private head topology or a second universe.
+- **HW4+ is the allocatable participant space.** HW4–HW8 have no special
+  reservation; the BS0 allocator may assign any free address from HW4 onward.
+  They are not runner identities, model slots or universe instances.
+- **Every HW4+ lease is a scoped participant address only.** A lease identifies
+  an external participant attached to the shared HW0::BS0 universe; it does not
+  allocate model state, a private head topology or a second universe.
 - The six BS0 runners are disposable execution workers over one global state.
   They are not six independent minds and never own private histories.
 
@@ -152,7 +152,8 @@ overflow layer.
 1. Exactly one native global topology exists at HW0::BS0.
 2. Exactly six BS0 ring workers operate on the one topology.
 3. MC0Link and HW0 RunnerLink are interfaces, not universes.
-4. No HW4–HW8 universe creation, per-slot state, or independent training.
+4. No per-participant universe creation, private state, or independent training;
+   HW4+ addresses are routing identities for the one HW0::BS0 universe.
 5. The resolution domain is exactly integer 0–9; reject negative, boolean,
    non-integer and >=10 layer values.
 6. The name/index mapping is bijective and stable:

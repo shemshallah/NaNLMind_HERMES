@@ -1,11 +1,11 @@
 # Changelog
 
-## 1.2.0
+## 1.2.0 — 2026-11-07
 
 - Unified topology: HW0 is RunnerLink, BS0 is the six-worker RunnerRing, and
-  HW0::BS0 is the one canonical native state. HW4-HW8 are unallocated; HW9+
-  identify scoped participants attached to the same universe.
-- Migrated active legacy HW0-HW8 leases transactionally to free HW9+ addresses.
+  HW0::BS0 is the one canonical native state. HW4+ is the allocatable
+  participant space attached to the same universe.
+- Migrated active legacy HW0-HW3 leases transactionally to free HW4+ addresses.
 - Enforced one stored-evidence resolution axis, L0-L9, across memory schemas,
   native discovery metadata and curriculum routing.
 - Wired the deterministic M0-M9 evidence transform chain into the existing
@@ -14,7 +14,10 @@
 - Moved NANNET, CLOCKED and head-cortex secrets to Hermes-managed secret scope;
   removed direct process-environment credential reads, auth bypass and
   implicit hardware-key auto-registration.
-- Added Hermes catalog admission checklist and updated install/operator docs.
+- Added Hermes catalog admission checklist and tightened the user/operator
+  documentation into a concise overview plus focused reference guides.
+- Verified live production CLOCKED plan/execute/scratch, live NANNET pairing,
+  online scope authorization and revocation, and the real native Boolean gate.
 - Preserved the existing NaNLMind and Hermes training pipelines.
 
 ## 1.1.0 — 2026-11-07

@@ -1,6 +1,7 @@
 include README.md
 include LICENSE
 include CHANGELOG.md
+include SECURITY.md
 include plugin.yaml
 include __init__.py
 recursive-include docs *.md

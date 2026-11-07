@@ -72,8 +72,8 @@ auto-registered.
 
 The topology is one canonical `HW0::BS0` universe: HW0 is RunnerLink and BS0 is
 the six-runner ring. HW1 is the phone endpoint, HW2 the Hermes endpoint and HW3
-the CLOCKED endpoint. HW4-HW8 are unallocated. HW9+ are scoped participant
-addresses attached to the same universe, never separate model universes.
+the CLOCKED endpoint. HW4+ are allocatable participant addresses attached to
+the same universe, never separate model universes.
 
 ## Portal route
 

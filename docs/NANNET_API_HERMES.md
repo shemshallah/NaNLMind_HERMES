@@ -8,13 +8,13 @@ Configure an independent random 256-bit base64url `NANNET_MASTER_KEY` in the mas
 
 ## One-time pairing authority
 
-`PairingAuthority` derives a distinct Ed25519 signing key for each identity from the authority master key using separate `identity/admin/v1` and `identity/guest/v1` HKDF domains. Private signing keys remain server-side; only the matching public key is returned during pairing. Pairing codes default to the guest role and are checked against a hard role scope ceiling; admin codes must be explicitly requested by the authority operator. Codes are hashed at rest, expire in 60–3600 seconds, and are consumed transactionally. Pairing binds the installation UUID to its public key and issues a signed token for 30–86400 seconds. Identity revocation is persisted and invalidates every token for that identity.
+`PairingAuthority` keeps a stable authority Ed25519 issuer key for installation pairing and derives per-identity keys for short-lived device and admin tokens from the authority master key. Private signing keys remain server-side. Pairing tokens are signed by the stable issuer key, and the authority publishes only its public key at `GET /v1/issuer`; the client pins that key before pairing. Pairing codes default to the guest role and are checked against a hard role scope ceiling; admin codes must be explicitly requested by the authority operator. Codes are hashed at rest, expire in 60–3600 seconds, and are consumed transactionally. Pairing binds the installation UUID to its public key and issues a signed token for 30–86400 seconds. Identity revocation is persisted and invalidates every token for that identity.
 
 Allowed scopes are bounded by role. Guest: corpus:write, training:execute, universe:read, snapshot:read. Admin: all listed scopes, including snapshot:write, universe:register, and installation:admin.
 
 ## Pairing HTTP endpoint
 
-The optional stdlib HTTP service exposes POST /v1/pair, POST /v1/authorize, POST /v1/revoke, and admin-only POST /v1/admin/identities/revoke, plus the device enrollment routes POST /v1/devices/register, /heartbeat, /rotate, /release, and /report. Device enrollment requires explicit consent and a versioned terms acknowledgement. The authority stores only a SHA-256 digest of the random installation secret and signed guest bearer tokens; each HW guest bearer is signed by its per-device root-derived guest key, is stored only as a digest, and is rotated/revoked on heartbeat, rotation, and release. The authority does not collect MAC addresses, IMEIs, or serial numbers. Each device lease is a scoped participant identity attached to the single `HW0::BS0` universe. HW4-HW8 are reserved and never allocated; dynamic participant addresses begin at HW9+. The legacy `hw_slot` column is retained, and active pre-contract leases in HW0-HW8 are transactionally moved to free HW9+ addresses without changing device credentials or lease IDs. Heartbeats extend leases, rotation invalidates the previous bearer, release ends the participant lease, and expiry reclaims abandoned leases. A copied device credential cannot hold two simultaneous leases; a newly generated identity cannot be proven to be the same physical device without platform attestation, so the server deliberately does not pretend MAC-based identity is reliable. The authorize route checks a requested scope against a signed token and persisted revocation state. Revocation accepts the token's bearer credential, records its token ID, and causes subsequent authority-side validation to reject it. It must be deployed behind HTTPS; plain HTTP is accepted only for loopback development. The client pins `nannet_issuer_public_key` in Hermes plugin settings before trusting the returned token. The token is saved encrypted under the installation master key.
+The optional stdlib HTTP service exposes POST /v1/pair, POST /v1/authorize, POST /v1/revoke, and admin-only POST /v1/admin/identities/revoke, plus the device enrollment routes POST /v1/devices/register, /heartbeat, /rotate, /release, and /report. Device enrollment requires explicit consent and a versioned terms acknowledgement. The authority stores only a SHA-256 digest of the random installation secret and signed guest bearer tokens; each HW guest bearer is signed by its per-device root-derived guest key, is stored only as a digest, and is rotated/revoked on heartbeat, rotation, and release. The authority does not collect MAC addresses, IMEIs, or serial numbers. Each device lease is a scoped participant identity attached to the single `HW0::BS0` universe. HW0 is the runner link, HW1 is the phone endpoint, HW2 is Hermes, and HW3 is CLOCKED; HW4+ is the allocatable participant space. The legacy `hw_slot` column is retained, and active pre-contract leases in the reserved HW0-HW3 range are transactionally moved to free HW4+ addresses without changing device credentials or lease IDs. Heartbeats extend leases, rotation invalidates the previous bearer, release ends the participant lease, and expiry reclaims abandoned leases. A copied device credential cannot hold two simultaneous leases; a newly generated identity cannot be proven to be the same physical device without platform attestation, so the server deliberately does not pretend MAC-based identity is reliable. The authorize route checks a requested scope against a signed token and persisted revocation state. Revocation accepts the token's bearer credential, records its token ID, and causes subsequent authority-side validation to reject it. It must be deployed behind HTTPS; plain HTTP is accepted only for loopback development. The client pins `nannet_issuer_public_key` in Hermes plugin settings before trusting the returned token. The token is saved encrypted under the installation master key.
 
 For subsequent API requests, send the bearer token and Ed25519 request signature over method, exact path, timestamp, nonce, and SHA-256 body digest. The API must verify token signature, issuer, audience, expiry, scope, installation key, and five-minute clock skew, then atomically consume the nonce. Token revocation is persisted by TokenRegistry.
 
@@ -28,7 +28,13 @@ Payload encryption uses AES-256-GCM with HKDF-SHA256 domain separation and authe
 4. Installation pairs over HTTPS and verifies the issuer against its pinned public key.
 5. The demo uses the issued token, then revokes it and demonstrates rejection.
 
-The local authority, domain-separated per-identity signing keys, role-bounded one-time codes, identity-wide revocation, HTTP pairing and self-revocation endpoints, client pairing/revocation handlers, encrypted token storage, and authority-side token validation are implemented as source components. A public hosted deployment, TLS certificate/operations, and authenticated training/snapshot API endpoints remain deployment/integration work; do not claim a live hosted NANNET service until those pieces are deployed and tested.
+The local authority, stable pairing issuer, domain-separated per-identity
+signing keys, role-bounded one-time codes, identity-wide revocation, HTTP
+pairing and self-revocation endpoints, client pairing/revocation handlers,
+encrypted token storage, and authority-side token validation are implemented.
+A hosted authority has been live-verified for pairing, online scope
+authorization, and revocation. Head-cortex deployment and authenticated
+training/snapshot API endpoints remain separate integration work.
 
 ## Signed request enforcement (implemented)
 
@@ -48,13 +54,17 @@ The GitHub Actions BSR OIDC bootstrap is a separate service identity flow and do
 
 The NaNLMind Mesh-LLM Cluster Universe document is an architecture proposal, not a deployed API contract. Its cluster create/simulate/schedule routes and Mesh-LLM management integration are not implemented by this Hermes plugin or the current Koyeb portal. Do not send training corpora or model execution through Koyeb. A future cluster orchestrator may use NANNET-authorized worker agents and Mesh-LLM as a data plane, while semantic updates still enter the single global commit path with base hashes, idempotency and ledger validation.
 
-## Per-installation issuer pin
+## Stable issuer pin
 
-New tokens are signed by a domain-separated per-identity key. The client must pin the public key for its own installation UUID, not the legacy global signer key. After the client creates its installation identity, the authority operator obtains the matching public key with:
+Installation pairing tokens are signed by the stable authority issuer key. The
+client pins that key as `nannet_issuer_public_key` before pairing and rejects a
+response whose issuer key does not match. The operator reads the key from:
 
-    nannet-authority public-key --role guest --identity INSTALLATION_UUID
+    GET /v1/issuer
 
-The operator communicates this public key to the installation over a trusted channel as `nannet_issuer_public_key` in the Hermes plugin settings. Admin identities use --role admin. The default public-key command without --identity remains the legacy signer key for backwards compatibility only.
+Per-identity derived keys remain in use for short-lived device and admin
+tokens; those tokens are validated online by the authority. The plugin does not
+need a per-installation pin for the pairing token.
 
 ## CLOCKED API credential separation
 

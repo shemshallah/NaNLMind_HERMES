@@ -59,7 +59,8 @@ jobs:
           with tarfile.open(path, "r:gz") as archive:
               names = archive.getnames()
           required = ("plugin.yaml", "README.md", "LICENSE", "CHANGELOG.md",
-                      "nanlmind_hermes/__init__.py", "docs/HERMES_CATALOG_ADMISSION.md")
+                      "SECURITY.md", "nanlmind_hermes/__init__.py",
+                      "docs/DEMO.md", "docs/HERMES_CATALOG_ADMISSION.md")
           missing = [item for item in required if not any(name.endswith(item) for name in names)]
           if missing:
               raise SystemExit("source distribution missing: " + ", ".join(missing))

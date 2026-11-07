@@ -13,7 +13,7 @@ prove from steps that only the upstream catalog maintainer can complete.
 | Python dependency policy | PASS | No mandatory third-party runtime dependencies; `cryptography>=42,<47` is an optional bounded `pyproject.toml` extra, with a dependency-free compatibility path. |
 | Secret handling | PASS | NANNET, CLOCKED and head-cortex secrets use `agent.secret_scope.get_secret()`; secret fields are declared in `config_schema`. |
 | No process-environment credential reads | PASS | `tests/test_credential_policy.py` scans all plugin Python modules. |
-| Manifest/runtime and release-metadata parity | TEST ADDED; CI PENDING | `tests/test_manifest_registration.py` checks registered tool names, package/manifest versions, secret names, Apache-2.0 license alignment, and build metadata. |
+| Manifest/runtime and release-metadata parity | PASS | `tests/test_manifest_registration.py` checks registered tool names, package/manifest versions, secret names, Apache-2.0 license alignment, and build metadata; the admission and release CI jobs pass. |
 | No external credential-store scraping | PASS | No reads of `.env`, `auth.json`, browser profiles, vendor CLI stores or keychains. |
 | Authorization and approvals | PASS | Protected operations fail closed; candidate learning and CLOCKED execution retain explicit approval gates. No production auth bypass. |
 | No implicit hardware auto-registration | PASS | The former auto-registration module is removed; NANNET pairing is explicit. |
@@ -25,21 +25,52 @@ prove from steps that only the upstream catalog maintainer can complete.
 | Desktop SDK restrictions | N/A | No Hermes Desktop SDK or Desktop-specific code. |
 | Password-manager restrictions | N/A | No password-manager integration or credential scraping. |
 
+## Validation record
+
+### Plugin checks
+
+- Plugin version: **1.2.0** in `plugin.yaml` and `pyproject.toml`; license
+  **Apache-2.0** in both.
+- Unit/integration suite: **130 tests passed** locally and in CI on Python
+  3.10, 3.11 and 3.12 (390 successful test executions).
+- Hermes Agent v0.23.0 `hermes plugins validate . --install-deps`: **PASS**.
+  Manifest, compatibility floor, config schema, required secret names,
+  tool/hook/middleware parity, collision scan, security scan and no-core-override
+  checks pass.
+- Hermes Plugin Doctor `hermes plugins doctor . --ci`: **PASS**. Runtime
+  discovery, manifest parsing, import and registration pass; **33 tools, 0 hooks**.
+- Release package: wheel and sdist build; Twine metadata checks pass; required
+  plugin source/docs are present in the sdist; both distributions install and
+  import; SHA-256 checksums generate and verify.
+- GitGuardian: no secrets detected.
+
+### Live integration checks
+
+| Check | Result | Evidence |
+|---|---|---|
+| Production CLOCKED gateway | PASS | A scoped `clu_...` participant token executed a versioned `pii` task plan through `ClockedGatewayClient`; the full plan → execute → scratch → evidence-atom flow passed and wrote the expected `hermes_plan`, `clocked_request`, `clocked_result` and `evidence_atoms` lanes. |
+| Production NANNET authority | PASS | `nanlm_auth_init` → `nanlm_auth_pair` → `nanlm_auth_status` → online `training:execute` authorization → `nanlm_auth_revoke` all passed. The issuer key was pinned from the authority's `GET /v1/issuer`; the authority deployment includes the stable pairing contract and operator code issuance at commit `8aaa3df`. |
+| Native runner | PASS | Real `NaNLMind/build/nanlm-universal` run: `bootstrap` completed with a recorded corpus digest and metrics; `byte`, `kn`, and `ctx2` evaluations completed; the Boolean foundation gate passed **1,024/1,024** with all 16 distinct rules, composed gates and a persisted `boolean_foundation.nmg`. |
+| Hermes-managed secrets | PASS | Credential-policy tests scan every plugin module; live pairing and CLOCKED calls used the same secret-scope path as production. |
+
+Live checks are deployment smoke tests, not CI claims. Exact commands and the
+resulting artifacts are recorded in the release notes.
+
 ## Upstream catalog submission gates
 
 | Requirement | Status | Required action |
 |---|---|---|
-| Maintainer-reviewed PR to `NousResearch/hermes-agent` | PENDING | Submit the catalog entry after this plugin PR is accepted. |
-| Exact 40-character source SHA pin | PENDING | Pin the reviewed immutable plugin commit in the upstream catalog; do not use a moving branch or tag. |
-| Owner/maintainer-curated submission | PENDING | Confirm repository ownership/maintainer approval in the upstream PR. |
-| `capabilities:` declaration matches tools and environment variables | PENDING | In the upstream catalog entry, enumerate the registered tools and the three secret-backed environment names exactly. |
-| Scanner warnings reviewed | PENDING | Keep the upstream `hermes plugins validate` output clean; review any caution-level warnings rather than suppressing them. |
+| Maintainer-reviewed PR to `NousResearch/hermes-agent` | READY | Submit `plugin-catalog/nanlmind-hermes.yaml` after this plugin PR is accepted. |
+| Exact 40-character source SHA pin | READY | Pin the reviewed release tag commit; never a branch or short SHA. |
+| Owner/maintainer-curated submission | READY | Submit from `shemshallah`, the repository owner. |
+| `capabilities:` declaration matches tools and environment variables | READY | Use the capability block below; it matches `plugin.yaml` and `register(ctx)`. |
+| Scanner warnings reviewed | READY | Keep `hermes plugins validate` clean; review any caution-level warnings. |
 | Human review and merge | PENDING | Requires upstream maintainer review; this repository cannot self-approve catalog admission. |
 
 ## Prepared upstream catalog capability block
 
-Use this exact capability declaration in the eventual
-`NousResearch/hermes-agent/plugin-catalog/nanlmind-hermes.yaml` entry. Keep it
+Use this capability declaration in
+`NousResearch/hermes-agent/plugin-catalog/nanlmind-hermes.yaml`. Keep it
 synchronized with `plugin.yaml` and `register(ctx)` at the pinned SHA.
 
 ```yaml
@@ -88,19 +119,6 @@ capabilities:
 
 The upstream entry must also set `name: nanlmind-hermes`,
 `repo: https://github.com/shemshallah/NaNLMind_HERMES`,
-`requires_hermes: ">=0.23.0"`, `version: "1.2.0"`, and a full 40-character
-SHA for the reviewed release commit. Use the community tier (the catalog
-maintainers control verified/official tiers).
-
-## Validation record
-
-- Plugin version: **1.2.0** in both `plugin.yaml` and `pyproject.toml`.
-- Fully validated source/manifest commit: `a99ed96016f844694b444ac63d80909e01f43e10`.
-- Python 3.10, 3.11 and 3.12: **128 tests passed on each version** (384 successful test executions).
-- Hermes Agent v0.23.0 `hermes plugins validate . --install-deps`: **PASS**. Manifest, compatibility floor, config schema, required secret names, tool/hook/middleware parity, collision scan, security scan and no-core-override checks all passed.
-- Hermes Plugin Doctor `hermes plugins doctor . --ci`: **PASS**. Runtime discovery, manifest parsing, import and registration passed; **33 tools, 0 hooks**.
-- Release package: wheel and sdist both built; Twine checks passed; required source files were present; wheel and sdist each installed and imported; SHA256 checksums for both distributions were generated and verified.
-- Release artifact: [nanlmind-hermes-python-distributions](https://github.com/shemshallah/NaNLMind_HERMES/actions/runs/42346913559/artifacts/13563454894).
-- GitGuardian: 123 commits scanned; no secrets detected.
-- Live CLOCKED/NANNET/production-native endpoint integration is not exercised by CI and remains a deployment smoke-test gate.
-- Upstream catalog admission is still separate: submit the catalog PR with the exact 40-character source SHA, then obtain maintainer review and merge.
+`requires_hermes: ">=0.23.0"`, `version: "1.2.0"`, `maintainer: shemshallah`,
+`tier: community`, `category: tools`, and a full 40-character SHA for the
+reviewed release commit.

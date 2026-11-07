@@ -1,646 +1,198 @@
 # NaNLMind Hermes
 
-## Quickstart for the impatient
+A Hermes Agent plugin for a local NaNLMind 256-head universe: conversational
+learning, explicit native training, durable mathematical memory, and approved
+CLOCKED evidence plans. Training and inference stay local; NANNET is the
+identity/authorization boundary and CLOCKED is an evidence service.
+
+**Version 1.2.0 — catalog submission pending.**
+
+## What it does
+
+- **Chat** — the default `/nanlm <message>` path, with durable transcripts and
+  optional online relation learning from explicit supported/refuted claims.
+- **Training** — native `logic`, `words`, `sentences`, and ordered `pipeline`
+  sessions. A full 256-head Boolean foundation gate must pass before language
+  training. Training runs through the local `nanlm-universal` binary.
+- **CLOCKED** — versioned, scoped task plans for extract, grounding, compare,
+  privacy, injection, and synthesis. Multi-source results are written to an
+  append-only scratch journal; source text is not sent during planning, and
+  execution requires explicit approval.
+- **Memory** — additive mathematical memory with evidence assessments,
+  cross-resolution relations, and merge support.
+- **NANNET** — one encrypted installation identity, a pinned issuer key,
+  short-lived scoped tokens, signed requests, and fail-closed authorization.
+- **Hermes secrets** — NANNET, CLOCKED, and head-cortex credentials are read
+  through `agent.secret_scope.get_secret()`.
+
+The topology is one canonical `HW0::BS0` universe: HW0 is RunnerLink, BS0 owns
+the six-worker RunnerRing, HW1 is the phone endpoint, HW2 is Hermes, and HW3 is
+CLOCKED. HW4 and above are allocatable participant addresses attached to that
+same universe; they are not separate model instances.
+
+The plugin does not ship a model, download code, or run a background service.
+The optional `cryptography` extra supplies the audited crypto backend; a
+dependency-free fallback keeps ordinary chat and training importable on
+Termux/Alpine.
+
+## Quick start
 
 ```sh
-# Install the plugin from its public repository
+# 1. Install the plugin from its public repository
 hermes plugins install shemshallah/NaNLMind_HERMES --yes-deps --enable
 
-# Validate the manifest and registration
+# 2. Validate the manifest and registration
 hermes plugins doctor /path/to/NaNLMind_HERMES --ci
 
-# First: configure NANNET authority URL + pinned issuer key in plugin settings.
-# Configure NANNET_MASTER_KEY in the masked Hermes secret field.
-# Run nanlm_auth_init, then nanlm_auth_pair with an authority-issued pairing code.
-# For one-shot/CI runs, export HERMES_GATEWAY_NO_SUPERVISE=1.
+# 3. Configure the plugin in Hermes Settings → Plugins → NaNLMind Hermes:
+#    - state_dir
+#    - runner_command: ["/absolute/path/to/NaNLMind/build/nanlm-universal"]
+#    - nannet_auth_url and nannet_issuer_public_key
+#    - NANNET_MASTER_KEY in the masked secret field
+#    - clocked_gateway_url + CLOCKED_GATEWAY_TOKEN for CLOCKED
+#    - nanlm_head_cortex_url + NANLM_DEVICE_TOKEN for head-cortex calls
 
-# Default: chat
+# 4. Create the local identity, then pair with an operator-issued code
+#    (run these as Hermes tools)
+nanlm_auth_init
+nanlm_auth_pair  # pairing_code: "nnh_..."
+
+# 5. Use it
 /nanlm Hello. What can you do?
-
-# Explicit training modes
 /nanlm logic Boolean inverses and nested implications
 /nanlm words common words and next-word choice
 /nanlm sentences short stories and sentence continuations
 /nanlm pipeline full logic -> language curriculum
-
-# Inspect state
 /nanlm status
 ```
 
-## NANNET identity and pairing
+For one-shot or CI runs, set `HERMES_GATEWAY_NO_SUPERVISE=1`. Catalog installs
+will use `hermes plugins install nanlmind-hermes` after admission.
 
-The plugin uses one encrypted installation identity and an authority-issued,
-scoped pairing token. It does not auto-register a hardware key, allocate a
-second universe, or accept a local authorization bypass.
+## Demo path
 
-Configure these values under Hermes **Settings → Plugins → NaNLMind Hermes**:
-
-- `nannet_auth_url`: HTTPS NANNET authority URL (HTTP only for loopback development).
-- `nannet_issuer_public_key`: pinned base64url Ed25519 issuer public key.
-- `nannet_master_key`: an independently generated random 256-bit key, entered in the masked secret field.
-
-Then run `nanlm_auth_init` once and `nanlm_auth_pair` with a pairing code issued by
-the authority. The private installation identity and paired token are encrypted
-at rest under the configured master key. Protected operations verify the local
-token and request online scope authorization; unavailable authority means
-fail-closed behavior.
-
-Topology and routing policy:
-
-See [the unified topology and layer contract](docs/UNIFIED_TOPOLOGY_AND_LAYERS.md)
-and [the Hermes catalog admission checklist](docs/HERMES_CATALOG_ADMISSION.md)
-for the canonical topology, L0-L9/M0-M9 boundaries and catalog submission gates.
-
-```text
-one instantiated universe: HW0::BS0
-HW0 = RunnerLink (hardware-level interface)
-BS0 = RunnerRing (six internal workers)
-MC0 = MC0Link (transport/link identity, not a second universe)
-HW1 = phone endpoint
-HW2 = Hermes demo endpoint
-HW3 = CLOCKED demo endpoint
-HW4-HW8 = unallocated
-HW9+ = scoped participant addresses attached to the same HW0::BS0 universe
-```
-
-The Hermes and CLOCKED demos are endpoints attached to the one canonical
-universe. They do not create or own model universes. The six BS0 runners are
-execution workers over that same object, not separate universes. HW4-HW8 stay
-unallocated; HW9+ addresses are scoped guest identities attached to the shared
-universe, not new model instances.
+A complete local demo needs no NANNET or CLOCKED account:
 
 ```sh
-export HERMES_GATEWAY_NO_SUPERVISE=1 # recommended for one-shot/CI runs
+# Build the native learner once
+git clone https://github.com/shemshallah/NaNLMind.git
+make -C NaNLMind -j2 nanlm-universal
+
+# Configure runner_command to NaNLMind/build/nanlm-universal, then:
+/nanlm logic Boolean foundations
+/nanlm status
 ```
 
-NANNET login is required for chat and training. Pair first with
-`nanlm_auth_init` and `nanlm_auth_pair`; the plugin uses the configured
-authority URL and pinned issuer key. CLOCKED and head-cortex credentials are
-separate masked Hermes secrets, not interchangeable NANNET installation keys.
+With NANNET configured, pair once and repeat the same commands; protected
+operations verify the token locally and request online scope authorization.
+With CLOCKED configured, the approved plan → execute → scratch → head-process
+flow is available through `/nanlm clocked ...`. See the
+[three-scenario demo guide](docs/DEMO.md) and the
+[CLOCKED reference](docs/CLOCKED_AUTONOMOUS_HEAD_CORTEX.md).
 
-Native training requires the local binary:
-
-```yaml
-plugins:
-  entries:
-    nanlmind-hermes:
-      settings:
-        runner_command: ["/absolute/path/to/NaNLMind/build/nanlm-universal"]
-```
-
-The plugin itself needs no Google API key. It uses the model provider configured
-in Hermes (local Ollama, a custom endpoint, or any configured provider).
-
-**Version 1.2.0 — catalog admission pending**
-
-NaNLMind Hermes connects a Hermes agent to a local NaNLMind 256-head universe.
-It provides:
-
-- a default open-ended chat loop with durable conversation history;
-- online free-form relation learning from explicit supervised claims in back-and-forth chat;
-- a mandatory full-Boolean foundation gate before structured training;
-- explicit, ordered logic → words → sentences training sessions;
-- a teacher-generated structured relation pipeline with frozen held-out challenges at L0-L9;
-- native head, canonical mirror-pair, temporal-link and hyperedge updates in one resumable topology;
-- separate pre/post and cross-run metrics for each evaluated resolution;
-- additive mathematical memory with evidence assessment and cross-resolution feedback;
-- local NANNET identity, pairing, signed requests, and optional authority
-  scopes;
-- Hermes-managed secrets and bounded cryptography support for encrypted
-  installation identity and paired-token storage.
-
-Training runs locally. Koyeb/NANNET is coordination and authorization only;
-it is not the model runner or corpus store.
-
----
-
-See [the unified topology and layer contract](docs/UNIFIED_TOPOLOGY_AND_LAYERS.md) for the single HW0::BS0 universe, MC0Link/RunnerLink boundaries, fixed L0-L9 resolution mapping, curriculum routing, and M0-M9 transformation semantics.
-
-## 1. Default behaviour: chat
-
-Plain conversation is the default. The model should use `nanlm_chat` for normal
-interaction. With `chat_learning: true` (default), each exchange is reflected
-and explicit supported/refuted subject-predicate-object relations are submitted
-to the native relation learner. This is a bounded online update, not an automatic
-curriculum-generation job. Set `chat_learning: false` to disable native chat
-updates while retaining transcripts and symbolic reflection.
-
-Inside a Hermes session:
-
-```text
-/nanlm Hello, explain what you remember about penguins.
-/nanlm chat Continue the previous discussion.
-```
-
-Bare text after `/nanlm` is treated as a chat message:
-
-```text
-/nanlm What did we train last time?
-```
-
-Chat records:
-
-- a durable JSONL transcript per session;
-- provider/model metadata;
-- exact UTF-8 bit, nibble, byte, lexical, sentence, and paragraph measurements;
-- a structured reflection proposal merged into additive mathematical memory;
-- native-learning receipt: accepted relation events, changed heads, mirror-pair
-  mutations, hyperedges, checkpoint digests and per-resolution metrics when a
-  held-out set is available;
-- optional cross-resolution relations.
-
-Reflection is best effort and never blocks the conversational answer. Only
-explicit, non-neutral triples with evidence update native state. Neutral or
-incomplete reflections remain symbolic evidence; the plugin never claims a
-head update unless the native runner confirms it.
-
----
-
-## 2. Installation
-
-### From the Hermes plugin service / Git repository
-
-```sh
-hermes plugins install shemshallah/NaNLMind_HERMES --yes-deps --enable
-hermes plugins list
-hermes tools
-```
-
-Installing from a repository is available immediately. Catalog review and
-listing are a separate submission process.
-
-### Local development
-
-```sh
-git clone https://github.com/shemshallah/NaNLMind_HERMES.git
-hermes plugins install /absolute/path/NaNLMind_HERMES --enable
-hermes plugins validate /absolute/path/NaNLMind_HERMES --install-deps
-hermes plugins doctor /absolute/path/NaNLMind_HERMES --ci
-```
-
-Expected validation:
-
-```text
-✓ manifest
-✓ loadable
-✓ capability probe
-✓ declared tools
-✓ declared hooks
-✓ built-in tool collisions
-✓ security scan
-✓ no core override
-Validation passed.
-```
-
-### Minimal Alpine / Termux
-
-The runtime has no mandatory third-party Python dependencies.
-`crypto_compat.py` uses the audited `cryptography` primitives when available
-and retains a dependency-free compatibility implementation for constrained
-hosts. For production deployments, install the optional bounded backend:
-
-```sh
-pip install "nanlmind-hermes[auth]"
-```
-
-The optional backend is not an HSM; production key custody should still use an
-appropriate OS secret store or hardware-backed service. See
-`docs/ALPINE_PROOT_TESTING.md`.
-
----
-
-## 3. Configuration
+## Configuration
 
 Settings live under `plugins.entries.nanlmind-hermes.settings`.
 
-| key | type | default | meaning |
+| key | type | default | purpose |
 |---|---|---|---|
-| `duration_minutes` | int | `30` | wall budget for legacy native bootstrap runs, 1–360 |
-| `checkpoint_interval_seconds` | int | `60` | reserved for native checkpoint support |
+| `state_dir` | str | `~/.local/share/nanlmind-hermes` | one canonical universe, transcripts, memory, scratch, runs |
 | `runner_command` | list[str] | `[]` | absolute argv for the local `nanlm-universal` binary |
-| `chat_learning` | bool | `true` | allow free-form chat to update native heads/mirror pairs/hyperedges from explicit supervised relations |
-| `state_dir` | str | `~/.local/share/nanlmind-hermes` | universe, corpora, transcripts, runs |
-| layer count | fixed | `10` | one canonical L0–L9 resolution axis; not configurable per plugin instance |
+| `duration_minutes` | int | `30` | wall budget for native bootstrap runs, 1–360 |
+| `chat_learning` | bool | `true` | allow explicit supervised claims to update native heads |
+| `nannet_auth_url` | str | `""` | HTTPS NANNET authority (HTTP only for loopback) |
+| `nannet_issuer_public_key` | str | `""` | pinned base64url Ed25519 issuer key |
+| `clocked_gateway_url` | str | `""` | HTTPS CLOCKED participant gateway |
+| `nanlm_head_cortex_url` | str | `""` | HTTPS head-cortex receiving endpoint |
 
-Example:
+Secrets are declared in `plugin.yaml` and read only through Hermes:
+`NANNET_MASTER_KEY`, `CLOCKED_GATEWAY_TOKEN`, `NANLM_DEVICE_TOKEN`.
 
-```yaml
-plugins:
-  entries:
-    nanlmind-hermes:
-      enabled: true
-      settings:
-        state_dir: ~/.local/share/nanlmind-hermes
-        runner_command: ["/opt/NaNLMind/build/nanlm-universal"]
-```
+## Commands and tools
 
-The native runner is required for structured training and native chat learning.
-Without it, chat still answers and stores reflection evidence, but its
-`native_learning` receipt reports that no native update occurred.
-
----
-
-## 4. Training modes
-
-Training is deliberately command-driven.
-
-### Full pipeline
-
-```text
-/nanlm pipeline English logic, common words, and short stories
-```
-
-or call `nanlm_training_pipeline`.
-
-The canonical 12-stage order is:
-
-```text
-boolean_inverses
-deep_logic
-story_saturation
-exceptions
-repetitive_words
-phonetic_pairs
-morpheme_structure
-lexical_words
-word_completion
-sentence_choice
-paragraph_structure
-narrative
-```
-
-### Logic-only session
-
-```text
-/nanlm logic Boolean truth tables and nested implications
-```
-
-Uses:
-
-```text
-boolean_inverses + deep_logic + exceptions (L0-L2)
-```
-
-Tool: `nanlm_logic_session`.
-
-### Word-only session
-
-```text
-/nanlm words common words, repetition, and next-word choice
-```
-
-Uses:
-
-```text
-repetitive_words + phonetic_pairs + morpheme_structure + lexical_words + word_completion (L3-L6)
-```
-
-Tool: `nanlm_word_session`.
-
-### Sentence/story session
-
-```text
-/nanlm sentences sentence continuations and short narratives
-```
-
-Uses:
-
-```text
-sentence_choice + paragraph_structure + narrative (L7-L9)
-```
-
-Tool: `nanlm_sentence_session`.
-
-### Custom stage order
-
-`nanlm_training_pipeline` accepts an ordered `stages` array:
-
-```json
-{
-  "topic": "logic and language",
-  "stages": ["boolean_inverses", "deep_logic", "word_completion", "sentence_choice"],
-  "records_per_stage": 12,
-  "epochs": 3,
-  "max_samples_per_head": 4096
-}
-```
-
-Structured training generates N16REL/1 relation records, preserves a frozen
-challenge set per topic/resolution, and merges only training evidence into
-mathematical memory. Each resolution reports before/after held-out metrics and
-a cross-run delta only when its challenge digest is unchanged.
-
-### What native training actually learns
-
-Before structured relation training, Hermes runs the mandatory native
-full-Boolean foundation: all 1,024 truth-row checks, all 16 distinct learned
-functions, composed circuits and a persisted checkpoint. That checkpoint seeds
-the shared `native/global_universe.nmg` once.
-
-The new `relation-train` objective is separate from the legacy byte-bit
-`math-train` control. It updates routed heads, canonical mirror-pair cells,
-temporal links and provenance-bound hyperedges from typed L0-L9 relations.
-Free-form chat does the same online for explicit supported/refuted triples.
-The relation trainer uses resolution-specific surface feature vectors; SHA-256 is used only for routing and event identity. It is a compact feature learner, not a pretrained semantic encoder. Neither relation-polarity accuracy nor byte-bit accuracy is text-generation accuracy or independent fact verification.
-
----
-
-## 5. Commands
-
-| command | behaviour |
+| command | purpose |
 |---|---|
-| `/nanlm` or `/nanlm chat ...` | default chat |
-| `/nanlm logic ...` | logic-only training |
-| `/nanlm words ...` | word-only training |
-| `/nanlm sentences ...` | sentence/story training |
-| `/nanlm pipeline ...` | full staged pipeline |
-| `/nanlm status` | universe/native/memory status |
-| `/nanlm help` | command help |
+| `/nanlm <message>` | chat (default) |
+| `/nanlm logic|words|sentences <topic>` | explicit native training session |
+| `/nanlm pipeline <topic>` | ordered logic → language curriculum |
+| `/nanlm clocked plan|run|scratch|head|learn|evaluate|synthesize` | approved CLOCKED flow |
+| `/nanlm route <nan://...>` | signed NaN16DE route envelope |
+| `/nanlm status` | state, memory, and native-run status |
+| `/nanlm help` | usage |
 
-The same actions are available as model tools. See
-`docs/TOOLS_REFERENCE.md` for every parameter.
+All 33 registered tools, their schemas, and their approval/scope requirements
+are listed in [docs/TOOLS_REFERENCE.md](docs/TOOLS_REFERENCE.md).
 
----
+## Training
 
-## 6. Memory model
+Native training requires `runner_command` pointing at a built
+`NaNLMind/build/nanlm-universal`. The adapter runs the real native binary and
+records stdout/stderr, corpus SHA-256, metrics, and a reproducibility manifest.
+The current native Context2Model bootstrap is in-memory; the manifest is not a
+resumable model checkpoint.
 
-There are two stores:
-
-1. **Native global topology** — serialized head/cell/scratchpad state, canonical
-   mirror pairs, temporal links and hyperedges at
-   `universe/native/global_universe.nmg`, resumed by chat and training runs.
-2. **Additive discovery ledger** — immutable, content-addressed events, typed
-   edges, n-ary hyperedges, and deterministic L0–L9 projections.
-
-A merge is an idempotent set union followed by projection rebuild. Conflicting
-claims are retained and become contested; they are not averaged away. The
-ledger contains evidence, not neural weights.
-
-Cross-resolution analysis covers ten channels:
-
-```text
-bit, nibble, byte, phonetic, morpheme, lexical,
-word_completion, sentence, paragraph, narrative
-```
-
-It compares aligned evidence, preserves contradictions, and emits auditable
-relations. Synthetic controls validate the mechanism; they do not establish
+Structured sessions begin with the mandatory Boolean foundation gate: 256 heads
+× 4 truth rows, 16 distinct learned rules, composed gates, and a persisted
+`boolean_foundation.nmg` checkpoint. A failed or undersized gate stops the run.
+Language-stage metrics are bounded byte/word task measurements, not a claim of
 general language understanding.
 
----
+See [docs/TRAINING_DURATIONS.md](docs/TRAINING_DURATIONS.md) for budgets and
+[docs/WALKTHROUGHS.md](docs/WALKTHROUGHS.md) for complete session examples.
 
-## 7. NANNET identity and pairing
+## CLOCKED
 
-The NANNET path provides:
+Configure `clocked_gateway_url` and the `CLOCKED_GATEWAY_TOKEN` secret. A plan
+is generated without transmitting source text; execution requires the exact
+`plan_sha256` and an explicit `approved: true`. Results are typed observations,
+not ground truth, and are stored in the revisioned scratch journal. Candidate
+learning remains isolated and cannot promote or mutate canonical head state.
 
-- one local installation Ed25519 identity;
-- a master-key-encrypted private-key envelope;
-- one-time pairing codes;
-- role-bounded scoped tokens;
-- signed requests with replay-resistant nonces;
-- revocation;
-- device lease routes.
-
-Commands/tools:
-
-```text
-nanlm_auth_init
-nanlm_auth_status
-nanlm_auth_pair
-nanlm_auth_revoke
-```
-
-Chat and training through Hermes require NANNET login and fail closed when
-authority credentials are missing or invalid. No production authorization
-bypass exists. See `docs/NANNET_API_HERMES.md`.
-
----
-
-## 8. Troubleshooting
-
-| symptom | fix |
-|---|---|
-| plugin not listed | `hermes plugins list`; enable `nanlmind-hermes` |
-| validation import error | ensure `__init__.py` exists; reinstall with `--force` |
-| no native training | configure `runner_command` to the local binary |
-| `nanlm-universal` not found | build NaNLMind and use an absolute path |
-| chat unavailable | configure the Hermes provider with `hermes model` |
-| authority errors | check `nannet_auth_url`, pinned issuer key, paired token and Hermes-managed master-key secret |
-| Alpine `fchdir` error | use `proot-distro login --minimal` |
-| state not resumable | native math runner writes the serialized topology; legacy bootstrap does not |
-
-Diagnostics:
-
-```sh
-hermes plugins validate /path/to/NaNLMind_HERMES
-hermes plugins doctor /path/to/NaNLMind_HERMES --ci
-python -m unittest discover -s tests -v
-```
-
----
-
-
-## 9. CLOCKED integration
-
-HERMES now has a dedicated CLOCKED planning/execution/synthesis path and a
-revisioned, hash-chained scratch journal. It autonomously asks its configured
-LLM to select a CLOCKED mode, then constrains that decision to a fixed
-endpoint allowlist and deterministic fallback. It plans bounded multi-endpoint
-tasks, requires explicit approval before execution, retains typed results and
-provenance, synthesizes a draft, submits that draft through the NaNLMind
-Boolean-head receiving interface, and composes a final answer while preserving
-UNKNOWN and CONFLICT.
-
-The NaNLMind head-cortex client is separate from the CLOCKED service adapter.
-HERMES also exposes approval-gated CLOCKED weak-supervision learning: typed
-endpoint observations in scratch are converted into bounded N16REL teacher
-records and trained against an isolated clone of the native topology. It can
-then evaluate the candidate against the immutable base on a caller-declared
-test split, with overlap checks and metrics recorded in scratch. CLOCKED
-outputs are never treated as ground truth; neither learning nor evaluation
-can promote or alter canonical state.
-
-The architecture and repository boundary are documented in
-[NaNLMind CLOCKED/HERMES brainstorm](https://github.com/shemshallah/NaNLMind_CLOCKED/blob/main/docs/CLOCKED_HERMES_BRAINSTORM.md).
-The code paths and tests are implemented, but production CLOCKED proxy
-deployment, real service credentials, live upstream end-to-end verification,
-full M0-M9 execution across every result type, automated mutation search and
-six-runner candidate promotion remain separate deployment/integration work.
-The current head-cortex relation path is tested; it is not yet proof that every
-M0-M9 transformation is active end-to-end through the live HW3:0 Router/Koyeb
-route.
-
-CLOCKED credentials are separate from NANNET identity. A sponsored HERMES
-demo requires an explicitly authorized server-side proxy and quota policy;
-otherwise users provide their own CLOCKED key through the gateway's supported
-credential flow.
-
-## 10. Vision and larger system
-
-See [HACKATHON_NOTE.md](HACKATHON_NOTE.md) for the architecture/manifesto: the
-c(256,2) universe, layered learning, NANNET, merge model, distributed hierarchy,
-and the limits of the experiment.
-
-## 11. Repository map
-
-| path | contents |
-|---|---|
-| `nanlmind_hermes/__init__.py` | tool registration, `/nanlm` command |
-| `nanlmind_hermes/tools.py` | chat, corpus, training, memory, status |
-| `nanlmind_hermes/chat.py` | conversational loop and multiresolution reflection |
-| `nanlmind_hermes/runner.py` | local native process harness |
-| `nanlmind_hermes/memory.py` | additive memory ledger and projections |
-| `nanlmind_hermes/auth.py`, `pairing.py` | NANNET identity and signing |
-| `nanlmind_hermes/crypto_compat.py` | Ed25519/AES-GCM/HKDF compatibility backend |
-| `docs/TOOLS_REFERENCE.md` | complete tool/option reference |
-| `docs/WALKTHROUGHS.md` | end-to-end usage scenarios |
-| `docs/PLUGIN_ARCHITECTURE.md` | design, boundaries, and invariants |\n| CLOCKED architecture | [NaNLMind/docs/CLOCKED_HERMES_BRAINSTORM.md](https://github.com/shemshallah/NaNLMind_CLOCKED/blob/main/docs/CLOCKED_HERMES_BRAINSTORM.md) |
-| `docs/NAN16DE.md` | raw NaN16 double-endian route protocol |
-| `docs/BASELINE_1.0.1.md` | model-planned logic/words/sentences baseline results |
-| `docs/TEACHER_LOOP.md` | teacher → validator → student → feedback protocol |
-
-## 12. Versioning
-
-- `1.1.0` — 2026-11-07: CLOCKED gateway planning/execution and scratch tools,
-  weak-supervision candidate learning, isolated NaN head-cortex evaluation,
-  dataset attestation and held-out validation, plus the full-Boolean foundation
-  gate and architecture-aware training baselines.
-- `1.0.1` — 2026-11-06: mandatory full-Boolean foundation gate, architecture-aware
-  model planning, chat checkpoints after logic/words/sentences rounds, baseline
-  metrics, and no-robust-learning conclusion.
-- `1.0.0` — 2026-11-06: default chat loop, explicit training modes, full
-  pipeline, 24 tools, `/nanlm` command, validation-ready manifest, dependency
-  fallback, complete documentation.
-
-License: Apache-2.0.
-
-
----
-
-## CLOCKED mode and autonomous head reasoning
-
-The first CLOCKED integration slice is implemented across
-[NaNLMind_CLOCKED](https://github.com/shemshallah/NaNLMind_CLOCKED),
-[NaNLMind](https://github.com/shemshallah/NaNLMind), and HERMES. HERMES has
-autonomous mode proposals, reviewed multi-source task plans, a hash-chained
-scratch, a scoped CLOCKED client, typed evidence packaging, a head-cortex
-client and a two-pass synthesis tool. CLOCKED exposes a bounded multi-endpoint
-task API. NaNLMind provides read-only Boolean-head relation inference and a
-NANNET-authorized HTTP adapter.
-
-The HERMES-side design is
+The token must be a scoped participant credential (`clu_...`), not the
+privileged upstream CLOCKED API key. See
 [docs/CLOCKED_AUTONOMOUS_HEAD_CORTEX.md](docs/CLOCKED_AUTONOMOUS_HEAD_CORTEX.md).
-The detailed cross-repository architecture is
-[HERMES Autonomous CLOCKED Cognition and NaN Head Cortex](https://github.com/shemshallah/NaNLMind_CLOCKED/blob/main/docs/HERMES_AUTONOMOUS_CLOCKED_HEAD_CORTEX.md).
 
-The upstream CLOCKED SDK and API key will remain in the CLOCKED service
-repository. HERMES will use a scoped gateway client; it will not import the
-upstream SDK or store the service key. NaNLMind retains its own receiving
-protocol, native heads and canonical learning pipeline. Self-modifying heads
-will operate on isolated candidate mutations; canonical changes still require
-the NaNLMind evaluator and six-runner promotion barrier.
+## Security boundaries
 
-The code and offline CI contracts are committed, but the services are not yet
-deployed or connected through the live Router/Koyeb topology. Live upstream
-CLOCKED endpoint calls and candidate self-modification/promotion remain
-outstanding.
+- One installation identity, one `HW0::BS0` universe. No per-endpoint model
+  universes, implicit hardware registration, or environment credential reads.
+- Endpoint URLs and the pinned issuer key are plugin configuration; secrets are
+  Hermes-managed.
+- Protected operations fail closed when pairing, scope authorization, or the
+  authority is unavailable. Candidate learning and CLOCKED execution retain
+  explicit approval gates.
+- NANNET/CLOCKED/head-cortex endpoints receive only the data required for the
+  requested operation; CLOCKED plans exclude raw source text until execution.
 
+Report security issues privately as described in [SECURITY.md](SECURITY.md).
 
-### Using autonomous CLOCKED mode
+## Verification
 
-Pass source material to `nanlm_chat` using its optional `sources` array. HERMES
-creates a local task plan and returns an `approval_digest`; it does not send
-the source text to CLOCKED at planning time. After reviewing the proposed
-endpoints and sources, approve the exact plan by calling
-`nanlm_clocked_execute` with the same question, `scratch_id`,
-`approved=true`, and the returned `plan_sha256`. The sources can be omitted
-from this second call because the immutable task plan is already in scratch.
+- 130 unit/integration tests pass locally; CI runs Python 3.10, 3.11, and 3.12.
+- Hermes Agent v0.23.0 `plugins validate` and `plugins doctor` pass in CI.
+- Wheel and source distribution builds, metadata checks, installation/import,
+  and SHA-256 checksums pass in CI.
+- Live smoke tests passed against a real local `nanlm-universal` build and a
+  production CLOCKED participant gateway; NANNET pairing, online scope
+  authorization, and revocation passed against a live authority.
+- Exact commits, commands, and evidence are recorded in
+  [docs/HERMES_CATALOG_ADMISSION.md](docs/HERMES_CATALOG_ADMISSION.md).
 
-Then use `nanlm_clocked_synthesize` with the same question and scratch ID.
-HERMES synthesizes a draft, submits the draft and evidence through
-NaNLMind's head-cortex interface, and composes the final answer from the
-evidence plus the diagnostic head response. The head response is not treated
-as a ground-truth oracle.
+## Documentation
 
-The same flow is available from the CLI using a JSON request file:
+| document | contents |
+|---|---|
+| [Demo guide](docs/DEMO.md) | offline, NANNET, and CLOCKED scenarios with success signals |
+| [Install and validate](docs/HERMES_PLUGIN_INSTALL.md) | install paths, doctor output, upgrade/uninstall |
+| [Tools reference](docs/TOOLS_REFERENCE.md) | every tool, schema, scope, and approval gate |
+| [Walkthroughs](docs/WALKTHROUGHS.md) | chat, training, memory, CLOCKED, and recovery |
+| [Topology and layers](docs/UNIFIED_TOPOLOGY_AND_LAYERS.md) | HW0::BS0, L0–L9, M0–M9 contracts |
+| [CLOCKED integration](docs/CLOCKED_AUTONOMOUS_HEAD_CORTEX.md) | plans, scratch, head process, candidates |
+| [NANNET API](docs/NANNET_API_HERMES.md) | identity, pairing, signed requests, scopes |
+| [Plugin architecture](docs/PLUGIN_ARCHITECTURE.md) | components, boundaries, invariants |
+| [Catalog admission](docs/HERMES_CATALOG_ADMISSION.md) | requirements, evidence, submission gates |
+| [Alpine/Termux](docs/ALPINE_PROOT_TESTING.md) | constrained-host testing |
 
-```json
-{
-  "question": "Compare these two technical sources.",
-  "scratch_id": "comparison-001",
-  "sources": [
-    {"id": "source-a", "text": "First source text..."},
-    {"id": "source-b", "text": "Second source text..."}
-  ]
-}
-```
+## License
 
-```text
-/nanlm clocked plan request.json
-/nanlm clocked run approved-request.json --approved
-/nanlm clocked synthesize "Compare these two technical sources."
-```
-
-The approved request JSON includes the exact `plan_sha256` returned by the
-plan step. Configure `clocked_gateway_url` and the masked `CLOCKED_GATEWAY_TOKEN`
-Hermes secret for the participant gateway. This is the issued participant token
-(`clu_...`), normally a `HERMES_DEMO_API` token for HERMES; it is not the
-privileged upstream `CLOCKED_API_KEY`, which stays server-side. Configure
-`nanlm_head_cortex_url` and the masked `NANLM_DEVICE_TOKEN` Hermes secret for
-the NaNLMind receiving service. For the standalone CLOCKED CLI, use a
-`CLOCKED_USER_API` token so the legacy `/v1/experience` route is also in scope.
-
-
-### CLOCKED weak-supervision candidate CLI
-
-After a reviewed CLOCKED plan has executed and its typed observations are in the
-same scratch journal, HERMES can build an isolated weak-supervision candidate.
-The command requires the explicit `--approved` flag and a NANNET
-`training:execute` device token:
-
-```json
-{
-  "mutation_id": "clocked-candidate-001",
-  "scratch_id": "comparison-001",
-  "epochs": 1
-}
-```
-
-```text
-/nanlm clocked learn learn-request.json --approved
-```
-
-The base topology digest can be supplied in the request or recovered from the
-latest head response in that scratch. CLOCKED output is recorded as weak
-supervision, not ground truth. The candidate is isolated and cannot promote or
-modify canonical head state.
-
-Held-out evaluation uses a separate caller-provided test set. Each N16REL row
-contains `resolution` (0–9), `polarity`, `subject`, `predicate`, `object`, and a
-64-character hexadecimal `source_digest`:
-
-```json
-{
-  "mutation_id": "clocked-candidate-001",
-  "scratch_id": "comparison-001",
-  "records": [
-    {
-      "resolution": 5,
-      "polarity": "+",
-      "subject": "source-a",
-      "predicate": "supports",
-      "object": "The river flows.",
-      "source_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    }
-  ]
-}
-```
-
-```text
-/nanlm clocked evaluate evaluation-request.json --approved
-```
-
-HERMES binds the exact test rows to a deterministic SHA-256 digest and records
-the result in scratch. Evaluation requires explicit receipts that promotion
-was not allowed and canonical state was not modified. Keep training and held-out
-test records disjoint; CLOCKED must never receive the held-out test set.
+Apache License 2.0. See [LICENSE](LICENSE).

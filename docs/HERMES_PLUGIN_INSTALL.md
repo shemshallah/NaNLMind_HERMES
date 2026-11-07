@@ -13,13 +13,10 @@ hermes plugins list
 hermes tools
 ```
 
-The plugin must register the tools declared in `plugin.yaml`. The current
-manifest declares 25 tools, including:
-
-```text
-nanlm_chat, nanlm_structured_relation_train, nanlm_chat_history,
-nanlm_curriculum_experiment, nanlm_math_train, nanlm_memory_* and NANNET auth tools
-```
+The plugin must register the tools declared in `plugin.yaml`. The manifest
+declares all **33** tools, including chat, native training, mathematical
+memory, NANNET auth, NaN16DE routing, CLOCKED plans, head processing, and
+isolated candidate learning. See [TOOLS_REFERENCE.md](TOOLS_REFERENCE.md).
 
 Free-form chat learning is enabled by default through `chat_learning: true`.
 It requires the `training:execute` scope when enabled. Set it to false for
@@ -37,7 +34,7 @@ The manifest is catalog-oriented:
 - `manifest_version: 2`
 - `api_version: 1`
 - `provides_tools` matches `register(ctx)`
-- the manifest declares bounded `cryptography>=42,<47` for production NANNET identity protection
+- `pyproject.toml` declares the optional bounded `cryptography>=42,<47` extra for production NANNET identity protection
 - NANNET, CLOCKED and head-cortex secrets are declared as masked `config_schema` secrets
 - the plugin reads those secrets only through `agent.secret_scope.get_secret()`
 - a pure-Python crypto compatibility path remains for constrained development/test hosts

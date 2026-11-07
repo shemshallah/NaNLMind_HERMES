@@ -41,7 +41,7 @@ OK
 ```
 
 This includes the cryptography-backed and compatibility crypto paths, chat loop,
-memory, native runner harness, pairing, auth, HW9+ lease migration, device
+memory, native runner harness, pairing, auth, HW4+ lease migration, device
 routes, and HTTP API tests. The production manifest declares
 `cryptography>=42,<47`; the compatibility fallback remains available for
 isolated constrained-host tests.
