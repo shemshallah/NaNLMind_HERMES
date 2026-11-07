@@ -58,6 +58,26 @@ class ManifestRegistrationTests(unittest.TestCase):
         self.assertIsNotNone(project_version, "pyproject.toml version is missing")
         self.assertEqual(manifest_version.group(1), project_version.group(1))
 
+    def test_license_and_build_metadata_match_the_release_files(self):
+        manifest = (ROOT / "plugin.yaml").read_text(encoding="utf-8")
+        project = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
+        license_text = (ROOT / "LICENSE").read_text(encoding="utf-8")
+        self.assertRegex(manifest, r"(?m)^license:\\s*Apache-2\\.0\\s*$")
+        self.assertRegex(project, r'(?m)^license\\s*=\\s*"Apache-2\\.0"\\s*        manifest = (ROOT / "plugin.yaml").read_text(encoding="utf-8")
+        expected = {"CLOCKED_GATEWAY_TOKEN", "NANLM_DEVICE_TOKEN", "NANNET_MASTER_KEY"}
+        declared = set(re.findall(r"(?m)^\s+env:\s*([A-Z][A-Z0-9_]*)\s*$", manifest))
+        self.assertEqual(declared, expected)
+        self.assertEqual(len(re.findall(r"(?m)^\s+env:\s*[A-Z][A-Z0-9_]*\s*$", manifest)),
+                         len(expected))
+
+
+if __name__ == "__main__":
+    unittest.main()
+)
+        self.assertIn("Apache License", license_text)
+        self.assertIn("[build-system]", project)
+        self.assertIn('build-backend = "setuptools.build_meta"', project)
+
     def test_secret_environment_names_are_unique_and_masked(self):
         manifest = (ROOT / "plugin.yaml").read_text(encoding="utf-8")
         expected = {"CLOCKED_GATEWAY_TOKEN", "NANLM_DEVICE_TOKEN", "NANNET_MASTER_KEY"}
