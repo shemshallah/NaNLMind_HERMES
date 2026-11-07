@@ -22,6 +22,59 @@ def _digest(value: Any) -> str:
                                      ensure_ascii=False).encode("utf-8")).hexdigest()
 
 
+
+def _sanitize_observation(observation: dict) -> dict:
+    """Strip raw sensitive values from privacy and code-safety endpoint results."""
+    endpoint = observation.get("endpoint")
+    allow = {
+        "pii": ("detected", "count", "types", "categories", "redacted"),
+        "injection": ("detected", "verdict", "risk", "categories", "count"),
+        "script": ("matched", "verdict", "patterns", "count", "risk"),
+    }.get(endpoint)
+    if allow is None:
+        return observation
+    result_data = observation.get("result", {})
+    if not isinstance(result_data, dict):
+        result_data = {}
+    if isinstance(result_data.get("result"), dict):
+        result_data = result_data["result"]
+    fields = result_data.get("fields", {})
+    if not isinstance(fields, dict):
+        fields = {}
+    safe_fields = {}
+    for key in allow:
+        value = fields.get(key, result_data.get(key))
+        if value is None:
+            continue
+        if isinstance(value, (bool, int, float)):
+            safe_fields[key] = value
+        elif isinstance(value, str):
+            safe_fields[key] = value[:128]
+        elif isinstance(value, list):
+            if key in ("types", "categories", "patterns"):
+                safe_fields[key] = [
+                    str(item.get("type") or item.get("category") or "unknown")
+                    if isinstance(item, dict) else str(item)
+                    for item in value[:32]
+                ]
+            else:
+                safe_fields[key + "_count"] = len(value)
+    provenance = observation.get("provenance", {})
+    if not isinstance(provenance, dict):
+        provenance = {}
+    safe_provenance = {
+        key: provenance[key] for key in ("input_sha256", "result_sha256")
+        if isinstance(provenance.get(key), str) and len(provenance[key]) == 64
+    }
+    return {
+        key: observation[key] for key in (
+            "task_id", "source_id", "endpoint", "result_type", "status"
+        ) if key in observation
+    } | {
+        "result": {"fields": safe_fields},
+        "provenance": safe_provenance,
+    }
+
 def propose_mode(question: str, source_texts: list[str] | None = None) -> dict:
     """Select a bounded CLOCKED mode from intent and available source material."""
     if not isinstance(question, str) or not question.strip():
@@ -170,6 +223,7 @@ def execute_multi_source(client: ClockedGatewayClient, scratch: Scratch,
     for observation in observations:
         if not isinstance(observation, dict):
             raise ValueError("invalid CLOCKED observation")
+        observation = _sanitize_observation(observation)
         scratch.append("clocked_result", "clocked", observation)
         result_data = observation.get("result", {})
         if not isinstance(result_data, dict):
