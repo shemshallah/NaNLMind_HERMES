@@ -224,8 +224,14 @@ def head_candidate_evaluate(ctx, mutation_id, records, approved=False,
                             scratch_id="default"):
     if approved is not True:
         raise PermissionError("held-out candidate evaluation requires explicit approved=true")
+    if not isinstance(mutation_id, str) or not mutation_id or len(mutation_id) > 64:
+        raise ValueError("invalid mutation_id")
     if not isinstance(records, list) or not 1 <= len(records) <= 512:
         raise ValueError("records must contain 1..512 held-out relations")
+    required = {"resolution", "polarity", "subject", "predicate", "object", "source_digest"}
+    for index, record in enumerate(records):
+        if not isinstance(record, dict) or not required.issubset(record):
+            raise ValueError("invalid held-out relation at index %d" % index)
     if not os.environ.get("NANLM_HEAD_CORTEX_URL") or not os.environ.get("NANLM_DEVICE_TOKEN"):
         raise RuntimeError("configure NANLM_HEAD_CORTEX_URL and a NANNET training:execute device token")
     dataset_sha256 = hashlib.sha256(json.dumps(
@@ -241,34 +247,6 @@ def head_candidate_evaluate(ctx, mutation_id, records, approved=False,
     result = HeadCortexClient().evaluate_candidate(request)
     scratch = _scratch(ctx, scratch_id)
     scratch.append("learning_proposal", "hermes", {
-        "kind": "boolean_head_candidate_evaluation",
-        "mutation_id": mutation_id,
-        "evaluation": result,
-        "promotion_allowed": False,
-    })
-    return {"evaluation": result, "scratch": scratch.snapshot()}
-
-def head_candidate_evaluate(ctx, mutation_id, records, approved=False,
-                            scratch_id="default"):
-    if approved is not True:
-        raise PermissionError("candidate evaluation requires explicit approved=true")
-    if not isinstance(mutation_id, str) or not mutation_id or len(mutation_id) > 64:
-        raise ValueError("invalid mutation_id")
-    if not isinstance(records, list) or not 1 <= len(records) <= 512:
-        raise ValueError("records must contain 1..512 held-out relations")
-    required = {"resolution", "polarity", "subject", "predicate", "object", "source_digest"}
-    for index, record in enumerate(records):
-        if not isinstance(record, dict) or not required.issubset(record):
-            raise ValueError("invalid held-out relation at index %d" % index)
-    if not os.environ.get("NANLM_HEAD_CORTEX_URL") or not os.environ.get("NANLM_DEVICE_TOKEN"):
-        raise RuntimeError("configure NANLM_HEAD_CORTEX_URL and a NANNET training:execute device token")
-    result = HeadCortexClient().evaluate_candidate({
-        "schema": "nanlm.head-candidate-evaluation-request/1",
-        "mutation_id": mutation_id,
-        "records": records,
-    })
-    scratch = _scratch(ctx, scratch_id)
-    scratch.append("learning_proposal", "nanlmind", {
         "kind": "boolean_head_candidate_evaluation",
         "mutation_id": mutation_id,
         "evaluation": result,
