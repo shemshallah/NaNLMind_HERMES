@@ -47,6 +47,10 @@ fail-closed behavior.
 
 Topology and routing policy:
 
+See [the unified topology and layer contract](docs/UNIFIED_TOPOLOGY_AND_LAYERS.md)
+and [the Hermes catalog admission checklist](docs/HERMES_CATALOG_ADMISSION.md)
+for the canonical topology, L0-L9/M0-M9 boundaries and catalog submission gates.
+
 ```text
 one instantiated universe: HW0::BS0
 HW0 = RunnerLink (hardware-level interface)
@@ -87,7 +91,7 @@ plugins:
 The plugin itself needs no Google API key. It uses the model provider configured
 in Hermes (local Ollama, a custom endpoint, or any configured provider).
 
-**Version 1.1.0 — released 2026-11-07**
+**Version 1.2.0 — catalog admission pending**
 
 NaNLMind Hermes connects a Hermes agent to a local NaNLMind 256-head universe.
 It provides:
@@ -102,8 +106,8 @@ It provides:
 - additive mathematical memory with evidence assessment and cross-resolution feedback;
 - local NANNET identity, pairing, signed requests, and optional authority
   scopes;
-- a dependency-free Ed25519/AES-GCM/HKDF path for Alpine, Termux, and minimal
-  hosts.
+- Hermes-managed secrets and bounded cryptography support for encrypted
+  installation identity and paired-token storage.
 
 Training runs locally. Koyeb/NANNET is coordination and authorization only;
 it is not the model runner or corpus store.
