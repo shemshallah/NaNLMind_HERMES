@@ -23,7 +23,7 @@ def _digest(value: Any) -> str:
 
 
 def propose_mode(question: str, source_texts: list[str] | None = None) -> dict:
-    """Deterministic safe proposal; a model may refine it, policy still validates."""
+    """Select a bounded CLOCKED mode from intent and available source material."""
     if not isinstance(question, str) or not question.strip():
         raise ValueError("question is required")
     sources = source_texts or []
@@ -34,22 +34,32 @@ def propose_mode(question: str, source_texts: list[str] | None = None) -> dict:
             raise ValueError("sources must be non-empty text strings or objects with text")
         normalized.append(text)
     if len(normalized) > 7 or any(len(s.encode("utf-8")) > MAX_TEXT_BYTES for s in normalized):
-        raise ValueError("at most seven sources (16 endpoint calls maximum), each no larger than 64 KiB")
+        raise ValueError("at most seven sources, each no larger than 64 KiB")
+    q = question.casefold()
     if not sources:
-        mode = "LOCAL_CHAT"
-    elif len(sources) == 1:
-        mode = "HYBRID"
+        mode, endpoints, reason = "LOCAL_CHAT", [], "no source material was supplied"
+    elif any(term in q for term in ("prompt injection", "jailbreak", "malicious instruction", "instruction attack")):
+        mode, endpoints, reason = "CLOCKED_INJECTION_AUDIT", ["injection", "script"], "question requests an instruction or injection safety audit"
+    elif any(term in q for term in ("pii", "personal information", "privacy", "sensitive data", "redact")):
+        mode, endpoints, reason = "CLOCKED_PRIVACY_AUDIT", ["pii"], "question requests a privacy or sensitive-data audit"
+    elif len(sources) > 1 and any(term in q for term in ("compare", "difference", "conflict", "contradiction", "agree", "disagree")):
+        mode, endpoints, reason = "CLOCKED_COMPARE", ["extract", "grounding", "compare"], "multi-source comparison or conflict analysis requested"
+    elif any(term in q for term in ("verify", "validate", "is it true", "fact check", "ground this")):
+        mode, endpoints, reason = "CLOCKED_VERIFY", ["extract", "grounding"], "question requests claim verification or grounding"
+    elif len(sources) > 1:
+        mode, endpoints, reason = "CLOCKED_MULTI_SOURCE", ["extract", "grounding", "compare"], "multiple independent sources require structured extraction and reconciliation"
     else:
-        mode = "CLOCKED_MULTI_SOURCE"
+        mode, endpoints, reason = "CLOCKED_EXTRACT", ["extract", "grounding"], "one source requires structured extraction and grounding"
     return {
         "schema": "nanlm.hermes-mode-plan/1",
         "mode": mode,
-        "reason": "external structured observations requested by supplied source material" if sources else "no external sources supplied",
+        "reason": reason,
+        "selected_endpoints": endpoints,
         "requires_approval": bool(sources),
         "source_count": len(sources),
-        "policy": "approval",
+        "policy": "approval" if sources else "local",
+        "autonomous": True,
     }
-
 
 def validate_task_plan(plan: dict, budget: dict | None = None) -> dict:
     if not isinstance(plan, dict) or plan.get("schema") != "nanlm.clocked-task-plan/1":
@@ -85,36 +95,58 @@ def validate_task_plan(plan: dict, budget: dict | None = None) -> dict:
             "plan_sha256": _digest(plan)}
 
 
-def make_task_plan(sources: list[dict], question: str) -> dict:
+def make_task_plan(sources: list[dict], question: str,
+                   mode_plan: dict | None = None) -> dict:
     if not isinstance(sources, list) or not sources:
         raise ValueError("at least one source is required")
+    mode_plan = mode_plan or propose_mode(question, sources)
+    mode = mode_plan.get("mode")
+    selected = mode_plan.get("selected_endpoints", [])
+    if mode == "CLOCKED_PRIVACY_AUDIT":
+        per_source = ["pii"]
+    elif mode == "CLOCKED_INJECTION_AUDIT":
+        per_source = ["injection", "script"]
+    elif mode in {"CLOCKED_VERIFY", "CLOCKED_EXTRACT"}:
+        per_source = ["extract", "grounding"]
+    elif mode in {"CLOCKED_COMPARE", "CLOCKED_MULTI_SOURCE"}:
+        per_source = ["extract", "grounding"]
+    else:
+        raise ValueError("unsupported autonomous CLOCKED mode")
     tasks = []
     for index, source in enumerate(sources):
         if not isinstance(source, dict) or not isinstance(source.get("text"), str):
             raise ValueError("each source requires text")
         source_id = str(source.get("id") or ("source-%d" % (index + 1)))
-        text = source["text"]
-        tasks.append({"id": "extract-" + source_id, "source_id": source_id, "endpoint": "extract",
-                      "text": text, "options": {"fields": {
-                          "claims": "Short factual claims explicitly stated in the source",
-                          "dates": "Dates explicitly stated in the source",
-                          "quantities": "Measurements and numeric values explicitly stated",
-                          "named_entities": "Named organizations, systems and products"}},
-                      "depends_on": []})
-        tasks.append({"id": "ground-" + source_id, "source_id": source_id, "endpoint": "grounding",
-                      "text": text, "options": {"claims_from": "extract-" + source_id},
-                      "depends_on": ["extract-" + source_id]})
-    if len(sources) > 1:
-        joined = "\n\n".join(s["text"] for s in sources)
+        previous = []
+        for endpoint in per_source:
+            task_id = endpoint + "-" + source_id
+            options = {}
+            if endpoint == "extract":
+                options = {"fields": {
+                    "claims": "Short factual claims explicitly stated in the source",
+                    "dates": "Dates explicitly stated in the source",
+                    "quantities": "Measurements and numeric values explicitly stated",
+                    "named_entities": "Named organizations, systems and products"}}
+            elif endpoint == "grounding":
+                options = {"claims_from": "extract-" + source_id}
+            elif endpoint == "pii":
+                options = {"redact": False}
+            tasks.append({"id": task_id, "source_id": source_id,
+                          "endpoint": endpoint, "text": source["text"],
+                          "options": options, "depends_on": previous[:]})
+            previous.append(task_id)
+    if mode in {"CLOCKED_COMPARE", "CLOCKED_MULTI_SOURCE"} and len(sources) > 1:
         tasks.append({"id": "compare-sources", "endpoint": "compare",
-                      "text": "QUESTION: " + question + "\n\n" + joined,
+                      "text": "QUESTION: " + question + "\\n\\n" +
+                              "\\n\\n".join(s["text"] for s in sources),
                       "depends_on": [t["id"] for t in tasks if t["endpoint"] == "extract"]})
     tasks.append({"id": "decide", "endpoint": "decide",
-                  "text": question + "\n\n" + "\n\n".join(s["text"] for s in sources),
-                  "depends_on": [t["id"] for t in tasks if t["endpoint"] in ("grounding", "compare")]})
-    return {"schema": "nanlm.clocked-task-plan/1", "version": 1,
+                  "text": question + "\\n\\n" + "\\n\\n".join(s["text"] for s in sources),
+                  "depends_on": [t["id"] for t in tasks]})
+    plan = {"schema": "nanlm.clocked-task-plan/1", "version": 1,
             "plan_id": uuid.uuid4().hex, "tasks": tasks}
-
+    validate_task_plan(plan)
+    return plan
 
 def execute_multi_source(client: ClockedGatewayClient, scratch: Scratch,
                          question: str, sources: list[dict],
