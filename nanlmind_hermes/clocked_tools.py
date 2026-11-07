@@ -155,7 +155,7 @@ def clocked_synthesize(ctx, question, scratch_id="default", max_tokens=2048):
     scratch.append("hermes_synthesis", "hermes", {
         "draft": draft, "source_scratch_revision": snapshot["revision"],
     })
-    validation = head_process(ctx, question, scratch_id, "ANSWER_VALIDATION", draft)
+    validation = head_process(ctx, question, scratch_id, "ANSWER_VALIDATION")
     second = ctx.llm.complete(
         messages=[
             {"role": "system", "content": (
