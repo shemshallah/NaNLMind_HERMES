@@ -166,5 +166,15 @@ The complete cross-repository specification, M0-M9 profile, scratch protocol,
 multi-source graph and service boundary are in
 [NaNLMind_CLOCKED/docs/HERMES_AUTONOMOUS_CLOCKED_HEAD_CORTEX.md](https://github.com/shemshallah/NaNLMind_CLOCKED/blob/main/docs/HERMES_AUTONOMOUS_CLOCKED_HEAD_CORTEX.md).
 
-This remains design-only: no CLOCKED mode, scratch bridge, head-cortex API or
-self-modifying mutation sandbox is claimed to be implemented or deployed.
+The first implementation slice is committed: HERMES now has a hash-chained
+scratch journal, deterministic mode/task planner, scoped CLOCKED gateway
+client, multi-source executor, evidence codec, head-cortex client and
+two-pass synthesis tool. The CLOCKED service exposes the bounded `/v1/tasks`
+endpoint. NaNLMind provides the read-only native `relation-eval` command and
+a NANNET-authorized head-cortex HTTP adapter.
+
+The services are not yet deployed or connected through the live Router/Koyeb
+route. Live upstream SDK calls, production scratch transport and candidate
+self-modification/promotion remain outstanding. The native relation-eval path
+does not mutate head state; candidate mutation remains sandbox-only future
+work.
