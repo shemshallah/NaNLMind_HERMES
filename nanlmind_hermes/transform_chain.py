@@ -260,7 +260,7 @@ def preflight(package: dict) -> dict:
             draft = payload.get("draft")
             if isinstance(draft, str) and draft.strip():
                 draft_digest = _digest(draft.encode("utf-8"))
-                for sentence in re.split(r"(?<=[.!?])\\s+", draft)[:128]:
+                for sentence in re.split(r"(?<=[.!?])\s+", draft)[:128]:
                     sentence = sentence.strip()
                     if sentence:
                         add_relation(entry, {
