@@ -1,6 +1,6 @@
 # Tool reference
 
-Version 1.2.1 (2026-11-07). All tools are registered under the `nanlmind` toolset.
+Version 1.2.2 (2026-11-07). All tools are registered under the `nanlmind` toolset.
 Tool schemas reject unknown properties unless stated otherwise.
 
 ## Default conversation
