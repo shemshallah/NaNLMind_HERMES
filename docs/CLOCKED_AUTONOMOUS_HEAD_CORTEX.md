@@ -1,6 +1,6 @@
 # Autonomous CLOCKED Mode and NaN Head Cortex
 
-**Status:** architecture/design; implementation not yet claimed  
+**Status:** partial implementation; upstream service deployment and candidate evaluation/promotion remain outstanding  
 **Service:** [NaNLMind_CLOCKED](https://github.com/shemshallah/NaNLMind_CLOCKED)  
 **Native learner:** [NaNLMind](https://github.com/shemshallah/NaNLMind)  
 **Canonical detailed design:** [HERMES Autonomous CLOCKED Cognition and NaN Head Cortex](https://github.com/shemshallah/NaNLMind_CLOCKED/blob/main/docs/HERMES_AUTONOMOUS_CLOCKED_HEAD_CORTEX.md)
@@ -27,6 +27,18 @@ user question + source material
 ```
 
 This should be an extension of the existing HERMES chat and training loop, not a second conversational agent or independent head universe.
+
+## 1A. Implemented integration surface
+
+The current HERMES branch now includes:
+- deterministic autonomous mode selection for local chat, extraction, verification, multi-source comparison, privacy audit and injection/script audit;
+- bounded endpoint task plans (maximum 16 calls) with ordered dependencies and explicit approval before source transmission;
+- a CLOCKED gateway client that calls only the NaNLMind_CLOCKED participant gateway;
+- append-only, hash-chained scratch lanes for source results, extracted evidence atoms, conflicts, NaN16 packages, head traces, drafts and final responses;
+- two-pass answer synthesis: HERMES draft -> NaNLMind Boolean-head relation evaluation -> HERMES final;
+- a scoped NaNLMind head-candidate endpoint backed by native `HeadView::self_modify_boolean`, producing isolated candidate state without changing canonical topology.
+
+The native candidate path is deliberately candidate-only. It is not yet a complete autonomous learning loop: held-out candidate evaluation, control scoring, candidate search, reviewer workflow and six-runner generation-barrier promotion remain to be implemented. The current head-cortex inference endpoint is read-only and does not claim its Boolean predictions are ground truth.
 
 ## 2. Repository and code ownership
 
