@@ -42,6 +42,12 @@ def register(ctx):
             params["base_topology_digest"], params.get("approved", False),
             params.get("scratch_id", "default"))
 
+    def handle_head_candidate_evaluate(params, **kwargs):
+        _require_scope("training:execute")
+        return clocked_tools.head_candidate_evaluate(ctx, params["mutation_id"],
+            params["records"], params.get("approved", False),
+            params.get("scratch_id", "default"))
+
     def handle_status(params, **kwargs):
         result = tools.status(ctx)
         result["mathematical_memory"] = tools.memory_status(ctx)
@@ -294,6 +300,12 @@ def register(ctx):
           "scratch_id": {"type": "string", "maxLength": 80}},
          ["mutation_id", "head_index", "patch_mask", "base_topology_digest", "approved"],
          handle_head_candidate),
+        ("nanlm_head_candidate_evaluate", "Compare an isolated Boolean-head candidate with the canonical baseline on caller-supplied held-out relations. Requires explicit approval and training:execute scope; never promotes.",
+         {"mutation_id": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,64}$"},
+          "records": {"type": "array", "minItems": 1, "maxItems": 512, "items": {"type": "object"}},
+          "approved": {"type": "boolean", "default": False},
+          "scratch_id": {"type": "string", "maxLength": 80}},
+         ["mutation_id", "records", "approved"], handle_head_candidate_evaluate),
         ("nanlm_status", "Inspect local NaNLMind universe and durable mathematical-memory status.", {}, [], handle_status),
         ("nanlm_chat", "Open-ended Hermes conversation; reflect evidence and, when explicit supervised relations are present, update native heads, mirror pairs and hyperedges in the shared universe.",
          {"message": {"type": "string", "minLength": 1, "maxLength": 1048576},
