@@ -33,8 +33,8 @@ def propose_mode(question: str, source_texts: list[str] | None = None) -> dict:
         if not isinstance(text, str) or not text.strip():
             raise ValueError("sources must be non-empty text strings or objects with text")
         normalized.append(text)
-    if len(normalized) > 8 or any(len(s.encode("utf-8")) > MAX_TEXT_BYTES for s in normalized):
-        raise ValueError("at most eight sources, each no larger than 64 KiB")
+    if len(normalized) > 7 or any(len(s.encode("utf-8")) > MAX_TEXT_BYTES for s in normalized):
+        raise ValueError("at most seven sources (16 endpoint calls maximum), each no larger than 64 KiB")
     if not sources:
         mode = "LOCAL_CHAT"
     elif len(sources) == 1:
