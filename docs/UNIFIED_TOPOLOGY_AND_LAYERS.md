@@ -10,7 +10,7 @@ universe. It supersedes assumptions that HW4–HW8 instantiate additional univer
                          |
                   routing / transport
                          |
-                 HW0::BS0::RunnerLink
+                 HW0::RunnerLink → BS0::RunnerRing
                          |
               ONE canonical NaNLMind universe
                  256 logical Boolean heads
@@ -28,7 +28,8 @@ HW9+: scoped participant addresses attached to HW0::BS0
 
 - **MC0 is MC0Link.** It is the link/transport interface, not the six-runner
   owner and not a separate model universe.
-- **BS0 is RunnerLink.** BS0 owns the six-runner ring and its dispatch,
+- **HW0 is RunnerLink.** HW0 is the hardware-level runner interface.
+- **BS0 is the RunnerRing.** BS0 owns the six-runner ring and its dispatch,
   synchronization, validation and canonical promotion barrier.
 - **The only instantiated universe is at HW0::BS0.** All heads, memory,
   training state, evidence and canonical generations belong to this one object.
@@ -147,7 +148,7 @@ overflow layer.
 
 1. Exactly one native global topology exists at HW0::BS0.
 2. Exactly six BS0 ring workers operate on the one topology.
-3. MC0Link and RunnerLink are interfaces, not universes.
+3. MC0Link and HW0 RunnerLink are interfaces, not universes.
 4. No HW4–HW8 universe creation, per-slot state, or independent training.
 5. The resolution domain is exactly integer 0–9; reject negative, boolean,
    non-integer and >=10 layer values.
