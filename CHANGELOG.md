@@ -69,7 +69,7 @@
 - Declared all 23 registered tools in `plugin.yaml`.
 - Fixed the root plugin entry to import the real sibling package under Hermes'
   isolated loader.
-- Released under MIT.
+- Released under Apache License 2.0.
 
 ## 0.2.0
 
