@@ -1,8 +1,8 @@
 """Consent-based NANNET device leases and issue reporting.
 
 Device identity is a random client-held secret, never a MAC/IMEI/serial.
-A copied credential cannot obtain a second simultaneous lease. Slots are
-released transactionally and become available to the next installation.
+A copied credential cannot obtain a second simultaneous lease. Each lease is a
+participant identity attached to the one HW0::BS0 universe; no HW slot is allocated.
 """
 from __future__ import annotations
 import hashlib, json, secrets, sqlite3, time, uuid
