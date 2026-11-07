@@ -129,13 +129,14 @@ def preflight(package: dict) -> dict:
                         "feature_schema": "canonical-payload-surface.v1"}))
 
     sequences = [
-        entry.get("sequence", index + 1) for index, entry in enumerate(entries)
+        entry.get("sequence") if entry.get("sequence") is not None else index + 1
+        for index, entry in enumerate(entries)
     ]
     if (any(isinstance(x, bool) or not isinstance(x, int) or x < 1
             for x in sequences)
             or sequences != sorted(sequences)
             or len(sequences) != len(set(sequences))):
-        raise ValueError("M4 scratch sequence is not strictly monotonic")
+        raise ValueError("M4 scratch sequence is not strictly monotonic: " + repr(sequences))
     for entry in entries:
         revision = entry.get("revision")
         if revision is not None and (
