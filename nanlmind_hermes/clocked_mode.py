@@ -129,7 +129,7 @@ def validate_task_plan(plan: dict, budget: dict | None = None) -> dict:
         seen[task_id] = endpoint
     if total_bytes > MAX_TASKS * MAX_TEXT_BYTES:
         raise ValueError("task plan exceeds aggregate input limit")
-    limits = budget or {}
+    limits = {} if budget is None else budget
     if not isinstance(limits, dict):
         raise ValueError("budget must be an object")
     max_requests = limits.get("max_requests", MAX_TASKS)
