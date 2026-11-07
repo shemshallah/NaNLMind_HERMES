@@ -48,12 +48,6 @@ def register(ctx):
             params["records"], params.get("approved", False),
             params.get("scratch_id", "default"))
 
-    def handle_head_candidate_evaluate(params, **kwargs):
-        _require_scope("training:execute")
-        return clocked_tools.head_candidate_evaluate(ctx, params["mutation_id"],
-            params["records"], params.get("approved", False),
-            params.get("scratch_id", "default"))
-
     def handle_status(params, **kwargs):
         result = tools.status(ctx)
         result["mathematical_memory"] = tools.memory_status(ctx)
@@ -306,15 +300,9 @@ def register(ctx):
           "scratch_id": {"type": "string", "maxLength": 80}},
          ["mutation_id", "head_index", "patch_mask", "base_topology_digest", "approved"],
          handle_head_candidate),
-        ("nanlm_head_candidate_evaluate", "Evaluate an isolated Boolean-head candidate against explicit held-out N16REL rows and record baseline/candidate metrics. Requires approval and training:execute; never promotes.",
+        ("nanlm_head_candidate_evaluate", "Evaluate an isolated Boolean-head candidate on caller-supplied held-out N16REL test rows. Requires approval and training:execute; never promotes.",
          {"mutation_id": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,64}$"},
           "records": {"type": "array", "minItems": 1, "maxItems": 512},
-          "approved": {"type": "boolean", "default": False},
-          "scratch_id": {"type": "string", "maxLength": 80}},
-         ["mutation_id", "records", "approved"], handle_head_candidate_evaluate),
-        ("nanlm_head_candidate_evaluate", "Compare an isolated Boolean-head candidate with the canonical baseline on caller-supplied held-out relations. Requires explicit approval and training:execute scope; never promotes.",
-         {"mutation_id": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,64}$"},
-          "records": {"type": "array", "minItems": 1, "maxItems": 512, "items": {"type": "object"}},
           "approved": {"type": "boolean", "default": False},
           "scratch_id": {"type": "string", "maxLength": 80}},
          ["mutation_id", "records", "approved"], handle_head_candidate_evaluate),
