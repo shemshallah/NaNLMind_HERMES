@@ -191,7 +191,7 @@ def clocked_synthesize(ctx, question, scratch_id="default", max_tokens=2048):
             "scratch": scratch.snapshot()}
 
 def head_candidate(ctx, mutation_id, head_index, patch_mask,
-                   base_topology_digest, approved=False):
+                   base_topology_digest, approved=False, scratch_id="default"):
     if approved is not True:
         raise PermissionError("candidate head mutation requires explicit approved=true")
     if isinstance(head_index, bool) or not isinstance(head_index, int) or not 0 <= head_index <= 255:
@@ -209,4 +209,12 @@ def head_candidate(ctx, mutation_id, head_index, patch_mask,
         "patch_mask": patch_mask,
         "base_topology_digest": base_topology_digest,
     }
-    return HeadCortexClient().create_candidate(request)
+    result = HeadCortexClient().create_candidate(request)
+    scratch = _scratch(ctx, scratch_id)
+    scratch.append("learning_proposal", "nanlmind", {
+        "kind": "boolean_head_candidate",
+        "mutation_id": mutation_id,
+        "candidate": result,
+        "promotion_allowed": False,
+    })
+    return {"candidate": result, "scratch": scratch.snapshot()}
