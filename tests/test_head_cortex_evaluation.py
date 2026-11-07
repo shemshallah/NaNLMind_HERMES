@@ -158,16 +158,12 @@ class CandidateInputTests(unittest.TestCase):
             with self.subTest(row=row), self.assertRaisesRegex(ValueError, message):
                 clocked_tools.head_candidate_evaluate(None, "eval-1", [row], approved=True)
 
-    @patch.dict("os.environ", {
-        "NANLM_HEAD_CORTEX_URL": "https://head.example",
-        "NANLM_DEVICE_TOKEN": "scoped-token",
-    })
     @patch("nanlmind_hermes.clocked_tools._scratch")
-    @patch("nanlmind_hermes.clocked_tools.HeadCortexClient")
-    def test_binds_dataset_digest_and_test_split(self, client_cls, scratch_factory):
+    @patch("nanlmind_hermes.clocked_tools._head_client")
+    def test_binds_dataset_digest_and_test_split(self, client_factory, scratch_factory):
         scratch = FakeScratch()
         scratch_factory.return_value = scratch
-        client_cls.return_value.evaluate_candidate.return_value = {
+        client_factory.return_value.evaluate_candidate.return_value = {
             "schema": "nanlm.head-candidate-evaluation-response/1",
             "promotion_allowed": False,
             "canonical_state_modified": False,
@@ -176,7 +172,7 @@ class CandidateInputTests(unittest.TestCase):
         result = clocked_tools.head_candidate_evaluate(
             object(), "eval-1", [self.row], approved=True, scratch_id="eval"
         )
-        request = client_cls.return_value.evaluate_candidate.call_args.args[0]
+        request = client_factory.return_value.evaluate_candidate.call_args.args[0]
         expected = hashlib.sha256(json.dumps(
             [self.row], sort_keys=True, separators=(",", ":"), ensure_ascii=False
         ).encode("utf-8")).hexdigest()

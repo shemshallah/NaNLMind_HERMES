@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import json
-import os
 import re
 import uuid
 from urllib.error import HTTPError, URLError
@@ -29,8 +28,10 @@ def _endpoint(value: str) -> str:
 class ClockedGatewayClient:
     def __init__(self, base_url: str | None = None, token: str | None = None,
                  timeout: int = 90):
-        self.base_url = _endpoint(base_url or os.environ.get("CLOCKED_GATEWAY_URL", ""))
-        self.token = token if token is not None else os.environ.get("CLOCKED_GATEWAY_TOKEN", "")
+        if not base_url:
+            raise ValueError("CLOCKED_GATEWAY_URL must be supplied by Hermes plugin configuration")
+        self.base_url = _endpoint(base_url)
+        self.token = token or ""
         if not self.token or len(self.token) > 512:
             raise ValueError("CLOCKED_GATEWAY_TOKEN is missing or invalid")
         if not 1 <= timeout <= 300:

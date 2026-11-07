@@ -167,7 +167,7 @@ class ScratchTests(unittest.TestCase):
             def __init__(self, root):
                 self.root = root
             def get_config(self, key, default=None):
-                return str(self.root) if key == "state_dir" else default
+                return str(self.root) if key == "state_dir" else ("https://clocked.example" if key == "clocked_gateway_url" else ("https://nanlmind.example" if key == "nanlm_head_cortex_url" else default))
         class Client:
             def execute(self, plan, idempotency_key=None):
                 return {"protocol": "nanlm.clocked-task-results", "version": 1,
@@ -187,10 +187,7 @@ class ScratchTests(unittest.TestCase):
             question = "Audit this source for PII and privacy risks."
             sources = [{"id": "source-a", "text": "private source content"}]
             preview = clocked_tools.clocked_plan(ctx, question, sources, "privacy-turn")
-            with patch.dict("os.environ", {
-                "CLOCKED_GATEWAY_URL": "https://clocked.example",
-                "CLOCKED_GATEWAY_TOKEN": "scoped-participant-token",
-            }), patch("nanlmind_hermes.clocked_tools.ClockedGatewayClient", return_value=Client()):
+            with patch("nanlmind_hermes.clocked_tools.get_secret", return_value="scoped-participant-token"), patch("nanlmind_hermes.clocked_tools.ClockedGatewayClient", return_value=Client()):
                 result = clocked_tools.clocked_execute(
                     ctx, question, sources, "privacy-turn", True,
                     preview["approval_digest"])
@@ -207,7 +204,7 @@ class ScratchTests(unittest.TestCase):
             def __init__(self, root):
                 self.root = root
             def get_config(self, key, default=None):
-                return str(self.root) if key == "state_dir" else default
+                return str(self.root) if key == "state_dir" else ("https://clocked.example" if key == "clocked_gateway_url" else ("https://nanlmind.example" if key == "nanlm_head_cortex_url" else default))
         class Client:
             def execute(self, plan, idempotency_key=None):
                 rows = []
@@ -235,10 +232,7 @@ class ScratchTests(unittest.TestCase):
             sources = [{"id": "source-a", "text": "The value is 12."},
                        {"id": "source-b", "text": "The value is 14."}]
             preview = clocked_tools.clocked_plan(ctx, question, sources, "conflict-turn")
-            with patch.dict("os.environ", {
-                "CLOCKED_GATEWAY_URL": "https://clocked.example",
-                "CLOCKED_GATEWAY_TOKEN": "scoped-participant-token",
-            }), patch("nanlmind_hermes.clocked_tools.ClockedGatewayClient", return_value=Client()):
+            with patch("nanlmind_hermes.clocked_tools.get_secret", return_value="scoped-participant-token"), patch("nanlmind_hermes.clocked_tools.ClockedGatewayClient", return_value=Client()):
                 result = clocked_tools.clocked_execute(
                     ctx, question, sources, "conflict-turn", True,
                     preview["approval_digest"])
@@ -280,17 +274,17 @@ class ScratchTests(unittest.TestCase):
     def test_head_candidate_requires_approval_and_never_promotes(self):
         with self.assertRaises(PermissionError):
             clocked_tools.head_candidate(None, "candidate-1", 42, 1, "a" * 64, False)
-        with patch.dict("os.environ", {
-            "NANLM_HEAD_CORTEX_URL": "https://nanlmind.example",
-            "NANLM_DEVICE_TOKEN": "scoped-training-token",
-        }), patch("nanlmind_hermes.clocked_tools.HeadCortexClient") as client:
+        with tempfile.TemporaryDirectory() as tmp, patch("nanlmind_hermes.clocked_tools.get_secret", return_value="scoped-training-token"), patch("nanlmind_hermes.clocked_tools.HeadCortexClient") as client:
+            class Context:
+                def get_config(self, key, default=None):
+                    return {"state_dir": tmp, "nanlm_head_cortex_url": "https://nanlmind.example"}.get(key, default)
             client.return_value.create_candidate.return_value = {
                 "schema": "nanlm.head-candidate-response/1",
                 "status": "candidate_only", "canonical_state_modified": False,
                 "promotion_allowed": False,
             }
             result = clocked_tools.head_candidate(
-                None, "candidate-1", 42, 1, "a" * 64, True)
+                Context(), "candidate-1", 42, 1, "a" * 64, True)
         self.assertEqual(result["candidate"]["status"], "candidate_only")
         self.assertFalse(result["candidate"]["canonical_state_modified"])
         self.assertFalse(result["candidate"]["promotion_allowed"])
@@ -300,7 +294,7 @@ class ScratchTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             class Context:
                 def get_config(self, key, default=None):
-                    return tmp if key == "state_dir" else default
+                    return tmp if key == "state_dir" else ("https://clocked.example" if key == "clocked_gateway_url" else ("https://nanlmind.example" if key == "nanlm_head_cortex_url" else default))
             ctx = Context()
             scratch = Scratch(Path(tmp) / "clocked_scratch", "learn-turn")
             scratch.append("clocked_result", "clocked", {
@@ -336,10 +330,7 @@ class ScratchTests(unittest.TestCase):
             scratch.append("head_response", "nanlmind", {
                 "provenance": {"state_digest": "d" * 64},
             })
-            with patch.dict("os.environ", {
-                "NANLM_HEAD_CORTEX_URL": "https://nanlmind.example",
-                "NANLM_DEVICE_TOKEN": "scoped-training-token",
-            }), patch("nanlmind_hermes.clocked_tools.HeadCortexClient") as client:
+            with patch("nanlmind_hermes.clocked_tools.get_secret", return_value="scoped-training-token"), patch("nanlmind_hermes.clocked_tools.HeadCortexClient") as client:
                 client.return_value.create_learning_candidate.return_value = {
                     "schema": "nanlm.head-learning-candidate-response/1",
                     "status": "candidate_only", "teacher_outputs_are_ground_truth": False,
@@ -370,10 +361,7 @@ class ScratchTests(unittest.TestCase):
         with self.assertRaises(PermissionError):
             clocked_tools.head_candidate_evaluate(
                 None, "candidate-1", records, False)
-        with patch.dict("os.environ", {
-            "NANLM_HEAD_CORTEX_URL": "https://nanlmind.example",
-            "NANLM_DEVICE_TOKEN": "scoped-training-token",
-        }), patch("nanlmind_hermes.clocked_tools.HeadCortexClient") as client:
+        with patch("nanlmind_hermes.clocked_tools.get_secret", return_value="scoped-training-token"), patch("nanlmind_hermes.clocked_tools.HeadCortexClient") as client:
             client.return_value.evaluate_candidate.return_value = {
                 "schema": "nanlm.head-candidate-evaluation-response/1",
                 "status": "evaluated_candidate", "utility_delta": 0.25,
@@ -384,7 +372,7 @@ class ScratchTests(unittest.TestCase):
             with tempfile.TemporaryDirectory() as tmp:
                 class Context:
                     def get_config(self, key, default=None):
-                        return tmp if key == "state_dir" else default
+                        return tmp if key == "state_dir" else ("https://clocked.example" if key == "clocked_gateway_url" else ("https://nanlmind.example" if key == "nanlm_head_cortex_url" else default))
                 result = clocked_tools.head_candidate_evaluate(
                     Context(), "candidate-1", records, True, "candidate-eval")
         self.assertEqual(result["evaluation"]["recommendation"], "review_candidate")
@@ -401,7 +389,7 @@ class ScratchTests(unittest.TestCase):
             def __init__(self, root):
                 self.root = root
             def get_config(self, key, default=None):
-                return str(self.root) if key == "state_dir" else default
+                return str(self.root) if key == "state_dir" else ("https://clocked.example" if key == "clocked_gateway_url" else ("https://nanlmind.example" if key == "nanlm_head_cortex_url" else default))
         records = [{
             "resolution": 5, "polarity": "+", "subject": "s",
             "predicate": "p", "object": "o", "source_digest": "a" * 64,
@@ -412,10 +400,7 @@ class ScratchTests(unittest.TestCase):
             "recommendation": "review_candidate", "promotion_allowed": False,
             "canonical_state_modified": False,
         }
-        with tempfile.TemporaryDirectory() as tmp, patch.dict("os.environ", {
-            "NANLM_HEAD_CORTEX_URL": "https://nanlmind.example",
-            "NANLM_DEVICE_TOKEN": "scoped-training-token",
-        }), patch("nanlmind_hermes.clocked_tools.HeadCortexClient") as client:
+        with tempfile.TemporaryDirectory() as tmp, patch("nanlmind_hermes.clocked_tools.get_secret", return_value="scoped-training-token"), patch("nanlmind_hermes.clocked_tools.HeadCortexClient") as client:
             client.return_value.evaluate_candidate.return_value = evaluation
             ctx = Context(Path(tmp))
             with self.assertRaises(PermissionError):
@@ -441,7 +426,7 @@ class ScratchTests(unittest.TestCase):
                 self.root = root
                 self.llm = LLM()
             def get_config(self, key, default=None):
-                return str(self.root) if key == "state_dir" else default
+                return str(self.root) if key == "state_dir" else ("https://clocked.example" if key == "clocked_gateway_url" else ("https://nanlmind.example" if key == "nanlm_head_cortex_url" else default))
         with tempfile.TemporaryDirectory() as tmp:
             ctx = Context(Path(tmp))
             scratch = clocked_tools._scratch(ctx, "synthesis-turn")
@@ -472,7 +457,7 @@ class ScratchTests(unittest.TestCase):
             def __init__(self, root):
                 self.root = root
             def get_config(self, key, default=None):
-                return str(self.root) if key == "state_dir" else default
+                return str(self.root) if key == "state_dir" else ("https://clocked.example" if key == "clocked_gateway_url" else ("https://nanlmind.example" if key == "nanlm_head_cortex_url" else default))
 
         class Client:
             def execute(self, plan, idempotency_key=None):
@@ -491,10 +476,7 @@ class ScratchTests(unittest.TestCase):
             sources = [{"id": "source-a", "text": "The river flows."}]
             preview = clocked_tools.clocked_plan(ctx, question, sources, "approved-turn")
             digest = preview["approval_digest"]
-            with patch.dict("os.environ", {
-                "CLOCKED_GATEWAY_URL": "https://clocked.example",
-                "CLOCKED_GATEWAY_TOKEN": "scoped-participant-token",
-            }), patch("nanlmind_hermes.clocked_tools.ClockedGatewayClient", return_value=Client()):
+            with patch("nanlmind_hermes.clocked_tools.get_secret", return_value="scoped-participant-token"), patch("nanlmind_hermes.clocked_tools.ClockedGatewayClient", return_value=Client()):
                 with self.assertRaises(PermissionError):
                     clocked_tools.clocked_execute(ctx, question, sources, "approved-turn",
                                                    False, digest)

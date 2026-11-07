@@ -75,7 +75,7 @@ def status(ctx):
     configured = _setting(ctx, "runner_command", [])
     return {
         "universe_id": _universe_id(universe),
-        "scope": "one installation / one local universe / one local native runner",
+        "scope": "one canonical HW0::BS0 state path / one native runner entry point / six-worker BS0 ring",
         "heads": 256,
         "duration_default_minutes": _setting(ctx, "duration_minutes", DEFAULT_DURATION_MINUTES),
         "duration_min_minutes": 1,
@@ -181,7 +181,7 @@ def _memory_store(ctx):
     from .memory import MemoryStore
     _, _, universe = _paths(ctx)
     heads = 256  # Native topology has exactly 256 palindromic heads.
-    layers = max(10, int(_setting(ctx, "universe_layers", 10)))
+    layers = 10  # One canonical L0-L9 resolution axis; never configurable per plugin instance.
     return MemoryStore(universe / "mathematical_memory.sqlite3", heads=heads, layers=layers)
 
 
@@ -429,11 +429,11 @@ def generate_curriculum(ctx, topic: str, records_per_stage: int = 12,
         selected = [(name, focus) for name, focus in CURRICULUM_STAGES if name in wanted]
     generated, stage_manifest = [], []
     stage_layers = {
-        "boolean_inverses": 0, "deep_logic": 4, "story_saturation": 6,
-        "exceptions": 5, "repetitive_words": 3,
-        "phonetic_pairs": 1, "morpheme_structure": 2,
-        "lexical_words": 3, "word_completion": 4, "sentence_choice": 5,
-        "paragraph_structure": 6, "narrative": 6,
+        "boolean_inverses": 0, "deep_logic": 0, "story_saturation": 9,
+        "exceptions": 5, "repetitive_words": 5,
+        "phonetic_pairs": 3, "morpheme_structure": 4,
+        "lexical_words": 5, "word_completion": 6, "sentence_choice": 7,
+        "paragraph_structure": 8, "narrative": 9,
     }
     for stage, focus in selected:
         universe_context = _memory_context(ctx, layer=stage_layers[stage], limit=16)

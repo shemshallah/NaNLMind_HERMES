@@ -321,10 +321,16 @@ Existing `/nanlm` chat and training modes remain unchanged. CLOCKED mode is an a
 - Candidate evaluation compares the candidate and canonical baseline with the same N16REL rows. The caller declares the test split and supplies a canonical dataset digest, which NaNLMind verifies; this binds the submitted records but does not independently attest dataset provenance. Metrics include accuracy, coverage, balanced accuracy, confusion counts and per-resolution results. Stale base/candidate digests are rejected and evaluation cannot promote.
 - Shared JSON schemas for evidence packages, scratch entries and head-cortex responses.
 
+**Live-verified in 1.2.0:**
+- Production CLOCKED participant token provisioning, gateway configuration,
+  task-plan execution, and revisioned scratch writes.
+- Production NANNET pairing, pinned issuer discovery, online scope
+  authorization, and revocation.
+- Local native Boolean gate and runner smoke tests.
+
 **Not yet deployed or end-to-end verified:**
-- CLOCKED gateway participant token provisioning and production endpoint configuration.
 - NANNET-authorized head-cortex service deployment and route registration through the live Router/Koyeb topology.
-- Live CLOCKED SDK calls for each direct endpoint method (CI uses fakes/fixtures; no paid API calls).
+- Live CLOCKED SDK calls for every direct endpoint method; the live smoke test covers `pii`, while the remaining methods use fixtures and CI fakes.
 - Production multi-source scratch transport between devices/services.
 - Automated multi-mask search, broader controls, candidate retrieval/review UI and six-runner generation-barrier promotion. Candidate creation, weak-supervision training and held-out baseline comparison are implemented; promotion is not.
 

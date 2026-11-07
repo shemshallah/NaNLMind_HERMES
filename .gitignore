@@ -22,3 +22,8 @@ nannet-authority.sqlite*
 experiments/baseline_state*/
 
 experiments/baseline_*_state/
+
+# Python release/build outputs
+build/
+dist/
+*.egg-info/

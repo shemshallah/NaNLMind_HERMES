@@ -1,6 +1,7 @@
 """Hermes-facing local installation identity and pairing handlers."""
 from __future__ import annotations
 import base64, json, os, urllib.parse, urllib.request, hmac
+from .hermes_secrets import get_secret
 from pathlib import Path
 from .auth import create_installation, load_installation, _unb64, _b64, encrypt_payload, decrypt_payload, verify_token, sign_request
 
@@ -10,16 +11,21 @@ def _universe_dir(ctx):
     path=Path(str(configured)).expanduser()/"universe"; path.mkdir(parents=True,exist_ok=True)
     return path
 
-def _master_key():
-    encoded=os.environ.get("NANNET_MASTER_KEY","")
-    if not encoded: raise ValueError("NANNET_MASTER_KEY is not set; provision an independent random 256-bit key in the host OS secret store")
+def _config(ctx, key, default=""):
+    try: return str(ctx.get_config(key, default=default) or "").strip()
+    except Exception: return default
+
+
+def _master_key(ctx):
+    encoded=get_secret("NANNET_MASTER_KEY")
+    if not encoded: raise ValueError("Configure NANNET_MASTER_KEY in Hermes-managed plugin secrets")
     try: raw=_unb64(encoded)
     except Exception as exc: raise ValueError("NANNET_MASTER_KEY must be base64url encoded") from exc
     if len(raw)!=32: raise ValueError("NANNET_MASTER_KEY must decode to exactly 32 bytes")
     return raw
 
 def auth_init(ctx):
-    identity=create_installation(_universe_dir(ctx),_master_key())
+    identity=create_installation(_universe_dir(ctx),_master_key(ctx))
     return {"installation_id":identity["installation_id"],"public_key":identity["public_key"],
             "identity_path":identity["path"],"private_key_encrypted_at_rest":True,"master_key_returned":False}
 
@@ -27,22 +33,22 @@ def auth_status(ctx):
     root=_universe_dir(ctx)
     path=root/"installation.json"
     token_path=root/"nannet_token.json"
-    result={"identity_present":path.exists(),"master_key_present":bool(os.environ.get("NANNET_MASTER_KEY")),
+    result={"identity_present":path.exists(),"master_key_present":bool(get_secret("NANNET_MASTER_KEY")),
             "paired_token_present":token_path.exists(),
-            "pairing_authority_configured":bool(os.environ.get("NANNET_AUTH_URL") and os.environ.get("NANNET_ISSUER_PUBLIC_KEY"))}
+            "pairing_authority_configured":bool(_config(ctx,"nannet_auth_url") and _config(ctx,"nannet_issuer_public_key"))}
     if not path.exists(): return result
     try:
-        doc,_=load_installation(root,_master_key())
+        doc,_=load_installation(root,_master_key(ctx))
         result.update({"installation_id":doc["installation_id"],"public_key":doc["public_key"],"identity_unlocked":True})
     except Exception:
         result["identity_unlocked"]=False
         return result
-    if token_path.exists() and os.environ.get("NANNET_ISSUER_PUBLIC_KEY"):
+    if token_path.exists() and _config(ctx,"nannet_issuer_public_key"):
         try:
             envelope=json.loads(token_path.read_text(encoding="utf-8"))
-            token=decrypt_payload(_master_key(),envelope,("nannet-token-v1:"+doc["installation_id"]).encode()).decode()
+            token=decrypt_payload(_master_key(ctx),envelope,("nannet-token-v1:"+doc["installation_id"]).encode()).decode()
             from .crypto_compat import Ed25519PublicKey
-            claims=verify_token(token,Ed25519PublicKey.from_public_bytes(_unb64(os.environ["NANNET_ISSUER_PUBLIC_KEY"])))
+            claims=verify_token(token,Ed25519PublicKey.from_public_bytes(_unb64(_config(ctx,"nannet_issuer_public_key"))))
             result.update({"token_valid":True,"token_scopes":claims["scope"],"token_expires_at":claims["exp"]})
         except Exception:
             result["token_valid"]=False
@@ -62,8 +68,8 @@ def auth_pair(ctx,pairing_code):
     """Pair against a trusted authority and pin its issuer before accepting its token."""
     import ipaddress
     from urllib.parse import urlsplit
-    base=os.environ.get("NANNET_AUTH_URL","").rstrip("/")
-    pinned=os.environ.get("NANNET_ISSUER_PUBLIC_KEY","")
+    base=_config(ctx,"nannet_auth_url").rstrip("/")
+    pinned=_config(ctx,"nannet_issuer_public_key")
     if not base or not pinned: raise ValueError("NANNET_AUTH_URL and pinned NANNET_ISSUER_PUBLIC_KEY are required")
     parsed=urlsplit(base)
     loopback=False
@@ -71,7 +77,7 @@ def auth_pair(ctx,pairing_code):
     except ValueError: loopback=(parsed.hostname or "").lower()=="localhost"
     if parsed.scheme!="https" and not (parsed.scheme=="http" and loopback):
         raise ValueError("pairing requires HTTPS; plain HTTP is allowed only for loopback development")
-    root=_universe_dir(ctx); master=_master_key()
+    root=_universe_dir(ctx); master=_master_key(ctx)
     doc,private=load_installation(root,master)
     payload={"pairing_code":pairing_code,"installation_id":doc["installation_id"],"public_key":doc["public_key"]}
     request=urllib.request.Request(base+"/v1/pair",data=json.dumps(payload).encode(),headers={"Content-Type":"application/json","Cache-Control":"no-store"},method="POST")
@@ -97,11 +103,11 @@ def auth_revoke(ctx):
     """Revoke this installation's active token at the pinned authority."""
     import urllib.request, ipaddress
     from urllib.parse import urlsplit
-    base=os.environ.get("NANNET_AUTH_URL","").rstrip("/")
-    pinned=os.environ.get("NANNET_ISSUER_PUBLIC_KEY","")
+    base=_config(ctx,"nannet_auth_url").rstrip("/")
+    pinned=_config(ctx,"nannet_issuer_public_key")
     if not base or not pinned:
         raise ValueError("NANNET_AUTH_URL and pinned issuer key are required")
-    root=_universe_dir(ctx); master=_master_key()
+    root=_universe_dir(ctx); master=_master_key(ctx)
     doc,_=load_installation(root,master)
     token_path=root/"nannet_token.json"
     if not token_path.exists():
@@ -130,20 +136,21 @@ def require_scope(ctx, required_scope):
     """Enforce the paired token locally when the NANNET authority is configured."""
     root=_universe_dir(ctx)
     token_path=root/"nannet_token.json"
-    configured=bool(os.environ.get("NANNET_AUTH_URL") and os.environ.get("NANNET_ISSUER_PUBLIC_KEY"))
+    configured=bool(_config(ctx,"nannet_auth_url") and _config(ctx,"nannet_issuer_public_key"))
+    if not configured:
+        raise ValueError("NANNET authority URL and pinned issuer key must be configured")
     if not token_path.exists():
-        if configured: raise ValueError("this installation must pair with NANNET before this operation")
-        return False
-    if not os.environ.get("NANNET_ISSUER_PUBLIC_KEY"):
+        raise ValueError("this installation must pair with NANNET before this operation")
+    if not _config(ctx,"nannet_issuer_public_key"):
         raise ValueError("NANNET_ISSUER_PUBLIC_KEY is required to validate the stored token")
-    doc,_=load_installation(root,_master_key())
+    doc,_=load_installation(root,_master_key(ctx))
     envelope=json.loads(token_path.read_text(encoding="utf-8"))
-    token=decrypt_payload(_master_key(),envelope,("nannet-token-v1:"+doc["installation_id"]).encode()).decode()
+    token=decrypt_payload(_master_key(ctx),envelope,("nannet-token-v1:"+doc["installation_id"]).encode()).decode()
     from .crypto_compat import Ed25519PublicKey
-    claims=verify_token(token,Ed25519PublicKey.from_public_bytes(_unb64(os.environ["NANNET_ISSUER_PUBLIC_KEY"])),required_scope=required_scope)
+    claims=verify_token(token,Ed25519PublicKey.from_public_bytes(_unb64(_config(ctx,"nannet_issuer_public_key"))),required_scope=required_scope)
     if claims.get("sub")!=doc["installation_id"]:
         raise ValueError("NANNET token belongs to a different installation")
-    authority_url=os.environ.get("NANNET_AUTH_URL","").rstrip("/")
+    authority_url=_config(ctx,"nannet_auth_url").rstrip("/")
     if authority_url:
         import ipaddress
         from urllib.parse import urlsplit
@@ -153,7 +160,7 @@ def require_scope(ctx, required_scope):
         if parsed.scheme!="https" and not (parsed.scheme=="http" and loopback):
             raise ValueError("online scope verification requires HTTPS except for loopback development")
         body = json.dumps({"scope":required_scope}, separators=(",", ":")).encode()
-        _, private = load_installation(root, _master_key())
+        _, private = load_installation(root, _master_key(ctx))
         headers = {"Authorization":"Bearer "+token,"Content-Type":"application/json","Cache-Control":"no-store"}
         headers.update(_signed_headers(private, "POST", "/v1/authorize", body))
         request=urllib.request.Request(authority_url+"/v1/authorize",

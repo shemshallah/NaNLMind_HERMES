@@ -263,8 +263,8 @@ def run_math_train(command: Sequence[str], corpus_path: Path, state_dir: Path,
         layer = event.get("layer", 0)
         if isinstance(head, bool) or not isinstance(head, int) or not 0 <= head < 256 or head in seen_heads:
             raise RunnerError(f"invalid or duplicate native head at line {line_no}")
-        if isinstance(layer, bool) or not isinstance(layer, int) or not 0 <= layer < 7:
-            raise RunnerError(f"invalid native layer at line {line_no}")
+        if isinstance(layer, bool) or not isinstance(layer, int) or not 0 <= layer < 10:
+            raise RunnerError(f"invalid native L0-L9 layer at line {line_no}")
         if event.get("source_digest") != corpus_digest:
             raise RunnerError(f"native discovery source digest mismatch at line {line_no}")
         hyperedge_id = event.get("hyperedge_id")

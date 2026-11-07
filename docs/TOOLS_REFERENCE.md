@@ -1,6 +1,6 @@
 # Tool reference
 
-Version 1.1.0 (2026-11-07). All tools are registered under the `nanlmind` toolset.
+Version 1.2.0 (2026-11-07). All tools are registered under the `nanlmind` toolset.
 Tool schemas reject unknown properties unless stated otherwise.
 
 ## Default conversation
@@ -202,10 +202,86 @@ No parameters. Reports identity presence, pairing state, key availability.
 ### `nanlm_auth_pair`
 - `pairing_code` (string, 12–256 characters, required)
 
-Requires `NANNET_AUTH_URL` and pinned `NANNET_ISSUER_PUBLIC_KEY`.
+Requires the `nannet_auth_url` and `nannet_issuer_public_key` plugin settings plus the masked `NANNET_MASTER_KEY` Hermes secret.
 
 ### `nanlm_auth_revoke`
 No parameters. Revokes the stored token and removes its encrypted local copy.
+
+## CLOCKED and head-cortex
+
+All CLOCKED tools require a paired NANNET token with `universe:read`.
+Candidate creation, learning, and evaluation additionally require
+`training:execute` and `approved: true`. CLOCKED results are evidence, never
+ground truth; canonical head state is not modified.
+
+### `nanlm_clocked_plan`
+Propose a policy-constrained mode and record a bounded multi-source plan
+without transmitting source text.
+
+- `question` (string, required, 1–65536 bytes)
+- `sources` (array, max 7; each item requires `text`, optionally `id`)
+- `scratch_id` (string, default `default`)
+
+### `nanlm_clocked_execute`
+Execute a reviewed plan through the scoped CLOCKED gateway.
+
+- `question`, `sources`, `scratch_id` as above
+- `approved` (boolean, default `false`) — must be true
+- `plan_sha256` (string, required) — exact digest from the plan step
+- `max_requests` (integer, 1–16)
+- `max_bytes` (integer, 1–1048576)
+
+### `nanlm_clocked_scratch`
+Inspect a revisioned scratch or one writer-owned lane.
+
+- `scratch_id` (string, default `default`)
+- `lane` (optional enum: `user`, `hermes_plan`, `clocked_request`,
+  `clocked_result`, `evidence_atoms`, `conflict_map`, `nan16_package`,
+  `head_response`, `hermes_synthesis`, `head_validation`, `final`,
+  `learning_proposal`)
+
+### `nanlm_head_process`
+Submit a frozen typed evidence package or answer draft to the NaNLMind
+head-cortex interface. The plugin never owns canonical head state.
+
+- `question` (string, required)
+- `scratch_id` (string, default `default`)
+- `purpose` (`EVIDENCE_COGNITION` or `ANSWER_VALIDATION`)
+- `draft` (string, optional)
+
+### `nanlm_clocked_synthesize`
+Synthesize an answer from revisioned CLOCKED evidence, validate the draft
+through NaNLMind heads, and return the composed response.
+
+- `question` (string, required)
+- `scratch_id` (string, default `default`)
+- `max_tokens` (integer, 1–8192, default 2048)
+
+### `nanlm_head_candidate`
+Create an isolated Boolean-mask mutation candidate for one head.
+
+- `mutation_id` (string, safe identifier)
+- `head_index` (integer, 0–255)
+- `patch_mask` (integer, 1–65535)
+- `base_topology_digest` (64-character hex)
+- `approved` (boolean, default `false`)
+- `scratch_id` (string, default `default`)
+
+### `nanlm_head_learn_candidate`
+Build a weak-supervision set from CLOCKED observations and train an isolated
+candidate. Never promotes or mutates canonical state.
+
+- `mutation_id`, `base_topology_digest`, `scratch_id` as above
+- `approved` (boolean, default `false`)
+- `epochs` (integer, default 1)
+
+### `nanlm_head_candidate_evaluate`
+Evaluate an isolated candidate against explicit held-out N16REL rows.
+
+- `mutation_id` (string)
+- `records` (array, 1–512 N16REL rows)
+- `approved` (boolean, default `false`)
+- `scratch_id` (string, default `default`)
 
 ## Return conventions
 

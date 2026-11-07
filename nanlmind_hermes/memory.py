@@ -37,8 +37,8 @@ class MemoryStore:
     def __init__(self, path: str | Path, heads: int = 256, layers: int = 10):
         if isinstance(heads, bool) or not 1 <= heads <= 256:
             raise ValueError("heads must be in [1, 256]")
-        if isinstance(layers, bool) or not 1 <= layers <= 32:
-            raise ValueError("layers must be in [1, 32]")
+        if isinstance(layers, bool) or not 1 <= layers <= 10:
+            raise ValueError("layers must be in [1, 10]")
         self.path = Path(path).expanduser()
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self.heads, self.layers = heads, layers

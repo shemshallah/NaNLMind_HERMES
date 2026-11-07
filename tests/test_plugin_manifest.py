@@ -34,6 +34,17 @@ class ManifestTests(unittest.TestCase):
             self.assertEqual(tool["schema"]["name"], name)
             self.assertEqual(tool["schema"]["parameters"]["type"], "object")
 
+    def test_memory_layer_parameters_are_bounded_to_l0_l9(self):
+        ctx = FakeContext()
+        register(ctx)
+        for name, tool in ctx.tools.items():
+            properties = tool["schema"]["parameters"].get("properties", {})
+            layer = properties.get("layer")
+            if layer is not None:
+                with self.subTest(tool=name):
+                    self.assertEqual(layer.get("minimum"), 0)
+                    self.assertEqual(layer.get("maximum"), 9)
+
 
 if __name__ == "__main__":
     unittest.main()

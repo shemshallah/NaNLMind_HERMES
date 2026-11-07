@@ -1,6 +1,4 @@
 """NaNLMind Hermes plugin entry point."""
-import os
-
 from . import tools
 
 
@@ -134,60 +132,14 @@ def register(ctx):
                 raise RuntimeError(
                     "NANNET cryptographic operations require the optional "
                     "cryptography extra; install nanlmind-hermes[auth] on a "
-                    "supported platform. Chat and local training do not require it."
+                    "supported platform. Protected NANNET operations require it."
                 ) from exc
             raise
 
-    def _hardware_scope(scope):
-        portal = os.environ.get("NANNET_AUTH_URL", "").strip()
-        if not portal:
-            return False
-        from .hw_hermes import authorize, ensure_hardware_key
-        try:
-            state = str(ctx.get_config("state_dir", "~/.local/share/nanlmind-hermes"))
-        except Exception:
-            state = "~/.local/share/nanlmind-hermes"
-        key = ensure_hardware_key(portal, state)
-        return authorize(portal, scope, key)
-
-    def _device_scope(scope):
-        """Android-style scoped device bearer, validated by NANNET."""
-        token = os.environ.get("NANLM_DEVICE_TOKEN", "")
-        base = (os.environ.get("NANNET_AUTH_URL") or
-                os.environ.get("NANLM_INTAKE_URL", "")).rstrip("/")
-        if not token or not base:
-            return False
-        import json as _json
-        import urllib.request
-        body = _json.dumps({"scope": scope}).encode()
-        request = urllib.request.Request(
-            base + "/v1/authorize", data=body,
-            headers={"Authorization": "Bearer " + token,
-                     "Content-Type": "application/json"},
-            method="POST")
-        try:
-            with urllib.request.urlopen(request, timeout=20) as response:
-                result = _json.load(response)
-        except Exception as exc:
-            raise RuntimeError("NANNET device authorization failed; log in again") from exc
-        if not result.get("authorized") or result.get("scope") != scope:
-            raise RuntimeError("NANNET device token lacks the required scope")
-        return True
-
     def _require_scope(scope):
-        # NANNET login is required for chat and training. The only bypass is an
-        # explicit test flag; production/local interactive use must pair first.
-        if os.environ.get("NANLM_AUTH_TEST_BYPASS") == "1":
-            return False
-        if _hardware_scope(scope):
-            return True
-        if not os.environ.get("NANNET_AUTH_URL"):
-            raise RuntimeError(
-                "NANNET login is required before chat or training. "
-                "Set NANNET_AUTH_URL, and optionally HW_HERMES_API; Hermes will "
-                "register one hardware key if no system key is present."
-            )
-        raise RuntimeError("NANNET hardware registration or authorization failed")
+        # Every protected action requires an encrypted paired installation token.
+        # There is no environment-variable test bypass or implicit hardware registration.
+        return _auth_tools().require_scope(ctx, scope)
 
     def handle_auth_init(params, **kwargs): return _auth_tools().auth_init(ctx)
     def handle_auth_status(params, **kwargs): return _auth_tools().auth_status(ctx)
@@ -197,16 +149,16 @@ def register(ctx):
     def handle_nan16de_route(params, **kwargs):
         _require_scope("universe:read")
         from .auth import load_installation, decrypt_payload
-        from .auth_tools import _master_key, _universe_dir
+        from .auth_tools import _master_key, _universe_dir, _config
         from .nan16de import NanWord, make_envelope, send_envelope
         import json as _json
         root = _universe_dir(ctx)
-        doc, private = load_installation(root, _master_key())
+        doc, private = load_installation(root, _master_key(ctx))
         token_path = root / "nannet_token.json"
         if not token_path.exists():
             raise RuntimeError("NANNET paired token is missing; pair before routing")
         envelope = _json.loads(token_path.read_text(encoding="utf-8"))
-        token = decrypt_payload(_master_key(), envelope,
+        token = decrypt_payload(_master_key(ctx), envelope,
                                 ("nannet-token-v1:" + doc["installation_id"]).encode()).decode()
         word = NanWord.from_bits(int(params.get("far_type", 0)),
                                  int(params.get("near_type", 0)),
@@ -214,7 +166,7 @@ def register(ctx):
         env = make_envelope(params["route"], params.get("kind", "route"),
                             word, private, doc["installation_id"],
                             int(params.get("epoch", 0)))
-        return send_envelope(os.environ["NANNET_AUTH_URL"], token, env)
+        return send_envelope(_config(ctx, "nannet_auth_url"), token, env)
 
     def handle_generate(params, **kwargs):
         _require_scope("corpus:write")
@@ -427,7 +379,7 @@ def register(ctx):
          {"discoveries": {"type": "array", "minItems": 1, "maxItems": 1000, "items": {"type": "object"}},
           "source_digest": {"type": "string", "pattern": "^[0-9a-fA-F]{64}$"},
           "head": {"type": "integer", "minimum": 0, "maximum": 255},
-          "layer": {"type": "integer", "minimum": 0, "maximum": 31}},
+          "layer": {"type": "integer", "minimum": 0, "maximum": 9}},
          ["discoveries", "source_digest"], handle_memory_ingest),
         ("nanlm_memory_reorganize", "Rebuild deterministic head/layer memory projections without deleting discoveries.", {}, [], handle_memory_reorganize),
         ("nanlm_memory_cross_resolution", "Compute the ten-by-ten linguistic resolution interaction matrix, compare aligned evidence, preserve contradictions, and merge derived mathematical hyperedges into the shared universe.",
@@ -439,12 +391,12 @@ def register(ctx):
                                 "properties": {"item": {"type": "object"},
                                                "source_digest": {"type": "string", "pattern": "^[0-9a-fA-F]{64}$"},
                                                "head": {"type": "integer", "minimum": 0, "maximum": 255},
-                                               "layer": {"type": "integer", "minimum": 0, "maximum": 31}},
+                                               "layer": {"type": "integer", "minimum": 0, "maximum": 9}},
                                 "additionalProperties": False}}},
          ["records"], handle_memory_merge),
         ("nanlm_memory_query", "Query active mathematical-memory records by subject, head or layer.",
          {"subject": {"type": "string"}, "head": {"type": "integer", "minimum": 0, "maximum": 255},
-          "layer": {"type": "integer", "minimum": 0, "maximum": 31},
+          "layer": {"type": "integer", "minimum": 0, "maximum": 9},
           "limit": {"type": "integer", "minimum": 1, "maximum": 1000}},
          [], handle_memory_query),
         ("nanlm_memory_assessments", "Inspect evidence-weighted support/refutation assessments; contested claims are promoted to the highest review layer.",

@@ -14,7 +14,7 @@ from typing import Any
 LANES = {
     "user", "hermes_plan", "clocked_request", "clocked_result",
     "evidence_atoms", "conflict_map", "nan16_package", "head_response",
-    "hermes_synthesis", "head_validation", "final", "learning_proposal",
+    "hermes_synthesis", "head_validation", "final", "learning_proposal", "transform_trace",
 }
 ZERO = "0" * 64
 
@@ -97,6 +97,7 @@ class Scratch:
             "head_validation": {"nanlmind"},
             "final": {"hermes"},
             "learning_proposal": {"hermes", "nanlmind"},
+            "transform_trace": {"hermes", "nanlmind"},
         }
         if writer not in allowed_writers[lane]:
             raise ScratchError("writer is not authorized for this scratch lane")

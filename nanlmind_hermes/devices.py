@@ -1,8 +1,9 @@
 """Consent-based NANNET device leases and issue reporting.
 
 Device identity is a random client-held secret, never a MAC/IMEI/serial.
-A copied credential cannot obtain a second simultaneous lease. Slots are
-released transactionally and become available to the next installation.
+A copied credential cannot obtain a second simultaneous lease. HW4+ addresses
+identify scoped participants attached to the one HW0::BS0 universe; they are not
+independent model universes.
 """
 from __future__ import annotations
 import hashlib, json, secrets, sqlite3, time, uuid
@@ -35,6 +36,25 @@ class DeviceRegistry:
                 report_type TEXT NOT NULL, summary TEXT NOT NULL,
                 details TEXT NOT NULL, system_report TEXT NOT NULL,
                 created_at INTEGER NOT NULL)""")
+        # Upgrade active legacy participant leases out of the fixed endpoints.
+        # HW0::BS0, HW1, HW2 and HW3 are reserved; HW4+ is allocatable.
+        # Preserve credentials and lease IDs; only the participant address moves.
+        now = int(time.time())
+        with self._connect() as db:
+            legacy = db.execute(
+                "SELECT lease_id FROM device_leases WHERE hw_slot IS NOT NULL "
+                "AND hw_slot<4 AND released_at IS NULL AND expires_at>?",
+                (now,)).fetchall()
+            used = {row[0] for row in db.execute(
+                "SELECT hw_slot FROM device_leases WHERE hw_slot>=4 "
+                "AND released_at IS NULL AND expires_at>?", (now,))}
+            for row in legacy:
+                slot = next((n for n in range(4, 256) if n not in used), None)
+                if slot is None:
+                    raise RuntimeError("cannot migrate reserved HW0-HW3 lease: no HW4+ participant address")
+                db.execute("UPDATE device_leases SET hw_slot=? WHERE lease_id=?",
+                           (slot, row["lease_id"]))
+                used.add(slot)
 
     def _new_token(self, device_id: str, now: int | None = None) -> str:
         if self.authority is None:
@@ -78,12 +98,18 @@ class DeviceRegistry:
             else:
                 device_id = uuid.uuid4().hex
                 db.execute("INSERT INTO devices VALUES (?,?,?,?)", (device_id, secret_hash, now, now))
-            used = {r[0] for r in db.execute("SELECT hw_slot FROM device_leases WHERE hw_slot IS NOT NULL AND released_at IS NULL AND expires_at>?", (now,))}
+            # HW0::BS0 is the one canonical universe and runner ring. HW1-HW3
+            # are fixed endpoints. HW4+ is the allocatable participant space;
+            # it never creates a private universe or training state.
+            used = {r[0] for r in db.execute(
+                "SELECT hw_slot FROM device_leases WHERE hw_slot IS NOT NULL "
+                "AND released_at IS NULL AND expires_at>?", (now,))}
             slot = next((n for n in range(4, 256) if n not in used), None)
             if slot is None:
-                raise ValueError("no hardware slots currently available")
+                raise ValueError("no participant addresses currently available")
             expires = now + self.lease_seconds
-            db.execute("INSERT INTO device_leases VALUES (?,?,?,?,?,?,NULL)", (lease_id, device_id, slot, placeholder_hash, now, expires))
+            db.execute("INSERT INTO device_leases VALUES (?,?,?,?,?,?,NULL)",
+                       (lease_id, device_id, slot, placeholder_hash, now, expires))
         try:
             token = self._new_token(device_id)
             with self._connect() as db:
@@ -94,7 +120,10 @@ class DeviceRegistry:
             with self._connect() as db:
                 db.execute("UPDATE device_leases SET hw_slot=NULL,released_at=? WHERE lease_id=?", (int(time.time()), lease_id))
             raise
-        return {"device_id": device_id, "address": f"nan://GM0:SC0:MC0:BS0:HW{slot}", "lease_id": lease_id, "lease_expires_at": expires, "token": token, "head_count": 256}
+        return {"device_id": device_id, "participant_id": device_id,
+                "address": f"nan://GM0:SC0:MC0:BS0:HW{slot}",
+                "lease_id": lease_id, "lease_expires_at": expires,
+                "token": token, "head_count": 256}
 
     def _active(self, db, token: str, now: int):
         if not isinstance(token, str) or not token.startswith("nnt_"):
@@ -130,6 +159,7 @@ class DeviceRegistry:
         if self.authority is not None:
             self.authority.revoke_token(token[4:])
         return {"lease_id": lease_id, "lease_expires_at": expires,
+                "participant_id": device_id,
                 "address": f"nan://GM0:SC0:MC0:BS0:HW{slot}", "token": replacement}
 
     def release(self, token: str, now: int | None = None) -> dict:
@@ -161,6 +191,7 @@ class DeviceRegistry:
         if self.authority is not None:
             self.authority.revoke_token(token[4:])
         return {"lease_id": lease_id, "lease_expires_at": expires,
+                "participant_id": device_id,
                 "address": f"nan://GM0:SC0:MC0:BS0:HW{slot}", "token": replacement}
 
     def report(self, token: str, payload: dict, now: int | None = None) -> dict:
