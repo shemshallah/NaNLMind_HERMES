@@ -158,7 +158,7 @@ def register(ctx):
         if not token_path.exists():
             raise RuntimeError("NANNET paired token is missing; pair before routing")
         envelope = _json.loads(token_path.read_text(encoding="utf-8"))
-        token = decrypt_payload(_master_key(), envelope,
+        token = decrypt_payload(_master_key(ctx), envelope,
                                 ("nannet-token-v1:" + doc["installation_id"]).encode()).decode()
         word = NanWord.from_bits(int(params.get("far_type", 0)),
                                  int(params.get("near_type", 0)),
