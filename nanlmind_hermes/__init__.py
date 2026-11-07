@@ -98,7 +98,7 @@ def register(ctx):
             _require_scope("training:execute")
         return tools.chat(ctx, params["message"], params.get("session_id", "default"),
                           params.get("system_prompt"), params.get("temperature", 0.7),
-                          params.get("max_tokens", 2048))
+                          params.get("max_tokens", 2048), params.get("sources"))
 
     def handle_chat_history(params, **kwargs):
         return tools.chat_history(ctx, params.get("session_id", "default"),
@@ -283,7 +283,10 @@ def register(ctx):
          {"message": {"type": "string", "minLength": 1, "maxLength": 1048576},
           "session_id": {"type": "string", "maxLength": 80}, "system_prompt": {"type": "string"},
           "temperature": {"type": "number", "minimum": 0, "maximum": 2},
-          "max_tokens": {"type": "integer", "minimum": 1, "maximum": 8192}},
+          "max_tokens": {"type": "integer", "minimum": 1, "maximum": 8192},
+          "sources": {"type": "array", "maxItems": 7, "items": {"type": "object",
+              "required": ["text"], "properties": {"id": {"type": "string", "maxLength": 80},
+              "text": {"type": "string", "minLength": 1, "maxLength": 65536}}}}},
          ["message"], handle_chat),
         ("nanlm_chat_history", "Read the durable transcript for an open-ended Hermes conversation.",
          {"session_id": {"type": "string", "maxLength": 80},
