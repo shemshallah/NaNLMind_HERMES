@@ -5,19 +5,24 @@ learning, explicit native training, durable mathematical memory, and approved
 CLOCKED evidence plans. Training and inference stay local; NANNET is the
 identity/authorization boundary and CLOCKED is an evidence service.
 
-**Version 1.3.0 — catalog submission pending.**
+**Version 1.3.1 — catalog submission pending.**
 
 ## What it does
 
 - **Native chat** — the default `/nanlm <message>` path parses explicit
-  relations, updates memory and native state, and synthesizes a reply from the
-  learned relation set. It does not require a language-model provider. Set
-  `chat_mode: auto` or `provider` to use a Hermes model instead.
+  relations, updates memory and native state, and predicts the reply word by
+  word from a temporal mirror frame. Replies are not templates or retrieval:
+  every step weighs every known word, finishes the sentence, and evaluates
+  whether it needs to explain further. Hermes boots its own local-CPU runner
+  with the 8 MiB chart and mapped registers; no language-model provider or
+  RunnerRing compute is required. Set `chat_mode: auto` or `provider` to use a
+  Hermes model instead.
 - **Three-way call** — `nanlm_phone_call` runs the shared-scratch cycle
   `user -> Hermes -> NaNLM -> user + Hermes`, with arbitrary autonomous rounds
   and user interjection. The routing kernel is a raw NaN16 program
   (`nanlmind_hermes/nan/phone_call.nan`) executed on a thin NaNVM0 boundary;
-  Hermes may use a model and CLOCKED as a bridge, NaNLM does not.
+  Hermes may use a model as a bridge and CLOCKED is opt-in (off by default, so
+  a normal call spends no gateway credits); NaNLM does not use either.
 - **Training** — native `logic`, `words`, `sentences`, and ordered `pipeline`
   sessions. A full 256-head Boolean foundation gate must pass before language
   training. Training runs through the local `nanlm-universal` binary.
@@ -181,14 +186,23 @@ Report security issues privately as described in [SECURITY.md](SECURITY.md).
 
 ## Verification
 
-- 154 unit/integration tests pass locally; CI runs Python 3.10, 3.11, and 3.12.
+- 170 unit/integration tests pass locally; CI runs Python 3.10, 3.11, and 3.12.
 - Hermes Agent v0.23.0 `plugins validate` and `plugins doctor` pass in CI.
 - Wheel and source distribution builds, metadata checks, installation/import,
   and SHA-256 checksums pass in CI.
 - The phone-call routing kernel is raw NaN16, verified word-for-word against
   the native nan0s C VM core across an eight-case routing matrix; see
   [docs/PHONE_CALL_NAN16.md](docs/PHONE_CALL_NAN16.md).
+- Hermes boots a local-CPU runner over an in-memory 8 MiB chart with real
+  `s+`/`s-` pair-cell rails and a mapped temporal register (genesis chart
+  before training; rebinds to the trained chart). It links through `HW2:0`
+  (NaN16DE) to `BS0:0::HW0:0` without using the RunnerRing for compute; see
+  [docs/LOCAL_RUNNER.md](docs/LOCAL_RUNNER.md).
 - The exhaustive demo passed 38/38 calls across all 34 registered tools.
+- A genuine held-out session asked unseen questions before and after new
+  exposure, and a "No, that's incorrect" feedback turn triggered a fresh
+  deliberation with the rejected answer suppressed; see
+  [docs/LONG_CHAT_DEMO.md](docs/LONG_CHAT_DEMO.md).
 - A separate transcript demo ran native chat without an LLM provider, the
   three-way shared-scratch call with Gemma as the Hermes bridge and CLOCKED
   evidence inside the call, native
@@ -204,6 +218,9 @@ Report security issues privately as described in [SECURITY.md](SECURITY.md).
 | [Demo guide](docs/DEMO.md) | offline, NANNET, and CLOCKED scenarios with success signals |
 | [Demo transcript](docs/HERMES_DEMO.md) | native chat, three-way call, training, CLOCKED, and live head-cortex output |
 | [Phone-call kernel](docs/PHONE_CALL_NAN16.md) | raw NaN16 routing kernel, memory map, routing matrix, C-core parity |
+| [Local runner](docs/LOCAL_RUNNER.md) | boot-time 8 MiB chart, mapped temporal register, real rails, HW2:0 link |
+| [MTH layers](docs/MTH_LAYERS.md) | root 4x4 Boolean table, L0–L9 curriculum, truth/frame scoring |
+| [Long chat session](docs/LONG_CHAT_DEMO.md) | exposure, temporal predictions, held-out session, feedback re-deliberation |
 | [Demo results](docs/DEMO_RESULTS.md) | 38/38 exhaustive tool-call results |
 | [Live smoke results](docs/LIVE_SMOKE.md) | 11/11 deployed-service checks |
 | [Install and validate](docs/HERMES_PLUGIN_INSTALL.md) | install paths, doctor output, upgrade/uninstall |

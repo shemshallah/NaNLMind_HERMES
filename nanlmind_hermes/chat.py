@@ -278,6 +278,7 @@ _NATIVE_STOPWORDS = frozenset({
     "of", "in", "on", "for", "with", "about", "as", "at", "by", "from", "it",
     "its", "i", "you", "we", "they", "he", "she", "me", "my", "your", "our",
     "do", "does", "did", "can", "could", "would", "should", "what", "how",
+    "where", "when", "why", "who", "whom", "whose", "which",
 })
 
 
@@ -294,7 +295,10 @@ def _native_parse(message: str, session_id: str, source_digest: str) -> list[dic
         if len(sentence) > 1000:
             sentence = sentence[:1000]
         matched = False
+        is_question = sentence.rstrip().endswith("?")
         for pattern, predicate, polarity in _NATIVE_PATTERNS:
+            if is_question:
+                break
             match = pattern.match(sentence)
             if not match:
                 continue
@@ -335,42 +339,84 @@ def _native_parse(message: str, session_id: str, source_digest: str) -> list[dic
 
 
 def _native_synthesize(ctx, message: str, parsed: list[dict]) -> dict:
-    """Compose a response from learned relation memory without an LLM."""
+    """Predict the reply word by word with the temporal mirror model.
+
+    No retrieval and no response templates: the model scores every word it
+    knows at every step, predicts the next word forward from a temporal frame
+    addressed by head/mirror cells, and feeds each chosen word back into the
+    frame. The frame is internal to the learner; no NaNNet rail registers are
+    written.
+    """
+    from .temporal_lm import TemporalMirrorLM
     from .tools import _memory_store
     store = _memory_store(ctx)
-    rows = [row for row in store.query(limit=500)
-            if row.get("kind") in {"relation", "equation", "constraint", "operator"}]
-    tokens = [token for token in re.findall(r"[a-z0-9']+", message.casefold())
-              if token not in _NATIVE_STOPWORDS and len(token) > 1]
-    def text_of(row):
-        return " ".join(str(row.get(key) or "") for key in
-                        ("subject", "predicate", "object")).casefold()
-    matched = [row for row in rows
-               if any(token in text_of(row) for token in tokens)][:5]
-    if matched:
-        facts = "; ".join(
-            f"{row.get('subject')} {row.get('predicate')} {row.get('object')}".strip()
-            for row in matched)
-        response = "I recall these learned relations: " + facts + "."
-    elif rows:
-        recent = rows[-3:]
-        facts = "; ".join(
-            f"{row.get('subject')} {row.get('predicate')} {row.get('object')}".strip()
-            for row in recent)
-        response = ("I have no relation matching that input yet. Recent learned relations: "
-                    + facts + ". Teach me a direct relation and I will store it.")
-    elif parsed:
-        response = ("I stored the new evidence, but I have no learned relation to answer from yet. "
-                    "Give me a simple relation such as 'a river is water'.")
+    rows = store.query(limit=1000)
+    from .mth_layers import MTHLayerStack, MTHScorer
+    stack = MTHLayerStack()
+    exposure_sentences = []
+    for row in rows:
+        evidence = row.get("evidence")
+        sentence = evidence.get("sentence") if isinstance(evidence, dict) else None
+        if isinstance(sentence, str):
+            exposure_sentences.append(sentence)
+        elif row.get("kind") == "observation" and isinstance(row.get("object"), str):
+            exposure_sentences.append(row["object"])
+    stack.learn(exposure_sentences, rows)
+    model = TemporalMirrorLM.load(ctx)
+    model.mth = MTHScorer(stack)
+    prior_words = set(model.vocab)
+    excluded = {str(message).strip().casefold()}
+    bootstrapped = model.observe_memory_rows(rows, exclude=excluded)
+    prior_words |= set(model.vocab)
+    correction = False
+    try:
+        from .temporal_lm import is_correction
+        correction = is_correction(message) and bool(model.last_query)
+    except Exception:
+        correction = False
+    if correction:
+        prediction = model.correct()
+        observed = False
     else:
-        response = ("I have no learned relations yet. Teach me a simple relation such as "
-                    "'a river is water'; I will parse, store, and reuse it.")
+        observed = model.observe(message)
+        prediction = model.generate(message, allowed_seed=prior_words)
+    model.save(ctx)
+    learned = sum(1 for record in parsed
+                  if isinstance(record.get("item"), dict)
+                  and record["item"].get("kind") == "relation")
     return {
-        "text": response,
-        "synthesis": "native_relation_memory_template/1",
-        "matched_records": len(matched),
+        "text": prediction.get("text", ""),
+        "synthesis": "temporal_mirror_lm/1",
+        "generator": "temporal_mirror_lm/1",
+        "response_templates": 0,
+        "retrieval": 0,
+        "correction": bool(prediction.get("correction", correction)),
+        "rejected": prediction.get("rejected"),
+        "learned_records": learned,
+        "learned_sentences_now": int(bool(observed)),
+        "bootstrap_sentences": bootstrapped,
+        "temporal_frame": {
+            "anchor": prediction.get("anchor"),
+            "seed": prediction.get("seed", []),
+            "steps": prediction.get("steps", 0),
+            "scored_per_step": prediction.get("scored_per_step", 0),
+            "score": prediction.get("score"),
+            "ended": prediction.get("ended"),
+            "forced": prediction.get("forced", False),
+            "sentences": prediction.get("sentences", []),
+            "explanation_rounds": prediction.get("explanation_rounds", 0),
+            "coverage": prediction.get("coverage", 0.0),
+            "considered": prediction.get("considered", []),
+            "mirror_state": prediction.get("mirror_state", False),
+            "mirror_addresses": prediction.get("mirror_addresses", []),
+        },
         "memory_records": len(rows),
-        "tokens": tokens[:32],
+        "vocabulary": model.stats(),
+        "mth": stack.summary(),
+        "register": prediction.get("register"),
+        "register_frames": prediction.get("register_frames", 0),
+        "runner": prediction.get("runner"),
+        "tokens": prediction.get("seed", [])[:32],
     }
 
 
@@ -438,7 +484,7 @@ def _native_chat(ctx, message: str, session_id: str, root: Path,
     _append(path, {"role": "user", "content": message, "created_at": now,
                    "source_sha256": hashlib.sha256(message.encode("utf-8")).hexdigest()})
     _append(path, {"role": "assistant", "content": response, "created_at": now,
-                   "provider": "nanlm-native", "model": "relation-memory/1"})
+                   "provider": "nanlm-native", "model": "temporal-mirror/1"})
     cross_resolution = {"derived_hyperedges": 0,
                         "merge": {"accepted": 0, "duplicates": 0}, "error": None}
     try:
@@ -448,7 +494,7 @@ def _native_chat(ctx, message: str, session_id: str, root: Path,
     return {
         "session_id": session_id, "response": response,
         "clocked_mode": None, "clocked_scratch_id": scratch.get("scratch_id"),
-        "provider": "nanlm-native", "model": "relation-memory/1",
+        "provider": "nanlm-native", "model": "temporal-mirror/1",
         "source_sha256": source_digest, "history_messages": len(history) + 2,
         "surface_measurements": {
             "records": len(surface_records),
@@ -466,8 +512,8 @@ def _native_chat(ctx, message: str, session_id: str, root: Path,
         "native_synthesis": synthesis,
         "scratch": scratch,
         "memory_note": ("Native chat parsed the input, updated additive memory, "
-                        "and synthesized from learned relations. It is not an LLM; "
-                        "output quality is bounded by the learned relation set."),
+                        "and answered only with sentences from its exposure. It is "
+                        "not an LLM; output quality is bounded by what was exposed."),
     }
 
 

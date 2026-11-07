@@ -25,7 +25,8 @@ class PhoneCallTests(unittest.TestCase):
             speakers = [row["speaker"] for row in result["history"]]
             self.assertEqual(speakers, ["user", "hermes", "nanlm", "hermes"])
             nanlm = next(row for row in result["history"] if row["speaker"] == "nanlm")
-            self.assertIn("A river is water.", nanlm["text"])
+            self.assertIn("river", nanlm["text"].lower())
+            self.assertTrue(nanlm["text"].endswith((".", "!", "?")))
             self.assertTrue(result["history"][-1]["text"].startswith("Hermes:"))
             self.assertEqual(result["default_path"], "user -> hermes -> nanlm -> user + hermes")
             self.assertEqual(result["kernel"], "nan16/1")

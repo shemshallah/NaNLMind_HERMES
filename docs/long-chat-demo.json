@@ -1,0 +1,1103 @@
+{
+  "call": {
+    "clocked": false,
+    "history": [
+      {
+        "addressee": "hermes",
+        "at": "2026-11-07T23:06:24.951697+00:00",
+        "phase": "user_message",
+        "speaker": "user",
+        "text": "What is a river?",
+        "turn": 1
+      },
+      {
+        "addressee": "nanlm",
+        "at": "2026-11-07T23:06:24.959632+00:00",
+        "phase": "hermes_to_nanlm",
+        "speaker": "hermes",
+        "text": "What is a river?",
+        "turn": 2
+      },
+      {
+        "addressee": "user+hermes",
+        "at": "2026-11-07T23:06:26.168123+00:00",
+        "phase": "nanlm_reply",
+        "speaker": "nanlm",
+        "text": "River is a mountain.",
+        "turn": 3
+      },
+      {
+        "addressee": "hermes",
+        "at": "2026-11-07T23:06:26.170343+00:00",
+        "phase": "hermes_to_user",
+        "speaker": "hermes",
+        "text": "Hermes: River is a mountain.",
+        "turn": 4
+      },
+      {
+        "addressee": "nanlm",
+        "at": "2026-11-07T23:06:26.179247+00:00",
+        "phase": "user_message",
+        "speaker": "user",
+        "text": "Can water flow?",
+        "turn": 5
+      },
+      {
+        "addressee": "user+hermes",
+        "at": "2026-11-07T23:06:27.583720+00:00",
+        "phase": "nanlm_reply",
+        "speaker": "nanlm",
+        "text": "Water can flow through valleys.",
+        "turn": 6
+      },
+      {
+        "addressee": "hermes",
+        "at": "2026-11-07T23:06:27.589965+00:00",
+        "phase": "hermes_to_user",
+        "speaker": "hermes",
+        "text": "Hermes: Water can flow through valleys.",
+        "turn": 7
+      },
+      {
+        "addressee": "nanlm",
+        "at": "2026-11-07T23:06:27.602384+00:00",
+        "phase": "hermes_to_nanlm",
+        "speaker": "hermes",
+        "text": "Can water flow?",
+        "turn": 8
+      },
+      {
+        "addressee": "user+hermes",
+        "at": "2026-11-07T23:06:28.919201+00:00",
+        "phase": "nanlm_reply",
+        "speaker": "nanlm",
+        "text": "Water can flow.",
+        "turn": 9
+      },
+      {
+        "addressee": "nanlm",
+        "at": "2026-11-07T23:06:28.924716+00:00",
+        "phase": "hermes_followup",
+        "speaker": "hermes",
+        "text": "NaNLM, can you extend that answer with one concrete relation?",
+        "turn": 10
+      },
+      {
+        "addressee": "user+hermes",
+        "at": "2026-11-07T23:06:29.891103+00:00",
+        "phase": "nanlm_reply",
+        "speaker": "nanlm",
+        "text": ", that's incorrect.",
+        "turn": 11
+      },
+      {
+        "addressee": "hermes",
+        "at": "2026-11-07T23:06:29.893984+00:00",
+        "phase": "hermes_to_user",
+        "speaker": "hermes",
+        "text": "Hermes: , that's incorrect.",
+        "turn": 12
+      }
+    ],
+    "kernel": "nan16/1",
+    "turn": 12
+  },
+  "chat_mode": "native",
+  "clocked_calls": 0,
+  "conversation": [
+    {
+      "anchor": "river",
+      "nanlm": "River is a flowing body of water.",
+      "register_frames": 7,
+      "register_mapped": true,
+      "response_templates": 0,
+      "retrieval": 0,
+      "scored_per_step": 45,
+      "seed": [
+        "river"
+      ],
+      "steps": 7,
+      "user": "What is a river?"
+    },
+    {
+      "anchor": "flow",
+      "nanlm": "Flow through valleys.",
+      "register_frames": 3,
+      "register_mapped": true,
+      "response_templates": 0,
+      "retrieval": 0,
+      "scored_per_step": 45,
+      "seed": [
+        "water",
+        "flow"
+      ],
+      "steps": 3,
+      "user": "Can water flow?"
+    },
+    {
+      "anchor": "water",
+      "nanlm": "Water can flow through valleys.",
+      "register_frames": 5,
+      "register_mapped": true,
+      "response_templates": 0,
+      "retrieval": 0,
+      "scored_per_step": 45,
+      "seed": [
+        "water"
+      ],
+      "steps": 5,
+      "user": "What is water?"
+    },
+    {
+      "anchor": "bird",
+      "nanlm": "Bird is an animal.",
+      "register_frames": 4,
+      "register_mapped": true,
+      "response_templates": 0,
+      "retrieval": 0,
+      "scored_per_step": 45,
+      "seed": [
+        "bird"
+      ],
+      "steps": 4,
+      "user": "What can a bird do?"
+    },
+    {
+      "anchor": "fish",
+      "nanlm": "Fish live in water.",
+      "register_frames": 4,
+      "register_mapped": true,
+      "response_templates": 0,
+      "retrieval": 0,
+      "scored_per_step": 45,
+      "seed": [
+        "fish",
+        "live",
+        "water"
+      ],
+      "steps": 4,
+      "user": "Do fish live in water?"
+    },
+    {
+      "anchor": "rain",
+      "nanlm": "Rain causes rivers to rise.",
+      "register_frames": 5,
+      "register_mapped": true,
+      "response_templates": 0,
+      "retrieval": 0,
+      "scored_per_step": 45,
+      "seed": [
+        "causes",
+        "rain"
+      ],
+      "steps": 5,
+      "user": "What causes rain?"
+    },
+    {
+      "anchor": "rivers",
+      "nanlm": "Rivers to rise.",
+      "register_frames": 3,
+      "register_mapped": true,
+      "response_templates": 0,
+      "retrieval": 0,
+      "scored_per_step": 45,
+      "seed": [
+        "rivers",
+        "rise"
+      ],
+      "steps": 3,
+      "user": "Why do rivers rise?"
+    },
+    {
+      "anchor": "sun",
+      "nanlm": "Sun causes light.",
+      "register_frames": 3,
+      "register_mapped": true,
+      "response_templates": 0,
+      "retrieval": 0,
+      "scored_per_step": 45,
+      "seed": [
+        "sun"
+      ],
+      "steps": 3,
+      "user": "Tell me about the sun."
+    },
+    {
+      "anchor": "fish",
+      "nanlm": "Fish is an animal.",
+      "register_frames": 4,
+      "register_mapped": true,
+      "response_templates": 0,
+      "retrieval": 0,
+      "scored_per_step": 45,
+      "seed": [
+        "fish",
+        "animals"
+      ],
+      "steps": 4,
+      "user": "Are fish animals?"
+    },
+    {
+      "anchor": "animals",
+      "nanlm": "Animals need water.",
+      "register_frames": 3,
+      "register_mapped": true,
+      "response_templates": 0,
+      "retrieval": 0,
+      "scored_per_step": 45,
+      "seed": [
+        "animals"
+      ],
+      "steps": 3,
+      "user": "Tell me about animals."
+    },
+    {
+      "anchor": "plants",
+      "nanlm": "Plants need water.",
+      "register_frames": 3,
+      "register_mapped": true,
+      "response_templates": 0,
+      "retrieval": 0,
+      "scored_per_step": 45,
+      "seed": [
+        "plants",
+        "need"
+      ],
+      "steps": 3,
+      "user": "What do plants need?"
+    },
+    {
+      "anchor": "cold",
+      "nanlm": "Cold water can freeze.",
+      "register_frames": 4,
+      "register_mapped": true,
+      "response_templates": 0,
+      "retrieval": 0,
+      "scored_per_step": 45,
+      "seed": [
+        "cold",
+        "water",
+        "freeze"
+      ],
+      "steps": 4,
+      "user": "Can cold water freeze?"
+    },
+    {
+      "anchor": "birds",
+      "nanlm": "Birds sing in the morning.",
+      "register_frames": 5,
+      "register_mapped": true,
+      "response_templates": 0,
+      "retrieval": 0,
+      "scored_per_step": 45,
+      "seed": [
+        "birds",
+        "morning"
+      ],
+      "steps": 5,
+      "user": "What do birds do in the morning?"
+    },
+    {
+      "anchor": "rivers",
+      "nanlm": "Rivers flow through valleys.",
+      "register_frames": 4,
+      "register_mapped": true,
+      "response_templates": 0,
+      "retrieval": 0,
+      "scored_per_step": 45,
+      "seed": [
+        "rivers",
+        "flow"
+      ],
+      "steps": 4,
+      "user": "Where do rivers flow?"
+    },
+    {
+      "anchor": "sky",
+      "nanlm": "Sky is blue.",
+      "register_frames": 3,
+      "register_mapped": true,
+      "response_templates": 0,
+      "retrieval": 0,
+      "scored_per_step": 45,
+      "seed": [
+        "sky"
+      ],
+      "steps": 3,
+      "user": "What is the sky?"
+    }
+  ],
+  "correction": {
+    "feedback": "No, that's incorrect.",
+    "first": {
+      "anchor": "volcano",
+      "nanlm": "Volcano can erupt.",
+      "register_frames": 3,
+      "response_templates": 0,
+      "retrieval": 0,
+      "scored_per_step": 57,
+      "seed": [
+        "volcano"
+      ],
+      "steps": 3,
+      "user": "What is a volcano?"
+    },
+    "question": "What is a volcano?",
+    "second": {
+      "correction": true,
+      "deliberation": [
+        {
+          "anchor": "volcano",
+          "ended": true,
+          "mth": {
+            "category_error": 0.7,
+            "coherence": 1.0,
+            "frame": 0.0,
+            "score": -0.115,
+            "truth": 0.0
+          },
+          "score": 0.2162,
+          "text": "Volcano is a flowing body of water."
+        },
+        {
+          "anchor": "volcano",
+          "ended": true,
+          "mth": {
+            "category_error": 0.0,
+            "coherence": 1.0,
+            "frame": 0.35,
+            "score": 0.5625,
+            "truth": 0.55
+          },
+          "score": 0.0568,
+          "text": "Volcano has a volcano can erupt."
+        },
+        {
+          "anchor": "volcano",
+          "ended": true,
+          "mth": {
+            "category_error": 0.7,
+            "coherence": 1.0,
+            "frame": 0.0,
+            "score": -0.115,
+            "truth": 0.0
+          },
+          "score": -0.2925,
+          "text": "Volcano is a flowing body of water can freeze."
+        },
+        {
+          "anchor": "volcano",
+          "ended": true,
+          "mth": {
+            "category_error": 0.7,
+            "coherence": 1.0,
+            "frame": 0.0,
+            "score": -0.115,
+            "truth": 0.0
+          },
+          "score": -0.3021,
+          "text": "Volcano is a flowing body of water can flow."
+        },
+        {
+          "anchor": "volcano",
+          "ended": true,
+          "mth": {
+            "category_error": 0.0,
+            "coherence": 1.0,
+            "frame": 1.0,
+            "score": 0.5875,
+            "truth": 0.275
+          },
+          "score": -0.3095,
+          "text": "Volcano has a volcano is a mountain."
+        },
+        {
+          "anchor": "volcano",
+          "ended": true,
+          "mth": {
+            "category_error": 0.7,
+            "coherence": 1.0,
+            "frame": 0.35,
+            "score": 0.2475,
+            "truth": 0.55
+          },
+          "score": -0.3834,
+          "text": "Volcano is a flowing body of water can erupt."
+        },
+        {
+          "anchor": "volcano",
+          "ended": true,
+          "mth": {
+            "category_error": 0.28,
+            "coherence": 1.0,
+            "frame": 0.0,
+            "score": 0.074,
+            "truth": 0.0
+          },
+          "score": -0.3992,
+          "text": "Volcano is a flowing body of."
+        },
+        {
+          "anchor": "volcano",
+          "ended": true,
+          "mth": {
+            "category_error": 0.0,
+            "coherence": 1.0,
+            "frame": 0.0,
+            "score": 0.2,
+            "truth": 0.0
+          },
+          "score": -0.4172,
+          "text": "Volcano has a volcano."
+        }
+      ],
+      "nanlm": "Volcano is a flowing body of water.",
+      "register_frames": 7,
+      "rejected": "Volcano is a flowing body of water."
+    }
+  },
+  "exposure": [
+    {
+      "known_seed": [
+        "river",
+        "flowing",
+        "body",
+        "water"
+      ],
+      "learned_records": 1,
+      "register_frames": 7,
+      "register_mapped": true,
+      "response": "River is a flowing body of water.",
+      "sentence": "A river is a flowing body of water."
+    },
+    {
+      "known_seed": [
+        "water"
+      ],
+      "learned_records": 1,
+      "register_frames": 3,
+      "register_mapped": true,
+      "response": "Water can flow.",
+      "sentence": "Water can flow."
+    },
+    {
+      "known_seed": [
+        "water"
+      ],
+      "learned_records": 1,
+      "register_frames": 6,
+      "register_mapped": true,
+      "response": "Water a flowing body of water.",
+      "sentence": "Rain is water."
+    },
+    {
+      "known_seed": [
+        "rain"
+      ],
+      "learned_records": 1,
+      "register_frames": 5,
+      "register_mapped": true,
+      "response": "Rain causes rivers to rise.",
+      "sentence": "Rain causes rivers to rise."
+    },
+    {
+      "known_seed": [
+        "rain"
+      ],
+      "learned_records": 0,
+      "register_frames": 7,
+      "register_mapped": true,
+      "response": "Rain is a flowing body of water.",
+      "sentence": "Storms cause rain."
+    },
+    {
+      "known_seed": [
+        "rivers",
+        "flow"
+      ],
+      "learned_records": 0,
+      "register_frames": 4,
+      "register_mapped": true,
+      "response": "Rivers flow through valleys.",
+      "sentence": "Rivers flow through valleys."
+    },
+    {
+      "known_seed": [
+        "bird",
+        "fly"
+      ],
+      "learned_records": 1,
+      "register_frames": 3,
+      "register_mapped": true,
+      "response": "Bird can fly.",
+      "sentence": "A bird can fly."
+    },
+    {
+      "known_seed": [
+        "birds",
+        "have",
+        "wings"
+      ],
+      "learned_records": 1,
+      "register_frames": 3,
+      "register_mapped": true,
+      "response": "Birds have wings.",
+      "sentence": "Birds have wings."
+    },
+    {
+      "known_seed": [
+        "birds"
+      ],
+      "learned_records": 0,
+      "register_frames": 5,
+      "register_mapped": true,
+      "response": "Birds sing in the morning.",
+      "sentence": "Birds sing in the morning."
+    },
+    {
+      "known_seed": [
+        "fish",
+        "swim"
+      ],
+      "learned_records": 1,
+      "register_frames": 3,
+      "register_mapped": true,
+      "response": "Fish can swim.",
+      "sentence": "A fish can swim."
+    },
+    {
+      "known_seed": [
+        "fish",
+        "water"
+      ],
+      "learned_records": 0,
+      "register_frames": 4,
+      "register_mapped": true,
+      "response": "Fish live in water.",
+      "sentence": "Fish live in water."
+    },
+    {
+      "known_seed": [
+        "fish"
+      ],
+      "learned_records": 1,
+      "register_frames": 4,
+      "register_mapped": true,
+      "response": "Fish is an animal.",
+      "sentence": "A fish is an animal."
+    },
+    {
+      "known_seed": [
+        "bird",
+        "animal"
+      ],
+      "learned_records": 1,
+      "register_frames": 4,
+      "register_mapped": true,
+      "response": "Bird is an animal.",
+      "sentence": "A bird is an animal."
+    },
+    {
+      "known_seed": [
+        "water"
+      ],
+      "learned_records": 0,
+      "register_frames": 5,
+      "register_mapped": true,
+      "response": "Water can flow through valleys.",
+      "sentence": "Animals need water."
+    },
+    {
+      "known_seed": [
+        "need",
+        "water"
+      ],
+      "learned_records": 0,
+      "register_frames": 4,
+      "register_mapped": true,
+      "response": "Need water can flow.",
+      "sentence": "Plants need water."
+    },
+    {
+      "known_seed": [
+        "plants"
+      ],
+      "learned_records": 0,
+      "register_frames": 4,
+      "register_mapped": true,
+      "response": "Plants grow in soil.",
+      "sentence": "Plants grow in soil."
+    },
+    {
+      "known_seed": [
+        "sun",
+        "hot"
+      ],
+      "learned_records": 1,
+      "register_frames": 3,
+      "register_mapped": true,
+      "response": "Sun is hot.",
+      "sentence": "The sun is hot."
+    },
+    {
+      "known_seed": [
+        "sun",
+        "causes"
+      ],
+      "learned_records": 1,
+      "register_frames": 3,
+      "register_mapped": true,
+      "response": "Sun causes light.",
+      "sentence": "The sun causes light."
+    },
+    {
+      "known_seed": [
+        "sky",
+        "blue"
+      ],
+      "learned_records": 1,
+      "register_frames": 3,
+      "register_mapped": true,
+      "response": "Sky is blue.",
+      "sentence": "The sky is blue."
+    },
+    {
+      "known_seed": [
+        "water"
+      ],
+      "learned_records": 1,
+      "register_frames": 3,
+      "register_mapped": true,
+      "response": "Water can freeze.",
+      "sentence": "Cold water can freeze."
+    }
+  ],
+  "generated_at": "2026-11-07T23:04:53Z",
+  "heldout": {
+    "after": [
+      {
+        "anchor": "volcano",
+        "nanlm": "Volcano is a flowing body of water.",
+        "register_frames": 7,
+        "response_templates": 0,
+        "retrieval": 0,
+        "scored_per_step": 57,
+        "seed": [
+          "volcano"
+        ],
+        "steps": 7,
+        "user": "What is a volcano?"
+      },
+      {
+        "anchor": "lava",
+        "nanlm": "Lava can flow through valleys.",
+        "register_frames": 5,
+        "response_templates": 0,
+        "retrieval": 0,
+        "scored_per_step": 57,
+        "seed": [
+          "lava",
+          "flow"
+        ],
+        "steps": 5,
+        "user": "Can lava flow?"
+      },
+      {
+        "anchor": "lava",
+        "nanlm": "Lava is hot.",
+        "register_frames": 3,
+        "response_templates": 0,
+        "retrieval": 0,
+        "scored_per_step": 57,
+        "seed": [
+          "lava",
+          "hot"
+        ],
+        "steps": 3,
+        "user": "Is lava hot?"
+      },
+      {
+        "anchor": "causes",
+        "nanlm": "Causes rivers to rise.",
+        "register_frames": 4,
+        "response_templates": 0,
+        "retrieval": 0,
+        "scored_per_step": 57,
+        "seed": [
+          "causes",
+          "ash"
+        ],
+        "steps": 4,
+        "user": "What causes ash?"
+      },
+      {
+        "anchor": "volcano",
+        "nanlm": "Volcano is a mountain.",
+        "register_frames": 4,
+        "response_templates": 0,
+        "retrieval": 0,
+        "scored_per_step": 57,
+        "seed": [
+          "volcano"
+        ],
+        "steps": 4,
+        "user": "What can a volcano do?"
+      },
+      {
+        "anchor": "lava",
+        "nanlm": "Lava comes from a volcano can erupt.",
+        "register_frames": 7,
+        "response_templates": 0,
+        "retrieval": 0,
+        "scored_per_step": 57,
+        "seed": [
+          "lava"
+        ],
+        "steps": 7,
+        "user": "Where does lava come from?"
+      },
+      {
+        "anchor": "volcanoes",
+        "nanlm": "Volcanoes cause ash.",
+        "register_frames": 3,
+        "response_templates": 0,
+        "retrieval": 0,
+        "scored_per_step": 57,
+        "seed": [
+          "volcanoes"
+        ],
+        "steps": 3,
+        "user": "Are volcanoes mountains?"
+      },
+      {
+        "anchor": "volcano",
+        "nanlm": "Volcano has a crater.",
+        "register_frames": 4,
+        "response_templates": 0,
+        "retrieval": 0,
+        "scored_per_step": 57,
+        "seed": [
+          "volcano"
+        ],
+        "steps": 4,
+        "user": "What happens when a volcano erupts?"
+      }
+    ],
+    "before": [
+      {
+        "anchor": "<s>",
+        "nanlm": "A bird is an animal.",
+        "register_frames": 5,
+        "response_templates": 0,
+        "retrieval": 0,
+        "scored_per_step": 45,
+        "seed": [
+          "<s>"
+        ],
+        "steps": 5,
+        "user": "What is a volcano?"
+      },
+      {
+        "anchor": "flow",
+        "nanlm": "Flow through valleys.",
+        "register_frames": 3,
+        "response_templates": 0,
+        "retrieval": 0,
+        "scored_per_step": 45,
+        "seed": [
+          "flow"
+        ],
+        "steps": 3,
+        "user": "Can lava flow?"
+      },
+      {
+        "anchor": "hot",
+        "nanlm": "Hot a bird is an animal.",
+        "register_frames": 6,
+        "response_templates": 0,
+        "retrieval": 0,
+        "scored_per_step": 45,
+        "seed": [
+          "hot"
+        ],
+        "steps": 6,
+        "user": "Is lava hot?"
+      },
+      {
+        "anchor": "causes",
+        "nanlm": "Causes rivers to rise.",
+        "register_frames": 4,
+        "response_templates": 0,
+        "retrieval": 0,
+        "scored_per_step": 45,
+        "seed": [
+          "causes"
+        ],
+        "steps": 4,
+        "user": "What causes ash?"
+      },
+      {
+        "anchor": "<s>",
+        "nanlm": "A bird can fly.",
+        "register_frames": 4,
+        "response_templates": 0,
+        "retrieval": 0,
+        "scored_per_step": 45,
+        "seed": [
+          "<s>"
+        ],
+        "steps": 4,
+        "user": "What can a volcano do?"
+      },
+      {
+        "anchor": "<s>",
+        "nanlm": "The sun is hot.",
+        "register_frames": 4,
+        "response_templates": 0,
+        "retrieval": 0,
+        "scored_per_step": 45,
+        "seed": [
+          "<s>"
+        ],
+        "steps": 4,
+        "user": "Where does lava come from?"
+      },
+      {
+        "anchor": "<s>",
+        "nanlm": "Birds sing in the morning.",
+        "register_frames": 5,
+        "response_templates": 0,
+        "retrieval": 0,
+        "scored_per_step": 45,
+        "seed": [
+          "<s>"
+        ],
+        "steps": 5,
+        "user": "Are volcanoes mountains?"
+      },
+      {
+        "anchor": "<s>",
+        "nanlm": "Birds sing in the sun is hot.",
+        "register_frames": 7,
+        "response_templates": 0,
+        "retrieval": 0,
+        "scored_per_step": 45,
+        "seed": [
+          "<s>"
+        ],
+        "steps": 7,
+        "user": "What happens when a volcano erupts?"
+      }
+    ],
+    "exposure": [
+      {
+        "learned_records": 1,
+        "response": "Volcano is a mountain.",
+        "sentence": "A volcano is a mountain."
+      },
+      {
+        "learned_records": 1,
+        "response": "Hot a fish is an animal.",
+        "sentence": "Lava is hot."
+      },
+      {
+        "learned_records": 1,
+        "response": "Lava can flow.",
+        "sentence": "Lava can flow."
+      },
+      {
+        "learned_records": 1,
+        "response": "Volcano can erupt.",
+        "sentence": "A volcano can erupt."
+      },
+      {
+        "learned_records": 0,
+        "response": "Cause rain causes rivers to rise.",
+        "sentence": "Volcanoes cause ash."
+      },
+      {
+        "learned_records": 1,
+        "response": "Ash can cover cities.",
+        "sentence": "Ash can cover cities."
+      },
+      {
+        "learned_records": 1,
+        "response": "Volcano has a crater.",
+        "sentence": "A volcano has a crater."
+      },
+      {
+        "learned_records": 0,
+        "response": "Lava comes from a volcano.",
+        "sentence": "Lava comes from a volcano."
+      }
+    ],
+    "questions": [
+      "What is a volcano?",
+      "Can lava flow?",
+      "Is lava hot?",
+      "What causes ash?",
+      "What can a volcano do?",
+      "Where does lava come from?",
+      "Are volcanoes mountains?",
+      "What happens when a volcano erupts?"
+    ],
+    "summary": {
+      "after_answered": 8,
+      "after_gold": 4,
+      "asked": 8,
+      "before_answered": 8,
+      "before_gold": 3,
+      "changed": 7
+    },
+    "topic": "volcano"
+  },
+  "logic_training": {
+    "boolean_foundation_reused": true,
+    "boolean_foundation_status": "passed",
+    "changed_heads": 0,
+    "corpus_records": 9,
+    "hyperedges_added": 0,
+    "mirror_pair_updates": 0,
+    "mode": "logic",
+    "stages_requested": [
+      "boolean_inverses",
+      "deep_logic"
+    ],
+    "state_sha256": "c30fc1f251a6fd916dd55ce1bc9bc129aabed31930c5a06555d18013fc4c8d5a",
+    "status": "no_op"
+  },
+  "memory": {
+    "by_kind": {
+      "observation": 354,
+      "relation": 23
+    },
+    "records": 377
+  },
+  "mth": {
+    "causal_edges": 0,
+    "edges": 5,
+    "layers": {
+      "bit": {
+        "accuracy": 1.0,
+        "coverage": 1.0,
+        "examples": 64
+      },
+      "byte": {
+        "accuracy": 1.0,
+        "coverage": 1.0,
+        "examples": 256
+      },
+      "lexical": {
+        "accuracy": 1.0,
+        "coverage": 1.0,
+        "examples": 4
+      },
+      "morpheme": {
+        "accuracy": 0.75,
+        "coverage": 1.0,
+        "examples": 3
+      },
+      "narrative": {
+        "accuracy": 0.0,
+        "coverage": 0.0,
+        "examples": 0
+      },
+      "nibble": {
+        "accuracy": 1.0,
+        "coverage": 1.0,
+        "examples": 4096
+      },
+      "paragraph": {
+        "accuracy": 0.0,
+        "coverage": 0.0,
+        "examples": 0
+      },
+      "phonetic": {
+        "accuracy": 1.0,
+        "coverage": 1.0,
+        "examples": 4
+      },
+      "sentence": {
+        "accuracy": 1.0,
+        "coverage": 1.0,
+        "examples": 5
+      },
+      "word_completion": {
+        "accuracy": 1.0,
+        "coverage": 1.0,
+        "examples": 7
+      }
+    },
+    "native_verified": false,
+    "schema": "nanlm.mth-layers/1",
+    "vocabulary": 4
+  },
+  "nannet_calls": 0,
+  "native_binary": "nanlm-universal",
+  "provider": "none",
+  "response_templates": 0,
+  "retrieval": 0,
+  "runner": {
+    "address": "nan://HW2:BS0:MC0:SC0:GM0",
+    "binary_translation": "NaN16DE",
+    "chart": {
+      "addresses": 65536,
+      "cells": 32896,
+      "dirty": true,
+      "heads": 256,
+      "mode": "trained",
+      "page_bytes": 8388608,
+      "root_hash": "cc52e06f602cf9ca3d832e337c8096ea7f759cd2dcce9bbb31f8b188c5a0e049",
+      "source": "/data/data/com.termux/files/usr/tmp/tmp7in2d8q3/state/universe/native/global_universe.nmg",
+      "trained": true
+    },
+    "chart_bytes": 8388608,
+    "local_memory_bytes": 8392704,
+    "nannet_link": "HW2:0",
+    "register": {
+      "back_payload": 1811939604,
+      "chart": {
+        "addresses": 65536,
+        "cells": 32896,
+        "dirty": true,
+        "heads": 256,
+        "mode": "trained",
+        "page_bytes": 8388608,
+        "root_hash": "cc52e06f602cf9ca3d832e337c8096ea7f759cd2dcce9bbb31f8b188c5a0e049",
+        "source": "/data/data/com.termux/files/usr/tmp/tmp7in2d8q3/state/universe/native/global_universe.nmg",
+        "trained": true
+      },
+      "forward_payload": 1811939604,
+      "frame": 277,
+      "mapped": true,
+      "pair": [
+        17,
+        136
+      ],
+      "rails": {
+        "canonical": 4369,
+        "canonical_hex": "1111",
+        "mirror": 34952,
+        "mirror_hex": "8888",
+        "s_minus": "nan://HW2:BS0:MC0:SC0:GM0::pair/17/136/s-",
+        "s_plus": "nan://HW2:BS0:MC0:SC0:GM0::pair/17/136/s+"
+      },
+      "reason": "trained chart",
+      "register_offset": 6535696,
+      "state_cells": 256,
+      "state_nonzero": 75
+    },
+    "register_bytes": 4096,
+    "ring_endpoint": "BS0:0::HW0:0",
+    "runner": "hermes-local-cpu",
+    "shares_code_with": [
+      "nanlm.chart-layout/1",
+      "nanlm.frame-sync/1",
+      "nanlm.dual-rails/1",
+      "nan16de"
+    ],
+    "uses_system_ring_for_compute": false
+  },
+  "schema": "nanlmind-hermes-long-chat/1",
+  "version": "1.3.1"
+}

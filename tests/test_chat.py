@@ -51,14 +51,89 @@ class HermesChatTests(unittest.TestCase):
             first = chat(ctx, "A river is water.", session_id="native-demo")
             self.assertEqual(first["provider"], "nanlm-native")
             self.assertEqual(first["native_synthesis"]["synthesis"],
-                             "native_relation_memory_template/1")
+                             "temporal_mirror_lm/1")
+            self.assertEqual(first["native_synthesis"]["response_templates"], 0)
             self.assertGreaterEqual(first["reflection"]["proposed_discoveries"], 1)
             self.assertTrue(first["scratch"]["scratch_id"].startswith("chat-"))
             self.assertEqual(len(chat_history(ctx, "native-demo")["messages"]), 2)
+            chat(ctx, "Water can flow.", session_id="native-demo")
             second = chat(ctx, "What is a river?", session_id="native-demo")
             self.assertEqual(second["provider"], "nanlm-native")
-            self.assertIn("river", second["response"].lower())
-            self.assertGreaterEqual(second["native_synthesis"]["matched_records"], 1)
+            self.assertTrue(second["response"])
+            frame = second["native_synthesis"]["temporal_frame"]
+            self.assertEqual(frame["scored_per_step"],
+                             second["native_synthesis"]["vocabulary"]["vocabulary"])
+            self.assertTrue(frame["mirror_state"])
+            self.assertTrue(second["response"].endswith((".", "!", "?")))
+            self.assertGreaterEqual(len(second["native_synthesis"]["temporal_frame"]["sentences"]), 1)
+
+    def test_native_chat_replies_are_exposure_only_and_questions_are_not_learned(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            ctx = NativeChatContext(Path(tmp))
+            chat(ctx, "A river is water.", session_id="exposure")
+            chat(ctx, "Water can flow.", session_id="exposure")
+            taught = chat(ctx, "What is a river?", session_id="exposure")
+            self.assertEqual(taught["native_synthesis"]["response_templates"], 0)
+            self.assertEqual(taught["native_synthesis"]["retrieval"], 0)
+            self.assertTrue(taught["response"])
+            for scripted in ("I recall", "Here is", "I learned", "I have no",
+                             "Teach me"):
+                self.assertNotIn(scripted, taught["response"])
+            chat(ctx, "What can a river do?", session_id="exposure")
+            from nanlmind_hermes.tools import _memory_store
+            relations = [row for row in _memory_store(ctx).query(limit=500)
+                         if row.get("kind") == "relation"]
+            self.assertFalse(any("what can a river do" in str(row).casefold()
+                                 for row in relations))
+            miss = chat(ctx, "What is dark matter?", session_id="exposure")
+            self.assertTrue(miss["response"])
+            self.assertTrue(miss["native_synthesis"]["temporal_frame"]["forced"])
+            self.assertTrue(miss["response"].endswith((".", "!", "?")))
+
+    def test_correction_rejects_the_answer_and_deliberates_again(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            ctx = NativeChatContext(Path(tmp))
+            for sentence in ("A bird can fly.", "A bird is an animal.",
+                             "Birds have wings."):
+                chat(ctx, sentence, session_id="correct")
+            first = chat(ctx, "What can a bird do?", session_id="correct")
+            self.assertTrue(first["response"])
+            feedback = chat(ctx, "No, that's incorrect.", session_id="correct")
+            synthesis = feedback["native_synthesis"]
+            self.assertTrue(synthesis["correction"])
+            self.assertTrue(feedback["response"])
+            self.assertNotEqual(feedback["response"], first["response"])
+            self.assertTrue(synthesis["temporal_frame"]["considered"])
+
+    def test_forced_futures_do_not_collapse_to_one_attractor(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            ctx = NativeChatContext(Path(tmp))
+            for sentence in ("A river is water.", "A bird is an animal.",
+                             "Fish live in water."):
+                chat(ctx, sentence, session_id="attractor")
+            first = chat(ctx, "What is a volcano?", session_id="attractor")
+            second = chat(ctx, "What is a quark?", session_id="attractor")
+            third = chat(ctx, "What is a comet?", session_id="attractor")
+            replies = [first["response"], second["response"], third["response"]]
+            self.assertTrue(all(replies))
+            self.assertTrue(all(reply.endswith((".", "!", "?")) for reply in replies))
+            self.assertGreater(len(set(replies)), 1)
+            self.assertTrue(first["native_synthesis"]["temporal_frame"]["forced"])
+
+    def test_native_chat_predicts_forward_from_the_learned_frame(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            ctx = NativeChatContext(Path(tmp))
+            for sentence in ("The sun is hot.", "The sun causes light.",
+                             "Rain is water.", "Cold water can freeze."):
+                chat(ctx, sentence, session_id="focus")
+            reply = chat(ctx, "Tell me about the sun.", session_id="focus")
+            self.assertTrue(reply["response"])
+            self.assertNotEqual(reply["response"], "Tell me about the sun.")
+            self.assertIn("sun", reply["response"].lower())
+            self.assertEqual(reply["native_synthesis"]["response_templates"], 0)
+            frame = reply["native_synthesis"]["temporal_frame"]
+            self.assertIn(frame["anchor"], {"sun"})
+            self.assertGreaterEqual(frame["steps"], 1)
 
     def test_open_ended_chat_persists_transcript_and_reflects_memory(self):
         with tempfile.TemporaryDirectory() as tmp:

@@ -37,11 +37,13 @@ In a Hermes session:
 /nanlm status
 ```
 
-Expected: the first chat stores `A river is water` as a supervised relation
-and updates the native state; the second retrieves it as
-`I recall these learned relations: A river is water.` The reply and the shared
-scratch window are stored under `state_dir`. No language-model provider is
-required in `native` mode. The training
+Expected: the first chat stores `A river is water` as exposure and updates the
+native state; the second predicts a reply word by word from the temporal mirror
+frame (for example `River is a water.`). Replies are not templates or retrieval,
+and every step weighs every known word. The reply and the shared scratch window
+are stored under `state_dir`. No language-model provider is required in
+`native` mode. Hermes' local-CPU runner loads the 8 MiB chart and mapped
+registers at boot. The training
 reply reports the Boolean foundation result and native run manifest; `status`
 shows the one `HW0::BS0` state directory and the last run. A failed Boolean
 gate stops before language stages.
