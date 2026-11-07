@@ -78,12 +78,12 @@ class DeviceRegistry:
             else:
                 device_id = uuid.uuid4().hex
                 db.execute("INSERT INTO devices VALUES (?,?,?,?)", (device_id, secret_hash, now, now))
-            used = {r[0] for r in db.execute("SELECT hw_slot FROM device_leases WHERE hw_slot IS NOT NULL AND released_at IS NULL AND expires_at>?", (now,))}
-            slot = next((n for n in range(4, 256) if n not in used), None)
-            if slot is None:
-                raise ValueError("no hardware slots currently available")
+            # A guest is a scoped participant in the one HW0::BS0 universe.
+            # It is not allocated a hardware/universe slot. Keep the legacy
+            # hw_slot column NULL so existing databases migrate without a
+            # destructive schema rewrite.
             expires = now + self.lease_seconds
-            db.execute("INSERT INTO device_leases VALUES (?,?,?,?,?,?,NULL)", (lease_id, device_id, slot, placeholder_hash, now, expires))
+            db.execute("INSERT INTO device_leases VALUES (?,?,?,?,?,?,NULL)", (lease_id, device_id, None, placeholder_hash, now, expires))
         try:
             token = self._new_token(device_id)
             with self._connect() as db:
@@ -94,7 +94,10 @@ class DeviceRegistry:
             with self._connect() as db:
                 db.execute("UPDATE device_leases SET hw_slot=NULL,released_at=? WHERE lease_id=?", (int(time.time()), lease_id))
             raise
-        return {"device_id": device_id, "address": f"nan://GM0:SC0:MC0:BS0:HW{slot}", "lease_id": lease_id, "lease_expires_at": expires, "token": token, "head_count": 256}
+        return {"device_id": device_id, "participant_id": device_id,
+                "address": "nan://GM0:SC0:MC0:HW0:BS0",
+                "lease_id": lease_id, "lease_expires_at": expires,
+                "token": token, "head_count": 256}
 
     def _active(self, db, token: str, now: int):
         if not isinstance(token, str) or not token.startswith("nnt_"):
@@ -130,13 +133,14 @@ class DeviceRegistry:
         if self.authority is not None:
             self.authority.revoke_token(token[4:])
         return {"lease_id": lease_id, "lease_expires_at": expires,
-                "address": f"nan://GM0:SC0:MC0:BS0:HW{slot}", "token": replacement}
+                "participant_id": device_id,
+                "address": "nan://GM0:SC0:MC0:HW0:BS0", "token": replacement}
 
     def release(self, token: str, now: int | None = None) -> dict:
         now = int(time.time()) if now is None else int(now)
         with self._connect() as db:
             row = self._active(db, token, now)
-            address = f"nan://GM0:SC0:MC0:BS0:HW{row['hw_slot']}"
+            address = "nan://GM0:SC0:MC0:HW0:BS0"
             db.execute("UPDATE device_leases SET hw_slot=NULL,released_at=? WHERE lease_id=?", (now, row["lease_id"]))
             device_id = row["device_id"]
         if self.authority is not None:
