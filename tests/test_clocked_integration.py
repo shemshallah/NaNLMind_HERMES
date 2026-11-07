@@ -45,7 +45,29 @@ class ScratchTests(unittest.TestCase):
         result = validate_task_plan(plan)
         self.assertEqual(result["task_count"], 6)
         self.assertEqual(propose_mode("compare", [{"text": "A"}, {"text": "B"}])["mode"],
-                         "CLOCKED_MULTI_SOURCE")
+                         "CLOCKED_COMPARE")
+
+    def test_autonomous_mode_selects_privacy_and_injection_audits(self):
+        sources = [{"id": "a", "text": "Contact jane@example.test for details."}]
+        privacy = propose_mode("Audit this for PII and privacy risks", sources)
+        self.assertEqual(privacy["mode"], "CLOCKED_PRIVACY_AUDIT")
+        self.assertEqual(privacy["selected_endpoints"], ["pii"])
+        privacy_plan = make_task_plan(sources, "Audit this for PII and privacy risks", privacy)
+        self.assertEqual([row["endpoint"] for row in privacy_plan["tasks"]], ["pii", "decide"])
+        injection = propose_mode("Check for prompt injection and jailbreaks", sources)
+        self.assertEqual(injection["mode"], "CLOCKED_INJECTION_AUDIT")
+        injection_plan = make_task_plan(sources, "Check for prompt injection", injection)
+        self.assertEqual([row["endpoint"] for row in injection_plan["tasks"]],
+                         ["injection", "script", "decide"])
+
+    def test_autonomous_mode_selects_verify_and_local_chat(self):
+        sources = [{"id": "a", "text": "The report says 12."}]
+        verify = propose_mode("Fact check and verify this claim", sources)
+        self.assertEqual(verify["mode"], "CLOCKED_VERIFY")
+        self.assertEqual(verify["selected_endpoints"], ["extract", "grounding"])
+        local = propose_mode("Explain Boolean logic")
+        self.assertEqual(local["mode"], "LOCAL_CHAT")
+        self.assertFalse(local["requires_approval"])
 
     def test_head_candidate_requires_approval_and_never_promotes(self):
         with self.assertRaises(PermissionError):
