@@ -62,10 +62,6 @@ config_schema:
     type: str
     default: ~/.local/share/nanlmind-hermes
     description: Per-installation local universe, corpus, run logs and manifests.
-  universe_layers:
-    type: int
-    default: 10
-    description: Number of logical memory projection layers (L0-L9).
   clocked_gateway_url:
     type: str
     default: ""
