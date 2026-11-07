@@ -79,8 +79,22 @@ class Scratch:
                expected_revision: str | None = None) -> dict:
         if lane not in LANES:
             raise ScratchError("unknown scratch lane")
-        if writer not in {"user", "hermes", "clocked", "nanlmind", "policy"}:
-            raise ScratchError("unknown scratch writer")
+        allowed_writers = {
+            "user": {"user"},
+            "hermes_plan": {"hermes"},
+            "clocked_request": {"hermes"},
+            "clocked_result": {"clocked"},
+            "evidence_atoms": {"hermes"},
+            "conflict_map": {"hermes"},
+            "nan16_package": {"hermes"},
+            "head_response": {"nanlmind"},
+            "hermes_synthesis": {"hermes"},
+            "head_validation": {"nanlmind"},
+            "final": {"hermes"},
+            "learning_proposal": {"hermes", "nanlmind"},
+        }
+        if writer not in allowed_writers[lane]:
+            raise ScratchError("writer is not authorized for this scratch lane")
         if len(canonical(payload)) > 1_048_576:
             raise ScratchError("scratch payload exceeds 1 MiB")
         with self.lock_path.open("a+") as lock:
