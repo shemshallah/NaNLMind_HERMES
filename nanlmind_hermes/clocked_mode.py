@@ -207,5 +207,28 @@ def execute_multi_source(client: ClockedGatewayClient, scratch: Scratch,
             "status": observation.get("status"),
             "provenance": observation.get("provenance", {}),
         })
+        if observation.get("endpoint") == "compare":
+            compare_data = observation.get("result", {})
+            if isinstance(compare_data, dict) and isinstance(compare_data.get("result"), dict):
+                compare_data = compare_data["result"]
+            compare_fields = compare_data.get("fields", {}) if isinstance(compare_data, dict) else {}
+            if not isinstance(compare_fields, dict):
+                compare_fields = {}
+            conflicts = compare_fields.get("conflicts", compare_data.get("conflicts", [])
+                if isinstance(compare_data, dict) else [])
+            verdict = compare_fields.get("verdict", compare_data.get("verdict")
+                if isinstance(compare_data, dict) else None)
+            if isinstance(conflicts, str):
+                conflicts = [conflicts]
+            if isinstance(conflicts, list) and conflicts or (
+                    isinstance(verdict, str) and "conflict" in verdict.casefold()):
+                scratch.append("conflict_map", "hermes", {
+                    "kind": "clocked_cross_source_conflict",
+                    "source_ids": [s.get("id") for s in sources if isinstance(s, dict)],
+                    "conflicts": conflicts[:64] if isinstance(conflicts, list) else [],
+                    "verdict": verdict if isinstance(verdict, str) else None,
+                    "result_ref": _digest(observation),
+                    "provenance": observation.get("provenance", {}),
+                })
     return {"plan": plan, "validation": validation,
             "result_count": len(observations), "scratch": scratch.snapshot()}
