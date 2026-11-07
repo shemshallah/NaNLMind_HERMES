@@ -35,7 +35,7 @@ def clocked_plan(ctx, question, sources=None, scratch_id="default"):
         }, snap["revision"])
         snap = scratch.snapshot()
     if sources:
-        plan = make_task_plan(sources, question)
+        plan = make_task_plan(sources, question, mode)
         validation = validate_task_plan(plan, {
             "max_requests": 16, "max_bytes": 1_048_576,
         })
@@ -74,7 +74,7 @@ def clocked_execute(ctx, question, sources=None, scratch_id="default",
     if reviewed.get("question") != question:
         raise ValueError("question differs from the reviewed CLOCKED plan")
     if sources:
-        fresh = make_task_plan(sources, question)
+        fresh = make_task_plan(sources, question, propose_mode(question, sources))
         if plan.get("tasks") != fresh.get("tasks"):
             raise ValueError("sources differ from the reviewed CLOCKED plan")
     else:
