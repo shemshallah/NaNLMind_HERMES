@@ -2,6 +2,7 @@ name: nanlmind-hermes
 version: 1.1.0
 manifest_version: 2
 api_version: 1
+requires_hermes: ">=0.23.0"
 description: Local NaNLMind conversational learning, explicit staged training, reproducible evaluation and NANNET-connected universe operations through Hermes.
 license: MIT
 homepage: https://github.com/shemshallah/NaNLMind_HERMES
@@ -61,12 +62,10 @@ config_schema:
     type: str
     default: ~/.local/share/nanlmind-hermes
     description: Per-installation local universe, corpus, run logs and manifests.
-
   universe_layers:
     type: int
-    default: 7
-    description: Number of logical memory projection layers (L0-L6).
-
+    default: 10
+    description: Number of logical memory projection layers (L0-L9).
   clocked_gateway_url:
     type: str
     default: ""
