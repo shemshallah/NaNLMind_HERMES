@@ -105,7 +105,7 @@ it is not the model runner or corpus store.
 
 ---
 
-## 1. Default behaviour: chat
+See [the unified topology and layer contract](docs/UNIFIED_TOPOLOGY_AND_LAYERS.md) for the single HW0::BS0 universe, MC0Link/RunnerLink boundaries, fixed L0-L9 resolution mapping, curriculum routing, and M0-M9 transformation semantics.\n\n## 1. Default behaviour: chat
 
 Plain conversation is the default. The model should use `nanlm_chat` for normal
 interaction. With `chat_learning: true` (default), each exchange is reflected
