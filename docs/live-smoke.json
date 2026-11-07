@@ -1,0 +1,75 @@
+{
+  "checks": [
+    {
+      "check": "nanlm_auth_init",
+      "detail": {
+        "installation_id": "0b2873ca-4107-4548-b3dc-bd8be9aa8586"
+      },
+      "status": "pass"
+    },
+    {
+      "check": "nanlm_auth_pair",
+      "detail": {
+        "issuer_key_pinned": true,
+        "scopes": [
+          "corpus:write",
+          "training:execute",
+          "universe:read"
+        ]
+      },
+      "status": "pass"
+    },
+    {
+      "check": "nanlm_auth_status",
+      "detail": {
+        "scopes": [
+          "corpus:write",
+          "training:execute",
+          "universe:read"
+        ]
+      },
+      "status": "pass"
+    },
+    {
+      "check": "nanlm_require_scope",
+      "detail": {
+        "scope": "training:execute"
+      },
+      "status": "pass"
+    },
+    {
+      "check": "nanlm_clocked_execute",
+      "detail": {
+        "result_count": 1,
+        "scratch_entries": 4
+      },
+      "status": "pass"
+    },
+    {
+      "check": "nanlm_clocked_scratch",
+      "detail": {
+        "lanes": [
+          "clocked_request",
+          "clocked_result",
+          "evidence_atoms",
+          "hermes_plan"
+        ]
+      },
+      "status": "pass"
+    },
+    {
+      "check": "nanlm_auth_revoke",
+      "detail": {
+        "local_token_erased": true,
+        "revoked": true
+      },
+      "status": "pass"
+    }
+  ],
+  "clocked_url": "https://deeprepo-qtcl-9c8fea15.apps.mistral.run",
+  "failed": 0,
+  "generated_at": "2026-11-07T17:00:28Z",
+  "nannet_url": "https://deeprepo-qtcl-9c8fea15.apps.mistral.run",
+  "passed": 7,
+  "schema": "nanlmind-hermes-live-smoke/1"
+}

@@ -66,7 +66,8 @@ class CurriculumTests(unittest.TestCase):
             corpus = {
                 "schema": "nanlm-structured-relation-curriculum/1",
                 "topic_key": "topic-key", "resolution_order": ["lexical"],
-                "frozen_challenge_sets": 1, "stages": [{"resolution": "lexical"}],
+                "frozen_challenge_sets": 1,
+                "stages": [{"resolution": "lexical", "rejected": {"duplicate": 1, "incomplete_triple": 2}}],
                 "records": [
                     {"split": "train", "source_digest": "a" * 64,
                      "item": {"kind": "relation", "subject": "penguin", "predicate": "is_a",
@@ -91,6 +92,7 @@ class CurriculumTests(unittest.TestCase):
             self.assertEqual(observed["mode"], "structured_teacher_training")
             self.assertEqual(observed["epochs"], 4)
             self.assertEqual(result["training"]["resolution_metrics"]["5"]["relation_polarity_accuracy"], 0.75)
+            self.assertEqual(result["rounds"][0]["rejected_records"], 3)
             self.assertEqual(result["legacy_max_samples_per_head_ignored"], 128)
             self.assertTrue(Path(result["manifest_path"]).is_file())
             saved = json.loads(Path(result["manifest_path"]).read_text())
@@ -165,3 +167,19 @@ class CurriculumTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TrainingSessionDispatchTests(unittest.TestCase):
+    def test_training_presets_route_to_curriculum_experiment(self):
+        from unittest.mock import patch
+        from nanlmind_hermes.tools import run_training_session
+        with patch("nanlmind_hermes.tools.run_curriculum_experiment", return_value={}) as run:
+            result = run_training_session(None, "demo", "logic", 3, 1, 16)
+        self.assertEqual(result["mode"], "logic")
+        self.assertEqual(result["stages_requested"], ["boolean_inverses", "deep_logic"])
+        self.assertEqual(run.call_args.args[5], ["boolean_inverses", "deep_logic"])
+
+    def test_unknown_training_preset_is_rejected(self):
+        from nanlmind_hermes.tools import run_training_session
+        with self.assertRaisesRegex(ValueError, "mode must be"):
+            run_training_session(None, "demo", "unknown")
