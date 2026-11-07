@@ -5,7 +5,7 @@ learning, explicit native training, durable mathematical memory, and approved
 CLOCKED evidence plans. Training and inference stay local; NANNET is the
 identity/authorization boundary and CLOCKED is an evidence service.
 
-**Version 1.2.1 — catalog submission pending.**
+**Version 1.2.2 — catalog submission pending.**
 
 ## What it does
 
@@ -168,7 +168,7 @@ Report security issues privately as described in [SECURITY.md](SECURITY.md).
 
 ## Verification
 
-- 132 unit/integration tests pass locally; CI runs Python 3.10, 3.11, and 3.12.
+- 133 unit/integration tests pass locally; CI runs Python 3.10, 3.11, and 3.12.
 - Hermes Agent v0.23.0 `plugins validate` and `plugins doctor` pass in CI.
 - Wheel and source distribution builds, metadata checks, installation/import,
   and SHA-256 checksums pass in CI.

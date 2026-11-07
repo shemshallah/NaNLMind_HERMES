@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.2 — 2026-11-07
+
+- Completed the full-feature demo coverage: all 33 registered tools are called,
+  with 36 calls total and 36/36 passing.
+- Added a manifest test that fails if a new registered tool is not exercised by
+  the demo script.
+- Recorded live NANNET and CLOCKED smoke results separately (7/7 checks).
+
 ## 1.2.1 — 2026-11-07
 
 - Restored the missing `run_training_session` dispatch used by the explicit

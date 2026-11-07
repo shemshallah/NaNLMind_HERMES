@@ -79,6 +79,12 @@ class ManifestRegistrationTests(unittest.TestCase):
         self.assertRegex(project, r'(?m)^dependencies\s*=\s*\[\]\s*$')
         self.assertIn('auth = ["cryptography>=42,<47"]', project)
 
+    def test_full_feature_demo_covers_every_registered_tool(self):
+        demo = (ROOT / "scripts" / "demo_run.py").read_text(encoding="utf-8")
+        missing = sorted(name for name in registered_tool_names()
+                         if '"%s"' % name not in demo)
+        self.assertFalse(missing, "demo_run.py does not call: " + ", ".join(missing))
+
     def test_secret_environment_names_are_unique_and_masked(self):
         manifest = (ROOT / "plugin.yaml").read_text(encoding="utf-8")
         expected = {"CLOCKED_GATEWAY_TOKEN", "NANLM_DEVICE_TOKEN", "NANNET_MASTER_KEY"}
