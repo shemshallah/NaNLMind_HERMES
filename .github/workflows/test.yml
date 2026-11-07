@@ -74,8 +74,7 @@ jobs:
           PYTHONPATH="$RUNNER_TEMP/sdist-install" python -c "from nanlmind_hermes import register; assert callable(register)"
       - name: Generate and verify distribution checksums
         run: |
-          sha256sum dist/*.whl dist/*.tar.gz > dist/SHA256SUMS
-          (cd dist && sha256sum -c SHA256SUMS)
+          (cd dist && sha256sum *.whl *.tar.gz > SHA256SUMS && sha256sum -c SHA256SUMS)
       - name: Upload release distributions
         uses: actions/upload-artifact@v4
         with:
