@@ -192,9 +192,11 @@ Validation passed.
 
 ### Minimal Alpine / Termux
 
-The plugin has no required Python dependencies. It uses `cryptography` when
-present and otherwise falls back to pure-Python Ed25519, AES-256-GCM, HKDF, and
-RSA PKCS#1 verification. See `docs/ALPINE_PROOT_TESTING.md`.
+The production manifest declares the bounded `cryptography>=42,<47` dependency
+for NANNET identity and token protection. `crypto_compat.py` retains a
+pure-Python compatibility fallback for constrained development/test hosts;
+production installs should use the declared dependency. See
+`docs/ALPINE_PROOT_TESTING.md`.
 
 For the audited/accelerated backend:
 
@@ -389,7 +391,7 @@ general language understanding.
 
 ## 7. NANNET identity and pairing
 
-The optional NANNET path provides:
+The NANNET path provides:
 
 - one local installation Ed25519 identity;
 - a master-key-encrypted private-key envelope;
@@ -489,7 +491,7 @@ and the limits of the experiment.
 | `nanlmind_hermes/runner.py` | local native process harness |
 | `nanlmind_hermes/memory.py` | additive memory ledger and projections |
 | `nanlmind_hermes/auth.py`, `pairing.py` | NANNET identity and signing |
-| `nanlmind_hermes/crypto_compat.py` | dependency-free Ed25519/AES-GCM/HKDF |
+| `nanlmind_hermes/crypto_compat.py` | Ed25519/AES-GCM/HKDF compatibility backend |
 | `docs/TOOLS_REFERENCE.md` | complete tool/option reference |
 | `docs/WALKTHROUGHS.md` | end-to-end usage scenarios |
 | `docs/PLUGIN_ARCHITECTURE.md` | design, boundaries, and invariants |\n| CLOCKED architecture | [NaNLMind/docs/CLOCKED_HERMES_BRAINSTORM.md](https://github.com/shemshallah/NaNLMind_CLOCKED/blob/main/docs/CLOCKED_HERMES_BRAINSTORM.md) |
