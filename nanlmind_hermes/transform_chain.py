@@ -106,7 +106,7 @@ def preflight(package: dict) -> dict:
         family = LANE_FAMILY.get(lane, "unclassified")
         entry_id = str(entry.get("entry_id") or index)
         routes.append({"entry_id": entry_id, "family": family,
-                       "route_target": "HW0::BS0::RunnerLink",
+                       "route_target": "HW0::RunnerLink::BS0",
                        "head_selection": "native_relation_eval"})
         payload_bytes = _canonical(entry.get("payload"))
         text = payload_bytes.decode("utf-8", errors="strict")
