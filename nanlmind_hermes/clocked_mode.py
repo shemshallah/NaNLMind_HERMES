@@ -138,11 +138,39 @@ def execute_multi_source(client: ClockedGatewayClient, scratch: Scratch,
         if not isinstance(observation, dict):
             raise ValueError("invalid CLOCKED observation")
         scratch.append("clocked_result", "clocked", observation)
+        result_data = observation.get("result", {})
+        if not isinstance(result_data, dict):
+            result_data = {}
+        nested = result_data.get("result")
+        if isinstance(nested, dict):
+            result_data = nested
+        fields = result_data.get("fields", {})
+        claims = fields.get("claims", []) if isinstance(fields, dict) else []
+        if isinstance(claims, str):
+            claims = [claims]
+        if isinstance(claims, list):
+            for claim in claims[:64]:
+                if isinstance(claim, dict):
+                    claim = claim.get("claim") or claim.get("text") or claim.get("value")
+                if not isinstance(claim, str) or not claim.strip():
+                    continue
+                scratch.append("evidence_atoms", "hermes", {
+                    "subject": str(observation.get("source_id") or "source")[:128],
+                    "predicate": "states_claim",
+                    "object": claim[:2048],
+                    "truth_state": "UNKNOWN",
+                    "resolution": 5,
+                    "source_digest": observation.get("provenance", {}).get("input_sha256"),
+                    "endpoint": observation.get("endpoint"),
+                    "result_type": observation.get("result_type"),
+                    "result_ref": _digest(observation),
+                    "provenance": observation.get("provenance", {}),
+                })
         scratch.append("evidence_atoms", "hermes", {
             "source_id": observation.get("source_id"),
             "endpoint": observation.get("endpoint"),
             "native_result_type": observation.get("result_type"),
-            "result_ref": observation.get("result_ref") or _digest(observation),
+            "result_ref": _digest(observation),
             "status": observation.get("status"),
             "provenance": observation.get("provenance", {}),
         })
