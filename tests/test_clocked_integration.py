@@ -46,6 +46,57 @@ class AutonomousModeTests(unittest.TestCase):
         self.assertEqual(result["decision_method"], "deterministic_fallback")
 
 
+class TaskPlanValidationTests(unittest.TestCase):
+    def plan(self, tasks=None):
+        return {
+            "schema": "nanlm.clocked-task-plan/1",
+            "version": 1,
+            "plan_id": "plan-123456",
+            "tasks": tasks if tasks is not None else [
+                {"id": "task-a", "endpoint": "extract", "text": "source text",
+                 "depends_on": [], "options": {}}
+            ],
+        }
+
+    def test_rejects_self_and_forward_dependencies(self):
+        with self.assertRaisesRegex(ValueError, "earlier tasks"):
+            validate_task_plan(self.plan([
+                {"id": "task-a", "endpoint": "extract", "text": "A",
+                 "depends_on": ["task-a"]}
+            ]))
+        with self.assertRaisesRegex(ValueError, "earlier tasks"):
+            validate_task_plan(self.plan([
+                {"id": "task-a", "endpoint": "extract", "text": "A",
+                 "depends_on": ["task-b"]}
+            ]))
+
+    def test_rejects_duplicate_or_non_string_dependencies(self):
+        tasks = [
+            {"id": "task-a", "endpoint": "extract", "text": "A", "depends_on": []},
+            {"id": "task-b", "endpoint": "grounding", "text": "B",
+             "depends_on": ["task-a", "task-a"]},
+        ]
+        with self.assertRaisesRegex(ValueError, "uniquely reference"):
+            validate_task_plan(self.plan(tasks))
+        tasks[1]["depends_on"] = [{"id": "task-a"}]
+        with self.assertRaisesRegex(ValueError, "uniquely reference"):
+            validate_task_plan(self.plan(tasks))
+
+    def test_rejects_invalid_versions_options_and_budget_types(self):
+        plan = self.plan()
+        plan["version"] = True
+        with self.assertRaisesRegex(ValueError, "version"):
+            validate_task_plan(plan)
+        plan = self.plan()
+        plan["tasks"][0]["options"] = {"large": "x" * 9000}
+        with self.assertRaisesRegex(ValueError, "options"):
+            validate_task_plan(plan)
+        with self.assertRaisesRegex(ValueError, "max_requests"):
+            validate_task_plan(self.plan(), {"max_requests": True})
+
+
+
+
 class ScratchTests(unittest.TestCase):
     def test_hash_chain_and_expected_revision(self):
         with tempfile.TemporaryDirectory() as tmp:
