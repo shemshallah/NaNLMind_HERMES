@@ -48,7 +48,9 @@ fail-closed behavior.
 Topology and routing policy:
 
 ```text
-one instantiated universe: HW0::BS0 (BS0 = RunnerLink)
+one instantiated universe: HW0::BS0
+HW0 = RunnerLink (hardware-level interface)
+BS0 = RunnerRing (six internal workers)
 MC0 = MC0Link (transport/link identity, not a second universe)
 HW1 = phone endpoint
 HW2 = Hermes demo endpoint
