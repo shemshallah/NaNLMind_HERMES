@@ -242,7 +242,7 @@ def register(ctx):
     specs = [
         ("nanlm_clocked_plan", "Propose an autonomous local/CLOCKED mode and record a bounded multi-source plan without transmitting source text.",
          {"question": {"type": "string", "minLength": 1, "maxLength": 65536},
-          "sources": {"type": "array", "maxItems": 8, "items": {"type": "object",
+          "sources": {"type": "array", "maxItems": 7, "items": {"type": "object",
              "required": ["text"], "properties": {"id": {"type": "string", "maxLength": 80},
              "text": {"type": "string", "minLength": 1, "maxLength": 65536}}}},
           "scratch_id": {"type": "string", "maxLength": 80}},
