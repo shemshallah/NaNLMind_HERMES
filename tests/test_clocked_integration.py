@@ -59,6 +59,20 @@ class TaskPlanValidationTests(unittest.TestCase):
             ],
         }
 
+    def test_rejects_unknown_fields_and_missing_schema_keys(self):
+        plan = self.plan()
+        plan["unexpected"] = True
+        with self.assertRaisesRegex(ValueError, "top-level fields"):
+            validate_task_plan(plan)
+        task = self.plan()["tasks"][0]
+        task["unexpected"] = True
+        with self.assertRaisesRegex(ValueError, "unsupported fields"):
+            validate_task_plan(self.plan([task]))
+        task = self.plan()["tasks"][0]
+        del task["depends_on"]
+        with self.assertRaisesRegex(ValueError, "missing required fields"):
+            validate_task_plan(self.plan([task]))
+
     def test_rejects_self_and_forward_dependencies(self):
         with self.assertRaisesRegex(ValueError, "earlier tasks"):
             validate_task_plan(self.plan([
