@@ -60,16 +60,20 @@ The signature covers SHA-256 of the body. The server verifies:
 4. ±300-second timestamp window;
 5. one-time nonce replay table.
 
-## Hermes hardware identity
+## Hermes identity and shared-universe addressing
 
-`HW_HERMES_API` is the preferred bearer for Hermes chat/training. If absent,
-Hermes registers one `hwh_` key at `/v1/hermes/register`, stores it under
-`<state_dir>/hw_hermes_api.json` with mode `0600`, and reuses it. Android device
-tokens (`nnt_`) are a separate namespace and are not reused by Hermes.
+Hermes uses an explicitly paired NANNET installation identity. Its private
+Ed25519 key and paired token are encrypted at rest under the independently
+configured `NANNET_MASTER_KEY` Hermes secret. The plugin retrieves secrets only
+through `agent.secret_scope.get_secret()`; it does not read `HW_HERMES_API`,
+shell environment credentials, or external credential stores. Pairing is
+initiated by `nanlm_auth_init` and `nanlm_auth_pair`; no hardware key is
+auto-registered.
 
-Slot allocation is `HW2` for the Hermes demo, `HW3` reserved for Clocked, then
-the lowest free slot from `HW4`. A seeded HW2 key is reused through
-`HW_HERMES_API`; it is not reissued or duplicated.
+The topology is one canonical `HW0::BS0` universe: HW0 is RunnerLink and BS0 is
+the six-runner ring. HW1 is the phone endpoint, HW2 the Hermes endpoint and HW3
+the CLOCKED endpoint. HW4-HW8 are unallocated. HW9+ are scoped participant
+addresses attached to the same universe, never separate model universes.
 
 ## Portal route
 
