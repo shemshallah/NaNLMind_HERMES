@@ -10,7 +10,7 @@ PACKAGE = ROOT / "nanlmind_hermes"
 
 class CredentialPolicyTests(unittest.TestCase):
     def test_plugin_source_never_reads_process_environment_or_credential_files(self):
-        forbidden = re.compile(r"os\\.environ|NANLM_AUTH_TEST_BYPASS|HW_HERMES_API")
+        forbidden = re.compile(r"os\.environ|NANLM_AUTH_TEST_BYPASS|HW_HERMES_API")
         for path in PACKAGE.glob("*.py"):
             with self.subTest(path=path.name):
                 source = path.read_text(encoding="utf-8")
@@ -28,9 +28,9 @@ class CredentialPolicyTests(unittest.TestCase):
         for key, env_name in expected.items():
             with self.subTest(key=key):
                 pattern = (
-                    rf"  {re.escape(key)}:\\n"
-                    rf"    type: secret\\n"
-                    rf"    env: {re.escape(env_name)}"
+                    rf"(?m)^  {re.escape(key)}:\s*\n"
+                    rf"    type: secret\s*\n"
+                    rf"    env: {re.escape(env_name)}$"
                 )
                 self.assertRegex(manifest, pattern)
 
