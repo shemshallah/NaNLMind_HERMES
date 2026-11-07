@@ -430,11 +430,13 @@ python -m unittest discover -s tests -v
 ## 9. CLOCKED integration
 
 HERMES now has a dedicated CLOCKED planning/execution/synthesis path and a
-revisioned, hash-chained scratch journal. It can plan bounded multi-endpoint
-CLOCKED tasks, require explicit approval before execution, retain typed
-results and provenance, synthesize a draft, submit that draft through the
-NaNLMind Boolean-head receiving interface, and compose a final answer while
-preserving UNKNOWN and CONFLICT.
+revisioned, hash-chained scratch journal. It autonomously asks its configured
+LLM to select a CLOCKED mode, then constrains that decision to a fixed
+endpoint allowlist and deterministic fallback. It plans bounded multi-endpoint
+tasks, requires explicit approval before execution, retains typed results and
+provenance, synthesizes a draft, submits that draft through the NaNLMind
+Boolean-head receiving interface, and composes a final answer while preserving
+UNKNOWN and CONFLICT.
 
 The NaNLMind head-cortex client is separate from the CLOCKED service adapter.
 HERMES also exposes approval-gated isolated Boolean-head candidate creation
