@@ -484,12 +484,14 @@ License: MIT.
 
 ## CLOCKED mode and autonomous head reasoning
 
-A dedicated CLOCKED integration is being designed with the service implementation
-in [NaNLMind_CLOCKED](https://github.com/shemshallah/NaNLMind_CLOCKED). HERMES
-will select local or CLOCKED-assisted modes per task, gather multiple typed
-CLOCKED results into a revisioned scratch, submit that evidence through the
-NaNLMind NaN16/M0-M9 interface, and validate its answer draft through the
-existing Boolean-derived heads.
+The first CLOCKED integration slice is implemented across
+[NaNLMind_CLOCKED](https://github.com/shemshallah/NaNLMind_CLOCKED),
+[NaNLMind](https://github.com/shemshallah/NaNLMind), and HERMES. HERMES has
+autonomous mode proposals, reviewed multi-source task plans, a hash-chained
+scratch, a scoped CLOCKED client, typed evidence packaging, a head-cortex
+client and a two-pass synthesis tool. CLOCKED exposes a bounded multi-endpoint
+task API. NaNLMind provides read-only Boolean-head relation inference and a
+NANNET-authorized HTTP adapter.
 
 The HERMES-side design is
 [docs/CLOCKED_AUTONOMOUS_HEAD_CORTEX.md](docs/CLOCKED_AUTONOMOUS_HEAD_CORTEX.md).
@@ -503,5 +505,7 @@ protocol, native heads and canonical learning pipeline. Self-modifying heads
 will operate on isolated candidate mutations; canonical changes still require
 the NaNLMind evaluator and six-runner promotion barrier.
 
-This is an architecture/design milestone, not a claim that the CLOCKED mode,
-scratch transport or head-cortex endpoint is already running.
+The code and offline CI contracts are committed, but the services are not yet
+deployed or connected through the live Router/Koyeb topology. Live upstream
+CLOCKED endpoint calls and candidate self-modification/promotion remain
+outstanding.
