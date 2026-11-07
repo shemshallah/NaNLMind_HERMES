@@ -64,6 +64,8 @@ def propose_mode(question: str, source_texts: list[str] | None = None) -> dict:
 def validate_task_plan(plan: dict, budget: dict | None = None) -> dict:
     if not isinstance(plan, dict) or plan.get("schema") != "nanlm.clocked-task-plan/1":
         raise ValueError("invalid CLOCKED task plan schema")
+    if set(plan) - {"schema", "version", "plan_id", "tasks"}:
+        raise ValueError("CLOCKED task plan contains unsupported top-level fields")
     if isinstance(plan.get("version"), bool) or plan.get("version") != 1:
         raise ValueError("unsupported CLOCKED task plan version")
     plan_id = plan.get("plan_id")
@@ -79,6 +81,10 @@ def validate_task_plan(plan: dict, budget: dict | None = None) -> dict:
     for index, task in enumerate(tasks):
         if not isinstance(task, dict):
             raise ValueError("task %d must be an object" % index)
+        if not {"id", "endpoint", "text", "depends_on"}.issubset(task):
+            raise ValueError("task %d is missing required fields" % index)
+        if set(task) - {"id", "source_id", "endpoint", "text", "depends_on", "options"}:
+            raise ValueError("task %d contains unsupported fields" % index)
         task_id, endpoint, text = task.get("id"), task.get("endpoint"), task.get("text")
         if not isinstance(task_id, str) or not 1 <= len(task_id) <= 128 or task_id in seen:
             raise ValueError("task IDs must be unique strings of 1..128 characters")
