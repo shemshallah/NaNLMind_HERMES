@@ -22,7 +22,8 @@ universe. It supersedes assumptions that HW4–HW8 instantiate additional univer
    HW1 phone         HW2 Hermes         HW3 CLOCKED
       endpoint          endpoint           endpoint
 
-HW4–HW8: no independent universe instances
+HW4–HW8: intentionally unallocated
+HW9+: scoped participant addresses attached to HW0::BS0
 ```
 
 - **MC0 is MC0Link.** It is the link/transport interface, not the six-runner
@@ -33,9 +34,11 @@ HW4–HW8: no independent universe instances
   training state, evidence and canonical generations belong to this one object.
 - **HW1, HW2 and HW3 are endpoints/demos.** They attach to the shared universe;
   they do not create model copies.
-- **HW4–HW8 are not required to exist as universe instances.** Do not allocate,
-  bootstrap, train or advertise per-slot universes there. A device lease or
-  participant credential is an access identity, not a universe allocation.
+- **HW4–HW8 are intentionally unallocated.** They are not runner identities,
+  model slots or universe instances.
+- **HW9+ are scoped participant addresses only.** A lease identifies an external
+  participant attached to the shared HW0::BS0 universe; it does not allocate
+  model state, a private head topology or a second universe.
 - The six BS0 runners are disposable execution workers over one global state.
   They are not six independent minds and never own private histories.
 
