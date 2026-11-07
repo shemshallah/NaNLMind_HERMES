@@ -218,3 +218,26 @@ def head_candidate(ctx, mutation_id, head_index, patch_mask,
         "promotion_allowed": False,
     })
     return {"candidate": result, "scratch": scratch.snapshot()}
+
+def head_candidate_evaluate(ctx, mutation_id, records, approved=False,
+                            scratch_id="default"):
+    if approved is not True:
+        raise PermissionError("held-out candidate evaluation requires explicit approved=true")
+    if not isinstance(records, list) or not 1 <= len(records) <= 512:
+        raise ValueError("records must contain 1..512 held-out relations")
+    if not os.environ.get("NANLM_HEAD_CORTEX_URL") or not os.environ.get("NANLM_DEVICE_TOKEN"):
+        raise RuntimeError("configure NANLM_HEAD_CORTEX_URL and a NANNET training:execute device token")
+    request = {
+        "schema": "nanlm.head-candidate-evaluation-request/1",
+        "mutation_id": mutation_id,
+        "records": records,
+    }
+    result = HeadCortexClient().evaluate_candidate(request)
+    scratch = _scratch(ctx, scratch_id)
+    scratch.append("learning_proposal", "hermes", {
+        "kind": "boolean_head_candidate_evaluation",
+        "mutation_id": mutation_id,
+        "evaluation": result,
+        "promotion_allowed": False,
+    })
+    return {"evaluation": result, "scratch": scratch.snapshot()}
