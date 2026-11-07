@@ -84,6 +84,45 @@ class HeadCortexClientTests(unittest.TestCase):
         with self.assertRaises(HeadCortexError):
             self.client.evaluate_candidate(self.request())
 
+    def learning_request(self):
+        return {
+            "schema": "nanlm.head-learning-candidate-request/1",
+            "mutation_id": "learn-1",
+            "base_topology_digest": "b" * 64,
+            "split": "train",
+            "teacher": "CLOCKED",
+            "teacher_outputs_are_ground_truth": False,
+            "dataset_sha256": "c" * 64,
+            "epochs": 1,
+            "records": [],
+        }
+
+    @patch("nanlmind_hermes.head_cortex.urlopen")
+    def test_learning_candidate_requires_isolated_weak_supervision_receipt(self, open_url):
+        open_url.return_value = FakeResponse({
+            "schema": "nanlm.head-learning-candidate-response/1",
+            "teacher_outputs_are_ground_truth": False,
+            "promotion_allowed": False,
+            "canonical_state_modified": False,
+        })
+        result = self.client.create_learning_candidate(self.learning_request())
+        self.assertFalse(result["promotion_allowed"])
+        self.assertFalse(result["canonical_state_modified"])
+
+    def test_learning_candidate_rejects_ground_truth_or_oversized_input(self):
+        request = self.learning_request()
+        request["teacher_outputs_are_ground_truth"] = True
+        with patch("nanlmind_hermes.head_cortex.urlopen") as open_url:
+            with self.assertRaises(ValueError):
+                self.client.create_learning_candidate(request)
+            open_url.assert_not_called()
+        request = self.learning_request()
+        request["records"] = [{"object": "x" * 1_100_000}]
+        with patch("nanlmind_hermes.head_cortex.urlopen") as open_url:
+            with self.assertRaises(ValueError):
+                self.client.create_learning_candidate(request)
+            open_url.assert_not_called()
+
     def test_rejects_oversized_request_before_network(self):
         with patch("nanlmind_hermes.head_cortex.urlopen") as open_url:
             request = self.request()
