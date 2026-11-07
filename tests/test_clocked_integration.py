@@ -77,6 +77,45 @@ class ScratchTests(unittest.TestCase):
             self.assertTrue(package["policy"]["clocked_outputs_are_not_ground_truth"])
             self.assertEqual(len(package["evidence_entries"]), 2)
 
+    def test_pii_endpoint_raw_values_are_redacted_before_scratch_storage(self):
+        class Context:
+            def __init__(self, root):
+                self.root = root
+            def get_config(self, key, default=None):
+                return str(self.root) if key == "state_dir" else default
+        class Client:
+            def execute(self, plan, idempotency_key=None):
+                return {"protocol": "nanlm.clocked-task-results", "version": 1,
+                        "results": [
+                            {"task_id": task["id"], "source_id": task.get("source_id"),
+                             "endpoint": task["endpoint"], "result_type": task["endpoint"],
+                             "status": "ok",
+                             "result": {"fields": {
+                                 "detected": True, "count": 1, "types": ["government_id"],
+                                 "values": ["PRIVATE-SSN-DO-NOT-PERSIST"],
+                             }},
+                             "provenance": {"input_sha256": "a" * 64}}
+                            for task in plan["tasks"]]}
+        with tempfile.TemporaryDirectory() as tmp:
+            ctx = Context(Path(tmp))
+            question = "Audit this source for PII and privacy risks."
+            sources = [{"id": "source-a", "text": "private source content"}]
+            preview = clocked_tools.clocked_plan(ctx, question, sources, "privacy-turn")
+            with patch.dict("os.environ", {
+                "CLOCKED_GATEWAY_URL": "https://clocked.example",
+                "CLOCKED_GATEWAY_TOKEN": "scoped-participant-token",
+            }), patch("nanlmind_hermes.clocked_tools.ClockedGatewayClient", return_value=Client()):
+                result = clocked_tools.clocked_execute(
+                    ctx, question, sources, "privacy-turn", True,
+                    preview["approval_digest"])
+            serialized = json.dumps(result["scratch"], sort_keys=True)
+            self.assertNotIn("PRIVATE-SSN-DO-NOT-PERSIST", serialized)
+            pii_rows = [row["payload"] for row in result["scratch"]["entries"]
+                        if row["lane"] == "clocked_result" and
+                        row["payload"].get("endpoint") == "pii"]
+            self.assertEqual(pii_rows[0]["result"]["fields"]["detected"], True)
+            self.assertEqual(pii_rows[0]["result"]["fields"]["types"], ["government_id"])
+
     def test_compare_endpoint_builds_explicit_conflict_map_in_shared_scratch(self):
         class Context:
             def __init__(self, root):
