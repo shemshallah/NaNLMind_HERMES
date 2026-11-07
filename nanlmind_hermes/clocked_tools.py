@@ -40,7 +40,7 @@ def clocked_plan(ctx, question, sources=None, scratch_id="default"):
             "max_requests": 16, "max_bytes": 1_048_576,
         })
         recorded = scratch.append("hermes_plan", "hermes", {
-            "mode": mode["mode"], "plan": plan, "validation": validation,
+            "mode": mode["mode"], "question": question, "plan": plan, "validation": validation,
             "requires_approval": True,
         }, snap["revision"])
         return {"mode_plan": mode, "task_plan": plan,
@@ -54,7 +54,7 @@ def clocked_plan(ctx, question, sources=None, scratch_id="default"):
             "scratch": scratch.snapshot()}
 
 
-def clocked_execute(ctx, question, sources, scratch_id="default",
+def clocked_execute(ctx, question, sources=None, scratch_id="default",
                     approved=False, plan_sha256="", max_requests=16,
                     max_bytes=1_048_576):
     if approved is not True:
@@ -71,9 +71,14 @@ def clocked_execute(ctx, question, sources, scratch_id="default",
     if reviewed is None:
         raise ValueError("create and review a CLOCKED plan before execution")
     plan = reviewed["plan"]
-    fresh = make_task_plan(sources, question)
-    if plan.get("tasks") != fresh.get("tasks"):
-        raise ValueError("question or sources differ from the reviewed CLOCKED plan")
+    if reviewed.get("question") != question:
+        raise ValueError("question differs from the reviewed CLOCKED plan")
+    if sources:
+        fresh = make_task_plan(sources, question)
+        if plan.get("tasks") != fresh.get("tasks"):
+            raise ValueError("sources differ from the reviewed CLOCKED plan")
+    else:
+        sources = []
     budget = {"max_requests": max_requests, "max_bytes": max_bytes}
     validation = validate_task_plan(plan, budget)
     if validation["plan_sha256"] != plan_sha256:
