@@ -78,7 +78,7 @@ def clocked_execute(ctx, question, sources, scratch_id="default",
     validation = validate_task_plan(plan, budget)
     if validation["plan_sha256"] != plan_sha256:
         raise PermissionError("approval digest does not match the reviewed task plan")
-    client = ClockedGatewayClient()
+    client = ClockedGatewayClient(base_url=_setting(ctx, "clocked_gateway_url", None) or None)
     return execute_multi_source(client, scratch, question, sources,
                                 budget=budget, plan=plan)
 
