@@ -109,3 +109,32 @@ class HeadCortexClient:
         if result.get("promotion_allowed") is not False or result.get("canonical_state_modified") is not False:
             raise HeadCortexError("candidate evaluation violated non-promotion contract")
         return result
+
+    def evaluate_candidate(self, request: dict) -> dict:
+        if not isinstance(request, dict) or request.get("schema") != "nanlm.head-candidate-evaluation-request/1":
+            raise ValueError("unsupported head-candidate evaluation request")
+        body = json.dumps(request, sort_keys=True, separators=(",", ":"),
+                          ensure_ascii=False).encode("utf-8")
+        if len(body) > 1_048_576:
+            raise ValueError("candidate evaluation request exceeds 1 MiB")
+        call = Request(
+            self.endpoint + "/v1/head-cortex/candidate/evaluate", data=body,
+            headers={"Authorization": "Bearer " + self.token,
+                     "Content-Type": "application/json", "Accept": "application/json"},
+            method="POST",
+        )
+        try:
+            with urlopen(call, timeout=self.timeout) as response:
+                raw = response.read(1_048_577)
+                if len(raw) > 1_048_576:
+                    raise HeadCortexError("candidate evaluation response exceeds 1 MiB")
+                result = json.loads(raw.decode("utf-8"))
+        except HTTPError as exc:
+            raise HeadCortexError("NaNLMind candidate evaluation returned HTTP %d" % exc.code) from exc
+        except (URLError, TimeoutError, OSError) as exc:
+            raise HeadCortexError("NaNLMind candidate evaluation is unavailable") from exc
+        except (UnicodeError, json.JSONDecodeError) as exc:
+            raise HeadCortexError("NaNLMind candidate evaluation returned invalid JSON") from exc
+        if not isinstance(result, dict) or result.get("schema") != "nanlm.head-candidate-evaluation-response/1":
+            raise HeadCortexError("unsupported NaNLMind candidate evaluation response")
+        return result
