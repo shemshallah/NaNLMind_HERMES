@@ -10,15 +10,15 @@ def payload(secret):
             "system_report":{"platform":"Android","abi":"aarch64"}}
 
 class DeviceLeaseTests(unittest.TestCase):
-    def test_one_active_lease_per_device_and_release_keeps_shared_universe_address(self):
+    def test_one_active_lease_per_device_and_release_reuses_participant_address(self):
         with tempfile.TemporaryDirectory() as tmp:
             registry=DeviceRegistry(Path(tmp)/"authority.sqlite")
             first=registry.register(payload("a"*43),now=1000)
-            self.assertEqual(first["address"],"nan://GM0:SC0:MC0:HW0:BS0")
+            self.assertEqual(first["address"],"nan://GM0:SC0:MC0:BS0:HW9")
             with sqlite3.connect(Path(tmp)/"authority.sqlite") as db:
-                self.assertIsNone(db.execute(
+                self.assertEqual(db.execute(
                     "SELECT hw_slot FROM device_leases WHERE lease_id=?",
-                    (first["lease_id"],)).fetchone()[0])
+                    (first["lease_id"],)).fetchone()[0], 9)
             with self.assertRaisesRegex(ValueError,"active lease"):
                 registry.register(payload("a"*43),now=1001)
             hb=registry.heartbeat(first["token"],now=1100)
