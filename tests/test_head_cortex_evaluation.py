@@ -151,8 +151,8 @@ class CandidateInputTests(unittest.TestCase):
     def test_plugin_registers_one_evaluation_handler_and_tool(self):
         entrypoint = Path(__file__).parents[1] / "nanlmind_hermes" / "__init__.py"
         source = entrypoint.read_text(encoding="utf-8")
-        handlers = re.findall(r"^    def handle_head_candidate_evaluate\\(", source, re.MULTILINE)
-        specs = re.findall(r'^\\s*\\("nanlm_head_candidate_evaluate",', source, re.MULTILINE)
+        handlers = re.findall(r"^    def handle_head_candidate_evaluate\(", source, re.MULTILINE)
+        specs = re.findall(r'^\s*\("nanlm_head_candidate_evaluate",', source, re.MULTILINE)
         self.assertEqual(len(handlers), 1)
         self.assertEqual(len(specs), 1)
 
