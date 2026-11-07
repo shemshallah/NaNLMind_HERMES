@@ -47,6 +47,47 @@ class ScratchTests(unittest.TestCase):
         self.assertEqual(propose_mode("compare", [{"text": "A"}, {"text": "B"}])["mode"],
                          "CLOCKED_MULTI_SOURCE")
 
+    def test_two_pass_synthesis_submits_draft_and_appends_final(self):
+        class Result:
+            def __init__(self, text):
+                self.text = text
+        class LLM:
+            def __init__(self):
+                self.calls = 0
+            def complete(self, **kwargs):
+                self.calls += 1
+                return Result("draft answer" if self.calls == 1 else "final answer")
+        class Context:
+            def __init__(self, root):
+                self.root = root
+                self.llm = LLM()
+            def get_config(self, key, default=None):
+                return str(self.root) if key == "state_dir" else default
+        with tempfile.TemporaryDirectory() as tmp:
+            ctx = Context(Path(tmp))
+            scratch = clocked_tools._scratch(ctx, "synthesis-turn")
+            scratch.append("clocked_result", "clocked", {
+                "endpoint": "extract", "result_type": "extract",
+                "provenance": {"input_sha256": "a" * 64},
+            })
+            scratch.append("evidence_atoms", "hermes", {
+                "subject": "source-a", "predicate": "states_claim",
+                "object": "The river flows.", "source_digest": "a" * 64,
+                "resolution": 5, "truth_state": "UNKNOWN",
+            })
+            with patch("nanlmind_hermes.clocked_tools.head_process",
+                       return_value={"package_sha256": "b" * 64,
+                                     "head_response": {"truth_state": "UNKNOWN"}}) as head:
+                result = clocked_tools.clocked_synthesize(
+                    ctx, "What does the source say?", "synthesis-turn")
+            self.assertEqual(result["response"], "final answer")
+            self.assertEqual(result["draft"], "draft answer")
+            head.assert_called_once()
+            self.assertEqual(head.call_args.args[3], "ANSWER_VALIDATION")
+            lanes = [row["lane"] for row in result["scratch"]["entries"]]
+            self.assertIn("hermes_synthesis", lanes)
+            self.assertIn("final", lanes)
+
     def test_clocked_execution_requires_exact_reviewed_plan(self):
         class Context:
             def __init__(self, root):
