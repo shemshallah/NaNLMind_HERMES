@@ -321,7 +321,7 @@ Existing `/nanlm` chat and training modes remain unchanged. CLOCKED mode is an a
 - Candidate evaluation compares the candidate and canonical baseline with the same N16REL rows. The caller declares the test split and supplies a canonical dataset digest, which NaNLMind verifies; this binds the submitted records but does not independently attest dataset provenance. Metrics include accuracy, coverage, balanced accuracy, confusion counts and per-resolution results. Stale base/candidate digests are rejected and evaluation cannot promote.
 - Shared JSON schemas for evidence packages, scratch entries and head-cortex responses.
 
-**Live-verified in 1.2.2:**
+**Live-verified in 1.2.3:**
 - Production CLOCKED participant token provisioning, gateway configuration,
   task-plan execution, and revisioned scratch writes.
 - Production NANNET pairing, pinned issuer discovery, online scope

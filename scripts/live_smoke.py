@@ -34,6 +34,8 @@ sys.path.insert(0, str(ROOT))
 from nanlmind_hermes import auth_tools, hermes_secrets  # noqa: E402
 from nanlmind_hermes.clocked_client import ClockedGatewayClient  # noqa: E402
 from nanlmind_hermes.clocked_mode import execute_multi_source  # noqa: E402
+from nanlmind_hermes.evidence import build_evidence_package  # noqa: E402
+from nanlmind_hermes.head_cortex import HeadCortexClient  # noqa: E402
 from nanlmind_hermes.scratch import Scratch  # noqa: E402
 
 
@@ -61,6 +63,7 @@ def main(argv=None):
     parser.add_argument("--issuer-key", default="")
     parser.add_argument("--clocked-url", required=True)
     parser.add_argument("--clocked-token-file", required=True)
+    parser.add_argument("--head-url", default="")
     parser.add_argument("--output", default=str(ROOT / "docs/LIVE_SMOKE.md"))
     args = parser.parse_args(argv)
 
@@ -75,6 +78,7 @@ def main(argv=None):
         import urllib.request
         with urllib.request.urlopen(args.nannet_url.rstrip("/") + "/v1/issuer", timeout=15) as response:
             issuer_key = json.loads(response.read(32768))["issuer_public_key"]
+    head_url = (args.head_url or args.nannet_url).rstrip("/")
     ctx = Context(root, args.nannet_url.rstrip("/"), issuer_key, args.clocked_url.rstrip("/"))
     secrets_map = {
         "NANNET_MASTER_KEY": master_b64,
@@ -94,6 +98,75 @@ def main(argv=None):
                              {"scopes": status.get("token_scopes")}))
         checks.append(result("nanlm_require_scope", auth_tools.require_scope(ctx, "training:execute"),
                              {"scope": "training:execute"}))
+
+        # Register one explicit Hermes device token for live head-cortex calls.
+        device_secret = base64.urlsafe_b64encode(secrets.token_bytes(32)).rstrip(b"=").decode()
+        import urllib.request
+        register_body = json.dumps({
+            "device_secret": device_secret, "consent": True,
+            "terms_version": "nannet-device-registration-v1",
+            "system_report": {"platform": "Hermes", "app_version": "1.2.3"},
+        }).encode()
+        register_request = urllib.request.Request(
+            ctx.config["nannet_auth_url"] + "/v1/hermes/register",
+            data=register_body, headers={"Content-Type": "application/json"}, method="POST")
+        with urllib.request.urlopen(register_request, timeout=20) as response:
+            registered = json.loads(response.read())
+        device_token = registered["token"]
+        checks.append(result("nanlm_device_register", True,
+                             {"address": registered["address"], "token_length": len(device_token)}))
+
+        with tempfile.TemporaryDirectory(prefix="nanlmind-live-head-") as tmp:
+            head_scratch = Scratch(tmp, "live-head")
+            head_scratch.append("user", "user", {"question": "Does the river flow?"})
+            head_scratch.append("evidence_atoms", "hermes", {
+                "task_id": "live-atom", "source_id": "live-source", "endpoint": "extract",
+                "subject": "river", "predicate": "flows", "object": "The river flows.",
+                "resolution": 5, "source_digest": hashlib.sha256(b"live-head-source").hexdigest(),
+                "provenance": {"input_sha256": hashlib.sha256(b"live-head-source").hexdigest()},
+            })
+            head_package = build_evidence_package(head_scratch.snapshot(), "Does the river flow?")
+            head_client = HeadCortexClient(head_url, device_token, timeout=90)
+            head_result = head_client.process(head_package)
+            checks.append(result("nanlm_head_process", True, {
+                "schema": head_result.get("schema"),
+                "truth_state": head_result.get("truth_state"),
+                "generation": head_result.get("generation"),
+                "state_digest": head_result.get("provenance", {}).get("state_digest"),
+            }))
+            mutation_id = "live-head-" + uuid.uuid4().hex[:10]
+            base_digest = head_result.get("provenance", {}).get("state_digest")
+            candidate = head_client.create_candidate({
+                "schema": "nanlm.head-candidate-request/1",
+                "mutation_id": mutation_id, "head_index": 42, "patch_mask": 1,
+                "base_topology_digest": base_digest,
+            })
+            checks.append(result("nanlm_head_candidate", candidate.get("promotion_allowed") is False, {
+                "status": candidate.get("status"),
+                "candidate_digest": candidate.get("candidate_digest"),
+                "canonical_state_modified": candidate.get("canonical_state_modified"),
+            }))
+            evaluation = head_client.evaluate_candidate({
+                "schema": "nanlm.head-candidate-evaluation-request/1",
+                "mutation_id": mutation_id, "split": "test",
+                "dataset_sha256": hashlib.sha256(json.dumps([{
+                    "resolution": 5, "polarity": "+", "subject": "river",
+                    "predicate": "flows", "object": "The river flows.",
+                    "source_digest": "c" * 64,
+                }], sort_keys=True, separators=(",", ":")).encode()).hexdigest(),
+                "records": [{
+                    "resolution": 5, "polarity": "+", "subject": "river",
+                    "predicate": "flows", "object": "The river flows.",
+                    "source_digest": "c" * 64,
+                }],
+            })
+            checks.append(result("nanlm_head_candidate_evaluate",
+                                 evaluation.get("promotion_allowed") is False, {
+                "recommendation": evaluation.get("recommendation"),
+                "utility_delta": evaluation.get("utility_delta"),
+                "baseline": evaluation.get("baseline"),
+                "candidate": evaluation.get("candidate"),
+            }))
 
         client = ClockedGatewayClient(ctx.config["clocked_gateway_url"], clocked_token, timeout=120)
         plan = {

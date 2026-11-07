@@ -25,17 +25,23 @@ plugins:
       settings:
         state_dir: ~/.local/share/nanlmind-hermes
         runner_command: ["/absolute/path/to/NaNLMind/build/nanlm-universal"]
+        chat_mode: native
 ```
 
 In a Hermes session:
 
 ```text
-/nanlm Hello. What can you do?
+/nanlm A river is water.
+/nanlm What is a river?
 /nanlm logic Boolean inverses and nested implications
 /nanlm status
 ```
 
-Expected: the chat reply is stored in the session transcript; the training
+Expected: the first chat stores `A river is water` as a supervised relation
+and updates the native state; the second retrieves it as
+`I recall these learned relations: A river is water.` The reply and the shared
+scratch window are stored under `state_dir`. No language-model provider is
+required in `native` mode. The training
 reply reports the Boolean foundation result and native run manifest; `status`
 shows the one `HW0::BS0` state directory and the last run. A failed Boolean
 gate stops before language stages.
@@ -117,11 +123,13 @@ head state.
 
 ## Latest recorded runs
 
-- [DEMO_RESULTS.md](DEMO_RESULTS.md): 35/35 tool calls passed against a local
+- [HERMES_DEMO.md](HERMES_DEMO.md): human-readable transcript of real local
+  chat, native training, live CLOCKED, and live head-cortex output.
+- [DEMO_RESULTS.md](DEMO_RESULTS.md): 36/36 tool calls passed against a local
   full-feature demo (real native binary, loopback NANNET authority, local
-  CLOCKED and head-cortex contract stubs).
-- [LIVE_SMOKE.md](LIVE_SMOKE.md): 7/7 checks passed against deployed NANNET and
-  CLOCKED services.
+  CLOCKED contract stubs).
+- [LIVE_SMOKE.md](LIVE_SMOKE.md): 11/11 checks passed against the single
+  deployed `nannet.apps.mistral.run` service, including head-cortex.
 
 Regenerate the local report with:
 

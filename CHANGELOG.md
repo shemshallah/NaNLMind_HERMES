@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.2.3 — 2026-11-07
+
+- Moved the head-cortex service into the single deployed `nannet-portal`
+  Koyeb service; no second Koyeb service is used.
+- Accepted real 514-character `hwh_` scoped bearer tokens in the HERMES head
+  client and the receiving service.
+- Added live head-cortex process, candidate, and held-out evaluation checks to
+  the live smoke report (11/11).
+- Added a human-readable Hermes transcript demo covering real local chat,
+  native training metrics, live CLOCKED, and live head-cortex output.
+
 ## 1.2.2 — 2026-11-07
 
 - Completed the full-feature demo coverage: all 33 registered tools are called,

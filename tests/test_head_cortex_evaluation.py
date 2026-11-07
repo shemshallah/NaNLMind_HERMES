@@ -41,6 +41,11 @@ class HeadCortexClientTests(unittest.TestCase):
     def setUp(self):
         self.client = HeadCortexClient("https://head.example", "scoped-token")
 
+    def test_accepts_scoped_bearer_longer_than_legacy_limit(self):
+        token = "hwh_" + "x" * 510
+        client = HeadCortexClient("https://head.example", token)
+        self.assertEqual(client.token, token)
+
     def request(self):
         return {
             "schema": "nanlm.head-candidate-evaluation-request/1",

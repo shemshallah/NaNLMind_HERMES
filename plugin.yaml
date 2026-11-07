@@ -1,5 +1,5 @@
 name: nanlmind-hermes
-version: 1.2.2
+version: 1.2.3
 manifest_version: 2
 api_version: 1
 requires_hermes: ">=0.23.0"
@@ -53,7 +53,11 @@ config_schema:
   chat_learning:
     type: bool
     default: true
-    description: Enable free-form chat reflection to update native heads, mirror pairs and hyperedges when explicit supervised relations are extracted.
+    description: Enable free-form chat parsing to update native heads, mirror pairs and hyperedges when explicit supervised relations are extracted.
+  chat_mode:
+    type: str
+    default: native
+    description: "native: NaNLMind parses, learns and synthesizes through the shared scratch window. auto: use the Hermes model when available and fall back to native. provider: legacy LLM-authored chat reply."
   runner_command:
     type: list
     default: []
