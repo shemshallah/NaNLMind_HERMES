@@ -4,7 +4,7 @@ The protocol separates Hermes provider credentials, GitHub credentials, and one 
 
 ## Installation identity
 
-Provision an independent random 256-bit base64url NANNET_MASTER_KEY through the host OS secret store. nanlm_auth_init creates an Ed25519 installation keypair and encrypts its private key with HKDF-SHA256 + AES-256-GCM. The master key is never returned or stored beside the identity.
+Configure an independent random 256-bit base64url `NANNET_MASTER_KEY` in the masked Hermes plugin-secret field. The plugin reads it only through `agent.secret_scope.get_secret`; it never reads `.env`, shell variables, or another credential store. `nanlm_auth_init` creates an Ed25519 installation keypair and encrypts its private key with HKDF-SHA256 + AES-256-GCM. The master key is never returned or stored beside the identity.
 
 ## One-time pairing authority
 
@@ -14,7 +14,7 @@ Allowed scopes are bounded by role. Guest: corpus:write, training:execute, unive
 
 ## Pairing HTTP endpoint
 
-The optional stdlib HTTP service exposes POST /v1/pair, POST /v1/authorize, POST /v1/revoke, and admin-only POST /v1/admin/identities/revoke, plus the device enrollment routes POST /v1/devices/register, /heartbeat, /rotate, /release, and /report. Device enrollment requires explicit consent and a versioned terms acknowledgement. The authority stores only a SHA-256 digest of the random installation secret and signed guest bearer tokens; each HW guest bearer is signed by its per-device root-derived guest key, is stored only as a digest, and is rotated/revoked on heartbeat, rotation, and release. The authority does not collect MAC addresses, IMEIs, or serial numbers. Each active installation holds one exclusive HW slot. Heartbeats extend leases, rotation invalidates the previous bearer, release returns the slot, and expiry reclaims abandoned slots. A copied device credential cannot hold two simultaneous leases; a newly generated identity cannot be proven to be the same physical device without platform attestation, so the server deliberately does not pretend MAC-based identity is reliable. The authorize route checks a requested scope against a signed token and persisted revocation state. Revocation accepts the token's bearer credential, records its token ID, and causes subsequent authority-side validation to reject it. It must be deployed behind HTTPS; plain HTTP is accepted only for loopback development. The client pins NANNET_ISSUER_PUBLIC_KEY before trusting the returned token. The token is saved encrypted under the installation master key.
+The optional stdlib HTTP service exposes POST /v1/pair, POST /v1/authorize, POST /v1/revoke, and admin-only POST /v1/admin/identities/revoke, plus the device enrollment routes POST /v1/devices/register, /heartbeat, /rotate, /release, and /report. Device enrollment requires explicit consent and a versioned terms acknowledgement. The authority stores only a SHA-256 digest of the random installation secret and signed guest bearer tokens; each HW guest bearer is signed by its per-device root-derived guest key, is stored only as a digest, and is rotated/revoked on heartbeat, rotation, and release. The authority does not collect MAC addresses, IMEIs, or serial numbers. Each device lease is a scoped participant identity attached to the single `HW0::BS0` universe. The legacy `hw_slot` database column remains nullable for compatibility, but new leases do not allocate HW slots. Heartbeats extend leases, rotation invalidates the previous bearer, release ends the participant lease, and expiry reclaims abandoned leases. A copied device credential cannot hold two simultaneous leases; a newly generated identity cannot be proven to be the same physical device without platform attestation, so the server deliberately does not pretend MAC-based identity is reliable. The authorize route checks a requested scope against a signed token and persisted revocation state. Revocation accepts the token's bearer credential, records its token ID, and causes subsequent authority-side validation to reject it. It must be deployed behind HTTPS; plain HTTP is accepted only for loopback development. The client pins NANNET_ISSUER_PUBLIC_KEY before trusting the returned token. The token is saved encrypted under the installation master key.
 
 For subsequent API requests, send the bearer token and Ed25519 request signature over method, exact path, timestamp, nonce, and SHA-256 body digest. The API must verify token signature, issuer, audience, expiry, scope, installation key, and five-minute clock skew, then atomically consume the nonce. Token revocation is persisted by TokenRegistry.
 
@@ -22,9 +22,9 @@ Payload encryption uses AES-256-GCM with HKDF-SHA256 domain separation and authe
 
 ## Demo flow
 
-1. Administrator starts the pairing service with NANNET_AUTHORITY_MASTER_KEY.
+1. Administrator starts the pairing service; the standalone CLI securely prompts for the authority master key without reading it from an environment variable.
 2. Administrator creates a short-lived guest pairing code restricted to demo scopes (or explicitly selects `--role admin` for a trusted administrator installation).
-3. Installation creates its own NANNET_MASTER_KEY and identity.
+3. Installation configures its own `NANNET_MASTER_KEY` as a Hermes-managed secret and creates its identity.
 4. Installation pairs over HTTPS and verifies the issuer against its pinned public key.
 5. The demo uses the issued token, then revokes it and demonstrates rejection.
 
@@ -54,14 +54,13 @@ New tokens are signed by a domain-separated per-identity key. The client must pi
 
     nannet-authority public-key --role guest --identity INSTALLATION_UUID
 
-The operator communicates this public key to the installation over a trusted channel as NANNET_ISSUER_PUBLIC_KEY. Admin identities use --role admin. The default public-key command without --identity remains the legacy signer key for backwards compatibility only.
+The operator communicates this public key to the installation over a trusted channel as `nannet_issuer_public_key` in the Hermes plugin settings. Admin identities use --role admin. The default public-key command without --identity remains the legacy signer key for backwards compatibility only.
 
 ## CLOCKED API credential separation
 
 The Rezolve.ai CLOCKED API is a separate external service and its official
 SDK documents a dedicated CLOCKED API key (normally supplied as
-`CLOCKED_API_KEY`). This credential is not a NANNET installation token,
-`HW_HERMES_API`, the HW3 service identity, or an Android device token.
+`CLOCKED_API_KEY`). This credential is not a NANNET installation token or a guest participant token.
 Never substitute one credential for another or place a CLOCKED key in a
 NANNET-signed request payload, prompt, transcript, scratch lane or Git commit.
 
