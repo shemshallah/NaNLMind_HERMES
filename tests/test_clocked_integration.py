@@ -90,10 +90,11 @@ class ScratchTests(unittest.TestCase):
                             {"task_id": task["id"], "source_id": task.get("source_id"),
                              "endpoint": task["endpoint"], "result_type": task["endpoint"],
                              "status": "ok",
-                             "result": {"fields": {
-                                 "detected": True, "count": 1, "types": ["government_id"],
-                                 "values": ["PRIVATE-SSN-DO-NOT-PERSIST"],
-                             }},
+                             "result": {"fields": (
+                                 {"detected": True, "count": 1, "types": ["government_id"],
+                                  "values": ["PRIVATE-SSN-DO-NOT-PERSIST"]}
+                                 if task["endpoint"] == "pii" else {"decision": "review"}
+                             )},
                              "provenance": {"input_sha256": "a" * 64}}
                             for task in plan["tasks"]]}
         with tempfile.TemporaryDirectory() as tmp:
