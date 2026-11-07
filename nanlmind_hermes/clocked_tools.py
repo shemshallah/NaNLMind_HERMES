@@ -327,13 +327,21 @@ def head_learn_candidate(ctx, mutation_id, base_topology_digest,
         raise PermissionError("CLOCKED weak-supervision training requires explicit approved=true")
     if not isinstance(mutation_id, str) or not mutation_id or len(mutation_id) > 64:
         raise ValueError("invalid mutation_id")
+    scratch = _scratch(ctx, scratch_id)
+    if base_topology_digest is None:
+        for row in reversed(scratch.lane("head_response")):
+            payload = row.get("payload", {})
+            provenance = payload.get("provenance", {}) if isinstance(payload, dict) else {}
+            digest = provenance.get("state_digest") if isinstance(provenance, dict) else None
+            if isinstance(digest, str) and len(digest) == 64:
+                base_topology_digest = digest
+                break
     if not isinstance(base_topology_digest, str) or len(base_topology_digest) != 64:
-        raise ValueError("base_topology_digest must be a SHA-256 digest")
+        raise ValueError("base_topology_digest must be supplied or present in the latest head response")
     if isinstance(epochs, bool) or not isinstance(epochs, int) or not 1 <= epochs <= 8:
         raise ValueError("epochs must be between 1 and 8")
     if not os.environ.get("NANLM_HEAD_CORTEX_URL") or not os.environ.get("NANLM_DEVICE_TOKEN"):
         raise RuntimeError("configure NANLM_HEAD_CORTEX_URL and a NANNET training:execute device token")
-    scratch = _scratch(ctx, scratch_id)
     observations = scratch.lane("clocked_result")
     if not observations:
         raise ValueError("scratch contains no CLOCKED endpoint observations")
