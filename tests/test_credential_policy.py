@@ -27,7 +27,9 @@ class CredentialPolicyTests(unittest.TestCase):
         }
         for key, env_name in expected.items():
             with self.subTest(key=key):
-                block = manifest.split("  " + key + ":", 1)[1].split("\n  ", 1)[0]
+                lines = manifest.splitlines()
+                index = lines.index("  " + key + ":")
+                block = "\n".join(lines[index + 1:index + 4])
                 self.assertIn("type: secret", block)
                 self.assertIn("env: " + env_name, block)
 
