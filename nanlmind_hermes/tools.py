@@ -626,10 +626,11 @@ def _merge_relation_memory(ctx, records, train_only=False, reorganize=False):
 
 
 def chat(ctx, message: str, session_id: str = "default", system_prompt: str = None,
-         temperature: float = 0.7, max_tokens: int = 2048):
+         temperature: float = 0.7, max_tokens: int = 2048,
+         sources: list[dict] | None = None):
     """Public Hermes chat entry point; keep conversation logic in its own module."""
     from .chat import chat as run_chat
-    return run_chat(ctx, message, session_id, system_prompt, temperature, max_tokens)
+    return run_chat(ctx, message, session_id, system_prompt, temperature, max_tokens, sources)
 
 
 def chat_history(ctx, session_id: str = "default", limit: int = 40):
