@@ -253,7 +253,7 @@ def register(ctx):
              "required": ["text"], "properties": {"id": {"type": "string", "maxLength": 80},
              "text": {"type": "string", "minLength": 1, "maxLength": 65536}}}},
           "scratch_id": {"type": "string", "maxLength": 80},
-          "approved": {"type": "boolean", "default": false},
+          "approved": {"type": "boolean", "default": False},
           "max_requests": {"type": "integer", "minimum": 1, "maximum": 16, "default": 16},
           "max_bytes": {"type": "integer", "minimum": 1, "maximum": 1048576, "default": 1048576}},
          ["question", "sources"], handle_clocked_execute),
