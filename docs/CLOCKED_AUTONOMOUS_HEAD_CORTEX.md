@@ -282,7 +282,29 @@ Existing `/nanlm` chat and training modes remain unchanged. CLOCKED mode is an a
 9. Add candidate-only head mutation and regression harness.
 10. Add training admission and six-runner promotion integration.
 
-## 12. Acceptance criteria
+## 12. Implementation status
+
+**Implemented first slice (committed and covered by Python CI):**
+- Hash-chained append-only HERMES scratch journal with revision conflict checks and lane writer ownership.
+- Deterministic mode proposal, bounded task-plan validation and exact-plan approval digest.
+- Scoped CLOCKED gateway client and HERMES multi-source orchestration.
+- CLOCKED service `POST /v1/tasks` with endpoint allowlisting, dependency ordering, request quotas, idempotency and per-endpoint typed outputs.
+- Extraction-to-grounding dependency resolution in the CLOCKED gateway.
+- NaN16 evidence-package codec and HERMES head-cortex client.
+- Two-pass HERMES synthesis tool: draft -> NaNLMind answer-validation request -> final synthesis.
+- NaNLMind native read-only `relation-eval` command and authenticated head-cortex HTTP adapter, with NANNET scope authorization support.
+- Shared JSON schemas for evidence packages, scratch entries and head-cortex responses.
+
+**Not yet deployed or end-to-end verified:**
+- CLOCKED gateway participant token provisioning and production endpoint configuration.
+- NANNET-authorized head-cortex service deployment and route registration through the live Router/Koyeb topology.
+- Live CLOCKED SDK calls for each direct endpoint method (CI uses fakes/fixtures; no paid API calls).
+- Production multi-source scratch transport between devices/services.
+- Candidate self-modification experiments, mutation review and six-runner promotion integration.
+
+The native `relation-eval` path is read-only: it evaluates relation records against an existing serialized topology and does not train or mutate canonical state. The service currently returns Boolean-head relation predictions and provenance; it is not yet a full general-purpose semantic reasoning endpoint.
+
+## 13. Acceptance criteria
 
 - Local chat remains the default and does not call CLOCKED.
 - Autonomous planner proposes only schema-valid, budget-bounded plans.
