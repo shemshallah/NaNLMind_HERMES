@@ -127,8 +127,14 @@ def validate_task_plan(plan: dict, budget: dict | None = None) -> dict:
         raise ValueError("task plan exceeds request budget")
     if total_bytes > max_bytes:
         raise ValueError("task plan exceeds byte budget")
+    request_envelope = {"protocol": "nanlm.clocked-task-plan", "version": 1, "plan": plan}
+    request_bytes = len(json.dumps(
+        request_envelope, sort_keys=True, separators=(",", ":"), ensure_ascii=False
+    ).encode("utf-8"))
+    if request_bytes > 1_048_576:
+        raise ValueError("serialized CLOCKED request exceeds gateway 1 MiB limit")
     return {"task_count": len(tasks), "input_bytes": total_bytes,
-            "plan_sha256": _digest(plan)}
+            "request_bytes": request_bytes, "plan_sha256": _digest(plan)}
 
 
 def make_task_plan(sources: list[dict], question: str,
