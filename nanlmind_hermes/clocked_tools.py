@@ -363,6 +363,22 @@ def head_learn_candidate(ctx, mutation_id, base_topology_digest,
     if not observations:
         raise ValueError("scratch contains no CLOCKED endpoint observations")
     records = []
+    pii_sources = set()
+    for entry in observations:
+        observation = entry.get("payload", {})
+        if not isinstance(observation, dict) or observation.get("endpoint") != "pii":
+            continue
+        result_data = observation.get("result", {})
+        if not isinstance(result_data, dict):
+            result_data = {}
+        if isinstance(result_data.get("result"), dict):
+            result_data = result_data["result"]
+        fields = result_data.get("fields", {})
+        if not isinstance(fields, dict):
+            fields = {}
+        detected = fields.get("detected", result_data.get("detected"))
+        if detected is True:
+            pii_sources.add(str(observation.get("source_id") or "cross_source"))
 
     def add_record(observation, entry, predicate, obj, polarity="+", resolution=5):
         provenance = observation.get("provenance", {})
@@ -412,6 +428,11 @@ def head_learn_candidate(ctx, mutation_id, base_topology_digest,
         status = str(observation.get("status") or "unknown")
         add_record(observation, entry, "clocked_endpoint_observation",
                    endpoint + ":" + status, "+", 5)
+        source_key = str(observation.get("source_id") or "cross_source")
+        if endpoint != "pii" and source_key in pii_sources:
+            # A source flagged for PII contributes only its boolean privacy label
+            # and non-content status metadata to weak supervision.
+            continue
         if endpoint == "extract":
             claims = fields.get("claims", [])
             if isinstance(claims, str):
