@@ -38,6 +38,7 @@ def build_evidence_package(scratch_snapshot: dict, question: str,
             "entry_id": entry.get("entry_id"),
             "lane": lane,
             "writer": entry.get("writer"),
+            "sequence": entry.get("sequence"),
             "revision": entry.get("revision"),
             "payload": entry.get("payload"),
         })
