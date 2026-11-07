@@ -46,7 +46,34 @@ reply reports the Boolean foundation result and native run manifest; `status`
 shows the one `HW0::BS0` state directory and the last run. A failed Boolean
 gate stops before language stages.
 
-## 2. NANNET demo: identity and scoped access
+## 2. Three-way phone-call demo
+
+The shared scratch journal is the call window. Hermes is the language bridge;
+NaNLM is the native relation learner and synthesizer. The default path is
+`user -> Hermes -> NaNLM -> user + Hermes`. The routing kernel is a raw NaN16
+program (`nan/phone_call.nan`) run on the NaNVM0 boundary; the kernel plan for
+every action is recorded in the `phone_event` lane.
+
+```text
+/nanlm call start A river is water.
+/nanlm call @nanlm What is a river?
+/nanlm call run 3
+/nanlm call status
+/nanlm call end
+```
+
+Hermes uses its configured model when available; if no model is configured it
+still relays deterministically. NaNLM never needs an LLM. The user can
+interject between calls with `start`/`say`, or address `@hermes`, `@nanlm`, or
+`@both`. `run N` adds autonomous Hermes ↔ NaNLM rounds. Prefix a call command
+with `--clocked` (for example `/nanlm call --clocked start A river is water.`)
+to route Hermes turns through CLOCKED. The call journal is
+`state_dir/clocked_scratch` with `scratch_id = call-<session>`, holding the
+`phone_user`, `phone_hermes`, `phone_nanlm`, `phone_event`, `hermes_plan`,
+`clocked_request`, `clocked_result` and `evidence_atoms` lanes. The transcript
+is also stored in `state_dir/phone_calls`.
+
+## 3. NANNET demo: identity and scoped access
 
 The NANNET authority must expose `GET /v1/issuer` and issue one-time pairing
 codes through `POST /v1/admin/pairing-codes` (operator credential). The issuer
@@ -86,7 +113,7 @@ stores the token encrypted, and reports the granted scopes; protected tools
 request online scope authorization and fail closed when the authority is
 unreachable. `nanlm_auth_revoke` revokes the token and erases the local copy.
 
-## 3. CLOCKED demo: approved evidence plan
+## 4. CLOCKED demo: approved evidence plan
 
 Configure `clocked_gateway_url` and the `CLOCKED_GATEWAY_TOKEN` secret. The
 token must be a scoped participant credential (`clu_...`), not the upstream
@@ -123,9 +150,9 @@ head state.
 
 ## Latest recorded runs
 
-- [HERMES_DEMO.md](HERMES_DEMO.md): human-readable transcript of real local
-  chat, native training, live CLOCKED, and live head-cortex output.
-- [DEMO_RESULTS.md](DEMO_RESULTS.md): 36/36 tool calls passed against a local
+- [HERMES_DEMO.md](HERMES_DEMO.md): native chat, three-way call, native
+  training, live CLOCKED, and live head-cortex output.
+- [DEMO_RESULTS.md](DEMO_RESULTS.md): 38/38 tool calls passed against a local
   full-feature demo (real native binary, loopback NANNET authority, local
   CLOCKED contract stubs).
 - [LIVE_SMOKE.md](LIVE_SMOKE.md): 11/11 checks passed against the single

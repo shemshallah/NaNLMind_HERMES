@@ -29,20 +29,24 @@ prove from steps that only the upstream catalog maintainer can complete.
 
 ### Plugin checks
 
-- Plugin version: **1.2.3** in `plugin.yaml` and `pyproject.toml`; license
+- Plugin version: **1.3.0** in `plugin.yaml` and `pyproject.toml`; license
   **Apache-2.0** in both.
-- Unit/integration suite: **135 tests passed** locally and in CI on Python
-  3.10, 3.11 and 3.12 (405 successful test executions).
+- Unit/integration suite: **154 tests passed** locally and in CI on Python
+  3.10, 3.11 and 3.12 (462 successful test executions).
 - Hermes Agent v0.23.0 `hermes plugins validate . --install-deps`: **PASS**.
   Manifest, compatibility floor, config schema, required secret names,
   tool/hook/middleware parity, collision scan, security scan and no-core-override
   checks pass.
 - Hermes Plugin Doctor `hermes plugins doctor . --ci`: **PASS**. Runtime
-  discovery, manifest parsing, import and registration pass; **33 tools, 0 hooks**.
+  discovery, manifest parsing, import and registration pass; **34 tools, 0 hooks**.
 - Release package: wheel and sdist build; Twine metadata checks pass; required
   plugin source/docs are present in the sdist; both distributions install and
   import; SHA-256 checksums generate and verify.
 - GitGuardian: no secrets detected.
+- Phone-call routing kernel: raw NaN16 (`nan/phone_call.nan`), run on the
+  NaNVM0 boundary with headless device stubs, verified word-for-word against
+  the native nan0s C VM core across an eight-case routing matrix; 12
+  NaN16 boundary/kernel tests are part of the 154-test suite.
 
 ### Live integration checks
 
@@ -52,8 +56,8 @@ prove from steps that only the upstream catalog maintainer can complete.
 | Production NANNET authority | PASS | `nanlm_auth_init` → `nanlm_auth_pair` → `nanlm_auth_status` → online `training:execute` authorization → `nanlm_auth_revoke` all passed. The issuer key was pinned from the authority's `GET /v1/issuer`; the authority deployment includes the stable pairing contract and operator code issuance at commit `8aaa3df`. |
 | Native runner | PASS | Real `NaNLMind/build/nanlm-universal` run: `bootstrap` completed with a recorded corpus digest and metrics; `byte`, `kn`, and `ctx2` evaluations completed; the Boolean foundation gate passed **1,024/1,024** with all 16 distinct rules, composed gates and a persisted `boolean_foundation.nmg`. |
 | Hermes-managed secrets | PASS | Credential-policy tests scan every plugin module; live pairing and CLOCKED calls used the same secret-scope path as production. |
-| Full plugin demo | PASS | [DEMO_RESULTS.md](DEMO_RESULTS.md): all 36 calls across 33 registered tools passed with the real native binary, a loopback NANNET authority, and local CLOCKED/head-cortex contract stubs. |
-| Demo transcript | PASS | [HERMES_DEMO.md](HERMES_DEMO.md): real local chat, native training metrics, live CLOCKED, live head-cortex, and isolated candidate evaluation. |
+| Full plugin demo | PASS | [DEMO_RESULTS.md](DEMO_RESULTS.md): all 38 calls across 34 registered tools passed with the real native binary, a loopback NANNET authority, and local CLOCKED/head-cortex contract stubs. |
+| Demo transcript | PASS | [HERMES_DEMO.md](HERMES_DEMO.md): native chat, three-way shared-scratch call, native training metrics, live CLOCKED, live head-cortex, and isolated candidate evaluation. |
 | Live deployed services | PASS | [LIVE_SMOKE.md](LIVE_SMOKE.md): 11/11 checks passed on the single `nannet.apps.mistral.run` service, including head-cortex process and candidate endpoints. |
 
 Live checks are deployment smoke tests, not CI claims. Exact commands and the
@@ -82,6 +86,7 @@ capabilities:
     - nanlm_status
     - nanlm_chat
     - nanlm_chat_history
+    - nanlm_phone_call
     - nanlm_auth_init
     - nanlm_auth_status
     - nanlm_auth_pair
@@ -122,6 +127,6 @@ capabilities:
 
 The upstream entry must also set `name: nanlmind-hermes`,
 `repo: https://github.com/shemshallah/NaNLMind_HERMES`,
-`requires_hermes: ">=0.23.0"`, `version: "1.2.3"`, `maintainer: shemshallah`,
+`requires_hermes: ">=0.23.0"`, `version: "1.3.0"`, `maintainer: shemshallah`,
 `tier: community`, `category: tools`, and a full 40-character SHA for the
 reviewed release commit.

@@ -1,0 +1,144 @@
+; phone_call.nan — three-way call routing kernel in raw NaN16 (spec v0.1)
+;
+; Word format (NAN16_SPEC): NNNN_PPPPPPPP_FFFF = near head, payload, far
+; head as stored in the low word (byte-swapped). Predication IS the class
+; nibble n = (c_near<<2)|c_far; every op except BOOL runs only if bit
+; (2Z+L) of n is 1. Heads used: +q/+q FFF8/F8FF = ALWAYS(15),
+; +s/-q 7FF1/F8FF = NE(3), -s/+s FFF1/F17F = EQ(4), +s/-s 7FF1/F1FF = GT(1).
+; Only NaNVM0 ops 0x00-0x1B are used; no NaNVM1 extensions.
+;
+; Register convention: r0=0, r13=1 (set by the program: the VM zeroes all
+; registers), r14=SP, r15=link. Registers here: r5=D_BASE, r8=addressee,
+; r9=loop counter, r10=event count, r11=event write pointer, r12=4.
+;
+; Memory map (word indices):
+;   0000-0062   program (this image, 99 words)
+;   0400 D_BASE action block, one word each:
+;     +0 ACTION   0=start 1=say 2=run 3=status 4=end
+;     +1 ADDRESSE 0=hermes 1=nanlm 2=both
+;     +2 ROUNDS   1..64
+;     +3 STATUS   0=open 1=closed (read/write)
+;     +4 TURN     running turn counter (read/add)
+;     +5 HAS_MSG  1 when a user message accompanies this action
+;     +6 EVENT_COUNT  out: number of emitted events
+;     +7 ERR      out: 0 ok, 1 closed, 2 bad rounds, 3 bad addressee,
+;                      4 message required
+;   0440 EVENT_BASE  out: events, 4 words each:
+;     [speaker 0=user 1=hermes 2=nanlm][phase][addressee][0]
+;     phases: 0=user_message 1=hermes_to_nanlm 2=nanlm_reply
+;             3=hermes_followup 4=hermes_to_user
+;   Max plan: 1 user + 1 forward + 2*63 + 1 relay = 128 events = 512 words.
+;
+; 000                          entry: r13=1 by convention
+FFF8_01D00001_F8FF   ; 000 MOVI r13,1
+FFF8_0A000009_F8FF   ; 001 JMP 9
+; 002-008  emit: append one event (r1 speaker, r2 phase, r3 addressee)
+FFF8_091B0000_F8FF   ; 002 ST r1,r11,0
+FFF8_092B0001_F8FF   ; 003 ST r2,r11,1
+FFF8_093B0002_F8FF   ; 004 ST r3,r11,2
+FFF8_090B0003_F8FF   ; 005 ST r0,r11,3
+FFF8_03BB000C_F8FF   ; 006 ADD r11,r11,r12
+FFF8_03AA000D_F8FF   ; 007 ADD r10,r10,r13
+FFF8_0C000000_F8FF   ; 008 RET
+; 009                          main
+FFF8_01500400_F8FF   ; 009 MOVI r5,1024
+FFF8_08150000_F8FF   ; 010 LD r1,r5,0        ACTION
+FFF8_01200003_F8FF   ; 011 MOVI r2,3
+FFF8_07010002_F8FF   ; 012 CMP r1,r2
+FFF1_0A000051_F17F   ; 013 JMP[EQ] 81        status -> ok_exit
+FFF8_01200004_F8FF   ; 014 MOVI r2,4
+FFF8_07010002_F8FF   ; 015 CMP r1,r2
+FFF1_0A000053_F17F   ; 016 JMP[EQ] 83        end -> do_end
+FFF8_08150003_F8FF   ; 017 LD r1,r5,3        STATUS
+FFF8_07010000_F8FF   ; 018 CMP r1,r0
+7FF1_0A000057_F8FF   ; 019 JMP[NE] 87        closed -> err_closed
+FFF8_08850001_F8FF   ; 020 LD r8,r5,1        ADDRESSEE
+FFF8_01200002_F8FF   ; 021 MOVI r2,2
+FFF8_07080002_F8FF   ; 022 CMP r8,r2
+7FF1_0A00005D_F1FF   ; 023 JMP[GT] 93        >2 -> err_addressee
+FFF8_08950002_F8FF   ; 024 LD r9,r5,2        ROUNDS
+FFF8_07090000_F8FF   ; 025 CMP r9,r0
+FFF1_0A00005A_F17F   ; 026 JMP[EQ] 90        0 -> err_rounds
+FFF8_01200040_F8FF   ; 027 MOVI r2,64
+FFF8_07090002_F8FF   ; 028 CMP r9,r2
+7FF1_0A00005A_F1FF   ; 029 JMP[GT] 90        >64 -> err_rounds
+FFF8_08150000_F8FF   ; 030 LD r1,r5,0        ACTION
+FFF8_01200002_F8FF   ; 031 MOVI r2,2
+FFF8_07010002_F8FF   ; 032 CMP r1,r2
+FFF1_0A000022_F17F   ; 033 JMP[EQ] 34        run -> same context check
+FFF8_08150005_F8FF   ; 034 LD r1,r5,5        HAS_MSG / history available
+FFF8_07010000_F8FF   ; 035 CMP r1,r0
+FFF1_0A000060_F17F   ; 036 JMP[EQ] 96        none -> err_need_msg
+; 037                          plan_init
+FFF8_01B00440_F8FF   ; 037 MOVI r11,1088
+FFF8_01A00000_F8FF   ; 038 MOVI r10,0
+FFF8_01C00004_F8FF   ; 039 MOVI r12,4
+FFF8_08150000_F8FF   ; 040 LD r1,r5,0        ACTION
+FFF8_01200002_F8FF   ; 041 MOVI r2,2
+FFF8_07010002_F8FF   ; 042 CMP r1,r2
+FFF1_0A000030_F17F   ; 043 JMP[EQ] 48        run -> no_user_evt
+FFF8_01100000_F8FF   ; 044 MOVI r1,0         user event
+FFF8_01200000_F8FF   ; 045 MOVI r2,0
+FFF8_00380000_F17F   ; 046 BOOL.12 r3,r8,r0  copy addressee (n=12 truth table)
+FFF8_0B000002_F8FF   ; 047 CALL 2
+; 048                          no_user_evt
+FFF8_01200001_F8FF   ; 048 MOVI r2,1
+FFF8_07080002_F8FF   ; 049 CMP r8,r2         addressee==nanlm?
+FFF1_0A000037_F17F   ; 050 JMP[EQ] 55        -> nanlm_reply
+FFF8_01100001_F8FF   ; 051 MOVI r1,1         hermes forward
+FFF8_01200001_F8FF   ; 052 MOVI r2,1
+FFF8_01300001_F8FF   ; 053 MOVI r3,1
+FFF8_0B000002_F8FF   ; 054 CALL 2
+; 055                          nanlm_reply
+FFF8_01100002_F8FF   ; 055 MOVI r1,2
+FFF8_01200002_F8FF   ; 056 MOVI r2,2
+FFF8_01300003_F8FF   ; 057 MOVI r3,3
+FFF8_0B000002_F8FF   ; 058 CALL 2
+FFF8_08950002_F8FF   ; 059 LD r9,r5,2        ROUNDS
+FFF8_0499000D_F8FF   ; 060 SUB r9,r9,r13     counter=rounds-1
+; 061                          loop
+FFF8_07090000_F8FF   ; 061 CMP r9,r0
+FFF1_0A000049_F17F   ; 062 JMP[EQ] 73        -> after_loop
+FFF8_01100001_F8FF   ; 063 MOVI r1,1         hermes followup
+FFF8_01200003_F8FF   ; 064 MOVI r2,3
+FFF8_01300001_F8FF   ; 065 MOVI r3,1
+FFF8_0B000002_F8FF   ; 066 CALL 2
+FFF8_01100002_F8FF   ; 067 MOVI r1,2         nanlm reply
+FFF8_01200002_F8FF   ; 068 MOVI r2,2
+FFF8_01300003_F8FF   ; 069 MOVI r3,3
+FFF8_0B000002_F8FF   ; 070 CALL 2
+FFF8_0499000D_F8FF   ; 071 SUB r9,r9,r13
+FFF8_0A00003D_F8FF   ; 072 JMP 61
+; 073                          after_loop
+FFF8_01100001_F8FF   ; 073 MOVI r1,1         hermes relay
+FFF8_01200004_F8FF   ; 074 MOVI r2,4
+FFF8_01300000_F8FF   ; 075 MOVI r3,0
+FFF8_0B000002_F8FF   ; 076 CALL 2
+FFF8_09A50006_F8FF   ; 077 ST r10,r5,6       EVENT_COUNT
+FFF8_08150004_F8FF   ; 078 LD r1,r5,4        TURN
+FFF8_0311000A_F8FF   ; 079 ADD r1,r1,r10
+FFF8_09150004_F8FF   ; 080 ST r1,r5,4        TURN += count
+; 081                          ok_exit
+FFF8_09050007_F8FF   ; 081 ST r0,r5,7        ERR=0
+FFF8_FF000000_F8FF   ; 082 HALT
+; 083                          do_end
+FFF8_01100001_F8FF   ; 083 MOVI r1,1
+FFF8_09150003_F8FF   ; 084 ST r1,r5,3        STATUS=1
+FFF8_09050007_F8FF   ; 085 ST r0,r5,7        ERR=0
+FFF8_FF000000_F8FF   ; 086 HALT
+; 087                          err_closed
+FFF8_01100001_F8FF   ; 087 MOVI r1,1
+FFF8_09150007_F8FF   ; 088 ST r1,r5,7
+FFF8_FF000000_F8FF   ; 089 HALT
+; 090                          err_rounds
+FFF8_01100002_F8FF   ; 090 MOVI r1,2
+FFF8_09150007_F8FF   ; 091 ST r1,r5,7
+FFF8_FF000000_F8FF   ; 092 HALT
+; 093                          err_addressee
+FFF8_01100003_F8FF   ; 093 MOVI r1,3
+FFF8_09150007_F8FF   ; 094 ST r1,r5,7
+FFF8_FF000000_F8FF   ; 095 HALT
+; 096                          err_need_msg
+FFF8_01100004_F8FF   ; 096 MOVI r1,4
+FFF8_09150007_F8FF   ; 097 ST r1,r5,7
+FFF8_FF000000_F8FF   ; 098 HALT

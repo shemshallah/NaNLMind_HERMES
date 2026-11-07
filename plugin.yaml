@@ -1,5 +1,5 @@
 name: nanlmind-hermes
-version: 1.2.3
+version: 1.3.0
 manifest_version: 2
 api_version: 1
 requires_hermes: ">=0.23.0"
@@ -11,6 +11,7 @@ provides_tools:
   - nanlm_status
   - nanlm_chat
   - nanlm_chat_history
+  - nanlm_phone_call
   - nanlm_auth_init
   - nanlm_auth_status
   - nanlm_auth_pair

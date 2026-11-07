@@ -105,7 +105,7 @@ def main(argv=None):
         register_body = json.dumps({
             "device_secret": device_secret, "consent": True,
             "terms_version": "nannet-device-registration-v1",
-            "system_report": {"platform": "Hermes", "app_version": "1.2.3"},
+            "system_report": {"platform": "Hermes", "app_version": "1.3.0"},
         }).encode()
         register_request = urllib.request.Request(
             ctx.config["nannet_auth_url"] + "/v1/hermes/register",

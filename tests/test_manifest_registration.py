@@ -72,6 +72,22 @@ class ManifestRegistrationTests(unittest.TestCase):
         self.assertIn("[build-system]", project)
         self.assertIn('build-backend = "setuptools.build_meta"', project)
 
+    def test_phone_call_schema_and_nan16_kernel_ship(self):
+        source = (ROOT / "nanlmind_hermes" / "__init__.py").read_text(encoding="utf-8")
+        self.assertIn('"clocked": {"type": "boolean"', source,
+                      "nanlm_phone_call schema must expose clocked")
+        kernel = ROOT / "nanlmind_hermes" / "nan" / "phone_call.nan"
+        self.assertTrue(kernel.exists(), "raw NaN16 kernel is missing")
+        from nanlmind_hermes.nanvm import parse_nan_image, word_payload
+        words = parse_nan_image(kernel.read_text(encoding="utf-8"))
+        self.assertEqual(len(words), 99)
+        first = word_payload(words[0])
+        self.assertEqual(first >> 24, 0x01)          # MOVI ...
+        self.assertEqual((first >> 20) & 15, 13)     # ... r13,1 executes first
+        self.assertIn("*.nan", (ROOT / "MANIFEST.in").read_text(encoding="utf-8"))
+        self.assertIn("nan/*.nan",
+                      (ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+
     def test_crypto_backend_is_optional_and_has_one_authoritative_declaration(self):
         manifest = (ROOT / "plugin.yaml").read_text(encoding="utf-8")
         project = (ROOT / "pyproject.toml").read_text(encoding="utf-8")

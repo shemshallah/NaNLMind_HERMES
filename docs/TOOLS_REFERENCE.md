@@ -1,6 +1,6 @@
 # Tool reference
 
-Version 1.2.3 (2026-11-07). All tools are registered under the `nanlmind` toolset.
+Version 1.3.0 (2026-11-07). All tools are registered under the `nanlmind` toolset.
 Tool schemas reject unknown properties unless stated otherwise.
 
 ## Default conversation
@@ -30,6 +30,34 @@ Read the durable transcript.
 
 - `session_id` (string, default `default`)
 - `limit` (integer, 1–200, default 40)
+
+### `nanlm_phone_call`
+Three-way call over the shared scratch journal:
+`user -> Hermes -> NaNLM -> user + Hermes`. The user may address Hermes or
+NaNLM directly and may inject a new message between runs. NaNLM uses native
+parsing/synthesis; Hermes uses its configured model as an optional bridge.
+
+The routing kernel is a raw NaN16 program (`nan/phone_call.nan`, 99 words)
+executed on the NaNVM0 boundary (`nanvm.py`): validation, addressee routing,
+round loops, event-plan emission and turn accounting are 0xNaN, not Python.
+Each turn's kernel plan is recorded in the `phone_event` lane with
+`kernel: nan16/1`.
+
+- `session_id` (string, default `default`, ≤64 safe characters)
+- `action` (`start`, `say`, `run`, `status`, `end`; default `say`)
+- `message` (string, required for `start`/`say`)
+- `addressee` (`hermes`, `nanlm`, `both`; default `hermes`)
+- `rounds` (integer, 1–64, default 1; extra autonomous Hermes ↔ NaNLM turns)
+- `clocked` (boolean, default false; persisted on `start`, overridable on
+  `say`). When enabled, Hermes turns run the call window through the CLOCKED
+  gateway (extract → grounding → decide) before phrasing the turn. Plan,
+  result and evidence lanes share the call scratch window; failures fall back
+  to the normal relay.
+
+Returns the call status, turn count, transcript, `scratch_id`, `kernel`, and
+the default path. Each participant writes only to its own scratch lane:
+`phone_user`, `phone_hermes`, `phone_nanlm`; the kernel plan is written to
+`phone_event`, and CLOCKED lanes land in the same journal.
 
 ### `nanlm_nan16de_route`
 Send one signed raw NaN16 double-endian route envelope to the authenticated
