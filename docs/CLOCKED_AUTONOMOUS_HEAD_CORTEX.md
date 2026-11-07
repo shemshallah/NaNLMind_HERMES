@@ -326,7 +326,7 @@ Existing `/nanlm` chat and training modes remain unchanged. CLOCKED mode is an a
 - NANNET-authorized head-cortex service deployment and route registration through the live Router/Koyeb topology.
 - Live CLOCKED SDK calls for each direct endpoint method (CI uses fakes/fixtures; no paid API calls).
 - Production multi-source scratch transport between devices/services.
-- Automated multi-mask mutation search, expanded control suites, candidate retrieval/evaluation UI and six-runner generation-barrier promotion. Candidate creation and held-out baseline comparison are implemented; promotion is not.
+- Automated multi-mask search, broader controls, candidate retrieval/review UI and six-runner generation-barrier promotion. Candidate creation, weak-supervision training and held-out baseline comparison are implemented; promotion is not.
 
 The native `relation-eval` path is read-only: it evaluates relation records against an existing serialized topology and does not train or mutate canonical state. The service currently returns Boolean-head relation predictions and provenance; it is not yet a full general-purpose semantic reasoning endpoint.
 
