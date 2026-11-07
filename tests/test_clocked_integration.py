@@ -9,6 +9,43 @@ from nanlmind_hermes import clocked_tools
 from unittest.mock import patch
 
 
+class AutonomousModeTests(unittest.TestCase):
+    def test_llm_selects_policy_constrained_mode_without_receiving_raw_sources(self):
+        class Provider:
+            def __init__(self):
+                self.calls = []
+            def complete(self, **kwargs):
+                self.calls.append(kwargs)
+                from types import SimpleNamespace
+                return SimpleNamespace(text='{"mode":"CLOCKED_COMPARE","reason":"The user asks to reconcile multiple sources."}')
+        class Context:
+            def __init__(self):
+                self.llm = Provider()
+        ctx = Context()
+        sources = [{"id": "source-a", "text": "private text A"},
+                   {"id": "source-b", "text": "private text B"}]
+        result = clocked_tools.choose_clocked_mode(ctx, "Compare these sources", sources)
+        self.assertEqual(result["mode"], "CLOCKED_COMPARE")
+        self.assertEqual(result["selected_endpoints"], ["extract", "grounding", "compare"])
+        self.assertEqual(result["decision_method"], "llm_policy_constrained")
+        sent = ctx.llm.calls[0]["messages"][1]["content"]
+        self.assertNotIn("private text A", sent)
+        self.assertNotIn("private text B", sent)
+
+    def test_invalid_llm_mode_falls_back_to_deterministic_policy(self):
+        class Provider:
+            def complete(self, **kwargs):
+                from types import SimpleNamespace
+                return SimpleNamespace(text='{"mode":"arbitrary_endpoint","reason":"bad"}')
+        class Context:
+            llm = Provider()
+        result = clocked_tools.choose_clocked_mode(
+            Context(), "Compare these sources",
+            [{"text": "A"}, {"text": "B"}])
+        self.assertEqual(result["mode"], "CLOCKED_COMPARE")
+        self.assertEqual(result["decision_method"], "deterministic_fallback")
+
+
 class ScratchTests(unittest.TestCase):
     def test_hash_chain_and_expected_revision(self):
         with tempfile.TemporaryDirectory() as tmp:
