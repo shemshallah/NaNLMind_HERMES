@@ -115,6 +115,28 @@ atoms appear in the append-only scratch journal. CLOCKED results are evidence,
 not ground truth, and candidate learning cannot promote or mutate canonical
 head state.
 
+## Latest recorded runs
+
+- [DEMO_RESULTS.md](DEMO_RESULTS.md): 35/35 tool calls passed against a local
+  full-feature demo (real native binary, loopback NANNET authority, local
+  CLOCKED and head-cortex contract stubs).
+- [LIVE_SMOKE.md](LIVE_SMOKE.md): 7/7 checks passed against deployed NANNET and
+  CLOCKED services.
+
+Regenerate the local report with:
+
+```sh
+python scripts/demo_run.py --native-binary /path/to/nanlm-universal
+```
+
+The live report is opt-in and requires an operator-issued pairing code:
+
+```sh
+python scripts/live_smoke.py --nannet-url https://<authority> \
+  --pairing-code nnh_... --clocked-url https://<gateway> \
+  --clocked-token-file /path/to/clocked-token
+```
+
 ## What to check
 
 | Area | Success signal |

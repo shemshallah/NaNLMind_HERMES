@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.2.1 — 2026-11-07
+
+- Restored the missing `run_training_session` dispatch used by the explicit
+  `nanlm_logic_session`, `nanlm_word_session`, `nanlm_sentence_session` and
+  `nanlm_training_pipeline` tools.
+- Fixed curriculum experiment aggregation when the teacher rejects records
+  (the rejected count is a per-reason mapping, not a scalar).
+- Made the bundled NANNET pairing authority sign installation tokens with the
+  stable issuer key, matching the client pin and the deployed authority.
+- Added a full-feature demo runner (`scripts/demo_run.py`) covering all 35
+  registered-tool calls, a live smoke runner (`scripts/live_smoke.py`), and
+  recorded results in `docs/DEMO_RESULTS.md` and `docs/LIVE_SMOKE.md`.
+- Final verification: 132 tests, 35/35 full-feature demo calls, 7/7 live
+  NANNET/CLOCKED checks, Hermes admission and package CI.
+
 ## 1.2.0 — 2026-11-07
 
 - Unified topology: HW0 is RunnerLink, BS0 is the six-worker RunnerRing, and

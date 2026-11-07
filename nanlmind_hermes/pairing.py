@@ -130,8 +130,12 @@ class PairingAuthority:
             db.execute("INSERT OR REPLACE INTO installations VALUES (?,?,?)",(installation_id,public_key,now))
             scopes=json.loads(row[0]); role=row[3]
         self.register_identity(role, installation_id, now)
-        token=issue_token(self._private_key(role, installation_id),installation_id,scopes,token_ttl_seconds,now,role=role)
-        return {"token":token,"issuer_public_key":self.issuer_public_key(role, installation_id),"installation_id":installation_id,"scopes":scopes,"role":role,"expires_at":now+token_ttl_seconds}
+        # Pairing clients pin one stable authority key before they contact the
+        # authority. Sign the installation token with that stable key; the
+        # per-identity keys remain available for short-lived device/admin
+        # tokens and are still accepted by verify_access_token().
+        token=issue_token(self._legacy_private_key(),installation_id,scopes,token_ttl_seconds,now,role=role)
+        return {"token":token,"issuer_public_key":self.issuer_public_key(),"installation_id":installation_id,"scopes":scopes,"role":role,"expires_at":now+token_ttl_seconds}
 
 
     def is_paired_installation(self, installation_id: str) -> bool:

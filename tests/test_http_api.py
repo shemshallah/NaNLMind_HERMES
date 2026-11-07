@@ -22,7 +22,8 @@ class PairingHttpTests(unittest.TestCase):
                 req=urllib.request.Request("http://127.0.0.1:%d/v1/pair"%server.server_address[1],data=json.dumps(payload).encode(),headers={"Content-Type":"application/json"},method="POST")
                 with urllib.request.urlopen(req,timeout=5) as response: result=json.loads(response.read())
                 self.assertEqual(result["scopes"],["training:execute"])
-                self.assertEqual(result["issuer_public_key"],authority.issuer_public_key("guest",payload["installation_id"]))
+                self.assertEqual(result["issuer_public_key"],authority.issuer_public_key())
+                self.assertEqual(authority.verify_access_token(result["token"],"training:execute")["role"],"guest")
                 base="http://127.0.0.1:%d"%server.server_address[1]
                 def signed(path, body):
                     envelope=sign_request(private,"POST",path,body)

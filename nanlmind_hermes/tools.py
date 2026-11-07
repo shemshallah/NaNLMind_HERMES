@@ -625,6 +625,33 @@ def _merge_relation_memory(ctx, records, train_only=False, reorganize=False):
     return result
 
 
+def run_training_session(ctx, topic: str, mode: str = "logic",
+                         records_per_stage: int = 12, epochs: int = 3,
+                         max_samples_per_head: int = 4096):
+    """Run one explicit training mode without changing the default chat path.
+
+    modes:
+      logic     Boolean inverses + deep logic
+      words     repetitive/lexical words + word completion
+      sentences sentence choice + narrative
+      pipeline  all twelve stages in canonical order
+    """
+    presets = {
+        "logic": ["boolean_inverses", "deep_logic"],
+        "words": ["repetitive_words", "lexical_words", "word_completion"],
+        "sentences": ["sentence_choice", "narrative"],
+        "pipeline": [name for name, _ in CURRICULUM_STAGES],
+    }
+    if mode not in presets:
+        raise ValueError("mode must be one of: " + ", ".join(sorted(presets)))
+    result = run_curriculum_experiment(
+        ctx, topic, records_per_stage, epochs, max_samples_per_head,
+        presets[mode])
+    result["mode"] = mode
+    result["stages_requested"] = presets[mode]
+    return result
+
+
 def chat(ctx, message: str, session_id: str = "default", system_prompt: str = None,
          temperature: float = 0.7, max_tokens: int = 2048,
          sources: list[dict] | None = None):
@@ -847,7 +874,13 @@ def run_curriculum_experiment(ctx, topic: str = "logic and language",
         training.update(_merge_relation_memory(
             ctx, corpus["records"], train_only=True, reorganize=True
         ))
-        rejected = sum(int(stage.get("rejected", 0)) for stage in corpus.get("stages", []))
+        rejected = 0
+        for stage in corpus.get("stages", []):
+            value = stage.get("rejected", 0)
+            if isinstance(value, dict):
+                rejected += sum(int(count) for count in value.values())
+            else:
+                rejected += int(value or 0)
         summary = {
             "round": round_index + 1,
             "test_set_sha256": corpus.get("test_sha256"),
