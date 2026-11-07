@@ -194,20 +194,18 @@ Validation passed.
 
 ### Minimal Alpine / Termux
 
-The production manifest declares the bounded `cryptography>=42,<47` dependency
-for NANNET identity and token protection. `crypto_compat.py` retains a
-pure-Python compatibility fallback for constrained development/test hosts;
-production installs should use the declared dependency. See
-`docs/ALPINE_PROOT_TESTING.md`.
-
-For the audited/accelerated backend:
+The runtime has no mandatory third-party Python dependencies.
+`crypto_compat.py` uses the audited `cryptography` primitives when available
+and retains a dependency-free compatibility implementation for constrained
+hosts. For production deployments, install the optional bounded backend:
 
 ```sh
 pip install "nanlmind-hermes[auth]"
 ```
 
-The fallback is appropriate for minimal local hosts; use the optional backend
-or an HSM for production key custody.
+The optional backend is not an HSM; production key custody should still use an
+appropriate OS secret store or hardware-backed service. See
+`docs/ALPINE_PROOT_TESTING.md`.
 
 ---
 
