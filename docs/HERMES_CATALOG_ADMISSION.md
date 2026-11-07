@@ -95,11 +95,12 @@ maintainers control verified/official tiers).
 ## Validation record
 
 - Plugin version: **1.2.0** in both `plugin.yaml` and `pyproject.toml`.
-- Local Python tests: last reported passing before the latest release-hardening commits; the final branch head must be rerun in CI.
-- Hermes Agent v0.23.0 admission validator and Plugin Doctor: previously passed on
-  `30d264a766d6219c2a23142ffb4b4e97bfbe9b03`. This is not a validation result
-  for the current PR head; rerun both checks after the final code changes and
-  record the exact resulting commit SHA and outputs.
-- Release package: wheel and source-distribution build/check/install verification is now part of CI; no successful artifact build is claimed until that job passes.
-- A passing local validator is not catalog admission. The upstream catalog PR,
-  immutable SHA pin, maintainer review and merge are still required.
+- Fully validated source/manifest commit: `a99ed96016f844694b444ac63d80909e01f43e10`.
+- Python 3.10, 3.11 and 3.12: **128 tests passed on each version** (384 successful test executions).
+- Hermes Agent v0.23.0 `hermes plugins validate . --install-deps`: **PASS**. Manifest, compatibility floor, config schema, required secret names, tool/hook/middleware parity, collision scan, security scan and no-core-override checks all passed.
+- Hermes Plugin Doctor `hermes plugins doctor . --ci`: **PASS**. Runtime discovery, manifest parsing, import and registration passed; **33 tools, 0 hooks**.
+- Release package: wheel and sdist both built; Twine checks passed; required source files were present; wheel and sdist each installed and imported; SHA256 checksums for both distributions were generated and verified.
+- Release artifact: [nanlmind-hermes-python-distributions](https://github.com/shemshallah/NaNLMind_HERMES/actions/runs/42346913559/artifacts/13563454894).
+- GitGuardian: 121 commits scanned; no secrets detected.
+- Live CLOCKED/NANNET/production-native endpoint integration is not exercised by CI and remains a deployment smoke-test gate.
+- Upstream catalog admission is still separate: submit the catalog PR with the exact 40-character source SHA, then obtain maintainer review and merge.
