@@ -161,8 +161,19 @@ def postflight(package: dict, response: dict, prepared: dict) -> dict:
     relations = response.get("relations", [])
     if not isinstance(relations, list):
         raise ValueError("M7 relation result must be a list")
+    reported_state = response.get("truth_state")
+    if reported_state not in TRUTH_STATES:
+        raise ValueError("M7 response truth state is invalid")
+    raw_source_ids = provenance.get("source_entry_ids", [])
+    if (not isinstance(raw_source_ids, list)
+            or any(not isinstance(x, str) for x in raw_source_ids)):
+        raise ValueError("M7 source-entry provenance is malformed")
+    state_digest = provenance.get("state_digest")
+    if state_digest is not None and (
+            not isinstance(state_digest, str) or not HEX64.fullmatch(state_digest)):
+        raise ValueError("M7 native state digest is invalid")
     states = set()
-    source_ids = set(provenance.get("source_entry_ids", []))
+    source_ids = set(raw_source_ids)
     for relation in relations:
         if not isinstance(relation, dict):
             raise ValueError("M7 relation must be an object")
@@ -204,6 +215,8 @@ def postflight(package: dict, response: dict, prepared: dict) -> dict:
         consensus = "UNKNOWN"
     else:
         consensus = next(iter(states))
+    if reported_state != consensus:
+        raise ValueError("M8 native and reconstructed consensus disagree")
     trace.append(_pass("M8", "cross_source_consensus",
                        _digest(relations), {"truth_state": consensus},
                        {"observed_states": sorted(states),
