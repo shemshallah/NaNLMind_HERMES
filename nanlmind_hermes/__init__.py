@@ -16,8 +16,8 @@ def register(ctx):
         _require_scope("universe:read")
         return clocked_tools.clocked_execute(ctx, params["question"],
             params["sources"], params.get("scratch_id", "default"),
-            params.get("approved", False), params.get("max_requests", 16),
-            params.get("max_bytes", 1048576))
+            params.get("approved", False), params.get("plan_sha256", ""),
+            params.get("max_requests", 16), params.get("max_bytes", 1048576))
 
     def handle_clocked_scratch(params, **kwargs):
         _require_scope("universe:read")
@@ -254,9 +254,10 @@ def register(ctx):
              "text": {"type": "string", "minLength": 1, "maxLength": 65536}}}},
           "scratch_id": {"type": "string", "maxLength": 80},
           "approved": {"type": "boolean", "default": False},
+          "plan_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
           "max_requests": {"type": "integer", "minimum": 1, "maximum": 16, "default": 16},
           "max_bytes": {"type": "integer", "minimum": 1, "maximum": 1048576, "default": 1048576}},
-         ["question", "sources"], handle_clocked_execute),
+         ["question", "sources", "approved", "plan_sha256"], handle_clocked_execute),
         ("nanlm_clocked_scratch", "Inspect a revisioned HERMES scratch or one writer-owned lane.",
          {"scratch_id": {"type": "string", "maxLength": 80},
           "lane": {"type": "string", "enum": ["user", "hermes_plan", "clocked_request", "clocked_result", "evidence_atoms", "conflict_map", "nan16_package", "head_response", "hermes_synthesis", "head_validation", "final", "learning_proposal"]}},
@@ -452,11 +453,11 @@ def register(ctx):
                 return _json.dumps(_clocked.clocked_plan(ctx, data["question"], data.get("sources", []), data.get("scratch_id", "default")), sort_keys=True, default=str)
             if sub == "run" and len(rest) >= 3 and "--approved" in rest[2:]:
                 data = _json.loads(_Path(rest[1]).expanduser().read_text(encoding="utf-8"))
-                return _json.dumps(_clocked.clocked_execute(ctx, data["question"], data["sources"], data.get("scratch_id", "default"), True), sort_keys=True, default=str)
+                return _json.dumps(_clocked.clocked_execute(ctx, data["question"], data["sources"], data.get("scratch_id", "default"), True, data["plan_sha256"]), sort_keys=True, default=str)
             if sub == "head" and len(rest) >= 2:
                 data = _json.loads(_Path(rest[1]).expanduser().read_text(encoding="utf-8"))
                 return _json.dumps(_clocked.head_process(ctx, data["question"], data.get("scratch_id", "default"), data.get("purpose", "EVIDENCE_COGNITION"), data.get("draft")), sort_keys=True, default=str)
-            return _json.dumps({"usage": "/nanlm clocked [plan <request.json>|run <request.json> --approved|scratch [id]|head <request.json>]", "request_file": {"question": "string", "sources": [{"id": "source-a", "text": "source text"}], "scratch_id": "optional-id"}, "note": "Plan does not transmit source text. Run requires the explicit --approved flag."})
+            return _json.dumps({"usage": "/nanlm clocked [plan <request.json>|run <request.json> --approved --plan-sha256 <digest>|scratch [id]|head <request.json>]", "request_file": {"question": "string", "sources": [{"id": "source-a", "text": "source text"}], "scratch_id": "optional-id"}, "note": "Plan does not transmit source text. Run requires the explicit --approved flag."})
         if command == "chat":
             message = " ".join(rest)
         else:
