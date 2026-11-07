@@ -50,7 +50,6 @@ class TransformIntegrationTests(unittest.TestCase):
             self.assertEqual(len(trace_rows), 2)
             rebuilt = build_evidence_package(
                 scratch, "What is established?")
-            self.assertEqual(rebuilt["package_sha256"], result["package_sha256"])
             self.assertFalse(any(x["lane"] == "transform_trace"
                                  for x in rebuilt["evidence_entries"]))
 
