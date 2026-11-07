@@ -115,8 +115,8 @@ class CandidateInputTests(unittest.TestCase):
         import re
         entrypoint = Path(__file__).parents[1] / "nanlmind_hermes" / "__init__.py"
         source = entrypoint.read_text(encoding="utf-8")
-        handler_defs = re.findall(r"^    def handle_head_candidate_evaluate\\(", source, re.MULTILINE)
-        tool_specs = re.findall(r'^\\s*\\("nanlm_head_candidate_evaluate",', source, re.MULTILINE)
+        handler_defs = re.findall(r"^    def handle_head_candidate_evaluate\(", source, re.MULTILINE)
+        tool_specs = re.findall(r'^\s*\("nanlm_head_candidate_evaluate",', source, re.MULTILINE)
         self.assertEqual(len(handler_defs), 1)
         self.assertEqual(len(tool_specs), 1)
 
