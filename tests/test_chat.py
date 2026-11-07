@@ -60,7 +60,7 @@ class HermesChatTests(unittest.TestCase):
                           session_id="clocked-proposal",
                           sources=[{"id": "spec-a", "text": "The system uses NaN16."},
                                    {"id": "spec-b", "text": "The system uses Boolean heads."}])
-            self.assertEqual(result["clocked_mode"]["mode_plan"]["mode"], "CLOCKED_MULTI_SOURCE")
+            self.assertEqual(result["clocked_mode"]["mode_plan"]["mode"], "CLOCKED_COMPARE")
             self.assertEqual(result["clocked_mode"]["task_plan"]["schema"],
                              "nanlm.clocked-task-plan/1")
             self.assertEqual(len(result["clocked_mode"]["approval_digest"]), 64)
