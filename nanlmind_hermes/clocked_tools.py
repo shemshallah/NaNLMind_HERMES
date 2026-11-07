@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-import os
 import math
 from pathlib import Path
 
@@ -12,6 +11,7 @@ from .clocked_mode import execute_multi_source, make_task_plan, propose_mode, va
 from .evidence import build_evidence_package
 from .head_cortex import HeadCortexClient
 from .scratch import Scratch
+from .hermes_secrets import get_secret
 
 
 def _setting(ctx, key, default=None):
@@ -24,6 +24,21 @@ def _setting(ctx, key, default=None):
 def _scratch(ctx, scratch_id):
     root = Path(str(_setting(ctx, "state_dir", "~/.local/share/nanlmind-hermes"))).expanduser()
     return Scratch(root / "clocked_scratch", scratch_id)
+
+def _clocked_client(ctx):
+    url = _setting(ctx, "clocked_gateway_url", "")
+    token = get_secret("CLOCKED_GATEWAY_TOKEN")
+    if not url or not token:
+        raise RuntimeError("Configure clocked_gateway_url and CLOCKED_GATEWAY_TOKEN in Hermes plugin settings")
+    return ClockedGatewayClient(base_url=url, token=token)
+
+
+def _head_client(ctx):
+    url = _setting(ctx, "nanlm_head_cortex_url", "")
+    token = get_secret("NANLM_DEVICE_TOKEN")
+    if not url or not token:
+        raise RuntimeError("Configure nanlm_head_cortex_url and NANLM_DEVICE_TOKEN in Hermes plugin settings")
+    return HeadCortexClient(endpoint=url, token=token)
 
 
 
@@ -130,8 +145,6 @@ def clocked_execute(ctx, question, sources=None, scratch_id="default",
         raise PermissionError("CLOCKED execution requires explicit approved=true after reviewing the plan")
     if not isinstance(plan_sha256, str) or len(plan_sha256) != 64:
         raise ValueError("the exact reviewed approval_digest is required")
-    if not (_setting(ctx, "clocked_gateway_url", None) or os.environ.get("CLOCKED_GATEWAY_URL")) or not os.environ.get("CLOCKED_GATEWAY_TOKEN"):
-        raise RuntimeError("configure CLOCKED_GATEWAY_URL and CLOCKED_GATEWAY_TOKEN for the scoped participant gateway")
     scratch = _scratch(ctx, scratch_id)
     plan_rows = scratch.lane("hermes_plan")
     reviewed = next((row["payload"] for row in reversed(plan_rows)
@@ -152,7 +165,7 @@ def clocked_execute(ctx, question, sources=None, scratch_id="default",
     validation = validate_task_plan(plan, budget)
     if validation["plan_sha256"] != plan_sha256:
         raise PermissionError("approval digest does not match the reviewed task plan")
-    client = ClockedGatewayClient(base_url=_setting(ctx, "clocked_gateway_url", None) or None)
+    client = _clocked_client(ctx)
     return execute_multi_source(client, scratch, question, sources,
                                 budget=budget, plan=plan)
 
@@ -178,9 +191,7 @@ def head_process(ctx, question, scratch_id="default", purpose="EVIDENCE_COGNITIO
         "scratch_revision": package["scratch_revision"],
         "evidence_entry_count": len(package["evidence_entries"]),
     })
-    if not os.environ.get("NANLM_HEAD_CORTEX_URL") or not os.environ.get("NANLM_DEVICE_TOKEN"):
-        raise RuntimeError("configure NANLM_HEAD_CORTEX_URL and NANLM_DEVICE_TOKEN for the NANNET-authorized NaNLMind receiving interface")
-    result = HeadCortexClient().process(package)
+    result = _head_client(ctx).process(package)
     scratch.append("head_response", "nanlmind", result)
     if purpose == "ANSWER_VALIDATION":
         scratch.append("head_validation", "nanlmind", {
@@ -269,8 +280,6 @@ def head_candidate(ctx, mutation_id, head_index, patch_mask,
         raise ValueError("patch_mask must be 1..65535")
     if not isinstance(base_topology_digest, str) or len(base_topology_digest) != 64:
         raise ValueError("base_topology_digest must be a SHA-256 digest")
-    if not os.environ.get("NANLM_HEAD_CORTEX_URL") or not os.environ.get("NANLM_DEVICE_TOKEN"):
-        raise RuntimeError("configure NANLM_HEAD_CORTEX_URL and a NANNET training:execute device token")
     request = {
         "schema": "nanlm.head-candidate-request/1",
         "mutation_id": mutation_id,
@@ -278,7 +287,7 @@ def head_candidate(ctx, mutation_id, head_index, patch_mask,
         "patch_mask": patch_mask,
         "base_topology_digest": base_topology_digest,
     }
-    result = HeadCortexClient().create_candidate(request)
+    result = _head_client(ctx).create_candidate(request)
     scratch = _scratch(ctx, scratch_id)
     scratch.append("learning_proposal", "nanlmind", {
         "kind": "boolean_head_candidate",
@@ -311,8 +320,6 @@ def head_candidate_evaluate(ctx, mutation_id, records, approved=False,
         if (not isinstance(digest, str) or len(digest) != 64
                 or any(c not in "0123456789abcdef" for c in digest.lower())):
             raise ValueError("held-out relation %d has invalid source_digest" % index)
-    if not os.environ.get("NANLM_HEAD_CORTEX_URL") or not os.environ.get("NANLM_DEVICE_TOKEN"):
-        raise RuntimeError("configure NANLM_HEAD_CORTEX_URL and a NANNET training:execute device token")
     dataset_sha256 = hashlib.sha256(json.dumps(
         records, sort_keys=True, separators=(",", ":"), ensure_ascii=False
     ).encode("utf-8")).hexdigest()
@@ -323,7 +330,7 @@ def head_candidate_evaluate(ctx, mutation_id, records, approved=False,
         "dataset_sha256": dataset_sha256,
         "records": records,
     }
-    result = HeadCortexClient().evaluate_candidate(request)
+    result = _head_client(ctx).evaluate_candidate(request)
     scratch = _scratch(ctx, scratch_id)
     scratch.append("learning_proposal", "hermes", {
         "kind": "boolean_head_candidate_evaluation",
@@ -357,8 +364,6 @@ def head_learn_candidate(ctx, mutation_id, base_topology_digest,
         raise ValueError("base_topology_digest must be a hexadecimal SHA-256 digest")
     if isinstance(epochs, bool) or not isinstance(epochs, int) or not 1 <= epochs <= 8:
         raise ValueError("epochs must be between 1 and 8")
-    if not os.environ.get("NANLM_HEAD_CORTEX_URL") or not os.environ.get("NANLM_DEVICE_TOKEN"):
-        raise RuntimeError("configure NANLM_HEAD_CORTEX_URL and a NANNET training:execute device token")
     observations = scratch.lane("clocked_result")
     if not observations:
         raise ValueError("scratch contains no CLOCKED endpoint observations")
@@ -499,7 +504,7 @@ def head_learn_candidate(ctx, mutation_id, base_topology_digest,
         "dataset_sha256": dataset_sha256,
         "epochs": epochs, "records": records,
     }
-    candidate = HeadCortexClient().create_learning_candidate(request)
+    candidate = _head_client(ctx).create_learning_candidate(request)
     scratch.append("learning_proposal", "hermes", {
         "kind": "clocked_weak_supervision_head_candidate",
         "mutation_id": mutation_id,
