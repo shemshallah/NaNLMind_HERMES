@@ -95,12 +95,18 @@ identifier (M0–M9), while each relation/event retains its canonical resolution
 
 ### Runtime integration status
 
-This table defines the target processing contract; it does not claim all ten
-passes already execute in production. The current Hermes head-cortex adapter
-sends a typed evidence package to NaNLMind's read-only `relation-eval` path.
-Candidate learning is isolated behind a separate `relation-train` candidate
-endpoint. A live CLOCKED-to-M0–M9 execution trace has not yet been proven
-end-to-end.
+The Hermes head-process path now executes and records all ten M0–M9 passes:
+M0–M5 deterministic preflight, M6 delegated to NaNLMind's read-only native
+`relation-eval`, and M7–M9 response/provenance/consensus/metacontrol validation.
+The append-only `transform_trace` scratch lane records digests and bounded
+summaries, not raw evidence. M5 relation/hyperedge projections are candidate
+diagnostics; the native service remains authoritative and re-derives inference
+atoms from the immutable evidence package. Tests exercise the complete chain
+with a controlled head-cortex response.
+
+This is local integration validation, not a claim of a live external CLOCKED
+gateway plus production native-binary run. Candidate learning remains isolated
+behind a separate `relation-train` candidate endpoint.
 
 There is a naming collision to resolve before wiring the chain: the core
 router's `runner/nannet_router/macro.py` calls its ten address/bin mapping
