@@ -43,10 +43,13 @@ HW9+: scoped participant addresses attached to HW0::BS0
 - The six BS0 runners are disposable execution workers over one global state.
   They are not six independent minds and never own private histories.
 
-The Hermes plugin keeps local working artifacts (transcripts, scratch, corpora,
-run receipts and caches) separate from canonical native state. A Hermes-local
-SQLite projection is not another native universe and cannot promote canonical
-model state.
+The Hermes plugin keeps working artifacts (transcripts, scratch,
+corpora, run receipts and caches) under its configured state directory. Its
+`universe/` subdirectory is the native state/checkpoint path for the one
+HW0::BS0 universe, not another universe. All BS0 workers and attached Hermes
+clients must use the same canonical state path; do not configure per-runner or
+per-endpoint native state directories. Hermes-local SQLite projections remain
+derived caches and cannot promote canonical model state.
 
 ## 2. One canonical L0–L9 resolution axis
 
