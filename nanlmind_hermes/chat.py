@@ -264,7 +264,8 @@ def _reflect(ctx, user_text: str, assistant_text: str, source_digest: str,
 
 
 def chat(ctx, message: str, session_id: str = "default", system_prompt: str = None,
-         temperature: float = 0.7, max_tokens: int = 2048) -> dict:
+         temperature: float = 0.7, max_tokens: int = 2048,
+         sources: list[dict] | None = None) -> dict:
     """Open-ended conversation plus asynchronous-in-spirit best-effort reflection."""
     if not isinstance(message, str) or not message.strip():
         raise ValueError("message must be non-empty text")
@@ -288,6 +289,23 @@ def chat(ctx, message: str, session_id: str = "default", system_prompt: str = No
         + ARCHITECTURE_CONTEXT
     )
     messages = [{"role": "system", "content": system_prompt or default_system}]
+    clocked_mode = None
+    clocked_scratch_id = None
+    if sources:
+        from .clocked_tools import clocked_plan
+        clocked_scratch_id = "chat-" + hashlib.sha256(session_id.encode("utf-8")).hexdigest()[:24]
+        clocked_mode = clocked_plan(ctx, message, sources, clocked_scratch_id)
+        messages.append({"role": "system", "content": (
+            "Autonomous mode proposal: " + json.dumps({
+                "mode": clocked_mode["mode_plan"]["mode"],
+                "approval_digest": clocked_mode.get("approval_digest"),
+                "scratch_id": clocked_scratch_id,
+                "task_plan": clocked_mode.get("task_plan"),
+            }, ensure_ascii=False, sort_keys=True) +
+            ". Source text has NOT been transmitted to CLOCKED. Do not claim CLOCKED results exist. "
+            "Explain the proposed task plan and ask for explicit approval. After approval, use "
+            "nanlm_clocked_execute with this scratch_id and exact plan_sha256."
+        )})
     messages.extend(history)
     messages.append({"role": "user", "content": message})
     answer = ctx.llm.complete(
@@ -371,6 +389,8 @@ def chat(ctx, message: str, session_id: str = "default", system_prompt: str = No
 
     return {
         "session_id": session_id, "response": response_text,
+        "clocked_mode": clocked_mode,
+        "clocked_scratch_id": clocked_scratch_id,
         "provider": getattr(answer, "provider", None), "model": getattr(answer, "model", None),
         "source_sha256": source_digest, "history_messages": len(history) + 2,
         "surface_measurements": {
