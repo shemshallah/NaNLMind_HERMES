@@ -427,7 +427,7 @@ def register(ctx):
          {"discoveries": {"type": "array", "minItems": 1, "maxItems": 1000, "items": {"type": "object"}},
           "source_digest": {"type": "string", "pattern": "^[0-9a-fA-F]{64}$"},
           "head": {"type": "integer", "minimum": 0, "maximum": 255},
-          "layer": {"type": "integer", "minimum": 0, "maximum": 31}},
+          "layer": {"type": "integer", "minimum": 0, "maximum": 9}},
          ["discoveries", "source_digest"], handle_memory_ingest),
         ("nanlm_memory_reorganize", "Rebuild deterministic head/layer memory projections without deleting discoveries.", {}, [], handle_memory_reorganize),
         ("nanlm_memory_cross_resolution", "Compute the ten-by-ten linguistic resolution interaction matrix, compare aligned evidence, preserve contradictions, and merge derived mathematical hyperedges into the shared universe.",
