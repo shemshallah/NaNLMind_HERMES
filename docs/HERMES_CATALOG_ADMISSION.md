@@ -10,7 +10,7 @@ prove from steps that only the upstream catalog maintainer can complete.
 |---|---|---|
 | Current plugin manifest format | PASS | `plugin.yaml` uses manifest v2. |
 | Hermes compatibility floor | PASS | `requires_hermes: ">=0.23.0"`; CI validates against Hermes Agent v0.23.0. |
-| Bounded dependencies | PASS | `cryptography>=42,<47`; no unbounded plugin dependency. |
+| Python dependency policy | PASS | No mandatory third-party runtime dependencies; `cryptography>=42,<47` is an optional bounded `pyproject.toml` extra, with a dependency-free compatibility path. |
 | Secret handling | PASS | NANNET, CLOCKED and head-cortex secrets use `agent.secret_scope.get_secret()`; secret fields are declared in `config_schema`. |
 | No process-environment credential reads | PASS | `tests/test_credential_policy.py` scans all plugin Python modules. |
 | Manifest/runtime and release-metadata parity | TEST ADDED; CI PENDING | `tests/test_manifest_registration.py` checks registered tool names, package/manifest versions, secret names, Apache-2.0 license alignment, and build metadata. |
