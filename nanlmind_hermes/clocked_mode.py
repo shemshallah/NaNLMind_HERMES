@@ -64,32 +64,61 @@ def propose_mode(question: str, source_texts: list[str] | None = None) -> dict:
 def validate_task_plan(plan: dict, budget: dict | None = None) -> dict:
     if not isinstance(plan, dict) or plan.get("schema") != "nanlm.clocked-task-plan/1":
         raise ValueError("invalid CLOCKED task plan schema")
+    if plan.get("version") != 1:
+        raise ValueError("unsupported CLOCKED task plan version")
+    plan_id = plan.get("plan_id")
+    if not isinstance(plan_id, str) or not 8 <= len(plan_id) <= 128:
+        raise ValueError("plan_id must contain 8..128 characters")
+    if any(ch not in "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789._:-" for ch in plan_id):
+        raise ValueError("plan_id contains unsupported characters")
     tasks = plan.get("tasks")
     if not isinstance(tasks, list) or not 1 <= len(tasks) <= MAX_TASKS:
         raise ValueError("task plan must contain 1..16 tasks")
-    ids = set()
+    seen = set()
     total_bytes = 0
-    for task in tasks:
+    for index, task in enumerate(tasks):
         if not isinstance(task, dict):
-            raise ValueError("each task must be an object")
+            raise ValueError("task %d must be an object" % index)
         task_id, endpoint, text = task.get("id"), task.get("endpoint"), task.get("text")
-        if not isinstance(task_id, str) or not task_id or task_id in ids:
-            raise ValueError("task IDs must be unique non-empty strings")
-        ids.add(task_id)
+        if not isinstance(task_id, str) or not 1 <= len(task_id) <= 128 or task_id in seen:
+            raise ValueError("task IDs must be unique strings of 1..128 characters")
         if endpoint not in ALLOWED_ENDPOINTS:
             raise ValueError("unsupported CLOCKED endpoint")
         if not isinstance(text, str) or not text.strip():
             raise ValueError("task text is required")
-        total_bytes += len(text.encode("utf-8"))
+        encoded = text.encode("utf-8")
+        if len(encoded) > MAX_TEXT_BYTES:
+            raise ValueError("each task text must be no larger than 64 KiB")
         deps = task.get("depends_on", [])
-        if not isinstance(deps, list) or any(d not in ids for d in deps):
-            raise ValueError("dependencies must reference earlier tasks")
+        if (not isinstance(deps, list) or len(deps) != len(set(deps))
+                or any(not isinstance(dep, str) or dep not in seen for dep in deps)):
+            raise ValueError("dependencies must uniquely reference earlier tasks")
+        options = task.get("options", {})
+        if not isinstance(options, dict):
+            raise ValueError("task options must be an object")
+        try:
+            options_size = len(json.dumps(options, sort_keys=True, separators=(",", ":"),
+                                          ensure_ascii=False).encode("utf-8"))
+        except (TypeError, ValueError):
+            raise ValueError("task options must be JSON-serializable")
+        if options_size > 8192:
+            raise ValueError("task options exceed 8 KiB")
+        total_bytes += len(encoded)
+        seen.add(task_id)
     if total_bytes > MAX_TASKS * MAX_TEXT_BYTES:
         raise ValueError("task plan exceeds aggregate input limit")
     limits = budget or {}
-    if len(tasks) > int(limits.get("max_requests", MAX_TASKS)):
+    max_requests = limits.get("max_requests", MAX_TASKS)
+    max_bytes = limits.get("max_bytes", MAX_TASKS * MAX_TEXT_BYTES)
+    if (isinstance(max_requests, bool) or not isinstance(max_requests, int)
+            or max_requests < 1):
+        raise ValueError("max_requests budget must be a positive integer")
+    if (isinstance(max_bytes, bool) or not isinstance(max_bytes, int)
+            or max_bytes < 1):
+        raise ValueError("max_bytes budget must be a positive integer")
+    if len(tasks) > max_requests:
         raise ValueError("task plan exceeds request budget")
-    if total_bytes > int(limits.get("max_bytes", MAX_TASKS * MAX_TEXT_BYTES)):
+    if total_bytes > max_bytes:
         raise ValueError("task plan exceeds byte budget")
     return {"task_count": len(tasks), "input_bytes": total_bytes,
             "plan_sha256": _digest(plan)}
