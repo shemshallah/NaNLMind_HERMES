@@ -41,9 +41,9 @@ jobs:
           done
           echo "HERMES_BIN=$HERMES_INSTALL_DIR/.hermes/bin/hermes" >> "$GITHUB_ENV"
       - name: Validate catalog admission contract
-        run: "$HERMES_BIN" plugins validate . --install-deps
+        run: '"$HERMES_BIN" plugins validate . --install-deps'
       - name: Validate plugin registration in isolation
-        run: "$HERMES_BIN" plugins doctor . --ci
+        run: '"$HERMES_BIN" plugins doctor . --ci'
 
   release-package:
     runs-on: ubuntu-latest
