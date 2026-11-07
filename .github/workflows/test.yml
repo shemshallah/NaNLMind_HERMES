@@ -29,21 +29,14 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
-      - name: Install Hermes Agent v0.23.0 runtime for plugin validation
-        env:
-          HERMES_HOME: ${{ runner.temp }}/hermes-home
-          HERMES_INSTALL_DIR: ${{ runner.temp }}/hermes-agent
+      - name: Install Hermes Agent v0.23.0
         run: |
-          installer=https://raw.githubusercontent.com/NousResearch/hermes-agent/v0.23.0/scripts/install.sh
-          pin=2bd378ed1b8d6bf2192cb26e0a55ff3091e6bd19
-          for stage in prerequisites repository venv python-deps; do
-            curl -fsSL "$installer" | bash -s -- --commit "$pin" --channel main --non-interactive --skip-browser --skip-computer-use --stage "$stage"
-          done
-          echo "HERMES_BIN=$HERMES_INSTALL_DIR/.hermes/bin/hermes" >> "$GITHUB_ENV"
+          curl -fsSL https://raw.githubusercontent.com/NousResearch/hermes-agent/v0.23.0/scripts/install.sh | bash -s -- --commit 2bd378ed1b8d6bf2192cb26e0a55ff3091e6bd19 --channel main --non-interactive --skip-browser --skip-computer-use
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
       - name: Validate catalog admission contract
-        run: '"$HERMES_BIN" plugins validate . --install-deps'
+        run: hermes plugins validate . --install-deps
       - name: Validate plugin registration in isolation
-        run: '"$HERMES_BIN" plugins doctor . --ci'
+        run: hermes plugins doctor . --ci
 
   release-package:
     runs-on: ubuntu-latest
