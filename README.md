@@ -41,17 +41,21 @@ test namespace, and is tagged `hardware_kind=hermes` at the portal so a later
 router can send the identity to the correct kernel. If a system key is present,
 Hermes does not register another one.
 
-Slot policy:
+Topology and routing policy:
 
 ```text
-HW2  Hermes demo identity
-HW3  Clocked demo identity (reserved; Hermes never claims it)
-HW4+ lowest free Hermes registration after the demo slot is occupied
+one instantiated universe: HW0::BS0 (BS0 = RunnerLink)
+MC0 = MC0Link (transport/link identity, not a second universe)
+HW1 = phone endpoint
+HW2 = Hermes demo endpoint
+HW3 = CLOCKED demo endpoint
+HW4-HW8 = no universe instances; no independent universe allocation
 ```
 
-Two Hermes instances therefore use HW2 (the seeded demo key) and HW4; a third
-uses HW5. Android test registration stays in its own namespace and does not
-take HW2/HW3.
+The Hermes and CLOCKED demos are endpoints attached to the one canonical
+universe. They do not create or own model universes. The six BS0 runners are
+execution workers over that same object, not separate universes. Device/guest
+leases are scoped access identities and must not imply a new universe.
 
 ```sh
 export NANNET_AUTH_URL=https://your-nannet-portal
@@ -205,7 +209,7 @@ Settings live under `plugins.entries.nanlmind-hermes.settings`.
 | `runner_command` | list[str] | `[]` | absolute argv for the local `nanlm-universal` binary |
 | `chat_learning` | bool | `true` | allow free-form chat to update native heads/mirror pairs/hyperedges from explicit supervised relations |
 | `state_dir` | str | `~/.local/share/nanlmind-hermes` | universe, corpora, transcripts, runs |
-| `universe_layers` | int | `10` | logical memory projection layers L0–L9 |
+| layer count | fixed | `10` | one canonical L0–L9 resolution axis; not configurable per plugin instance |
 
 Example:
 
@@ -216,7 +220,6 @@ plugins:
       enabled: true
       settings:
         state_dir: ~/.local/share/nanlmind-hermes
-        universe_layers: 10
         runner_command: ["/opt/NaNLMind/build/nanlm-universal"]
 ```
 
