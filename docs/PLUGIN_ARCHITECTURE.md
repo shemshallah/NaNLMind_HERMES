@@ -111,70 +111,74 @@ not substituted for native head or mirror-pair state.
 ## 3. Autonomous CLOCKED mode and NaN head cortex
 
 CLOCKED by Rezolve.ai is an external structured-reasoning service. Its upstream
-SDK, API key, gateway, endpoint orchestration, idempotency and service tests
-belong in the dedicated
+SDK, API key, gateway, endpoint orchestration, idempotency, encrypted result
+cache and service tests belong in the dedicated
 [NaNLMind_CLOCKED repository](https://github.com/shemshallah/NaNLMind_CLOCKED).
-NaNLMind retains only its receiving-language schemas, NANNET evidence consumer,
-native Boolean heads, M0-M9 transforms, relation learner and canonical
-six-runner training/commit path.
+NaNLMind retains only its receiving-language schemas, scoped observation
+publisher, native Boolean heads, relation learner and canonical learning
+infrastructure. The NaNLMind-side files under \`integrations/clocked/\` do not
+import or call the upstream CLOCKED SDK.
 
 Do not confuse the Rezolve.ai service with NaNLMind's existing
-`ClockedAdapter` in `runner/hermes_pipeline.py`, which binds a training
+\`ClockedAdapter\` in \`runner/hermes_pipeline.py\`, which binds a training
 session to the NaNLMind logical epoch/clock. They are separate systems and
 must have distinct adapter names and credentials.
 
-HERMES remains the user-facing coordinator. It autonomously proposes a
-schema-bound mode/task plan, then a deterministic policy checks allowed
-endpoints, source ACLs, budgets, idempotency, credentials and approval. The
-default is approval; automatic CLOCKED calls require an explicit
-budgeted-auto policy. Ordinary local chat remains local.
+HERMES is the user-facing coordinator. It asks its configured LLM to choose
+among fixed CLOCKED modes using the user request and source descriptors, not
+raw source bodies. HERMES maps the selected mode to a fixed endpoint allowlist;
+invalid or unavailable proposals fall back to deterministic policy. Source
+transmission remains approval-gated. Ordinary local chat remains local.
 
 For multi-source tasks, HERMES uses separate typed CLOCKED calls, not a
-fictional parallel CLOCKED Pipeline. Each result keeps its endpoint-native
-type, source identity, digest, cost and provenance. A revisioned scratch
-stores writer-separated lanes for user input, HERMES plans, CLOCKED results,
-normalized evidence, conflict maps, NaN16 packages, head responses, synthesis
-drafts, answer validation and final output.
+fictional parallel CLOCKED Pipeline. Each result retains endpoint type, source
+identity and provenance. A revisioned, hash-chained scratch stores user input,
+plans, sanitized CLOCKED results, extracted evidence, explicit cross-source
+conflicts, NaN16 packages, head responses, synthesis drafts, validation and
+final output. PII, injection and script responses are allowlist-sanitized
+before scratch persistence; raw sensitive values and script/prompt bodies are
+not copied into those lanes.
 
-The recommended answer cycle has two NaNLMind passes:
+The implemented answer cycle is:
 
-1. Freeze the multi-source evidence scratch, encode it as a typed NaN16
-   package, and submit it through the existing NANNET/HW3:0 route. NaNLMind
-   processes it through M0-M9 and the existing Boolean-derived head/relation
-   learner.
-2. HERMES synthesizes a natural-language draft from the evidence and relation
-   graph, then submits that draft with its claim-to-source map for a second
-   head-validation pass before delivery.
+1. HERMES proposes a mode and bounded task plan. After approval, the CLOCKED
+   gateway executes the typed endpoint calls. Results and conflict signals are
+   appended to shared scratch.
+2. HERMES synthesizes a draft from the source evidence and endpoint results.
+   It submits the evidence package and draft to the authenticated NaNLMind
+   head-cortex receiving interface. NaNLMind maps CLOCKED endpoint observations,
+   conflict-map entries and answer claims into typed relations and evaluates
+   them with its native Boolean heads. HERMES composes the final response from
+   the original evidence plus the head trace, preserving UNKNOWN and CONFLICT.
+3. With separate explicit approval, HERMES can convert CLOCKED observations
+   already in scratch into weak-supervision N16REL records. NaNLMind clones the
+   base topology and runs native \`relation-train\` only against that candidate.
+   CLOCKED outputs are marked as teacher observations, never ground truth.
+   Candidate evaluation uses a caller-declared test split, verifies its digest
+   and topology digests, and rejects overlap with the candidate's training
+   fingerprints.
 
-The HERMES head cortex is a lightweight scheduler/client over the existing
-256 NaNLMind logical head IDs. It reuses HeadView/HeadRunner, HeadGate,
-LogicSessionTrainer and N16REL relation learning. It does **not** clone the
-six-runner ring, leader election, leases, generation barriers, Koyeb volume
-administration or canonical checkpoints. HERMES's existing `runner.py`
-remains a narrow local native-process wrapper.
+The HERMES head cortex is a lightweight client/orchestrator over the existing
+256 NaNLMind logical head IDs. It does not copy the native runner implementation
+or create a second six-runner ring. Native Boolean-head state, relation
+learning, mirror-pair updates, temporal links and hyperedges remain owned by
+NaNLMind. Candidate training writes only an isolated candidate topology; it
+never changes canonical state.
 
-Self-modification is candidate-only: heads may propose bounded Boolean-table,
-gate, relation-feature or routing-bias mutations in an isolated sandbox.
-Truth-table regressions, deep-logic circuits, held-out tasks, counterexamples,
-shuffled-label controls, no-CLOCKED baselines and replay checks must pass.
-Only the NaNLMind evaluator and six-runner generation barrier can promote a
-canonical mutation. CLOCKED agreement is not ground truth.
+Candidate evaluation reports accuracy, coverage, balanced accuracy, confusion
+counts and per-resolution metrics. A positive result is only a review signal.
+Automated mutation search, broader negative controls, candidate review UI and
+six-runner generation-barrier promotion remain outstanding. No candidate is
+canonical until that separate promotion gate exists and passes.
 
 The detailed HERMES implementation design is in
 [docs/CLOCKED_AUTONOMOUS_HEAD_CORTEX.md](CLOCKED_AUTONOMOUS_HEAD_CORTEX.md).
-The complete cross-repository specification, M0-M9 profile, scratch protocol,
+The cross-repository architecture, M0-M9 target profile, scratch protocol,
 multi-source graph and service boundary are in
 [NaNLMind_CLOCKED/docs/HERMES_AUTONOMOUS_CLOCKED_HEAD_CORTEX.md](https://github.com/shemshallah/NaNLMind_CLOCKED/blob/main/docs/HERMES_AUTONOMOUS_CLOCKED_HEAD_CORTEX.md).
 
-The first implementation slice is committed: HERMES now has a hash-chained
-scratch journal, deterministic mode/task planner, scoped CLOCKED gateway
-client, multi-source executor, evidence codec, head-cortex client and
-two-pass synthesis tool. The CLOCKED service exposes the bounded `/v1/tasks`
-endpoint. NaNLMind provides the read-only native `relation-eval` command and
-a NANNET-authorized head-cortex HTTP adapter.
-
-The services are not yet deployed or connected through the live Router/Koyeb
-route. Live upstream SDK calls, production scratch transport and candidate
-self-modification/promotion remain outstanding. The native relation-eval path
-does not mutate head state; candidate mutation remains sandbox-only future
-work.
+Production CLOCKED credentials, live upstream end-to-end verification and
+deployment of the CLOCKED gateway and NaNLMind head-cortex receiver through the
+live Router/Koyeb HW3:0 route remain deployment work. The current native
+head-cortex relation path is implemented and tested, but the full M0-M9
+transformation sequence is not yet demonstrated end-to-end.
