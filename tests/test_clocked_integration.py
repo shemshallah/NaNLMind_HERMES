@@ -108,6 +108,8 @@ class TaskPlanValidationTests(unittest.TestCase):
             validate_task_plan(plan)
         with self.assertRaisesRegex(ValueError, "max_requests"):
             validate_task_plan(self.plan(), {"max_requests": True})
+        with self.assertRaisesRegex(ValueError, "budget"):
+            validate_task_plan(self.plan(), [])
 
 
 
