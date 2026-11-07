@@ -96,6 +96,14 @@ class TaskPlanValidationTests(unittest.TestCase):
 
 
 
+    def test_rejects_unresolved_claims_from_dependency(self):
+        task = {
+            "id": "ground-1", "endpoint": "grounding", "text": "source",
+            "depends_on": [], "options": {"claims_from": "missing-extract"},
+        }
+        with self.assertRaisesRegex(ValueError, "claims_from"):
+            validate_task_plan(self.plan([task]))
+
     def test_rejects_serialized_envelope_over_gateway_limit(self):
         tasks = [
             {"id": "task-%02d" % index, "endpoint": "extract",
