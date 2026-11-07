@@ -115,6 +115,35 @@ class ScratchTests(unittest.TestCase):
         self.assertFalse(result["evaluation"]["promotion_allowed"])
         self.assertEqual(result["scratch"]["entries"][-1]["lane"], "learning_proposal")
 
+    def test_candidate_evaluation_records_metrics_without_promotion(self):
+        class Context:
+            def __init__(self, root):
+                self.root = root
+            def get_config(self, key, default=None):
+                return str(self.root) if key == "state_dir" else default
+        records = [{
+            "resolution": 5, "polarity": "+", "subject": "s",
+            "predicate": "p", "object": "o", "source_digest": "a" * 64,
+        }]
+        evaluation = {
+            "schema": "nanlm.head-candidate-evaluation-response/1",
+            "status": "evaluated_candidate", "utility_delta": 0.1,
+            "recommendation": "review_candidate", "promotion_allowed": False,
+        }
+        with tempfile.TemporaryDirectory() as tmp, patch.dict("os.environ", {
+            "NANLM_HEAD_CORTEX_URL": "https://nanlmind.example",
+            "NANLM_DEVICE_TOKEN": "scoped-training-token",
+        }), patch("nanlmind_hermes.clocked_tools.HeadCortexClient") as client:
+            client.return_value.evaluate_candidate.return_value = evaluation
+            ctx = Context(Path(tmp))
+            with self.assertRaises(PermissionError):
+                clocked_tools.head_candidate_evaluate(ctx, "candidate-1", records, False)
+            result = clocked_tools.head_candidate_evaluate(
+                ctx, "candidate-1", records, True, "candidate-review")
+        self.assertEqual(result["evaluation"]["recommendation"], "review_candidate")
+        self.assertFalse(result["evaluation"]["promotion_allowed"])
+        self.assertEqual(result["scratch"]["entries"][-1]["lane"], "learning_proposal")
+
     def test_two_pass_synthesis_submits_draft_and_appends_final(self):
         class Result:
             def __init__(self, text):
