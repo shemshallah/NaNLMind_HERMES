@@ -32,6 +32,10 @@ provides_tools:
   - nanlm_memory_merge
   - nanlm_memory_query
   - nanlm_memory_assessments
+  - nanlm_clocked_plan
+  - nanlm_clocked_execute
+  - nanlm_clocked_scratch
+  - nanlm_head_process
 config_schema:
   duration_minutes:
     type: int
@@ -58,3 +62,12 @@ config_schema:
     type: int
     default: 7
     description: Number of logical memory projection layers (L0-L6).
+
+  clocked_gateway_url:
+    type: str
+    default: ""
+    description: NaNLMind_CLOCKED participant gateway URL; use HTTPS except localhost. The participant token is supplied separately as CLOCKED_GATEWAY_TOKEN.
+  clocked_auto_policy:
+    type: str
+    default: approval
+    description: CLOCKED execution policy; approval is the only supported default. Source text is not transmitted until explicit approval.
