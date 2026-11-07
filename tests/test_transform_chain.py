@@ -36,6 +36,7 @@ class TransformChainTests(unittest.TestCase):
                          ["M0", "M1", "M2", "M3", "M4", "M5"])
         self.assertEqual(result["relation_counts"]["evidence_atoms"], 1)
         self.assertEqual(result["relation_counts"]["clocked_observations"], 1)
+        self.assertEqual(result["relation_counts"]["typed_relations"], 2)
         self.assertTrue(all(len(x["input_sha256"]) == 64 for x in result["passes"]))
 
     def test_postflight_runs_m6_through_m9_and_never_promotes(self):
