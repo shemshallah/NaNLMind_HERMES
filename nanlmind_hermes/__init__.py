@@ -466,7 +466,7 @@ def register(ctx):
                 return _json.dumps(_clocked.clocked_plan(ctx, data["question"], data.get("sources", []), data.get("scratch_id", "default")), sort_keys=True, default=str)
             if sub == "run" and len(rest) >= 3 and "--approved" in rest[2:]:
                 data = _json.loads(_Path(rest[1]).expanduser().read_text(encoding="utf-8"))
-                return _json.dumps(_clocked.clocked_execute(ctx, data["question"], data["sources"], data.get("scratch_id", "default"), True, data["plan_sha256"]), sort_keys=True, default=str)
+                return _json.dumps(_clocked.clocked_execute(ctx, data["question"], data.get("sources", []), data.get("scratch_id", "default"), True, data["plan_sha256"]), sort_keys=True, default=str)
             if sub == "head" and len(rest) >= 2:
                 data = _json.loads(_Path(rest[1]).expanduser().read_text(encoding="utf-8"))
                 return _json.dumps(_clocked.head_process(ctx, data["question"], data.get("scratch_id", "default"), data.get("purpose", "EVIDENCE_COGNITION"), data.get("draft")), sort_keys=True, default=str)
