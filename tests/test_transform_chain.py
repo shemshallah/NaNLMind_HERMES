@@ -79,6 +79,21 @@ class TransformChainTests(unittest.TestCase):
         self.assertEqual(result["truth_state"], "UNKNOWN")
         self.assertEqual(result["decision"], "abstain")
 
+    def test_true_result_remains_review_only_despite_inference_disclaimer(self):
+        value = package()
+        prepared = preflight(value)
+        response = {
+            "request_sha256": value["package_sha256"],
+            "truth_state": "TRUE",
+            "relations": [{"truth_state": "TRUE", "head_id": 5}],
+            "abstentions": [{"reason": "model_output_is_inference_not_ground_truth"}],
+            "provenance": {"read_only": True, "source_entry_ids": []},
+        }
+        result = postflight(value, response, prepared)
+        self.assertEqual(result["decision"], "review_only")
+        self.assertEqual(result["hard_abstention_count"], 0)
+        self.assertFalse(result["canonical_mutation_allowed"])
+
     def test_m0_rejects_truth_policy_that_collapses_unknown_or_conflict(self):
         value = package()
         value["policy"]["unknown_is_not_false"] = False
