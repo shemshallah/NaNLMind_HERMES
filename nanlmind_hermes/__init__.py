@@ -511,10 +511,21 @@ def register(ctx):
             if sub == "head" and len(rest) >= 2:
                 data = _json.loads(_Path(rest[1]).expanduser().read_text(encoding="utf-8"))
                 return _json.dumps(_clocked.head_process(ctx, data["question"], data.get("scratch_id", "default"), data.get("purpose", "EVIDENCE_COGNITION"), data.get("draft")), sort_keys=True, default=str)
+            if sub == "learn" and len(rest) >= 3 and "--approved" in rest[2:]:
+                data = _json.loads(_Path(rest[1]).expanduser().read_text(encoding="utf-8"))
+                return _json.dumps(_clocked.head_learn_candidate(
+                    ctx, data["mutation_id"], data.get("base_topology_digest"),
+                    True, data.get("scratch_id", "default"), data.get("epochs", 1)),
+                    sort_keys=True, default=str)
+            if sub == "evaluate" and len(rest) >= 3 and "--approved" in rest[2:]:
+                data = _json.loads(_Path(rest[1]).expanduser().read_text(encoding="utf-8"))
+                return _json.dumps(_clocked.head_candidate_evaluate(
+                    ctx, data["mutation_id"], data["records"], True,
+                    data.get("scratch_id", "default")), sort_keys=True, default=str)
             if sub == "synthesize" and len(rest) >= 2:
                 question = " ".join(rest[1:])
                 return _json.dumps(_clocked.clocked_synthesize(ctx, question), sort_keys=True, default=str)
-            return _json.dumps({"usage": "/nanlm clocked [plan <request.json>|run <request.json> --approved (request.json includes plan_sha256)|scratch [id]|head <request.json>|synthesize <question>]", "request_file": {"question": "string", "sources": [{"id": "source-a", "text": "source text"}], "scratch_id": "optional-id"}, "note": "Plan does not transmit source text. Run requires the explicit --approved flag."})
+            return _json.dumps({"usage": "/nanlm clocked [plan <request.json>|run <request.json> --approved|scratch [id]|head <request.json>|learn <request.json> --approved|evaluate <request.json> --approved|synthesize <question>]", "request_file": {"question": "string", "sources": [{"id": "source-a", "text": "source text"}], "scratch_id": "optional-id"}, "note": "Plan does not transmit source text. Run requires the explicit --approved flag."})
         if command == "chat":
             message = " ".join(rest)
         else:
