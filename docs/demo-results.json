@@ -1,240 +1,240 @@
 {
   "failed": 0,
-  "generated_at": "2026-11-07T22:54:00Z",
+  "generated_at": "2026-11-07T23:36:00Z",
   "native_binary": "nanlm-universal",
   "passed": 38,
   "results": [
     {
-      "ms": 9.8,
+      "ms": 10.4,
       "status": "pass",
-      "summary": "{\"identity_path\": \"<demo-state>/state/universe/installation.json\", \"installation_id\": \"f6d8d1cb-51e7-4259-89f5-79072874868e\", \"master_key_returned\": false, \"private_key_encry...",
+      "summary": "{\"identity_path\": \"<demo-state>/state/universe/installation.json\", \"installation_id\": \"ee06f51e-096f-4ff8-bc22-4f738a28b52b\", \"master_key_returned\": false, \"private_key_encry...",
       "tool": "nanlm_auth_init"
     },
     {
-      "ms": 9.0,
+      "ms": 11.0,
       "status": "pass",
-      "summary": "{\"identity_present\": true, \"identity_unlocked\": true, \"installation_id\": \"f6d8d1cb-51e7-4259-89f5-79072874868e\", \"master_key_present\": true, \"paired_token_present\": false, \"pairing_authority_configured\": true, \"public_ke...",
+      "summary": "{\"identity_present\": true, \"identity_unlocked\": true, \"installation_id\": \"ee06f51e-096f-4ff8-bc22-4f738a28b52b\", \"master_key_present\": true, \"paired_token_present\": false, \"pairing_authority_configured\": true, \"public_ke...",
       "tool": "nanlm_auth_status"
     },
     {
-      "ms": 201.6,
+      "ms": 182.7,
       "status": "pass",
-      "summary": "{\"expires_at\": 1794092906, \"installation_id\": \"f6d8d1cb-51e7-4259-89f5-79072874868e\", \"issuer_key_pinned\": true, \"paired\": true, \"scopes\": [\"corpus:write\", \"training:execute\", \"universe:read\"], \"token_saved_encrypted\": t...",
+      "summary": "{\"expires_at\": 1794095431, \"installation_id\": \"ee06f51e-096f-4ff8-bc22-4f738a28b52b\", \"issuer_key_pinned\": true, \"paired\": true, \"scopes\": [\"corpus:write\", \"training:execute\", \"universe:read\"], \"token_saved_encrypted\": t...",
       "tool": "nanlm_auth_pair"
     },
     {
-      "ms": 37.9,
+      "ms": 32.6,
       "status": "pass",
-      "summary": "{\"identity_present\": true, \"identity_unlocked\": true, \"installation_id\": \"f6d8d1cb-51e7-4259-89f5-79072874868e\", \"master_key_present\": true, \"paired_token_present\": true, \"pairing_authority_configured\": true, \"public_key...",
+      "summary": "{\"identity_present\": true, \"identity_unlocked\": true, \"installation_id\": \"ee06f51e-096f-4ff8-bc22-4f738a28b52b\", \"master_key_present\": true, \"paired_token_present\": true, \"pairing_authority_configured\": true, \"public_key...",
       "tool": "nanlm_auth_status"
     },
     {
-      "ms": 81.2,
+      "ms": 81.7,
       "status": "pass",
       "summary": "{\"boolean_foundation\": null, \"duration_default_minutes\": 30, \"duration_max_minutes\": 360, \"duration_min_minutes\": 1, \"heads\": 256, \"last_math_run\": null, \"last_run\": null, \"mathematical_memory\": {\"active_routes\": 0, \"app...",
       "tool": "nanlm_status"
     },
     {
-      "ms": 837.2,
+      "ms": 1223.5,
       "status": "pass",
       "summary": "{\"clocked_mode\": null, \"clocked_scratch_id\": \"chat-demo\", \"cross_resolution_feedback\": {\"analysis\": {\"coarse_to_fine_feedback_matrix\": [[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0...",
       "tool": "nanlm_chat"
     },
     {
-      "ms": 0.6,
+      "ms": 2.4,
       "status": "pass",
-      "summary": "{\"count\": 2, \"messages\": [{\"content\": \"Hello from the demo\", \"created_at\": \"2026-11-07T22:53:27.804876+00:00\", \"role\": \"user\", \"source_sha256\": \"1b5f85a3db0341cf52ec304bfe403c95c7c6f80516f8df52ed5b43f2620531ac\"}, {\"conte...",
+      "summary": "{\"count\": 2, \"messages\": [{\"content\": \"Hello from the demo\", \"created_at\": \"2026-11-07T23:35:32.498877+00:00\", \"role\": \"user\", \"source_sha256\": \"1b5f85a3db0341cf52ec304bfe403c95c7c6f80516f8df52ed5b43f2620531ac\"}, {\"conte...",
       "tool": "nanlm_chat_history"
     },
     {
-      "ms": 727.6,
+      "ms": 1343.9,
       "status": "pass",
-      "summary": "{\"clocked\": false, \"default_path\": \"user -> hermes -> nanlm -> user + hermes\", \"history\": [{\"addressee\": \"hermes\", \"at\": \"2026-11-07T22:53:28.249343+00:00\", \"phase\": \"user_message\", \"speaker\": \"user\", \"text\": \"A river is...",
+      "summary": "{\"clocked\": false, \"default_path\": \"user -> hermes -> nanlm -> user + hermes\", \"history\": [{\"addressee\": \"hermes\", \"at\": \"2026-11-07T23:35:33.184374+00:00\", \"phase\": \"user_message\", \"speaker\": \"user\", \"text\": \"A river is...",
       "tool": "nanlm_phone_call"
     },
     {
-      "ms": 742.4,
+      "ms": 1115.2,
       "status": "pass",
-      "summary": "{\"clocked\": false, \"default_path\": \"user -> hermes -> nanlm -> user + hermes\", \"history\": [{\"addressee\": \"hermes\", \"at\": \"2026-11-07T22:53:28.249343+00:00\", \"phase\": \"user_message\", \"speaker\": \"user\", \"text\": \"A river is...",
+      "summary": "{\"clocked\": false, \"default_path\": \"user -> hermes -> nanlm -> user + hermes\", \"history\": [{\"addressee\": \"hermes\", \"at\": \"2026-11-07T23:35:33.184374+00:00\", \"phase\": \"user_message\", \"speaker\": \"user\", \"text\": \"A river is...",
       "tool": "nanlm_phone_call"
     },
     {
-      "ms": 253.7,
+      "ms": 153.8,
       "status": "pass",
       "summary": "{\"corpus_path\": \"<demo-state>/state/corpora/c7fdf4fb7e119dcf9843f182487a5e8106a0b4db6be699d34dfb7d1737065ccc.n16txt\", \"records\": 64, \"sha256\": \"c7fdf4fb7e119dcf9843f182487a5e...",
       "tool": "nanlm_generate_corpus"
     },
     {
-      "ms": 196.4,
+      "ms": 119.7,
       "status": "pass",
       "summary": "{\"corpus_path\": \"<demo-state>/state/corpora/be982a086cfbb17ee883a87608ece1129f831316ec969ddbc8c4f69c90218c99.n16txt\", \"manifest_path\": \"/data/data/com.termux/files/usr/tmp/na...",
       "tool": "nanlm_generate_curriculum"
     },
     {
-      "ms": 246.7,
+      "ms": 223.6,
       "status": "pass",
-      "summary": "{\"artifact_dir\": \"<demo-state>/state/universe/runs/9652773af4b442fcb6d68098da0afd1f\", \"checkpoint_note\": \"Native Context2Model bootstrap is currently in-memory; this artifact...",
+      "summary": "{\"artifact_dir\": \"<demo-state>/state/universe/runs/77f73879742b417ea386acdd7e2e55a2\", \"checkpoint_note\": \"Native Context2Model bootstrap is currently in-memory; this artifact...",
       "tool": "nanlm_train"
     },
     {
-      "ms": 287.5,
+      "ms": 287.2,
       "status": "pass",
       "summary": "{\"comparison_note\": \"These are independent native CLI runs with the CLI's documented 80/20 split; compare BPC/top-1 on the same corpus, not across different splits.\", \"corpus_sha256\": \"f8863fca66f3906ae0c38b7fa17629cba8a...",
       "tool": "nanlm_evaluate"
     },
     {
-      "ms": 5441.6,
+      "ms": 3694.2,
       "status": "pass",
-      "summary": "{\"boolean_foundation\": {\"created_at\": \"2026-11-07T22:53:30.936748+00:00\", \"elapsed_seconds\": 0.412, \"native_command\": [\"nanlm-universal\", \"logic-train\", \"32\", \"64\", \"/data/...",
+      "summary": "{\"boolean_foundation\": {\"created_at\": \"2026-11-07T23:35:36.507868+00:00\", \"elapsed_seconds\": 0.457, \"native_command\": [\"nanlm-universal\", \"logic-train\", \"32\", \"64\", \"/data/...",
       "tool": "nanlm_math_train"
     },
     {
-      "ms": 1703.5,
+      "ms": 1084.3,
       "status": "pass",
       "summary": "{\"boolean_foundation\": {\"reused_checkpoint\": true, \"state_sha256\": \"c30fc1f251a6fd916dd55ce1bc9bc129aabed31930c5a06555d18013fc4c8d5a\", \"status\": \"passed\"}, \"changed_heads\": 12, \"corpus\": {\"counts_by_split_and_resolution\"...",
       "tool": "nanlm_structured_relation_train"
     },
     {
-      "ms": 3366.1,
+      "ms": 3383.5,
       "status": "pass",
       "summary": "{\"corpus\": {\"frozen_challenge_sets\": 10, \"record_count\": 30, \"resolution_order\": [\"bit\", \"nibble\", \"byte\", \"phonetic\", \"morpheme\", \"lexical\", \"word_completion\", \"sentence\", \"paragraph\", \"narrative\"], \"schema\": \"nanlm-str...",
       "tool": "nanlm_curriculum_experiment"
     },
     {
-      "ms": 3278.7,
+      "ms": 2515.6,
       "status": "pass",
       "summary": "{\"corpus\": {\"frozen_challenge_sets\": 3, \"record_count\": 9, \"resolution_order\": [\"bit\", \"nibble\", \"byte\"], \"schema\": \"nanlm-structured-relation-curriculum/1\", \"stages\": [{\"challenge_sha256\": \"454f792eef7064f32a1e11f80a703...",
       "tool": "nanlm_logic_session"
     },
     {
-      "ms": 3259.5,
+      "ms": 2775.7,
       "status": "pass",
       "summary": "{\"corpus\": {\"frozen_challenge_sets\": 2, \"record_count\": 6, \"resolution_order\": [\"lexical\", \"word_completion\"], \"schema\": \"nanlm-structured-relation-curriculum/1\", \"stages\": [{\"challenge_sha256\": \"2b5f3ac7f6146fd9689ea952...",
       "tool": "nanlm_word_session"
     },
     {
-      "ms": 3020.0,
+      "ms": 2642.8,
       "status": "pass",
       "summary": "{\"corpus\": {\"frozen_challenge_sets\": 2, \"record_count\": 6, \"resolution_order\": [\"sentence\", \"narrative\"], \"schema\": \"nanlm-structured-relation-curriculum/1\", \"stages\": [{\"challenge_sha256\": \"2003c2fb9befc7a53ecaafdc6532d...",
       "tool": "nanlm_sentence_session"
     },
     {
-      "ms": 3456.6,
+      "ms": 3158.2,
       "status": "pass",
       "summary": "{\"corpus\": {\"frozen_challenge_sets\": 10, \"record_count\": 30, \"resolution_order\": [\"bit\", \"nibble\", \"byte\", \"phonetic\", \"morpheme\", \"lexical\", \"word_completion\", \"sentence\", \"paragraph\", \"narrative\"], \"schema\": \"nanlm-str...",
       "tool": "nanlm_training_pipeline"
     },
     {
-      "ms": 334.3,
+      "ms": 272.2,
       "status": "pass",
       "summary": "{\"cross_resolution\": {\"analysis\": {\"coarse_to_fine_feedback_matrix\": [[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ...",
       "tool": "nanlm_memory_ingest"
     },
     {
-      "ms": 545.3,
+      "ms": 333.9,
       "status": "pass",
       "summary": "{\"cross_resolution\": {\"analysis\": {\"coarse_to_fine_feedback_matrix\": [[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ...",
       "tool": "nanlm_memory_reorganize"
     },
     {
-      "ms": 410.3,
+      "ms": 245.6,
       "status": "pass",
       "summary": "{\"analysis\": {\"coarse_to_fine_feedback_matrix\": [[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0,...",
       "tool": "nanlm_memory_cross_resolution"
     },
     {
-      "ms": 414.7,
+      "ms": 286.3,
       "status": "pass",
       "summary": "{\"cross_resolution\": {\"analysis\": {\"coarse_to_fine_feedback_matrix\": [[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ...",
       "tool": "nanlm_memory_merge"
     },
     {
-      "ms": 172.1,
+      "ms": 170.2,
       "status": "pass",
       "summary": "{\"records\": [{\"conditions\": [], \"confidence\": 0.9, \"event_id\": \"7e578495d750ff249f8a60d8ff367deacd7554c79047072faf90edfda5645a36\", \"evidence\": {\"demo\": true}, \"expression\": null, \"head\": 0, \"kind\": \"relation\", \"layer\": 2...",
       "tool": "nanlm_memory_query"
     },
     {
-      "ms": 194.3,
+      "ms": 158.7,
       "status": "pass",
       "summary": "{\"assessments\": [{\"assessment_id\": \"60717a9da4e9a57bab8bbe3addd45af14bcec10d46a67b9ceca20b6a715119bd\", \"assessor_version\": \"evidence-review/1\", \"evidence_count\": 2, \"refute_weight\": 0.0, \"source_event_ids\": [\"7e578495d75...",
       "tool": "nanlm_memory_assessments"
     },
     {
-      "ms": 193.9,
+      "ms": 164.7,
       "status": "pass",
-      "summary": "{\"approval_digest\": \"3d9000489de2118430b3a04813752d33337bb4f51a26070372fae0bb4b73044c\", \"mode_plan\": {\"autonomous\": true, \"decision_method\": \"llm_policy_constrained\", \"mode\": \"CLOCKED_PRIVACY_AUDIT\", \"policy\": \"approval\"...",
+      "summary": "{\"approval_digest\": \"1ce6a66188902c3ddc500e962e5b907dd741b914c82fb50868644f15c289d0ce\", \"mode_plan\": {\"autonomous\": true, \"decision_method\": \"llm_policy_constrained\", \"mode\": \"CLOCKED_PRIVACY_AUDIT\", \"policy\": \"approval\"...",
       "tool": "nanlm_clocked_plan"
     },
     {
-      "ms": 219.4,
+      "ms": 181.4,
       "status": "pass",
-      "summary": "{\"plan\": {\"plan_id\": \"f657965739d644119ddb3d8a5820cff5\", \"schema\": \"nanlm.clocked-task-plan/1\", \"tasks\": [{\"depends_on\": [], \"endpoint\": \"pii\", \"id\": \"pii-source-a\", \"options\": {}, \"source_id\": \"source-a\", \"text\": \"Conta...",
+      "summary": "{\"plan\": {\"plan_id\": \"b249c1db8a18407ab7e25add3acf91df\", \"schema\": \"nanlm.clocked-task-plan/1\", \"tasks\": [{\"depends_on\": [], \"endpoint\": \"pii\", \"id\": \"pii-source-a\", \"options\": {}, \"source_id\": \"source-a\", \"text\": \"Conta...",
       "tool": "nanlm_clocked_execute"
     },
     {
-      "ms": 220.8,
+      "ms": 158.1,
       "status": "pass",
-      "summary": "{\"approval_digest\": \"27eb9e2aae7f124761b33eab94522bb7fb0f22bbb3adb3314e6a32990e6ab573\", \"mode_plan\": {\"autonomous\": true, \"decision_method\": \"llm_policy_constrained\", \"mode\": \"CLOCKED_EXTRACT\", \"policy\": \"approval\", \"rea...",
+      "summary": "{\"approval_digest\": \"e31bf4f0d4745c5284d353c54729f4b9a56965cee8839b092dd204236f1e363c\", \"mode_plan\": {\"autonomous\": true, \"decision_method\": \"llm_policy_constrained\", \"mode\": \"CLOCKED_EXTRACT\", \"policy\": \"approval\", \"rea...",
       "tool": "nanlm_clocked_plan"
     },
     {
-      "ms": 354.5,
+      "ms": 198.6,
       "status": "pass",
-      "summary": "{\"plan\": {\"plan_id\": \"4fe8d9de0f0f4ab8990a7f4011883519\", \"schema\": \"nanlm.clocked-task-plan/1\", \"tasks\": [{\"depends_on\": [], \"endpoint\": \"extract\", \"id\": \"extract-source-b\", \"options\": {\"fields\": {\"claims\": \"Short factua...",
+      "summary": "{\"plan\": {\"plan_id\": \"5adce0a859ee47e5b616c13c22f78ac9\", \"schema\": \"nanlm.clocked-task-plan/1\", \"tasks\": [{\"depends_on\": [], \"endpoint\": \"extract\", \"id\": \"extract-source-b\", \"options\": {\"fields\": {\"claims\": \"Short factua...",
       "tool": "nanlm_clocked_execute"
     },
     {
-      "ms": 337.8,
+      "ms": 156.3,
       "status": "pass",
-      "summary": "{\"entries\": [{\"created_at\": \"2026-11-07T22:53:56.119634+00:00\", \"entry_id\": \"3e5cc428040e439c9f08a3e4f46aafdf\", \"lane\": \"user\", \"parent_revision\": \"0000000000000000000000000000000000000000000000000000000000000000\", \"payl...",
+      "summary": "{\"entries\": [{\"created_at\": \"2026-11-07T23:35:56.753618+00:00\", \"entry_id\": \"ce793ac588694597a4ab39786df98ba1\", \"lane\": \"user\", \"parent_revision\": \"0000000000000000000000000000000000000000000000000000000000000000\", \"payl...",
       "tool": "nanlm_clocked_scratch"
     },
     {
-      "ms": 276.4,
+      "ms": 307.6,
       "status": "pass",
       "summary": "{\"head_response\": {\"abstentions\": [], \"generation\": 1, \"provenance\": {\"read_only\": true, \"source_entry_ids\": [], \"state_digest\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}, \"relations\": [{\"head_i...",
       "tool": "nanlm_head_process"
     },
     {
-      "ms": 327.6,
+      "ms": 258.5,
       "status": "pass",
-      "summary": "{\"draft\": \"Demo synthesis: the sources support the river-flow claim; unresolved conflicts are marked.\", \"final_revision\": \"bd8f358223f33963f7513f87a368d05690f60ee7c508f08b72c9d58ae004eb8f\", \"head_validation\": {\"abstentio...",
+      "summary": "{\"draft\": \"Demo synthesis: the sources support the river-flow claim; unresolved conflicts are marked.\", \"final_revision\": \"4e6d948c30274c8a4fc21337f1c177a6dc3d8c076b4ce8819ecdc42c5827c7d8\", \"head_validation\": {\"abstentio...",
       "tool": "nanlm_clocked_synthesize"
     },
     {
-      "ms": 222.6,
+      "ms": 182.3,
       "status": "pass",
       "summary": "{\"candidate\": {\"candidate_digest\": \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\", \"canonical_state_modified\": false, \"promotion_allowed\": false, \"schema\": \"nanlm.head-candidate-response/1\", \"status\":...",
       "tool": "nanlm_head_candidate"
     },
     {
-      "ms": 239.8,
+      "ms": 194.4,
       "status": "pass",
       "summary": "{\"candidate\": {\"candidate_digest\": \"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\", \"canonical_state_modified\": false, \"promotion_allowed\": false, \"schema\": \"nanlm.head-learning-candidate-response/1\", ...",
       "tool": "nanlm_head_learn_candidate"
     },
     {
-      "ms": 203.6,
+      "ms": 189.7,
       "status": "pass",
       "summary": "{\"evaluation\": {\"baseline\": {\"accuracy\": 0.5}, \"candidate\": {\"accuracy\": 0.6}, \"canonical_state_modified\": false, \"promotion_allowed\": false, \"recommendation\": \"review_candidate\", \"schema\": \"nanlm.head-candidate-evaluati...",
       "tool": "nanlm_head_candidate_evaluate"
     },
     {
-      "ms": 298.5,
+      "ms": 216.5,
       "status": "pass",
-      "summary": "{\"accepted\": true, \"body_sha256\": \"83b5d11e602ddc9339848657d14ff9b48e5e4db20861c0163b683b8d0f4b2568\", \"installation_id\": \"f6d8d1cb-51e7-4259-89f5-79072874868e\", \"opcode\": 0, \"route\": \"nan://HW2:BS0:MC0:SC0:GM0\", \"route_b...",
+      "summary": "{\"accepted\": true, \"body_sha256\": \"bbf152c3568d8e5de371f2525400e6c44cb1bb8861155764b222a6e042ca0859\", \"installation_id\": \"ee06f51e-096f-4ff8-bc22-4f738a28b52b\", \"opcode\": 0, \"route\": \"nan://HW2:BS0:MC0:SC0:GM0\", \"route_b...",
       "tool": "nanlm_nan16de_route"
     },
     {
-      "ms": 298.8,
+      "ms": 171.6,
       "status": "pass",
-      "summary": "{\"installation_id\": \"f6d8d1cb-51e7-4259-89f5-79072874868e\", \"local_token_erased\": true, \"revoked\": true}",
+      "summary": "{\"installation_id\": \"ee06f51e-096f-4ff8-bc22-4f738a28b52b\", \"local_token_erased\": true, \"revoked\": true}",
       "tool": "nanlm_auth_revoke"
     }
   ],
   "schema": "nanlmind-hermes-demo/1",
   "tools_called": 38,
   "tools_total": 34,
-  "version": "1.3.1"
+  "version": "1.3.2"
 }

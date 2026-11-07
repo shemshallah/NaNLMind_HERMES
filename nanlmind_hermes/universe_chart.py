@@ -65,6 +65,10 @@ OFF_CHART_SCRATCH = 0x62BA10
 OFF_EXTENSION = 0x63BA10
 REGISTER_MAGIC = b"NLMREG01"
 REGISTER_BYTES = 4_096
+HEAD_REGISTER_MAGIC = b"NLMHEAD1"
+HEAD_REGISTER_OFFSET = OFF_EXTENSION + REGISTER_BYTES
+HEAD_REGISTER_BYTES = 4_096
+LEAF_MAGIC = b"NLMLEAF1"
 RUNNER_ADDRESS = "nan://HW2:BS0:MC0:SC0:GM0"
 NANNET_LINK = "HW2:0"
 RING_ENDPOINT = "BS0:0::HW0:0"
@@ -551,6 +555,128 @@ class TemporalRegister:
         }
 
 
+class HeadScratchRegister:
+    """Special scratch register organizing relations by head and MTH leaf.
+
+    The aggregate register lives in the chart extension next to the temporal
+    register; each used head also receives a 1 KiB leaf record in its native
+    head scratchpad. Both are held in the in-memory 8 MiB chart.
+    """
+
+    MAX_LEAVES = 100
+
+    def __init__(self, chart: Chart8MiB | None, state_dir: Path):
+        self.chart = chart
+        self.state_dir = state_dir
+        self.offset = HEAD_REGISTER_OFFSET
+        self.leaves: list[dict] = []
+        self.heads: dict[int, list[dict]] = {}
+        self._load_sidecar()
+
+    def _sidecar(self) -> Path:
+        return self.state_dir / "language" / "mth_heads.json"
+
+    def _load_sidecar(self) -> None:
+        try:
+            import json
+            data = json.loads(self._sidecar().read_text(encoding="utf-8"))
+        except Exception:
+            return
+        if not isinstance(data, dict):
+            return
+        leaves = data.get("leaves")
+        if isinstance(leaves, list):
+            self.leaves = [leaf for leaf in leaves if isinstance(leaf, dict)][-self.MAX_LEAVES:]
+            self._rebuild_heads()
+
+    def _rebuild_heads(self) -> None:
+        self.heads = {}
+        for leaf in self.leaves:
+            self.heads.setdefault(int(leaf.get("head", 0)) & 0xFF, []).append(leaf)
+
+    def organize(self, rows: list[dict], mapper=None) -> dict:
+        if mapper is None:
+            from .mth_layers import MTHHeadMapper, MTHLayerStack
+            mapper = MTHHeadMapper(MTHLayerStack())
+        leaves = []
+        for row in rows:
+            if row.get("kind") != "relation":
+                continue
+            leaves.append(mapper.map_relation(row))
+        self.leaves = leaves[-self.MAX_LEAVES:]
+        self._rebuild_heads()
+        if self.chart is not None:
+            self._write_chart()
+        self._save()
+        return self.status()
+
+    def _write_chart(self) -> None:
+        data = self.chart.bytes
+        region = self.offset
+        data[region:region + 8] = HEAD_REGISTER_MAGIC
+        struct.pack_into("<I", data, region + 8, len(self.leaves))
+        struct.pack_into("<I", data, region + 12, len(self.heads))
+        table = region + 16
+        start = 0
+        for head in range(256):
+            bucket = self.heads.get(head, [])
+            mask = int(bucket[0]["mask"]) & 0x0F if bucket else 0
+            struct.pack_into("<HHBB", data, table + head * 8, start,
+                             len(bucket), mask, 0)
+            start += len(bucket)
+        leaf_base = table + 256 * 8
+        for index, leaf in enumerate(self.leaves):
+            struct.pack_into("<BBBBII", data, leaf_base + index * 16,
+                             int(leaf.get("head", 0)) & 0xFF,
+                             int(leaf.get("mirror", 0)) & 0xFF,
+                             int(leaf.get("mask", 0)) & 0x0F,
+                             0,
+                             int(leaf.get("value", 0)) & 0xFFFFFFFF,
+                             int(str(leaf.get("digest", "0")), 16) & 0xFFFFFFFF)
+        for head, bucket in self.heads.items():
+            scratch = OFF_HEAD_SCRATCH + (head & 0xFF) * HEAD_SCRATCH_BYTES
+            leaf = bucket[0]
+            data[scratch:scratch + 8] = LEAF_MAGIC
+            struct.pack_into("<HBBII", data, scratch + 8, len(bucket),
+                             int(leaf.get("mask", 0)) & 0x0F, 0,
+                             int(leaf.get("value", 0)) & 0xFFFFFFFF,
+                             int(str(leaf.get("digest", "0")), 16) & 0xFFFFFFFF)
+        self.chart._dirty = True
+
+    def _save(self) -> None:
+        import json
+        path = self._sidecar()
+        path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+        payload = {
+            "schema": "nanlm.mth-heads/1",
+            "chart_root": self.chart.root_hash if self.chart else None,
+            "offset": self.offset,
+            "leaves": self.leaves[-self.MAX_LEAVES:],
+            "heads": {str(head): len(bucket) for head, bucket in self.heads.items()},
+        }
+        temp = path.with_suffix(".tmp")
+        temp.write_text(json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n",
+                        encoding="utf-8")
+        try:
+            temp.chmod(0o600)
+        except OSError:
+            pass
+        temp.replace(path)
+
+    def status(self) -> dict:
+        return {
+            "mapped": self.chart is not None,
+            "register_offset": self.offset,
+            "magic": HEAD_REGISTER_MAGIC.decode("ascii"),
+            "leaf_count": len(self.leaves),
+            "head_count": len(self.heads),
+            "head_scratchpads": len(self.heads),
+            "masks": sorted({int(leaf.get("mask", 0)) for leaf in self.leaves}),
+            "layers": sorted({str(leaf.get("layer", "")) for leaf in self.leaves}),
+            "leaves": self.leaves[-8:],
+        }
+
+
 _RUNNERS: dict[str, "LocalRunner"] = {}
 
 
@@ -576,7 +702,8 @@ class LocalRunner:
     def __init__(self, chart: Chart8MiB | None, register: TemporalRegister):
         self.chart = chart
         self.register = register
-        self.local_memory_bytes = PAGE_BYTES + (REGISTER_BYTES if chart else 0)
+        self.heads = HeadScratchRegister(chart, register.state_dir)
+        self.local_memory_bytes = PAGE_BYTES + (2 * REGISTER_BYTES if chart else 0)
 
     @classmethod
     def open(cls, ctx) -> "LocalRunner":
@@ -602,7 +729,9 @@ class LocalRunner:
                 runner.register.reason = "trained chart"
                 runner.register._refresh_from_rail()
                 runner.register._sync_extension()
-                runner.local_memory_bytes = PAGE_BYTES + REGISTER_BYTES
+                runner.heads.chart = chart
+                runner.heads._write_chart()
+                runner.local_memory_bytes = PAGE_BYTES + 2 * REGISTER_BYTES
         return runner
 
     def commit(self, head: int) -> int:
@@ -610,6 +739,9 @@ class LocalRunner:
 
     def plan(self, heads: list[int]) -> list[int]:
         return [self.register.commit(head) for head in heads]
+
+    def organize(self, rows: list[dict], mapper=None) -> dict:
+        return self.heads.organize(rows, mapper)
 
     def status(self) -> dict:
         return {
@@ -630,4 +762,5 @@ class LocalRunner:
             "register_bytes": REGISTER_BYTES if self.chart else 0,
             "chart": self.chart.stats() if self.chart else None,
             "register": self.register.status(),
+            "head_register": self.heads.status(),
         }

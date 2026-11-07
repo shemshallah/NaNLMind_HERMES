@@ -1,13 +1,25 @@
 """MTH root 4x4 table and L0-L9 layer curriculum tests."""
 import unittest
 
+import tempfile
+from pathlib import Path
+
 from nanlmind_hermes.mth_layers import (
     LAYER_NAMES,
+    MTHHeadMapper,
     MTHLayerStack,
     MTHScorer,
     apply_bits,
     bool_class,
     root_table,
+)
+from nanlmind_hermes.universe_chart import (
+    HEAD_REGISTER_MAGIC,
+    HEAD_REGISTER_OFFSET,
+    LEAF_MAGIC,
+    OFF_HEAD_SCRATCH,
+    Chart8MiB,
+    HeadScratchRegister,
 )
 from nanlmind_hermes.temporal_lm import TemporalMirrorLM
 
@@ -71,6 +83,45 @@ class LayerTests(unittest.TestCase):
             "A volcano is a flowing body of water can freeze.")
         self.assertGreater(good["truth"], stitched["truth"])
         self.assertGreater(good["score"], stitched["score"])
+
+    def test_every_layer_is_in_the_forward_pass_and_scoring(self):
+        stack = MTHLayerStack()
+        stack.learn(SENTENCES, ROWS)
+        forward = stack.forward("Rain causes rivers to rise.",
+                                context="Rain is water.")
+        self.assertEqual(set(forward), set(LAYER_NAMES))
+        self.assertTrue(all(forward[name] for name in LAYER_NAMES))
+        scorer = MTHScorer(stack)
+        scored = scorer.score("Why does rain cause rivers to rise?",
+                              "Rain causes rivers to rise.",
+                              context="Rain is water.")
+        self.assertEqual(set(scored["layers"]), set(LAYER_NAMES))
+        self.assertTrue(all(0.0 <= value <= 1.0 for value in scored["layers"].values()))
+        self.assertGreater(scored["layers"]["narrative"], 0.5)
+        stitched = scorer.score("Why does rain cause rivers to rise?",
+                                "Rain causes rivers to rise. A bird is an animal.")
+        self.assertLess(stitched["coherence"], scored["coherence"] + 1.0)
+
+    def test_heads_use_root_transforms_and_fill_the_scratch_register(self):
+        stack = MTHLayerStack()
+        stack.learn(SENTENCES, ROWS)
+        mapper = MTHHeadMapper(stack)
+        leaves = [mapper.map_relation(row) for row in ROWS]
+        self.assertTrue(all(0 <= leaf["head"] <= 255 for leaf in leaves))
+        self.assertTrue(all(0 <= leaf["mask"] <= 15 for leaf in leaves))
+        self.assertEqual(leaves, [mapper.map_relation(row) for row in ROWS])
+        self.assertEqual(len({leaf["digest"] for leaf in leaves}), len(leaves))
+        with tempfile.TemporaryDirectory() as tmp:
+            chart = Chart8MiB.genesis()
+            register = HeadScratchRegister(chart, Path(tmp))
+            status = register.organize(ROWS, mapper)
+            self.assertEqual(status["leaf_count"], len(ROWS))
+            self.assertGreater(status["head_count"], 0)
+            self.assertEqual(chart.bytes[HEAD_REGISTER_OFFSET:HEAD_REGISTER_OFFSET + 8],
+                             HEAD_REGISTER_MAGIC)
+            head = status["leaves"][0]["head"]
+            scratch = OFF_HEAD_SCRATCH + head * 1024
+            self.assertEqual(chart.bytes[scratch:scratch + 8], LEAF_MAGIC)
 
     def test_temporal_deliberation_exposes_mth_scores(self):
         model = TemporalMirrorLM()
