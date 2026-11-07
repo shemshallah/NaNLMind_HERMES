@@ -26,11 +26,12 @@ jobs:
 
   hermes-admission:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - name: Install Hermes Agent v0.23.0
         run: |
-          curl -fsSL https://raw.githubusercontent.com/NousResearch/hermes-agent/v0.23.0/scripts/install.sh | bash
+          curl -fsSL https://raw.githubusercontent.com/NousResearch/hermes-agent/v0.23.0/scripts/install.sh | bash -s -- --commit 2bd378ed1b8d6bf2192cb26e0a55ff3091e6bd19 --channel main --non-interactive --skip-browser --skip-computer-use
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
       - name: Validate catalog admission contract
         run: hermes plugins validate . --install-deps
