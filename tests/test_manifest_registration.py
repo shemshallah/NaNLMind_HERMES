@@ -72,6 +72,25 @@ class ManifestRegistrationTests(unittest.TestCase):
         self.assertIn("[build-system]", project)
         self.assertIn('build-backend = "setuptools.build_meta"', project)
 
+    def test_crypto_backend_is_optional_and_has_one_authoritative_declaration(self):
+        manifest = (ROOT / "plugin.yaml").read_text(encoding="utf-8")
+        project = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
+        self.assertNotIn("python_dependencies:", manifest)
+        self.assertRegex(project, r'(?m)^dependencies\\s*=\\s*\\[\\]\\s*        manifest = (ROOT / "plugin.yaml").read_text(encoding="utf-8")
+        expected = {"CLOCKED_GATEWAY_TOKEN", "NANLM_DEVICE_TOKEN", "NANNET_MASTER_KEY"}
+        declared = set(re.findall(r"(?m)^\s+env:\s*([A-Z][A-Z0-9_]*)\s*$", manifest))
+        self.assertEqual(declared, expected)
+        self.assertEqual(
+            len(re.findall(r"(?m)^\s+env:\s*[A-Z][A-Z0-9_]*\s*$", manifest)),
+            len(expected),
+        )
+
+
+if __name__ == "__main__":
+    unittest.main()
+)
+        self.assertIn('auth = ["cryptography>=42,<47"]', project)
+
     def test_secret_environment_names_are_unique_and_masked(self):
         manifest = (ROOT / "plugin.yaml").read_text(encoding="utf-8")
         expected = {"CLOCKED_GATEWAY_TOKEN", "NANLM_DEVICE_TOKEN", "NANNET_MASTER_KEY"}
