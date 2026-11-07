@@ -6,7 +6,7 @@ from pathlib import Path
 
 
 class OptionalCryptoImportTests(unittest.TestCase):
-    def test_plugin_registers_without_crypto_package(self):
+    def test_plugin_registers_without_crypto_and_protected_chat_fails_closed(self):
         code = r"""
 import importlib.abc
 import json
@@ -55,21 +55,24 @@ with tempfile.TemporaryDirectory() as tmp:
     assert "nanlm_generate_curriculum" in ctx.tools
     assert "nanlm_curriculum_experiment" in ctx.tools
     assert "nanlm_auth_init" in ctx.tools
-    result = json.loads(ctx.tools["nanlm_chat"]({"message": "Try an open-ended experiment."}))
-    assert result["response"] == "Hermes is ready."
-    assert result["reflection"]["memory_merge"]["accepted"] == 1
-    history = json.loads(ctx.tools["nanlm_chat_history"]({}))
-    assert len(history["messages"]) == 2
-    print("registered", len(ctx.tools), "tools and completed chat without cryptography")
+    status = json.loads(ctx.tools["nanlm_status"]({}))
+    assert "mathematical_memory" in status
+    try:
+        ctx.tools["nanlm_chat"]({"message": "Try an open-ended experiment."})
+    except (RuntimeError, ValueError) as exc:
+        assert "NANNET" in str(exc) or "secret" in str(exc).lower()
+    else:
+        raise AssertionError("protected chat must fail closed without configured NANNET pairing")
+    print("registered", len(ctx.tools), "tools; protected chat correctly failed closed")
 """
         root = Path(__file__).resolve().parents[1]
         result = subprocess.run(
             [sys.executable, "-c", code], cwd=root,
             text=True, capture_output=True, timeout=20,
-            env={**os.environ, "NANLM_AUTH_TEST_BYPASS": "1"},
+            env={**os.environ},
         )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        self.assertIn("without cryptography", result.stdout)
+        self.assertIn("failed closed", result.stdout)
 
 
 if __name__ == "__main__":
