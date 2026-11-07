@@ -36,9 +36,10 @@ The current HERMES branch now includes:
 - a CLOCKED gateway client that calls only the NaNLMind_CLOCKED participant gateway;
 - append-only, hash-chained scratch lanes for source results, extracted evidence atoms, conflicts, NaN16 packages, head traces, drafts and final responses;
 - two-pass answer synthesis: HERMES draft -> NaNLMind Boolean-head relation evaluation -> HERMES final;
-- a scoped NaNLMind head-candidate endpoint backed by native `HeadView::self_modify_boolean`, producing isolated candidate state without changing canonical topology.
+- a scoped NaNLMind head-candidate endpoint backed by native `HeadView::self_modify_boolean`, producing isolated candidate state without changing canonical topology;
+- a held-out candidate-evaluation tool that compares baseline and candidate relation-eval metrics, records accuracy/coverage/balanced-accuracy/utility deltas by resolution, and still cannot promote.
 
-The native candidate path is deliberately candidate-only. It is not yet a complete autonomous learning loop: held-out candidate evaluation, control scoring, candidate search, reviewer workflow and six-runner generation-barrier promotion remain to be implemented. The current head-cortex inference endpoint is read-only and does not claim its Boolean predictions are ground truth.
+The native candidate path is deliberately candidate-only. It is not yet a complete autonomous learning loop: multi-control scoring, bounded mutation search, reviewer workflow and six-runner generation-barrier promotion remain to be implemented. The current head-cortex inference endpoint is read-only and does not claim its Boolean predictions are ground truth.
 
 ## 2. Repository and code ownership
 
