@@ -21,13 +21,16 @@ class DeviceLeaseTests(unittest.TestCase):
                     (first["lease_id"],)).fetchone()[0], 9)
             with self.assertRaisesRegex(ValueError,"active lease"):
                 registry.register(payload("a"*43),now=1001)
+            parallel=registry.register(payload("b"*43),now=1001)
+            self.assertEqual(parallel["address"],"nan://GM0:SC0:MC0:BS0:HW10")
             hb=registry.heartbeat(first["token"],now=1100)
             self.assertGreater(hb["lease_expires_at"],first["lease_expires_at"])
             self.assertNotEqual(hb["token"], first["token"])
             released=registry.release(hb["token"],now=1200)
             self.assertTrue(released["released"])
-            second=registry.register(payload("b"*43),now=1201)
+            second=registry.register(payload("c"*43),now=1201)
             self.assertEqual(second["address"],released["address"])
+            self.assertEqual(second["address"],"nan://GM0:SC0:MC0:BS0:HW9")
             self.assertNotEqual(second["participant_id"],first["participant_id"])
             with self.assertRaisesRegex(ValueError,"invalid, expired, or released"):
                 registry.heartbeat(first["token"],now=1202)
