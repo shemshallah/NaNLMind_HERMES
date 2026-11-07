@@ -289,16 +289,27 @@ def head_candidate(ctx, mutation_id, head_index, patch_mask,
 
 def head_candidate_evaluate(ctx, mutation_id, records, approved=False,
                             scratch_id="default"):
+    """Evaluate one isolated candidate against a fixed caller-declared test split."""
     if approved is not True:
         raise PermissionError("held-out candidate evaluation requires explicit approved=true")
     if not isinstance(mutation_id, str) or not mutation_id or len(mutation_id) > 64:
-        raise ValueError("invalid mutation_id")
+        raise ValueError("mutation_id must be 1..64 characters")
     if not isinstance(records, list) or not 1 <= len(records) <= 512:
         raise ValueError("records must contain 1..512 held-out relations")
     required = {"resolution", "polarity", "subject", "predicate", "object", "source_digest"}
     for index, record in enumerate(records):
         if not isinstance(record, dict) or not required.issubset(record):
             raise ValueError("invalid held-out relation at index %d" % index)
+        resolution = record["resolution"]
+        if isinstance(resolution, bool) or not isinstance(resolution, int) or not 0 <= resolution <= 9:
+            raise ValueError("held-out relation %d has unsupported N16REL resolution" % index)
+        for field in ("polarity", "subject", "predicate", "object"):
+            if not isinstance(record[field], str) or not record[field].strip():
+                raise ValueError("held-out relation %d has invalid %s" % (index, field))
+        digest = record["source_digest"]
+        if (not isinstance(digest, str) or len(digest) != 64
+                or any(c not in "0123456789abcdef" for c in digest.lower())):
+            raise ValueError("held-out relation %d has invalid source_digest" % index)
     if not os.environ.get("NANLM_HEAD_CORTEX_URL") or not os.environ.get("NANLM_DEVICE_TOKEN"):
         raise RuntimeError("configure NANLM_HEAD_CORTEX_URL and a NANNET training:execute device token")
     dataset_sha256 = hashlib.sha256(json.dumps(
@@ -316,10 +327,14 @@ def head_candidate_evaluate(ctx, mutation_id, records, approved=False,
     scratch.append("learning_proposal", "hermes", {
         "kind": "boolean_head_candidate_evaluation",
         "mutation_id": mutation_id,
+        "dataset_sha256": dataset_sha256,
+        "split": "test",
         "evaluation": result,
         "promotion_allowed": False,
+        "canonical_state_modified": False,
     })
     return {"evaluation": result, "scratch": scratch.snapshot()}
+
 
 def head_learn_candidate(ctx, mutation_id, base_topology_digest,
                          approved=False, scratch_id="default", epochs=1):
