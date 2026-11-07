@@ -29,10 +29,10 @@ prove from steps that only the upstream catalog maintainer can complete.
 
 ### Plugin checks
 
-- Plugin version: **1.3.1** in `plugin.yaml` and `pyproject.toml`; license
+- Plugin version: **1.3.2** in `plugin.yaml` and `pyproject.toml`; license
   **Apache-2.0** in both.
-- Unit/integration suite: **170 tests passed** locally and in CI on Python
-  3.10, 3.11 and 3.12 (510 successful test executions).
+- Unit/integration suite: **172 tests passed** locally and in CI on Python
+  3.10, 3.11 and 3.12 (516 successful test executions).
 - Hermes Agent v0.23.0 `hermes plugins validate . --install-deps`: **PASS**.
   Manifest, compatibility floor, config schema, required secret names,
   tool/hook/middleware parity, collision scan, security scan and no-core-override
@@ -52,7 +52,7 @@ prove from steps that only the upstream catalog maintainer can complete.
 - Phone-call routing kernel: raw NaN16 (`nan/phone_call.nan`), run on the
   NaNVM0 boundary with headless device stubs, verified word-for-word against
   the native nan0s C VM core across an eight-case routing matrix; 12
-  NaN16 boundary/kernel tests are part of the 170-test suite.
+  NaN16 boundary/kernel tests are part of the 172-test suite.
 
 ### Live integration checks
 
@@ -133,6 +133,6 @@ capabilities:
 
 The upstream entry must also set `name: nanlmind-hermes`,
 `repo: https://github.com/shemshallah/NaNLMind_HERMES`,
-`requires_hermes: ">=0.23.0"`, `version: "1.3.1"`, `maintainer: shemshallah`,
+`requires_hermes: ">=0.23.0"`, `version: "1.3.2"`, `maintainer: shemshallah`,
 `tier: community`, `category: tools`, and a full 40-character SHA for the
 reviewed release commit.

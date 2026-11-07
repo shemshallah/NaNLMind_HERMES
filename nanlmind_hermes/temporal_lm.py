@@ -361,7 +361,7 @@ class TemporalMirrorLM:
         return completed
 
     def _select_sentence(self, anchors, state, seed_stems, beam, max_tokens,
-                         query: str = ""):
+                         query: str = "", context: str = ""):
         max_subject = max(self.subject.values() or [1])
         considered = []
         best = None
@@ -382,7 +382,7 @@ class TemporalMirrorLM:
                     score -= 0.3
                 text = _detokenize([w for w in words if w not in (BOS, EOS)])
                 if self.mth is not None:
-                    mth_score = self.mth.score(query, text)
+                    mth_score = self.mth.score(query, text, context=context)
                     score += 0.35 * mth_score["score"]
                 else:
                     mth_score = None
@@ -468,8 +468,9 @@ class TemporalMirrorLM:
         weighed = []
         for round_index in range(3):
             budget = max_tokens if round_index == 0 else 8
-            best, considered = self._select_sentence(pending, state, seed_stems,
-                                                     beam, budget, query=query)
+            best, considered = self._select_sentence(
+                pending, state, seed_stems, beam, budget, query=query,
+                context=sentences[-1] if sentences else "")
             if best is None:
                 break
             words = best["words"]
@@ -506,8 +507,9 @@ class TemporalMirrorLM:
             rounds += 1
 
         if not sentences and self.vocab:
-            best, considered = self._select_sentence([BOS], state, set(), beam, 8,
-                                                      query=query)
+            best, considered = self._select_sentence(
+                [BOS], state, set(), beam, 8, query=query,
+                context=sentences[-1] if sentences else "")
             if best is not None:
                 words = best["words"]
                 if not best["ended"]:

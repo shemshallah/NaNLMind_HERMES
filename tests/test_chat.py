@@ -56,6 +56,8 @@ class HermesChatTests(unittest.TestCase):
             self.assertGreaterEqual(first["reflection"]["proposed_discoveries"], 1)
             self.assertTrue(first["scratch"]["scratch_id"].startswith("chat-"))
             self.assertEqual(len(chat_history(ctx, "native-demo")["messages"]), 2)
+            self.assertGreaterEqual(first["native_synthesis"]["heads"]["leaf_count"], 1)
+            self.assertGreaterEqual(first["native_synthesis"]["heads"]["head_count"], 1)
             chat(ctx, "Water can flow.", session_id="native-demo")
             second = chat(ctx, "What is a river?", session_id="native-demo")
             self.assertEqual(second["provider"], "nanlm-native")

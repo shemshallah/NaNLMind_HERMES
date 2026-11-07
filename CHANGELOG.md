@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.3.2 — 2026-11-07
+
+- Made the MTH/L0-L9 stack coherent: every layer produces a signal used in
+  candidate scoring (structure, phonetic, morpheme, lexical, word completion,
+  sentence truth, paragraph coherence, narrative causality).
+- Heads now actively use MTH root transforms: each relation maps through a
+  root Boolean function to a head and mathematical leaf, organized in a mapped
+  head scratch register plus 1 KiB per-head scratchpad leaves.
+- Exposed the head register and MTH layers in chat metadata and the long-chat
+  session; 172 tests pass.
+
 ## 1.3.1 — 2026-11-07
 
 - Replaced native template/retrieval replies with a word-level temporal mirror

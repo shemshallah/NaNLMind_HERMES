@@ -57,3 +57,33 @@ category-error evidence next to next-word likelihood.
   described in `docs/LOCAL_RUNNER.md`.
 - `docs/LONG_CHAT_DEMO.md` records the root/nibble/byte accuracies, layer
   summary, held-out session and feedback re-deliberation.
+
+## Heads actively use MTH: the special scratch register
+
+Every relation is transformed through a root Boolean function, not hashed:
+
+```
+mask = (sum(ord(c) for c in predicate) + len(subject) + len(object)) mod 16
+s = fold(subject, mask)      # byte pairs through the root function
+p = fold(predicate, mask)
+o = fold(object, mask)
+head  = (s ^ (p << 1) ^ (o << 2)) & 0xFF
+leaf  = (s << 16) | (p << 8) | o
+```
+
+The leaf records its head, mirror (`reverse8`), Boolean function name, layer
+(`sentence` or `narrative`, or the memory resolution when present), value and
+relation digest.
+
+`HeadScratchRegister` actively organizes the DB tree:
+
+- the **aggregate register** is mapped in the chart extension at
+  `HEAD_REGISTER_OFFSET` (magic `NLMHEAD1`) with a 256-head table and leaf
+  entries;
+- every used head also receives a **1 KiB leaf** in its native head scratchpad
+  (magic `NLMLEAF1`) inside the in-memory 8 MiB chart;
+- the register is persisted to `state_dir/language/mth_heads.json` and exposed
+  in chat metadata as `native_synthesis.heads` (`head_count`, `leaf_count`,
+  `head_scratchpads`, masks, layers).
+
+`docs/LONG_CHAT_DEMO.md` records the live head mapping for the session.

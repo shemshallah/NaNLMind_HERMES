@@ -351,7 +351,7 @@ def _native_synthesize(ctx, message: str, parsed: list[dict]) -> dict:
     from .tools import _memory_store
     store = _memory_store(ctx)
     rows = store.query(limit=1000)
-    from .mth_layers import MTHLayerStack, MTHScorer
+    from .mth_layers import MTHHeadMapper, MTHLayerStack, MTHScorer
     stack = MTHLayerStack()
     exposure_sentences = []
     for row in rows:
@@ -362,8 +362,11 @@ def _native_synthesize(ctx, message: str, parsed: list[dict]) -> dict:
         elif row.get("kind") == "observation" and isinstance(row.get("object"), str):
             exposure_sentences.append(row["object"])
     stack.learn(exposure_sentences, rows)
+    heads_summary = {}
     model = TemporalMirrorLM.load(ctx)
     model.mth = MTHScorer(stack)
+    if model.runner is not None:
+        heads_summary = model.runner.organize(rows, MTHHeadMapper(stack))
     prior_words = set(model.vocab)
     excluded = {str(message).strip().casefold()}
     bootstrapped = model.observe_memory_rows(rows, exclude=excluded)
@@ -413,6 +416,7 @@ def _native_synthesize(ctx, message: str, parsed: list[dict]) -> dict:
         "memory_records": len(rows),
         "vocabulary": model.stats(),
         "mth": stack.summary(),
+        "heads": heads_summary,
         "register": prediction.get("register"),
         "register_frames": prediction.get("register_frames", 0),
         "runner": prediction.get("runner"),

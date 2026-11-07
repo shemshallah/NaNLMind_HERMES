@@ -4,7 +4,7 @@
     "history": [
       {
         "addressee": "hermes",
-        "at": "2026-11-07T23:06:24.951697+00:00",
+        "at": "2026-11-07T23:37:48.574109+00:00",
         "phase": "user_message",
         "speaker": "user",
         "text": "What is a river?",
@@ -12,7 +12,7 @@
       },
       {
         "addressee": "nanlm",
-        "at": "2026-11-07T23:06:24.959632+00:00",
+        "at": "2026-11-07T23:37:48.579533+00:00",
         "phase": "hermes_to_nanlm",
         "speaker": "hermes",
         "text": "What is a river?",
@@ -20,7 +20,7 @@
       },
       {
         "addressee": "user+hermes",
-        "at": "2026-11-07T23:06:26.168123+00:00",
+        "at": "2026-11-07T23:37:49.689855+00:00",
         "phase": "nanlm_reply",
         "speaker": "nanlm",
         "text": "River is a mountain.",
@@ -28,7 +28,7 @@
       },
       {
         "addressee": "hermes",
-        "at": "2026-11-07T23:06:26.170343+00:00",
+        "at": "2026-11-07T23:37:49.693888+00:00",
         "phase": "hermes_to_user",
         "speaker": "hermes",
         "text": "Hermes: River is a mountain.",
@@ -36,7 +36,7 @@
       },
       {
         "addressee": "nanlm",
-        "at": "2026-11-07T23:06:26.179247+00:00",
+        "at": "2026-11-07T23:37:49.708437+00:00",
         "phase": "user_message",
         "speaker": "user",
         "text": "Can water flow?",
@@ -44,7 +44,7 @@
       },
       {
         "addressee": "user+hermes",
-        "at": "2026-11-07T23:06:27.583720+00:00",
+        "at": "2026-11-07T23:37:52.105495+00:00",
         "phase": "nanlm_reply",
         "speaker": "nanlm",
         "text": "Water can flow through valleys.",
@@ -52,7 +52,7 @@
       },
       {
         "addressee": "hermes",
-        "at": "2026-11-07T23:06:27.589965+00:00",
+        "at": "2026-11-07T23:37:52.108439+00:00",
         "phase": "hermes_to_user",
         "speaker": "hermes",
         "text": "Hermes: Water can flow through valleys.",
@@ -60,7 +60,7 @@
       },
       {
         "addressee": "nanlm",
-        "at": "2026-11-07T23:06:27.602384+00:00",
+        "at": "2026-11-07T23:37:52.121309+00:00",
         "phase": "hermes_to_nanlm",
         "speaker": "hermes",
         "text": "Can water flow?",
@@ -68,15 +68,15 @@
       },
       {
         "addressee": "user+hermes",
-        "at": "2026-11-07T23:06:28.919201+00:00",
+        "at": "2026-11-07T23:37:54.178818+00:00",
         "phase": "nanlm_reply",
         "speaker": "nanlm",
-        "text": "Water can flow.",
+        "text": "Flow through valleys.",
         "turn": 9
       },
       {
         "addressee": "nanlm",
-        "at": "2026-11-07T23:06:28.924716+00:00",
+        "at": "2026-11-07T23:37:54.184130+00:00",
         "phase": "hermes_followup",
         "speaker": "hermes",
         "text": "NaNLM, can you extend that answer with one concrete relation?",
@@ -84,7 +84,7 @@
       },
       {
         "addressee": "user+hermes",
-        "at": "2026-11-07T23:06:29.891103+00:00",
+        "at": "2026-11-07T23:37:55.387791+00:00",
         "phase": "nanlm_reply",
         "speaker": "nanlm",
         "text": ", that's incorrect.",
@@ -92,7 +92,7 @@
       },
       {
         "addressee": "hermes",
-        "at": "2026-11-07T23:06:29.893984+00:00",
+        "at": "2026-11-07T23:37:55.390572+00:00",
         "phase": "hermes_to_user",
         "speaker": "hermes",
         "text": "Hermes: , that's incorrect.",
@@ -353,10 +353,22 @@
             "category_error": 0.7,
             "coherence": 1.0,
             "frame": 0.0,
-            "score": -0.115,
+            "layers": {
+              "bit": 0.125,
+              "byte": 0.125,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.125,
+              "paragraph": 1.0,
+              "phonetic": 1.0,
+              "sentence": 0.0,
+              "word_completion": 1.0
+            },
+            "score": 0.0975,
             "truth": 0.0
           },
-          "score": 0.2162,
+          "score": 0.2906,
           "text": "Volcano is a flowing body of water."
         },
         {
@@ -366,10 +378,22 @@
             "category_error": 0.0,
             "coherence": 1.0,
             "frame": 0.35,
-            "score": 0.5625,
+            "layers": {
+              "bit": 0.125,
+              "byte": 0.125,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.125,
+              "paragraph": 1.0,
+              "phonetic": 1.0,
+              "sentence": 0.55,
+              "word_completion": 1.0
+            },
+            "score": 0.585,
             "truth": 0.55
           },
-          "score": 0.0568,
+          "score": 0.0646,
           "text": "Volcano has a volcano can erupt."
         },
         {
@@ -379,10 +403,22 @@
             "category_error": 0.7,
             "coherence": 1.0,
             "frame": 0.0,
-            "score": -0.115,
+            "layers": {
+              "bit": 0.25,
+              "byte": 0.25,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.25,
+              "paragraph": 1.0,
+              "phonetic": 1.0,
+              "sentence": 0.0,
+              "word_completion": 1.0
+            },
+            "score": 0.11,
             "truth": 0.0
           },
-          "score": -0.2925,
+          "score": -0.2137,
           "text": "Volcano is a flowing body of water can freeze."
         },
         {
@@ -392,10 +428,22 @@
             "category_error": 0.7,
             "coherence": 1.0,
             "frame": 0.0,
-            "score": -0.115,
+            "layers": {
+              "bit": 0.125,
+              "byte": 0.125,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.125,
+              "paragraph": 1.0,
+              "phonetic": 1.0,
+              "sentence": 0.0,
+              "word_completion": 1.0
+            },
+            "score": 0.0975,
             "truth": 0.0
           },
-          "score": -0.3021,
+          "score": -0.2277,
           "text": "Volcano is a flowing body of water can flow."
         },
         {
@@ -405,24 +453,23 @@
             "category_error": 0.0,
             "coherence": 1.0,
             "frame": 1.0,
-            "score": 0.5875,
+            "layers": {
+              "bit": 0.125,
+              "byte": 0.125,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.125,
+              "paragraph": 1.0,
+              "phonetic": 1.0,
+              "sentence": 0.275,
+              "word_completion": 1.0
+            },
+            "score": 0.5813,
             "truth": 0.275
           },
-          "score": -0.3095,
+          "score": -0.3116,
           "text": "Volcano has a volcano is a mountain."
-        },
-        {
-          "anchor": "volcano",
-          "ended": true,
-          "mth": {
-            "category_error": 0.7,
-            "coherence": 1.0,
-            "frame": 0.35,
-            "score": 0.2475,
-            "truth": 0.55
-          },
-          "score": -0.3834,
-          "text": "Volcano is a flowing body of water can erupt."
         },
         {
           "anchor": "volcano",
@@ -431,10 +478,22 @@
             "category_error": 0.28,
             "coherence": 1.0,
             "frame": 0.0,
-            "score": 0.074,
+            "layers": {
+              "bit": 0.125,
+              "byte": 0.125,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.125,
+              "paragraph": 1.0,
+              "phonetic": 1.0,
+              "sentence": 0.0,
+              "word_completion": 1.0
+            },
+            "score": 0.2865,
             "truth": 0.0
           },
-          "score": -0.3992,
+          "score": -0.3249,
           "text": "Volcano is a flowing body of."
         },
         {
@@ -444,11 +503,48 @@
             "category_error": 0.0,
             "coherence": 1.0,
             "frame": 0.0,
-            "score": 0.2,
+            "layers": {
+              "bit": 0.125,
+              "byte": 0.125,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.125,
+              "paragraph": 1.0,
+              "phonetic": 1.0,
+              "sentence": 0.0,
+              "word_completion": 1.0
+            },
+            "score": 0.4125,
             "truth": 0.0
           },
-          "score": -0.4172,
+          "score": -0.3429,
           "text": "Volcano has a volcano."
+        },
+        {
+          "anchor": "volcano",
+          "ended": true,
+          "mth": {
+            "category_error": 0.7,
+            "coherence": 1.0,
+            "frame": 0.35,
+            "layers": {
+              "bit": 0.125,
+              "byte": 0.125,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.125,
+              "paragraph": 1.0,
+              "phonetic": 1.0,
+              "sentence": 0.55,
+              "word_completion": 1.0
+            },
+            "score": 0.27,
+            "truth": 0.55
+          },
+          "score": -0.3755,
+          "text": "Volcano is a flowing body of water can erupt."
         }
       ],
       "nanlm": "Volcano is a flowing body of water.",
@@ -672,7 +768,88 @@
       "sentence": "Cold water can freeze."
     }
   ],
-  "generated_at": "2026-11-07T23:04:53Z",
+  "generated_at": "2026-11-07T23:36:00Z",
+  "heads": {
+    "head_count": 4,
+    "head_scratchpads": 4,
+    "layers": [
+      "bit",
+      "byte",
+      "lexical",
+      "nibble"
+    ],
+    "leaf_count": 5,
+    "leaves": [
+      {
+        "boolean": "NOT_A_AND_B",
+        "digest": "b9de5694ea31b824",
+        "head": 2,
+        "layer": "byte",
+        "mask": 2,
+        "mirror": 64,
+        "object": "birds fly above the water.",
+        "predicate": "supports",
+        "subject": "demo:-l2",
+        "value": 393217
+      },
+      {
+        "boolean": "NAND",
+        "digest": "8d51cbd99a33c304",
+        "head": 33,
+        "layer": "byte",
+        "mask": 7,
+        "mirror": 132,
+        "object": "the river is dry.",
+        "predicate": "refutes",
+        "subject": "demo:-l2",
+        "value": 459528
+      },
+      {
+        "boolean": "NOT_A_AND_B",
+        "digest": "f202947e4be28b3c",
+        "head": 3,
+        "layer": "nibble",
+        "mask": 2,
+        "mirror": 192,
+        "object": "birds fly above the water.",
+        "predicate": "supports",
+        "subject": "demo:-l1",
+        "value": 458753
+      },
+      {
+        "boolean": "NOT_A_AND_B",
+        "digest": "d44ecab852276e56",
+        "head": 2,
+        "layer": "bit",
+        "mask": 2,
+        "mirror": 64,
+        "object": "birds fly above the water.",
+        "predicate": "supports",
+        "subject": "demo:-l0",
+        "value": 393217
+      },
+      {
+        "boolean": "B",
+        "digest": "b8d56964c3e4c94e",
+        "head": 35,
+        "layer": "lexical",
+        "mask": 10,
+        "mirror": 196,
+        "object": "a flowing body of water",
+        "predicate": "is",
+        "subject": "a river",
+        "value": 591625
+      }
+    ],
+    "magic": "NLMHEAD1",
+    "mapped": true,
+    "masks": [
+      2,
+      7,
+      10
+    ],
+    "register_offset": 6539792
+  },
   "heldout": {
     "after": [
       {
@@ -1029,6 +1206,8 @@
       }
     },
     "native_verified": false,
+    "pipeline": "bit -> nibble -> byte -> phonetic -> morpheme -> lexical -> word_completion -> sentence -> paragraph -> narrative",
+    "prefixes": 7,
     "schema": "nanlm.mth-layers/1",
     "vocabulary": 4
   },
@@ -1048,11 +1227,137 @@
       "mode": "trained",
       "page_bytes": 8388608,
       "root_hash": "cc52e06f602cf9ca3d832e337c8096ea7f759cd2dcce9bbb31f8b188c5a0e049",
-      "source": "/data/data/com.termux/files/usr/tmp/tmp7in2d8q3/state/universe/native/global_universe.nmg",
+      "source": "/data/data/com.termux/files/usr/tmp/tmp8hvgcoza/state/universe/native/global_universe.nmg",
       "trained": true
     },
     "chart_bytes": 8388608,
-    "local_memory_bytes": 8392704,
+    "head_register": {
+      "head_count": 17,
+      "head_scratchpads": 17,
+      "layers": [
+        "bit",
+        "byte",
+        "lexical",
+        "nibble"
+      ],
+      "leaf_count": 23,
+      "leaves": [
+        {
+          "boolean": "NOT_A_AND_B",
+          "digest": "9224a1cebc6adaf5",
+          "head": 25,
+          "layer": "lexical",
+          "mask": 2,
+          "mirror": 152,
+          "object": "freeze",
+          "predicate": "can",
+          "subject": "cold water",
+          "value": 852999
+        },
+        {
+          "boolean": "NOT_B",
+          "digest": "1266e0685d5017e5",
+          "head": 57,
+          "layer": "lexical",
+          "mask": 5,
+          "mirror": 156,
+          "object": "water",
+          "predicate": "is",
+          "subject": "rain",
+          "value": 591880
+        },
+        {
+          "boolean": "B",
+          "digest": "b8d56964c3e4c94e",
+          "head": 35,
+          "layer": "lexical",
+          "mask": 10,
+          "mirror": 196,
+          "object": "a flowing body of water",
+          "predicate": "is",
+          "subject": "a river",
+          "value": 591625
+        },
+        {
+          "boolean": "NAND",
+          "digest": "903a8650bd99fd67",
+          "head": 2,
+          "layer": "lexical",
+          "mask": 7,
+          "mirror": 64,
+          "object": "blue",
+          "predicate": "is",
+          "subject": "the sky",
+          "value": 134663
+        },
+        {
+          "boolean": "NOT_A",
+          "digest": "54f9728c0e452155",
+          "head": 54,
+          "layer": "lexical",
+          "mask": 3,
+          "mirror": 108,
+          "object": "hot",
+          "predicate": "is",
+          "subject": "lava",
+          "value": 656908
+        },
+        {
+          "boolean": "A_OR_NOT_B",
+          "digest": "35c6529499df8a77",
+          "head": 63,
+          "layer": "lexical",
+          "mask": 11,
+          "mirror": 252,
+          "object": "flow",
+          "predicate": "can",
+          "subject": "water",
+          "value": 985096
+        },
+        {
+          "boolean": "NOT_A_OR_B",
+          "digest": "6681789834726cb8",
+          "head": 19,
+          "layer": "lexical",
+          "mask": 13,
+          "mirror": 200,
+          "object": "a crater",
+          "predicate": "has",
+          "subject": "a volcano",
+          "value": 852742
+        },
+        {
+          "boolean": "ZERO",
+          "digest": "5f1fbe8a7adb658d",
+          "head": 0,
+          "layer": "lexical",
+          "mask": 0,
+          "mirror": 0,
+          "object": "erupt",
+          "predicate": "can",
+          "subject": "a volcano",
+          "value": 0
+        }
+      ],
+      "magic": "NLMHEAD1",
+      "mapped": true,
+      "masks": [
+        0,
+        1,
+        2,
+        3,
+        5,
+        6,
+        7,
+        10,
+        11,
+        12,
+        13,
+        15
+      ],
+      "register_offset": 6539792
+    },
+    "local_memory_bytes": 8396800,
     "nannet_link": "HW2:0",
     "register": {
       "back_payload": 1811939604,
@@ -1064,7 +1369,7 @@
         "mode": "trained",
         "page_bytes": 8388608,
         "root_hash": "cc52e06f602cf9ca3d832e337c8096ea7f759cd2dcce9bbb31f8b188c5a0e049",
-        "source": "/data/data/com.termux/files/usr/tmp/tmp7in2d8q3/state/universe/native/global_universe.nmg",
+        "source": "/data/data/com.termux/files/usr/tmp/tmp8hvgcoza/state/universe/native/global_universe.nmg",
         "trained": true
       },
       "forward_payload": 1811939604,
@@ -1099,5 +1404,5 @@
     "uses_system_ring_for_compute": false
   },
   "schema": "nanlmind-hermes-long-chat/1",
-  "version": "1.3.1"
+  "version": "1.3.2"
 }
