@@ -1,4 +1,4 @@
-import json, sqlite3, tempfile, threading, unittest, urllib.request, urllib.error
+import hashlib, json, sqlite3, tempfile, threading, time, unittest, urllib.request, urllib.error
 from pathlib import Path
 from nanlmind_hermes.auth import _unb64, generate_master_key
 from nanlmind_hermes.pairing import PairingAuthority
@@ -47,6 +47,26 @@ class DeviceLeaseTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,"invalid, expired, or released"):
                 registry.heartbeat(first["token"],now=1101)
             self.assertEqual(registry.heartbeat(rotated["token"],now=1102)["lease_id"],first["lease_id"])
+
+    def test_legacy_reserved_slot_leases_migrate_to_hw9_plus(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "authority.sqlite"
+            DeviceRegistry(path)
+            now = int(time.time())
+            with sqlite3.connect(path) as db:
+                db.execute("INSERT INTO devices VALUES (?,?,?,?)", (
+                    "legacy-device", hashlib.sha256(b"legacy-secret").hexdigest(),
+                    now, now))
+                db.execute("INSERT INTO device_leases VALUES (?,?,?,?,?,?,NULL)", (
+                    "legacy-lease", "legacy-device", 4,
+                    hashlib.sha256(b"legacy-token").hexdigest(), now, now + 3600))
+            migrated = DeviceRegistry(path)
+            with sqlite3.connect(path) as db:
+                self.assertEqual(db.execute(
+                    "SELECT hw_slot FROM device_leases WHERE lease_id='legacy-lease'"
+                ).fetchone()[0], 9)
+            next_lease = migrated.register(payload("m" * 43), now=now + 1)
+            self.assertEqual(next_lease["address"], "nan://GM0:SC0:MC0:BS0:HW10")
 
     def test_registration_requires_consent_and_terms(self):
         with tempfile.TemporaryDirectory() as tmp:
