@@ -227,7 +227,7 @@ or general reasoning.
 ## 5. NANNET, Koyeb, and mathematical memory
 
 NANNET is the identity, authorization, and delta-coordination boundary. Hermes
-has a dedicated `HW_HERMES_API` hardware key, separate from Android test keys;
+historically used a dedicated `HW_HERMES_API` hardware key, separate from Android test keys; this was superseded in v1.2.0 by explicit NANNET pairing and Hermes-managed secrets.
 the portal records `hardware_kind=hermes` so identified hardware can later be
 routed to the appropriate kernels. HW2 is the Hermes demo, HW3 is reserved for
 Clocked, and new Hermes instances take the lowest free slot from HW4. Android
