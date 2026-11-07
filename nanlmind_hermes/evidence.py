@@ -25,7 +25,7 @@ def build_evidence_package(scratch_snapshot: dict, question: str,
     if not isinstance(entries, list):
         raise ValueError("scratch snapshot entries are required")
     selected = []
-    for entry in entries:
+    for index, entry in enumerate(entries):
         if not isinstance(entry, dict):
             raise ValueError("invalid scratch entry")
         lane = entry.get("lane")
@@ -38,7 +38,7 @@ def build_evidence_package(scratch_snapshot: dict, question: str,
             "entry_id": entry.get("entry_id"),
             "lane": lane,
             "writer": entry.get("writer"),
-            "sequence": entry.get("sequence"),
+            "sequence": entry.get("sequence") if entry.get("sequence") is not None else index + 1,
             "revision": entry.get("revision"),
             "payload": entry.get("payload"),
         })
