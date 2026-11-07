@@ -425,7 +425,7 @@ def register(ctx):
         rest = parts[1:]
         if command in {"help", "?"}:
             return _json.dumps({
-                "usage": "/nanlm [chat|logic|words|sentences|pipeline|route|status] ...",
+                "usage": "/nanlm [chat|logic|words|sentences|pipeline|clocked|route|status] ...",
                 "default": "chat",
                 "note": "Bare /nanlm text is treated as a chat message.",
             }, sort_keys=True)
@@ -441,6 +441,22 @@ def register(ctx):
             return handle_training_pipeline({"topic": " ".join(rest) or "logic and language", "mode": "pipeline"})
         if command == "route":
             return _json.dumps(handle_nan16de_route({"route": rest[0] if rest else ""}), sort_keys=True)
+        if command == "clocked":
+            from pathlib import Path as _Path
+            from . import clocked_tools as _clocked
+            sub = rest[0].lower() if rest else "help"
+            if sub == "scratch":
+                return _json.dumps(_clocked.scratch_show(ctx, rest[1] if len(rest) > 1 else "default"), sort_keys=True, default=str)
+            if sub == "plan" and len(rest) >= 2:
+                data = _json.loads(_Path(rest[1]).expanduser().read_text(encoding="utf-8"))
+                return _json.dumps(_clocked.clocked_plan(ctx, data["question"], data.get("sources", []), data.get("scratch_id", "default")), sort_keys=True, default=str)
+            if sub == "run" and len(rest) >= 3 and "--approved" in rest[2:]:
+                data = _json.loads(_Path(rest[1]).expanduser().read_text(encoding="utf-8"))
+                return _json.dumps(_clocked.clocked_execute(ctx, data["question"], data["sources"], data.get("scratch_id", "default"), True), sort_keys=True, default=str)
+            if sub == "head" and len(rest) >= 2:
+                data = _json.loads(_Path(rest[1]).expanduser().read_text(encoding="utf-8"))
+                return _json.dumps(_clocked.head_process(ctx, data["question"], data.get("scratch_id", "default"), data.get("purpose", "EVIDENCE_COGNITION"), data.get("draft")), sort_keys=True, default=str)
+            return _json.dumps({"usage": "/nanlm clocked [plan <request.json>|run <request.json> --approved|scratch [id]|head <request.json>]", "request_file": {"question": "string", "sources": [{"id": "source-a", "text": "source text"}], "scratch_id": "optional-id"}, "note": "Plan does not transmit source text. Run requires the explicit --approved flag."})
         if command == "chat":
             message = " ".join(rest)
         else:
