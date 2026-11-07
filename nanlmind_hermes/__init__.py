@@ -30,6 +30,11 @@ def register(ctx):
             params.get("scratch_id", "default"), params.get("purpose", "EVIDENCE_COGNITION"),
             params.get("draft"))
 
+    def handle_clocked_synthesize(params, **kwargs):
+        _require_scope("universe:read")
+        return clocked_tools.clocked_synthesize(ctx, params["question"],
+            params.get("scratch_id", "default"), params.get("max_tokens", 2048))
+
     def handle_status(params, **kwargs):
         result = tools.status(ctx)
         result["mathematical_memory"] = tools.memory_status(ctx)
@@ -268,6 +273,11 @@ def register(ctx):
           "purpose": {"type": "string", "enum": ["EVIDENCE_COGNITION", "ANSWER_VALIDATION"]},
           "draft": {"type": "string", "maxLength": 65536}},
          ["question"], handle_head_process),
+        ("nanlm_clocked_synthesize", "Synthesize a final answer from revisioned CLOCKED evidence, submit the draft through NaNLMind heads for answer validation, and compose the final response without treating head predictions as ground truth.",
+         {"question": {"type": "string", "minLength": 1, "maxLength": 65536},
+          "scratch_id": {"type": "string", "maxLength": 80},
+          "max_tokens": {"type": "integer", "minimum": 1, "maximum": 8192, "default": 2048}},
+         ["question"], handle_clocked_synthesize),
         ("nanlm_status", "Inspect local NaNLMind universe and durable mathematical-memory status.", {}, [], handle_status),
         ("nanlm_chat", "Open-ended Hermes conversation; reflect evidence and, when explicit supervised relations are present, update native heads, mirror pairs and hyperedges in the shared universe.",
          {"message": {"type": "string", "minLength": 1, "maxLength": 1048576},
