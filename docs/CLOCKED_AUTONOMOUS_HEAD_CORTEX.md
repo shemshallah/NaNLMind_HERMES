@@ -307,7 +307,7 @@ Existing `/nanlm` chat and training modes remain unchanged. CLOCKED mode is an a
 - Two-pass HERMES synthesis tool: draft -> NaNLMind answer-validation request -> final synthesis.
 - NaNLMind native read-only `relation-eval` command and authenticated head-cortex HTTP adapter, with NANNET scope authorization support.
 - Native `head-candidate` command and NANNET `training:execute`-authorized HERMES candidate endpoint. It applies `HeadView::self_modify_boolean` to an isolated topology copy, binds the base digest, records before/after digests, and refuses to overwrite canonical state.
-- Held-out candidate evaluation compares the candidate and canonical baseline with the same N16REL test rows, reporting accuracy, coverage, balanced accuracy, confusion counts and per-resolution metrics. It rejects stale base/candidate digests and cannot promote.
+- Candidate evaluation compares the candidate and canonical baseline with the same N16REL rows. The caller declares the test split and supplies a canonical dataset digest, which NaNLMind verifies; this binds the submitted records but does not independently attest dataset provenance. Metrics include accuracy, coverage, balanced accuracy, confusion counts and per-resolution results. Stale base/candidate digests are rejected and evaluation cannot promote.
 - Shared JSON schemas for evidence packages, scratch entries and head-cortex responses.
 
 **Not yet deployed or end-to-end verified:**
