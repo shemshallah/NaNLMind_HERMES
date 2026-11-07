@@ -53,13 +53,15 @@ MC0 = MC0Link (transport/link identity, not a second universe)
 HW1 = phone endpoint
 HW2 = Hermes demo endpoint
 HW3 = CLOCKED demo endpoint
-HW4-HW8 = no universe instances; no independent universe allocation
+HW4-HW8 = unallocated
+HW9+ = scoped participant addresses attached to the same HW0::BS0 universe
 ```
 
 The Hermes and CLOCKED demos are endpoints attached to the one canonical
 universe. They do not create or own model universes. The six BS0 runners are
-execution workers over that same object, not separate universes. Device/guest
-leases are scoped access identities and must not imply a new universe.
+execution workers over that same object, not separate universes. HW4-HW8 stay
+unallocated; HW9+ addresses are scoped guest identities attached to the shared
+universe, not new model instances.
 
 ```sh
 export HERMES_GATEWAY_NO_SUPERVISE=1 # recommended for one-shot/CI runs
