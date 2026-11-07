@@ -1,5 +1,31 @@
 # Changelog
 
+## 1.3.1 — 2026-11-07
+
+- Replaced native template/retrieval replies with a word-level temporal mirror
+  predictor: every known word is weighed at every step, the next word is
+  predicted forward from a head/mirror temporal frame, and the chosen word is
+  fed back into the frame. There are no response templates and no retrieval.
+- Added forced, complete replies: no learned seed is not an option; the model
+  falls back to newly exposed words or the start token, finishes the sentence,
+  then evaluates coverage/open-endedness to decide whether to explain further.
+- Added genuine held-out sessions: unseen questions are asked before and after
+  exposure, and a `No, that's incorrect` feedback turn suppresses the rejected
+  future and re-deliberates with the alternatives exposed.
+- Added Hermes' own local-CPU runner: the plugin boots a genesis 8 MiB chart
+  and mapped temporal register into local memory so heads can map before any
+  Boolean training; the runner rebinds to the trained chart while preserving
+  frames. It does not use the system RunnerRing for compute and links through
+  `HW2:0` (NaN16DE) to `BS0:0::HW0:0`.
+- CLOCKED during the three-way call is opt-in (`--phone-clocked`, default off)
+  so normal demos spend no gateway credits.
+- Added the MTH bridge: the 16-function root 4x4 Boolean table, L0-L9
+  layer curriculum, and truth/frame/category-error scoring wired into
+  temporal deliberation.
+- Test suite: 170 tests, including chart mapping, real-rail commits,
+  boot-time genesis, trained-chart rebinding, forced generation, anti-attractor
+  diversity, and feedback re-deliberation.
+
 ## 1.3.0 — 2026-11-07
 
 - Added native chat parsing/synthesis as the default `chat_mode: native`; no

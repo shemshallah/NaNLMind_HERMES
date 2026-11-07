@@ -5,6 +5,15 @@ from . import tools
 def register(ctx):
     from . import clocked_tools
 
+    # Boot the local-CPU runner immediately. The 8 MiB chart (genesis before
+    # training) and the temporal register file are held in local memory so
+    # heads can map from plugin boot, before any Boolean/local training.
+    try:
+        from .universe_chart import LocalRunner
+        LocalRunner.open(ctx)
+    except Exception:
+        pass
+
     def handle_clocked_plan(params, **kwargs):
         _require_scope("universe:read")
         return clocked_tools.clocked_plan(ctx, params["question"],

@@ -1,6 +1,6 @@
 # Tool reference
 
-Version 1.3.0 (2026-11-07). All tools are registered under the `nanlmind` toolset.
+Version 1.3.1 (2026-11-07). All tools are registered under the `nanlmind` toolset.
 Tool schemas reject unknown properties unless stated otherwise.
 
 ## Default conversation
@@ -22,8 +22,11 @@ Returns: response, provider/model, source digest, transcript count, surface
 measurements, parsed discoveries, memory merge counts, cross-resolution
 feedback, `native_learning`, and `native_synthesis`. With `chat_learning: true`,
 explicit supported/refuted triples update native heads, mirror pairs and
-hyperedges. Native replies are template retrieval from learned relations, not
-LLM output; quality is bounded by the relation set.
+hyperedges. Native replies are temporal next-word predictions (no response
+templates, no retrieval): Hermes' local-CPU runner weighs every known word at
+every step, completes the sentence, and may add explanation sentences when
+coverage is low or the question is open-ended. Quality is bounded by exposure.
+See `docs/LOCAL_RUNNER.md`.
 
 ### `nanlm_chat_history`
 Read the durable transcript.
@@ -49,10 +52,11 @@ Each turn's kernel plan is recorded in the `phone_event` lane with
 - `addressee` (`hermes`, `nanlm`, `both`; default `hermes`)
 - `rounds` (integer, 1–64, default 1; extra autonomous Hermes ↔ NaNLM turns)
 - `clocked` (boolean, default false; persisted on `start`, overridable on
-  `say`). When enabled, Hermes turns run the call window through the CLOCKED
-  gateway (extract → grounding → decide) before phrasing the turn. Plan,
-  result and evidence lanes share the call scratch window; failures fall back
-  to the normal relay.
+  `say`). **Off by default so a normal call spends no gateway credits.** When
+  enabled, Hermes turns run the call window through the CLOCKED gateway
+  (extract → grounding → decide) before phrasing the turn. Plan, result and
+  evidence lanes share the call scratch window; failures fall back to the
+  normal relay.
 
 Returns the call status, turn count, transcript, `scratch_id`, `kernel`, and
 the default path. Each participant writes only to its own scratch lane:
