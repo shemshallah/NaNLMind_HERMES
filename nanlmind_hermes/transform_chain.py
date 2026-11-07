@@ -105,9 +105,9 @@ def preflight(package: dict) -> dict:
         lane = entry.get("lane")
         family = LANE_FAMILY.get(lane, "unclassified")
         entry_id = str(entry.get("entry_id") or index)
-        hint = int(hashlib.sha256((family + ":" + entry_id).encode("utf-8")).hexdigest()[:8], 16) % 256
         routes.append({"entry_id": entry_id, "family": family,
-                       "logical_head_hint": hint})
+                       "route_target": "HW0::BS0::RunnerLink",
+                       "head_selection": "native_relation_eval"})
         payload_bytes = _canonical(entry.get("payload"))
         text = payload_bytes.decode("utf-8", errors="strict")
         feature_rows.append({
@@ -121,8 +121,9 @@ def preflight(package: dict) -> dict:
             ),
         })
     trace.append(_pass("M2", "type_head_router", package_digest, routes,
-                       {"routed_entries": len(routes), "routing_mode": "advisory_only",
-                        "logical_heads": sorted({r["logical_head_hint"] for r in routes})}))
+                       {"routed_entries": len(routes), "routing_mode": "typed_family_to_runnerlink",
+                        "head_families": sorted({r["family"] for r in routes}),
+                        "head_selection": "delegated_to_native_relation_eval"}))
     trace.append(_pass("M3", "feature_projector", package_digest, feature_rows,
                        {"projected_entries": len(feature_rows),
                         "feature_schema": "canonical-payload-surface.v1"}))
