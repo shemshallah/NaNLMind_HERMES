@@ -320,3 +320,144 @@ def head_candidate_evaluate(ctx, mutation_id, records, approved=False,
         "promotion_allowed": False,
     })
     return {"evaluation": result, "scratch": scratch.snapshot()}
+
+def head_learn_candidate(ctx, mutation_id, base_topology_digest,
+                         approved=False, scratch_id="default", epochs=1):
+    if approved is not True:
+        raise PermissionError("CLOCKED weak-supervision training requires explicit approved=true")
+    if not isinstance(mutation_id, str) or not mutation_id or len(mutation_id) > 64:
+        raise ValueError("invalid mutation_id")
+    if not isinstance(base_topology_digest, str) or len(base_topology_digest) != 64:
+        raise ValueError("base_topology_digest must be a SHA-256 digest")
+    if isinstance(epochs, bool) or not isinstance(epochs, int) or not 1 <= epochs <= 8:
+        raise ValueError("epochs must be between 1 and 8")
+    if not os.environ.get("NANLM_HEAD_CORTEX_URL") or not os.environ.get("NANLM_DEVICE_TOKEN"):
+        raise RuntimeError("configure NANLM_HEAD_CORTEX_URL and a NANNET training:execute device token")
+    scratch = _scratch(ctx, scratch_id)
+    observations = scratch.lane("clocked_result")
+    if not observations:
+        raise ValueError("scratch contains no CLOCKED endpoint observations")
+    records = []
+
+    def add_record(observation, entry, predicate, obj, polarity="+", resolution=5):
+        provenance = observation.get("provenance", {})
+        if not isinstance(provenance, dict):
+            provenance = {}
+        source_digest = provenance.get("input_sha256")
+        if not isinstance(source_digest, str) or len(source_digest) != 64:
+            source_digest = hashlib.sha256(json.dumps(
+                observation, sort_keys=True, separators=(",", ":"),
+                ensure_ascii=False).encode("utf-8")).hexdigest()
+        observation_id = str(observation.get("task_id") or entry.get("entry_id") or "clocked")
+        safe_id = "".join(ch if ch.isalnum() or ch in "_.:-" else "-" for ch in observation_id)[:120]
+        if not safe_id:
+            safe_id = hashlib.sha256(observation_id.encode("utf-8")).hexdigest()[:32]
+        confidence = 1
+        if isinstance(observation.get("confidence"), (int, float)) and not isinstance(observation.get("confidence"), bool):
+            confidence = max(1, min(65535, int(float(observation["confidence"]) * 65535)))
+        text_value = str(obj).strip()[:2048]
+        if not text_value:
+            return
+        records.append({
+            "observation_id": safe_id + "-" + str(len(records)),
+            "resolution": resolution, "polarity": polarity,
+            "confidence": confidence,
+            "subject": str(observation.get("source_id") or "cross_source")[:128],
+            "predicate": predicate[:128], "object": text_value,
+            "source_digest": source_digest,
+        })
+
+    for entry in observations:
+        observation = entry.get("payload", {})
+        if not isinstance(observation, dict):
+            continue
+        endpoint = str(observation.get("endpoint") or "unknown")
+        result_data = observation.get("result", {})
+        if not isinstance(result_data, dict):
+            result_data = {}
+        if isinstance(result_data.get("result"), dict):
+            result_data = result_data["result"]
+        fields = result_data.get("fields", {})
+        if not isinstance(fields, dict):
+            fields = {}
+        status = str(observation.get("status") or "unknown")
+        add_record(observation, entry, "clocked_endpoint_observation",
+                   endpoint + ":" + status, "+", 5)
+        if endpoint == "extract":
+            claims = fields.get("claims", [])
+            if isinstance(claims, str):
+                claims = [claims]
+            if isinstance(claims, list):
+                for claim in claims[:64]:
+                    if isinstance(claim, dict):
+                        claim = claim.get("claim") or claim.get("text") or claim.get("value")
+                    if isinstance(claim, str) and claim.strip():
+                        add_record(observation, entry, "states_claim", claim, "+", 5)
+        elif endpoint == "grounding":
+            verdict = fields.get("verdict", result_data.get("verdict"))
+            if isinstance(verdict, str) and verdict.strip():
+                normalized = verdict.casefold()
+                polarity = "-" if normalized in {"unsupported", "not_supported", "false", "ungrounded"} else "+"
+                add_record(observation, entry, "grounding_verdict", verdict, "+", 7)
+                if normalized in {"supported", "grounded", "true"}:
+                    add_record(observation, entry, "grounding_supports_claim", verdict, "+", 7)
+                elif normalized in {"unsupported", "not_supported", "false", "ungrounded"}:
+                    add_record(observation, entry, "grounding_supports_claim", verdict, "-", 7)
+        elif endpoint == "compare":
+            verdict = fields.get("verdict", result_data.get("verdict"))
+            if isinstance(verdict, str) and verdict.strip():
+                add_record(observation, entry, "source_comparison", verdict, "+", 7)
+                if "conflict" in verdict.casefold():
+                    add_record(observation, entry, "sources_conflict", verdict, "+", 7)
+        elif endpoint == "pii":
+            detected = fields.get("detected", result_data.get("detected"))
+            if isinstance(detected, bool):
+                add_record(observation, entry, "contains_pii", "detected" if detected else "not_detected",
+                           "+" if detected else "-", 9)
+        elif endpoint == "injection":
+            detected = fields.get("detected", result_data.get("detected"))
+            verdict = fields.get("verdict", result_data.get("verdict"))
+            if isinstance(detected, bool):
+                add_record(observation, entry, "contains_prompt_injection",
+                           "detected" if detected else "not_detected",
+                           "+" if detected else "-", 9)
+            elif isinstance(verdict, str) and verdict.strip():
+                add_record(observation, entry, "injection_verdict", verdict, "+", 9)
+        elif endpoint == "script":
+            matched = fields.get("matched", result_data.get("matched"))
+            if isinstance(matched, bool):
+                add_record(observation, entry, "contains_script_pattern",
+                           "matched" if matched else "not_matched",
+                           "+" if matched else "-", 9)
+        elif endpoint == "decide":
+            decision = fields.get("decision", result_data.get("decision"))
+            if isinstance(decision, str) and decision.strip():
+                add_record(observation, entry, "clocked_decision", decision, "+", 9)
+    if not records:
+        raise ValueError("CLOCKED scratch has no typed teacher signals suitable for candidate training")
+    records = records[:512]
+    dataset_sha256 = hashlib.sha256(json.dumps(
+        records, sort_keys=True, separators=(",", ":"), ensure_ascii=False
+    ).encode("utf-8")).hexdigest()
+    request = {
+        "schema": "nanlm.head-learning-candidate-request/1",
+        "mutation_id": mutation_id,
+        "base_topology_digest": base_topology_digest,
+        "split": "train", "teacher": "CLOCKED",
+        "teacher_outputs_are_ground_truth": False,
+        "dataset_sha256": dataset_sha256,
+        "epochs": epochs, "records": records,
+    }
+    candidate = HeadCortexClient().create_learning_candidate(request)
+    scratch.append("learning_proposal", "hermes", {
+        "kind": "clocked_weak_supervision_head_candidate",
+        "mutation_id": mutation_id,
+        "training_dataset_sha256": dataset_sha256,
+        "training_record_count": len(records),
+        "candidate": candidate,
+        "teacher_outputs_are_ground_truth": False,
+        "promotion_allowed": False,
+    })
+    return {"candidate": candidate, "training_records": len(records),
+            "training_dataset_sha256": dataset_sha256,
+            "scratch": scratch.snapshot()}
