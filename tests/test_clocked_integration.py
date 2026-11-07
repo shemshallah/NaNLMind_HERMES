@@ -47,6 +47,90 @@ class AutonomousModeTests(unittest.TestCase):
         self.assertEqual(result["decision_method"], "deterministic_fallback")
 
 
+class TaskPlanValidationTests(unittest.TestCase):
+    def plan(self, tasks=None):
+        return {
+            "schema": "nanlm.clocked-task-plan/1",
+            "version": 1,
+            "plan_id": "plan-123456",
+            "tasks": tasks if tasks is not None else [
+                {"id": "task-a", "endpoint": "extract", "text": "source text",
+                 "depends_on": [], "options": {}}
+            ],
+        }
+
+    def test_rejects_unknown_fields_and_missing_schema_keys(self):
+        plan = self.plan()
+        plan["unexpected"] = True
+        with self.assertRaisesRegex(ValueError, "top-level fields"):
+            validate_task_plan(plan)
+        task = self.plan()["tasks"][0]
+        task["unexpected"] = True
+        with self.assertRaisesRegex(ValueError, "unsupported fields"):
+            validate_task_plan(self.plan([task]))
+        task = self.plan()["tasks"][0]
+        del task["depends_on"]
+        with self.assertRaisesRegex(ValueError, "missing required fields"):
+            validate_task_plan(self.plan([task]))
+
+    def test_rejects_self_and_forward_dependencies(self):
+        with self.assertRaisesRegex(ValueError, "earlier tasks"):
+            validate_task_plan(self.plan([
+                {"id": "task-a", "endpoint": "extract", "text": "A",
+                 "depends_on": ["task-a"]}
+            ]))
+        with self.assertRaisesRegex(ValueError, "earlier tasks"):
+            validate_task_plan(self.plan([
+                {"id": "task-a", "endpoint": "extract", "text": "A",
+                 "depends_on": ["task-b"]}
+            ]))
+
+    def test_rejects_duplicate_or_non_string_dependencies(self):
+        tasks = [
+            {"id": "task-a", "endpoint": "extract", "text": "A", "depends_on": []},
+            {"id": "task-b", "endpoint": "grounding", "text": "B",
+             "depends_on": ["task-a", "task-a"]},
+        ]
+        with self.assertRaisesRegex(ValueError, "uniquely reference"):
+            validate_task_plan(self.plan(tasks))
+        tasks[1]["depends_on"] = [{"id": "task-a"}]
+        with self.assertRaisesRegex(ValueError, "uniquely reference"):
+            validate_task_plan(self.plan(tasks))
+
+    def test_rejects_invalid_versions_options_and_budget_types(self):
+        plan = self.plan()
+        plan["version"] = True
+        with self.assertRaisesRegex(ValueError, "version"):
+            validate_task_plan(plan)
+        plan = self.plan()
+        plan["tasks"][0]["options"] = {"large": "x" * 9000}
+        with self.assertRaisesRegex(ValueError, "options"):
+            validate_task_plan(plan)
+        with self.assertRaisesRegex(ValueError, "max_requests"):
+            validate_task_plan(self.plan(), {"max_requests": True})
+        with self.assertRaisesRegex(ValueError, "budget"):
+            validate_task_plan(self.plan(), [])
+
+
+
+    def test_rejects_unresolved_claims_from_dependency(self):
+        task = {
+            "id": "ground-1", "endpoint": "grounding", "text": "source",
+            "depends_on": [], "options": {"claims_from": "missing-extract"},
+        }
+        with self.assertRaisesRegex(ValueError, "claims_from"):
+            validate_task_plan(self.plan([task]))
+
+    def test_rejects_serialized_envelope_over_gateway_limit(self):
+        tasks = [
+            {"id": "task-%02d" % index, "endpoint": "extract",
+             "text": "x" * 65536, "depends_on": []}
+            for index in range(16)
+        ]
+        with self.assertRaisesRegex(ValueError, "serialized CLOCKED request"):
+            validate_task_plan(self.plan(tasks))
+
+
 class ScratchTests(unittest.TestCase):
     def test_hash_chain_and_expected_revision(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -222,6 +306,11 @@ class ScratchTests(unittest.TestCase):
             scratch.append("clocked_result", "clocked", {
                 "task_id": "extract-a", "endpoint": "extract", "source_id": "source-a",
                 "status": "ok", "provenance": {"input_sha256": "a" * 64},
+                "result": {"fields": {"claims": ["PRIVATE-SSN-DO-NOT-LEARN"]}},
+            })
+            scratch.append("clocked_result", "clocked", {
+                "task_id": "extract-clean", "endpoint": "extract", "source_id": "source-b",
+                "status": "ok", "provenance": {"input_sha256": "f" * 64},
                 "result": {"fields": {"claims": ["The river flows."]}},
             })
             scratch.append("clocked_result", "clocked", {
@@ -234,6 +323,16 @@ class ScratchTests(unittest.TestCase):
                 "status": "ok", "provenance": {"input_sha256": "c" * 64},
                 "result": {"fields": {"detected": True, "values": ["PRIVATE-SSN-DO-NOT-LEARN"]}},
             })
+            scratch.append("clocked_result", "clocked", {
+                "task_id": "extract-unknown", "endpoint": "extract", "source_id": "source-c",
+                "status": "ok", "provenance": {"input_sha256": "1" * 64},
+                "result": {"fields": {"claims": ["UNKNOWN-PII-DO-NOT-LEARN"]}},
+            })
+            scratch.append("clocked_result", "clocked", {
+                "task_id": "pii-unknown", "endpoint": "pii", "source_id": "source-c",
+                "status": "error", "provenance": {"input_sha256": "2" * 64},
+                "result": {"fields": {"detected": None}},
+            })
             scratch.append("head_response", "nanlmind", {
                 "provenance": {"state_digest": "d" * 64},
             })
@@ -245,6 +344,7 @@ class ScratchTests(unittest.TestCase):
                     "schema": "nanlm.head-learning-candidate-response/1",
                     "status": "candidate_only", "teacher_outputs_are_ground_truth": False,
                     "promotion_allowed": False, "candidate_digest": "e" * 64,
+                    "canonical_state_modified": False,
                 }
                 result = clocked_tools.head_learn_candidate(
                     ctx, "learned-heads-1", None, True, "learn-turn", 1)
@@ -256,6 +356,10 @@ class ScratchTests(unittest.TestCase):
             self.assertGreaterEqual(len(request["records"]), 5)
             self.assertFalse(any("PRIVATE-SSN-DO-NOT-LEARN" in row["object"]
                                  for row in request["records"]))
+            self.assertFalse(any("UNKNOWN-PII-DO-NOT-LEARN" in row["object"]
+                                 for row in request["records"]))
+            self.assertTrue(any(row["object"] == "The river flows."
+                                for row in request["records"]))
             self.assertEqual(result["scratch"]["entries"][-1]["lane"], "learning_proposal")
         with self.assertRaises(PermissionError):
             clocked_tools.head_learn_candidate(None, "candidate", "d" * 64, False)
@@ -306,6 +410,7 @@ class ScratchTests(unittest.TestCase):
             "schema": "nanlm.head-candidate-evaluation-response/1",
             "status": "evaluated_candidate", "utility_delta": 0.1,
             "recommendation": "review_candidate", "promotion_allowed": False,
+            "canonical_state_modified": False,
         }
         with tempfile.TemporaryDirectory() as tmp, patch.dict("os.environ", {
             "NANLM_HEAD_CORTEX_URL": "https://nanlmind.example",

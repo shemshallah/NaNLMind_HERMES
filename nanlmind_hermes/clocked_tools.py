@@ -4,6 +4,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import math
 from pathlib import Path
 
 from .clocked_client import ClockedGatewayClient
@@ -289,16 +290,27 @@ def head_candidate(ctx, mutation_id, head_index, patch_mask,
 
 def head_candidate_evaluate(ctx, mutation_id, records, approved=False,
                             scratch_id="default"):
+    """Evaluate one isolated candidate against a fixed caller-declared test split."""
     if approved is not True:
         raise PermissionError("held-out candidate evaluation requires explicit approved=true")
     if not isinstance(mutation_id, str) or not mutation_id or len(mutation_id) > 64:
-        raise ValueError("invalid mutation_id")
+        raise ValueError("mutation_id must be 1..64 characters")
     if not isinstance(records, list) or not 1 <= len(records) <= 512:
         raise ValueError("records must contain 1..512 held-out relations")
     required = {"resolution", "polarity", "subject", "predicate", "object", "source_digest"}
     for index, record in enumerate(records):
         if not isinstance(record, dict) or not required.issubset(record):
             raise ValueError("invalid held-out relation at index %d" % index)
+        resolution = record["resolution"]
+        if isinstance(resolution, bool) or not isinstance(resolution, int) or not 0 <= resolution <= 9:
+            raise ValueError("held-out relation %d has unsupported N16REL resolution" % index)
+        for field in ("polarity", "subject", "predicate", "object"):
+            if not isinstance(record[field], str) or not record[field].strip():
+                raise ValueError("held-out relation %d has invalid %s" % (index, field))
+        digest = record["source_digest"]
+        if (not isinstance(digest, str) or len(digest) != 64
+                or any(c not in "0123456789abcdef" for c in digest.lower())):
+            raise ValueError("held-out relation %d has invalid source_digest" % index)
     if not os.environ.get("NANLM_HEAD_CORTEX_URL") or not os.environ.get("NANLM_DEVICE_TOKEN"):
         raise RuntimeError("configure NANLM_HEAD_CORTEX_URL and a NANNET training:execute device token")
     dataset_sha256 = hashlib.sha256(json.dumps(
@@ -316,10 +328,14 @@ def head_candidate_evaluate(ctx, mutation_id, records, approved=False,
     scratch.append("learning_proposal", "hermes", {
         "kind": "boolean_head_candidate_evaluation",
         "mutation_id": mutation_id,
+        "dataset_sha256": dataset_sha256,
+        "split": "test",
         "evaluation": result,
         "promotion_allowed": False,
+        "canonical_state_modified": False,
     })
     return {"evaluation": result, "scratch": scratch.snapshot()}
+
 
 def head_learn_candidate(ctx, mutation_id, base_topology_digest,
                          approved=False, scratch_id="default", epochs=1):
@@ -336,8 +352,9 @@ def head_learn_candidate(ctx, mutation_id, base_topology_digest,
             if isinstance(digest, str) and len(digest) == 64:
                 base_topology_digest = digest
                 break
-    if not isinstance(base_topology_digest, str) or len(base_topology_digest) != 64:
-        raise ValueError("base_topology_digest must be supplied or present in the latest head response")
+    if (not isinstance(base_topology_digest, str) or len(base_topology_digest) != 64
+            or any(ch not in "0123456789abcdef" for ch in base_topology_digest.lower())):
+        raise ValueError("base_topology_digest must be a hexadecimal SHA-256 digest")
     if isinstance(epochs, bool) or not isinstance(epochs, int) or not 1 <= epochs <= 8:
         raise ValueError("epochs must be between 1 and 8")
     if not os.environ.get("NANLM_HEAD_CORTEX_URL") or not os.environ.get("NANLM_DEVICE_TOKEN"):
@@ -346,13 +363,31 @@ def head_learn_candidate(ctx, mutation_id, base_topology_digest,
     if not observations:
         raise ValueError("scratch contains no CLOCKED endpoint observations")
     records = []
+    pii_sources = set()
+    for entry in observations:
+        observation = entry.get("payload", {})
+        if not isinstance(observation, dict) or observation.get("endpoint") != "pii":
+            continue
+        result_data = observation.get("result", {})
+        if not isinstance(result_data, dict):
+            result_data = {}
+        if isinstance(result_data.get("result"), dict):
+            result_data = result_data["result"]
+        fields = result_data.get("fields", {})
+        if not isinstance(fields, dict):
+            fields = {}
+        detected = fields.get("detected", result_data.get("detected"))
+        # Fail closed: only an explicit negative PII verdict permits content learning.
+        if detected is not False or observation.get("status") != "ok":
+            pii_sources.add(str(observation.get("source_id") or "cross_source"))
 
     def add_record(observation, entry, predicate, obj, polarity="+", resolution=5):
         provenance = observation.get("provenance", {})
         if not isinstance(provenance, dict):
             provenance = {}
         source_digest = provenance.get("input_sha256")
-        if not isinstance(source_digest, str) or len(source_digest) != 64:
+        if (not isinstance(source_digest, str) or len(source_digest) != 64
+                or any(ch not in "0123456789abcdef" for ch in source_digest.lower())):
             source_digest = hashlib.sha256(json.dumps(
                 observation, sort_keys=True, separators=(",", ":"),
                 ensure_ascii=False).encode("utf-8")).hexdigest()
@@ -361,8 +396,11 @@ def head_learn_candidate(ctx, mutation_id, base_topology_digest,
         if not safe_id:
             safe_id = hashlib.sha256(observation_id.encode("utf-8")).hexdigest()[:32]
         confidence = 1
-        if isinstance(observation.get("confidence"), (int, float)) and not isinstance(observation.get("confidence"), bool):
-            confidence = max(1, min(65535, int(float(observation["confidence"]) * 65535)))
+        raw_confidence = observation.get("confidence")
+        if (isinstance(raw_confidence, (int, float))
+                and not isinstance(raw_confidence, bool)
+                and math.isfinite(float(raw_confidence))):
+            confidence = max(1, min(65535, int(float(raw_confidence) * 65535)))
         text_value = str(obj).strip()[:2048]
         if not text_value:
             return
@@ -391,6 +429,11 @@ def head_learn_candidate(ctx, mutation_id, base_topology_digest,
         status = str(observation.get("status") or "unknown")
         add_record(observation, entry, "clocked_endpoint_observation",
                    endpoint + ":" + status, "+", 5)
+        source_key = str(observation.get("source_id") or "cross_source")
+        if endpoint != "pii" and source_key in pii_sources:
+            # A source flagged for PII contributes only its boolean privacy label
+            # and non-content status metadata to weak supervision.
+            continue
         if endpoint == "extract":
             claims = fields.get("claims", [])
             if isinstance(claims, str):
@@ -421,12 +464,6 @@ def head_learn_candidate(ctx, mutation_id, base_topology_digest,
             detected = fields.get("detected", result_data.get("detected"))
             if isinstance(detected, bool):
                 add_record(observation, entry, "contains_pii", "detected" if detected else "not_detected",
-                           "+" if detected else "-", 9)
-        elif endpoint == "pii":
-            detected = fields.get("detected", result_data.get("detected"))
-            if isinstance(detected, bool):
-                add_record(observation, entry, "contains_pii",
-                           "detected" if detected else "not_detected",
                            "+" if detected else "-", 9)
         elif endpoint == "injection":
             detected = fields.get("detected", result_data.get("detected"))

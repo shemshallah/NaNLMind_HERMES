@@ -569,3 +569,58 @@ plan step. Configure `CLOCKED_GATEWAY_URL` and `CLOCKED_GATEWAY_TOKEN` for
 the participant gateway. Configure `NANLM_HEAD_CORTEX_URL` and a NANNET
 `NANLM_DEVICE_TOKEN` for the NaNLMind receiving service. Neither service
 credential is the privileged upstream `CLOCKED_API_KEY`.
+
+
+### CLOCKED weak-supervision candidate CLI
+
+After a reviewed CLOCKED plan has executed and its typed observations are in the
+same scratch journal, HERMES can build an isolated weak-supervision candidate.
+The command requires the explicit `--approved` flag and a NANNET
+`training:execute` device token:
+
+```json
+{
+  "mutation_id": "clocked-candidate-001",
+  "scratch_id": "comparison-001",
+  "epochs": 1
+}
+```
+
+```text
+/nanlm clocked learn learn-request.json --approved
+```
+
+The base topology digest can be supplied in the request or recovered from the
+latest head response in that scratch. CLOCKED output is recorded as weak
+supervision, not ground truth. The candidate is isolated and cannot promote or
+modify canonical head state.
+
+Held-out evaluation uses a separate caller-provided test set. Each N16REL row
+contains `resolution` (0–9), `polarity`, `subject`, `predicate`, `object`, and a
+64-character hexadecimal `source_digest`:
+
+```json
+{
+  "mutation_id": "clocked-candidate-001",
+  "scratch_id": "comparison-001",
+  "records": [
+    {
+      "resolution": 5,
+      "polarity": "+",
+      "subject": "source-a",
+      "predicate": "supports",
+      "object": "The river flows.",
+      "source_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  ]
+}
+```
+
+```text
+/nanlm clocked evaluate evaluation-request.json --approved
+```
+
+HERMES binds the exact test rows to a deterministic SHA-256 digest and records
+the result in scratch. Evaluation requires explicit receipts that promotion
+was not allowed and canonical state was not modified. Keep training and held-out
+test records disjoint; CLOCKED must never receive the held-out test set.
