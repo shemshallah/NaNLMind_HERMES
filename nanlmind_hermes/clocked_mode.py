@@ -76,7 +76,7 @@ def validate_task_plan(plan: dict, budget: dict | None = None) -> dict:
     tasks = plan.get("tasks")
     if not isinstance(tasks, list) or not 1 <= len(tasks) <= MAX_TASKS:
         raise ValueError("task plan must contain 1..16 tasks")
-    seen = set()
+    seen = {}
     total_bytes = 0
     for index, task in enumerate(tasks):
         if not isinstance(task, dict):
@@ -115,8 +115,9 @@ def validate_task_plan(plan: dict, budget: dict | None = None) -> dict:
         claims_from = options.get("claims_from")
         if claims_from is not None and (
             not isinstance(claims_from, str) or claims_from not in seen
+            or seen[claims_from] != "extract" or claims_from not in deps
         ):
-            raise ValueError("claims_from must reference an earlier task")
+            raise ValueError("claims_from must reference an earlier extract task dependency")
         try:
             options_size = len(json.dumps(options, sort_keys=True, separators=(",", ":"),
                                           ensure_ascii=False).encode("utf-8"))
@@ -125,7 +126,7 @@ def validate_task_plan(plan: dict, budget: dict | None = None) -> dict:
         if options_size > 8192:
             raise ValueError("task options exceed 8 KiB")
         total_bytes += len(encoded)
-        seen.add(task_id)
+        seen[task_id] = endpoint
     if total_bytes > MAX_TASKS * MAX_TEXT_BYTES:
         raise ValueError("task plan exceeds aggregate input limit")
     limits = budget or {}
