@@ -1,6 +1,9 @@
 import unittest
 
-from cryptography.hazmat.primitives import serialization
+try:
+    from cryptography.hazmat.primitives import serialization
+except ImportError:  # optional dependency; the pure-Python fallback is supported
+    serialization = None
 
 from nanlmind_hermes.crypto_compat import (
     AESGCM, Ed25519PrivateKey, Ed25519PublicKey, HKDF, hashes,
@@ -17,7 +20,13 @@ class CryptoCompatTests(unittest.TestCase):
             "e5564300c360ac729086e2cc806e828a84877f1eb8e5d974d873e06522490155"
             "5fb8821590a33bacc61e39701cf9b46bd25bf5f0595bbe24655141438e7a100b")
         key = Ed25519PrivateKey.from_private_bytes(seed)
-        self.assertEqual(key.public_key().public_bytes(serialization.Encoding.Raw, serialization.PublicFormat.Raw), public)
+        public_key = key.public_key()
+        if serialization is None:
+            exported = public_key.public_bytes()
+        else:
+            exported = public_key.public_bytes(
+                serialization.Encoding.Raw, serialization.PublicFormat.Raw)
+        self.assertEqual(exported, public)
         self.assertEqual(key.sign(b""), signature)
         Ed25519PublicKey.from_public_bytes(public).verify(signature, b"")
 
