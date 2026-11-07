@@ -512,7 +512,7 @@ and the limits of the experiment.
   pipeline, 24 tools, `/nanlm` command, validation-ready manifest, dependency
   fallback, complete documentation.
 
-License: MIT.
+License: Apache-2.0.
 
 
 ---
