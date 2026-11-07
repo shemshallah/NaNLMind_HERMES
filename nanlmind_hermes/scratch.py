@@ -43,9 +43,14 @@ class Scratch:
         if not re.fullmatch(r"[A-Za-z0-9_-]{1,80}", scratch_id or ""):
             raise ScratchError("invalid scratch_id")
         self.root = Path(root).expanduser()
-        self.root.mkdir(parents=True, exist_ok=True)
+        self.root.mkdir(parents=True, exist_ok=True, mode=0o700)
+        os.chmod(self.root, 0o700)
         self.path = self.root / (scratch_id + ".jsonl")
         self.lock_path = self.root / (scratch_id + ".lock")
+        if self.path.exists():
+            os.chmod(self.path, 0o600)
+        if self.lock_path.exists():
+            os.chmod(self.lock_path, 0o600)
         self.scratch_id = scratch_id
 
     def _read(self) -> list[dict]:
@@ -97,7 +102,9 @@ class Scratch:
             raise ScratchError("writer is not authorized for this scratch lane")
         if len(canonical(payload)) > 1_048_576:
             raise ScratchError("scratch payload exceeds 1 MiB")
-        with self.lock_path.open("a+") as lock:
+        lock_fd = os.open(self.lock_path, os.O_CREAT | os.O_RDWR, 0o600)
+        with os.fdopen(lock_fd, "a+") as lock:
+            os.chmod(self.lock_path, 0o600)
             fcntl.flock(lock.fileno(), fcntl.LOCK_EX)
             rows = self._read()
             parent = rows[-1]["revision"] if rows else ZERO
@@ -115,7 +122,9 @@ class Scratch:
                 "payload": payload,
             }
             row["revision"] = digest(row)
-            with self.path.open("a", encoding="utf-8") as stream:
+            fd = os.open(self.path, os.O_CREAT | os.O_APPEND | os.O_WRONLY, 0o600)
+            with os.fdopen(fd, "a", encoding="utf-8") as stream:
+                os.chmod(self.path, 0o600)
                 stream.write(canonical(row).decode("utf-8") + "\n")
                 stream.flush()
                 os.fsync(stream.fileno())
