@@ -90,9 +90,9 @@ def make_task_plan(sources: list[dict], question: str) -> dict:
             raise ValueError("each source requires text")
         source_id = str(source.get("id") or ("source-%d" % (index + 1)))
         text = source["text"]
-        tasks.append({"id": "extract-" + source_id, "endpoint": "extract",
+        tasks.append({"id": "extract-" + source_id, "source_id": source_id, "endpoint": "extract",
                       "text": text, "depends_on": []})
-        tasks.append({"id": "ground-" + source_id, "endpoint": "grounding",
+        tasks.append({"id": "ground-" + source_id, "source_id": source_id, "endpoint": "grounding",
                       "text": text, "depends_on": ["extract-" + source_id]})
     if len(sources) > 1:
         joined = "\n\n".join(s["text"] for s in sources)
