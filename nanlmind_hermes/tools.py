@@ -75,7 +75,7 @@ def status(ctx):
     configured = _setting(ctx, "runner_command", [])
     return {
         "universe_id": _universe_id(universe),
-        "scope": "one installation / one local universe / one local native runner",
+        "scope": "one canonical HW0::BS0 state path / one native runner entry point / six-worker BS0 ring",
         "heads": 256,
         "duration_default_minutes": _setting(ctx, "duration_minutes", DEFAULT_DURATION_MINUTES),
         "duration_min_minutes": 1,
