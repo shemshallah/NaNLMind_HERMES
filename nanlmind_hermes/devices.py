@@ -36,6 +36,24 @@ class DeviceRegistry:
                 report_type TEXT NOT NULL, summary TEXT NOT NULL,
                 details TEXT NOT NULL, system_report TEXT NOT NULL,
                 created_at INTEGER NOT NULL)""")
+        # Upgrade active legacy participant leases out of reserved HW0-HW8.
+        # Preserve credentials and lease IDs; only their participant address moves.
+        now = int(time.time())
+        with self._connect() as db:
+            legacy = db.execute(
+                "SELECT lease_id FROM device_leases WHERE hw_slot IS NOT NULL "
+                "AND hw_slot<9 AND released_at IS NULL AND expires_at>?",
+                (now,)).fetchall()
+            used = {row[0] for row in db.execute(
+                "SELECT hw_slot FROM device_leases WHERE hw_slot>=9 "
+                "AND released_at IS NULL AND expires_at>?", (now,))}
+            for row in legacy:
+                slot = next((n for n in range(9, 256) if n not in used), None)
+                if slot is None:
+                    raise RuntimeError("cannot migrate reserved HW0-HW8 lease: no HW9+ participant address")
+                db.execute("UPDATE device_leases SET hw_slot=? WHERE lease_id=?",
+                           (slot, row["lease_id"]))
+                used.add(slot)
 
     def _new_token(self, device_id: str, now: int | None = None) -> str:
         if self.authority is None:
