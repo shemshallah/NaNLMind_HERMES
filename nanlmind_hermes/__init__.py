@@ -317,7 +317,7 @@ def register(ctx):
           "base_topology_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
           "scratch_id": {"type": "string", "maxLength": 80},
           "epochs": {"type": "integer", "minimum": 1, "maximum": 8, "default": 1},
-          "approved": {"type": "boolean", "default": false}},
+          "approved": {"type": "boolean", "default": False}},
          ["mutation_id", "approved"], handle_head_learn_candidate),
         ("nanlm_head_candidate_evaluate", "Evaluate an isolated Boolean-head candidate against explicit held-out N16REL rows and record baseline/candidate metrics. Requires approval and training:execute; never promotes.",
          {"mutation_id": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,64}$"},
