@@ -427,22 +427,32 @@ python -m unittest discover -s tests -v
 ---
 
 
-## 9. CLOCKED integration (architecture in progress)
+## 9. CLOCKED integration
 
-CLOCKED by Rezolve.ai is being designed as a first-class capability of this
-plugin, with a dedicated CLOCKED mode and a shared, revisioned scratch loop.
-The target design uses HW3 as the CLOCKED service identity and HW3:0 as its
-NANNET interface, while preserving the distinction between Router node point
-3, BSR wire identities and NaNLMind's internal 256 heads.
+HERMES now has a dedicated CLOCKED planning/execution/synthesis path and a
+revisioned, hash-chained scratch journal. It can plan bounded multi-endpoint
+CLOCKED tasks, require explicit approval before execution, retain typed
+results and provenance, synthesize a draft, submit that draft through the
+NaNLMind Boolean-head receiving interface, and compose a final answer while
+preserving UNKNOWN and CONFLICT.
 
-The architecture and implementation boundaries are documented in
+The NaNLMind head-cortex client is separate from the CLOCKED service adapter.
+HERMES also exposes approval-gated isolated Boolean-head candidate creation
+and held-out candidate evaluation. Candidate evaluation compares the
+candidate with the immutable base topology and records metrics in scratch; it
+cannot promote or alter canonical state.
+
+The architecture and repository boundary are documented in
 [NaNLMind CLOCKED/HERMES brainstorm](https://github.com/shemshallah/NaNLMind_CLOCKED/blob/main/docs/CLOCKED_HERMES_BRAINSTORM.md).
-This is a design specification, not a claim that CLOCKED mode, HW3:0 or the
-service proxy is already implemented.
+The code paths and tests are implemented, but production CLOCKED proxy
+deployment, real service credentials, live upstream end-to-end verification,
+automated mutation search and six-runner candidate promotion remain separate
+deployment/integration work.
 
-CLOCKED credentials are separate from NANNET identity. The official SDK uses
-a CLOCKED API key; a sponsored HERMES demo requires an explicitly authorized
-server-side proxy and quota policy. Otherwise users provide their own key.
+CLOCKED credentials are separate from NANNET identity. A sponsored HERMES
+demo requires an explicitly authorized server-side proxy and quota policy;
+otherwise users provide their own CLOCKED key through the gateway's supported
+credential flow.
 
 ## 10. Vision and larger system
 
