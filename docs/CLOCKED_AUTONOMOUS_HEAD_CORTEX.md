@@ -307,6 +307,7 @@ Existing `/nanlm` chat and training modes remain unchanged. CLOCKED mode is an a
 - Two-pass HERMES synthesis tool: draft -> NaNLMind answer-validation request -> final synthesis.
 - NaNLMind native read-only `relation-eval` command and authenticated head-cortex HTTP adapter, with NANNET scope authorization support.
 - Native `head-candidate` command and NANNET `training:execute`-authorized HERMES candidate endpoint. It applies `HeadView::self_modify_boolean` to an isolated topology copy, binds the base digest, records before/after digests, and refuses to overwrite canonical state.
+- Held-out candidate evaluation compares the candidate and canonical baseline with the same N16REL test rows, reporting accuracy, coverage, balanced accuracy, confusion counts and per-resolution metrics. It rejects stale base/candidate digests and cannot promote.
 - Shared JSON schemas for evidence packages, scratch entries and head-cortex responses.
 
 **Not yet deployed or end-to-end verified:**
@@ -314,7 +315,7 @@ Existing `/nanlm` chat and training modes remain unchanged. CLOCKED mode is an a
 - NANNET-authorized head-cortex service deployment and route registration through the live Router/Koyeb topology.
 - Live CLOCKED SDK calls for each direct endpoint method (CI uses fakes/fixtures; no paid API calls).
 - Production multi-source scratch transport between devices/services.
-- Automated candidate mutation search, multi-control regression scoring, candidate retrieval/evaluation UI and six-runner promotion integration. Candidate creation is implemented; promotion is not.
+- Automated multi-mask mutation search, expanded control suites, candidate retrieval/evaluation UI and six-runner generation-barrier promotion. Candidate creation and held-out baseline comparison are implemented; promotion is not.
 
 The native `relation-eval` path is read-only: it evaluates relation records against an existing serialized topology and does not train or mutate canonical state. The service currently returns Boolean-head relation predictions and provenance; it is not yet a full general-purpose semantic reasoning endpoint.
 
