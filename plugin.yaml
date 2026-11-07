@@ -66,3 +66,27 @@ config_schema:
     type: str
     default: ""
     description: NaNLMind_CLOCKED participant gateway URL; use HTTPS except localhost. The participant token is supplied separately as CLOCKED_GATEWAY_TOKEN.
+  clocked_gateway_token:
+    type: secret
+    env: CLOCKED_GATEWAY_TOKEN
+    description: Scoped CLOCKED participant credential, retrieved only through Hermes secret scope.
+  nanlm_head_cortex_url:
+    type: str
+    default: ""
+    description: NaNLMind head-cortex receiving endpoint; use HTTPS except localhost.
+  nanlm_device_token:
+    type: secret
+    env: NANLM_DEVICE_TOKEN
+    description: Scoped NaNLMind participant credential for head-cortex operations.
+  nannet_auth_url:
+    type: str
+    default: ""
+    description: NANNET pairing and scope-verification authority URL; use HTTPS except localhost.
+  nannet_issuer_public_key:
+    type: str
+    default: ""
+    description: Pinned base64url Ed25519 issuer public key used to validate paired NANNET tokens.
+  nannet_master_key:
+    type: secret
+    env: NANNET_MASTER_KEY
+    description: Independent random 256-bit key used to encrypt this installation's private identity and paired token at rest.
