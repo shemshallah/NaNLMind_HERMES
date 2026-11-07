@@ -125,6 +125,54 @@ class ScratchTests(unittest.TestCase):
         self.assertFalse(result["candidate"]["promotion_allowed"])
         self.assertEqual(result["scratch"]["entries"][-1]["lane"], "learning_proposal")
 
+    def test_clocked_scratch_builds_weak_supervision_candidate_without_raw_pii(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            class Context:
+                def get_config(self, key, default=None):
+                    return tmp if key == "state_dir" else default
+            ctx = Context()
+            scratch = Scratch(Path(tmp) / "clocked_scratch", "learn-turn")
+            scratch.append("clocked_result", "clocked", {
+                "task_id": "extract-a", "endpoint": "extract", "source_id": "source-a",
+                "status": "ok", "provenance": {"input_sha256": "a" * 64},
+                "result": {"fields": {"claims": ["The river flows."]}},
+            })
+            scratch.append("clocked_result", "clocked", {
+                "task_id": "grounding-a", "endpoint": "grounding", "source_id": "source-a",
+                "status": "ok", "provenance": {"input_sha256": "b" * 64},
+                "result": {"fields": {"verdict": "supported"}},
+            })
+            scratch.append("clocked_result", "clocked", {
+                "task_id": "pii-a", "endpoint": "pii", "source_id": "source-a",
+                "status": "ok", "provenance": {"input_sha256": "c" * 64},
+                "result": {"fields": {"detected": True, "values": ["PRIVATE-SSN-DO-NOT-LEARN"]}},
+            })
+            scratch.append("head_response", "nanlmind", {
+                "provenance": {"state_digest": "d" * 64},
+            })
+            with patch.dict("os.environ", {
+                "NANLM_HEAD_CORTEX_URL": "https://nanlmind.example",
+                "NANLM_DEVICE_TOKEN": "scoped-training-token",
+            }), patch("nanlmind_hermes.clocked_tools.HeadCortexClient") as client:
+                client.return_value.create_learning_candidate.return_value = {
+                    "schema": "nanlm.head-learning-candidate-response/1",
+                    "status": "candidate_only", "teacher_outputs_are_ground_truth": False,
+                    "promotion_allowed": False, "candidate_digest": "e" * 64,
+                }
+                result = clocked_tools.head_learn_candidate(
+                    ctx, "learned-heads-1", None, True, "learn-turn", 1)
+            request = client.return_value.create_learning_candidate.call_args.args[0]
+            self.assertEqual(request["base_topology_digest"], "d" * 64)
+            self.assertEqual(request["split"], "train")
+            self.assertEqual(request["teacher"], "CLOCKED")
+            self.assertFalse(request["teacher_outputs_are_ground_truth"])
+            self.assertGreaterEqual(len(request["records"]), 5)
+            self.assertFalse(any("PRIVATE-SSN-DO-NOT-LEARN" in row["object"]
+                                 for row in request["records"]))
+            self.assertEqual(result["scratch"]["entries"][-1]["lane"], "learning_proposal")
+        with self.assertRaises(PermissionError):
+            clocked_tools.head_learn_candidate(None, "candidate", "d" * 64, False)
+
     def test_head_candidate_evaluation_requires_approval_and_records_metrics(self):
         records = [{"resolution": 5, "polarity": "+", "subject": "s",
                     "predicate": "p", "object": "o", "source_digest": "a" * 64}]
