@@ -5,6 +5,17 @@
 **Native learner:** [NaNLMind](https://github.com/shemshallah/NaNLMind)  
 **Canonical detailed design:** [HERMES Autonomous CLOCKED Cognition and NaN Head Cortex](https://github.com/shemshallah/NaNLMind_CLOCKED/blob/main/docs/HERMES_AUTONOMOUS_CLOCKED_HEAD_CORTEX.md)
 
+
+## Autonomous mode selection
+
+HERMES now asks its configured model to select among the fixed CLOCKED modes
+using the user request and source descriptors (IDs/types, not raw source
+bodies). The selected mode is mapped locally to a fixed endpoint set; model
+output cannot supply arbitrary endpoints or task dependencies. Invalid,
+unavailable or out-of-policy decisions fall back to the deterministic
+selector. Any mode that transmits source material still requires explicit
+approval before gateway execution.
+
 ## 1. Integration objective
 
 HERMES should autonomously decide when an external CLOCKED operation is useful, construct a bounded plan, retrieve several independent CLOCKED outputs, reconcile them into one revisioned scratch, submit the complete typed evidence package to NaNLMind's native M0-M9/head pipeline, and synthesize its answer from the resulting mathematical relation graph.
