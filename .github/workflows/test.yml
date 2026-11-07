@@ -61,7 +61,7 @@ jobs:
           required = ("plugin.yaml", "README.md", "LICENSE", "CHANGELOG.md",
                       "SECURITY.md", "nanlmind_hermes/__init__.py",
                       "scripts/demo_run.py", "scripts/live_smoke.py",
-                      "docs/DEMO.md", "docs/DEMO_RESULTS.md",
+                      "docs/DEMO.md", "docs/DEMO_RESULTS.md", "docs/HERMES_DEMO.md",
                       "docs/LIVE_SMOKE.md", "docs/HERMES_CATALOG_ADMISSION.md")
           missing = [item for item in required if not any(name.endswith(item) for name in names)]
           if missing:

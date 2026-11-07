@@ -60,7 +60,7 @@ so it must not be conflated with the Boolean result.
 ## Commands
 
 ```sh
-export NANNET_AUTH_URL=https://deeprepo-qtcl-9c8fea15.apps.mistral.run
+export NANNET_AUTH_URL=https://nannet.apps.mistral.run
 export HERMES_GATEWAY_NO_SUPERVISE=1
 python experiments/baseline_experiment.py \
   --native-command /absolute/path/to/build/nanlm-universal \

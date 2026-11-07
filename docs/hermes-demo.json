@@ -1,0 +1,213 @@
+{
+  "chat_provider": "http://127.0.0.1:8085/v1/chat/completions",
+  "generated_at": "2026-11-07T18:44:54Z",
+  "nannet_url": "https://nannet.apps.mistral.run",
+  "native_binary": "nanlm-universal",
+  "schema": "nanlmind-hermes-demo-transcript/1",
+  "transcript": {
+    "chat": {
+      "model": "qwen2.5-0.5b-instruct-q4_k_m.gguf",
+      "native_learning": {
+        "boolean_foundation_status": "passed",
+        "changed_heads": 3,
+        "hyperedges_added": 1,
+        "metric_scope": "binary relation-polarity prediction by declared resolution; not text-generation accuracy",
+        "mirror_pair_updates": 3,
+        "records": 1,
+        "state_sha256_after": "bec396ea9270d343727c0654824fc3e9e72ddb92f3be0c6bc94f79e34ac702d8",
+        "state_sha256_before": "c30fc1f251a6fd916dd55ce1bc9bc129aabed31930c5a06555d18013fc4c8d5a"
+      },
+      "provider": "llama.cpp",
+      "response": "A 256-head Boolean learner is a computational model designed to process a bounded number of binary inputs efficiently. It can handle a total of 1,024 exact truth-table checks for its two-input functions (256 x 4 = 1,024). This capacity makes it suitable for tasks such as data analysis, artificial intelligence, and machine learning that require processing large amounts of binary data. The learner can be trained to recognize patterns and make decisions based on a bounded set of inputs, making it a valuable tool for researchers and developers working on complex problem-solving tasks.",
+      "transcript_count": 2
+    },
+    "clocked": {
+      "candidate": {
+        "base_topology_digest": "aca7b7d2542ab1879656e1d7bcb0dfa66fa2d2f1a7e647fe2b6955036e2f1019",
+        "boolean_mask_after": 3,
+        "boolean_mask_before": 2,
+        "boolean_rule_after": 0,
+        "boolean_rule_before": 1,
+        "candidate_digest": "a65aaf9ae9c4450bb243825f8f62091eec818bd626b0f6c5eb4f121fe6dd7be0",
+        "canonical_state_modified": false,
+        "head_index": 42,
+        "mutation_id": "demo-candidate-74f718ae",
+        "patch_mask": 1,
+        "promotion_allowed": false,
+        "schema": "nanlm.head-candidate-response/1",
+        "status": "candidate_only"
+      },
+      "claim_plan_digest": "2f52605a12fe6ddf7148aa4109c62e6a319438237b8f4ac14326f95753d45e07",
+      "claim_result_count": 3,
+      "evaluation": {
+        "balanced_accuracy_nonregression": true,
+        "base_state_digest": "aca7b7d2542ab1879656e1d7bcb0dfa66fa2d2f1a7e647fe2b6955036e2f1019",
+        "baseline": {
+          "accuracy": 0.0,
+          "balanced_accuracy": 0.0,
+          "by_resolution": {
+            "5": {
+              "accuracy": 0.0,
+              "coverage": 0.0,
+              "decisive": 0,
+              "total": 1
+            }
+          },
+          "confusion": {
+            "fn": 0,
+            "fp": 0,
+            "tn": 0,
+            "tp": 0
+          },
+          "coverage": 0.0,
+          "decisive": 0,
+          "rows": 1,
+          "utility": 0.0
+        },
+        "candidate": {
+          "accuracy": 0.0,
+          "balanced_accuracy": 0.0,
+          "by_resolution": {
+            "5": {
+              "accuracy": 0.0,
+              "coverage": 0.0,
+              "decisive": 0,
+              "total": 1
+            }
+          },
+          "confusion": {
+            "fn": 0,
+            "fp": 0,
+            "tn": 0,
+            "tp": 0
+          },
+          "coverage": 0.0,
+          "decisive": 0,
+          "rows": 1,
+          "utility": 0.0
+        },
+        "candidate_digest": "a65aaf9ae9c4450bb243825f8f62091eec818bd626b0f6c5eb4f121fe6dd7be0",
+        "canonical_state_modified": false,
+        "dataset_sha256": "e60c76e7b449540ae6e4435608dddc491aae28472df9c4edfca6f482992de75f",
+        "evaluation_policy": "caller_declared_test_split_no_automatic_promotion",
+        "mutation_id": "demo-candidate-74f718ae",
+        "promotion_allowed": false,
+        "recommendation": "retain_baseline",
+        "schema": "nanlm.head-candidate-evaluation-response/1",
+        "split": "test",
+        "status": "evaluated_candidate",
+        "utility_delta": 0.0
+      },
+      "head_state_digest": "aca7b7d2542ab1879656e1d7bcb0dfa66fa2d2f1a7e647fe2b6955036e2f1019",
+      "head_truth_state": "CONFLICT",
+      "learned": {
+        "base_topology_digest": "aca7b7d2542ab1879656e1d7bcb0dfa66fa2d2f1a7e647fe2b6955036e2f1019",
+        "candidate_digest": "4e0bf0e58204a84d29121cd19426236673fbd3d758611186162a23fea6b640b4",
+        "canonical_state_modified": false,
+        "kind": "learned_candidate",
+        "mutation_id": "demo-learn-3a29634a",
+        "promotion_allowed": false,
+        "schema": "nanlm.head-learning-candidate-response/1",
+        "status": "candidate_only",
+        "teacher": "CLOCKED",
+        "teacher_outputs_are_ground_truth": false,
+        "training_dataset_sha256": "465095c36e238355d7e03d36e46104df2fd43782acae10c8d42997098e79570c",
+        "training_summary": {
+          "changed_heads": 12,
+          "epochs": 1,
+          "train_events": 7
+        }
+      },
+      "pii_plan_digest": "1e7b575865f85a9e9e612d300464e1b556592f6de80ffa2287044aaf35c1773b",
+      "pii_result_count": 2,
+      "scratch_lanes": [
+        "clocked_request",
+        "clocked_result",
+        "evidence_atoms",
+        "hermes_plan",
+        "user"
+      ]
+    },
+    "nannet": {
+      "identity_present": true,
+      "identity_unlocked": true,
+      "installation_id": "499e4084-4d5a-47cd-b604-f8feb887c32e",
+      "master_key_present": true,
+      "paired_token_present": true,
+      "pairing_authority_configured": true,
+      "public_key": "E5EBKRFWGTAyM9_jfnPjCGIioQGayqRtLPPfoO9GSHU",
+      "token_expires_at": 1794077962,
+      "token_scopes": [
+        "corpus:write",
+        "training:execute",
+        "universe:read"
+      ],
+      "token_valid": true
+    },
+    "training": {
+      "boolean_foundation": {
+        "reused_checkpoint": true,
+        "state_sha256": "c30fc1f251a6fd916dd55ce1bc9bc129aabed31930c5a06555d18013fc4c8d5a",
+        "status": "passed"
+      },
+      "corpus_records": 9,
+      "final_state_digest": "7e56ea4b53b91709a359ff0d1621494c7fa2a43fa634043b320b0194b320585d",
+      "mode": "logic",
+      "note": "Round 1 made the structural updates. Later rounds reuse the same deterministic teacher data, so changed_heads=0 is expected.",
+      "rounds": [
+        {
+          "changed_heads": 9,
+          "heldout_accuracy": {
+            "0": 0.0,
+            "1": 0.5,
+            "2": 0.5
+          },
+          "heldout_baseline": {
+            "0": 0.5,
+            "1": 0.5,
+            "2": 0.5
+          },
+          "hyperedges_added": 3,
+          "mirror_pair_updates": 9,
+          "records": 9,
+          "round": 1
+        },
+        {
+          "changed_heads": 0,
+          "heldout_accuracy": {
+            "0": 0.0,
+            "1": 0.5,
+            "2": 0.5
+          },
+          "heldout_baseline": {
+            "0": 0.5,
+            "1": 0.5,
+            "2": 0.5
+          },
+          "hyperedges_added": 0,
+          "mirror_pair_updates": 0,
+          "records": 9,
+          "round": 2
+        },
+        {
+          "changed_heads": 0,
+          "heldout_accuracy": {
+            "0": 0.0,
+            "1": 0.5,
+            "2": 0.5
+          },
+          "heldout_baseline": {
+            "0": 0.5,
+            "1": 0.5,
+            "2": 0.5
+          },
+          "hyperedges_added": 0,
+          "mirror_pair_updates": 0,
+          "records": 9,
+          "round": 3
+        }
+      ]
+    }
+  },
+  "version": "1.2.3"
+}

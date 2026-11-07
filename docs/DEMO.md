@@ -117,11 +117,13 @@ head state.
 
 ## Latest recorded runs
 
-- [DEMO_RESULTS.md](DEMO_RESULTS.md): 35/35 tool calls passed against a local
+- [HERMES_DEMO.md](HERMES_DEMO.md): human-readable transcript of real local
+  chat, native training, live CLOCKED, and live head-cortex output.
+- [DEMO_RESULTS.md](DEMO_RESULTS.md): 36/36 tool calls passed against a local
   full-feature demo (real native binary, loopback NANNET authority, local
-  CLOCKED and head-cortex contract stubs).
-- [LIVE_SMOKE.md](LIVE_SMOKE.md): 7/7 checks passed against deployed NANNET and
-  CLOCKED services.
+  CLOCKED contract stubs).
+- [LIVE_SMOKE.md](LIVE_SMOKE.md): 11/11 checks passed against the single
+  deployed `nannet.apps.mistral.run` service, including head-cortex.
 
 Regenerate the local report with:
 

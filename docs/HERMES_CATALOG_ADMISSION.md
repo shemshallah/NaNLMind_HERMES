@@ -29,10 +29,10 @@ prove from steps that only the upstream catalog maintainer can complete.
 
 ### Plugin checks
 
-- Plugin version: **1.2.2** in `plugin.yaml` and `pyproject.toml`; license
+- Plugin version: **1.2.3** in `plugin.yaml` and `pyproject.toml`; license
   **Apache-2.0** in both.
-- Unit/integration suite: **133 tests passed** locally and in CI on Python
-  3.10, 3.11 and 3.12 (399 successful test executions).
+- Unit/integration suite: **134 tests passed** locally and in CI on Python
+  3.10, 3.11 and 3.12 (402 successful test executions).
 - Hermes Agent v0.23.0 `hermes plugins validate . --install-deps`: **PASS**.
   Manifest, compatibility floor, config schema, required secret names,
   tool/hook/middleware parity, collision scan, security scan and no-core-override
@@ -52,8 +52,9 @@ prove from steps that only the upstream catalog maintainer can complete.
 | Production NANNET authority | PASS | `nanlm_auth_init` → `nanlm_auth_pair` → `nanlm_auth_status` → online `training:execute` authorization → `nanlm_auth_revoke` all passed. The issuer key was pinned from the authority's `GET /v1/issuer`; the authority deployment includes the stable pairing contract and operator code issuance at commit `8aaa3df`. |
 | Native runner | PASS | Real `NaNLMind/build/nanlm-universal` run: `bootstrap` completed with a recorded corpus digest and metrics; `byte`, `kn`, and `ctx2` evaluations completed; the Boolean foundation gate passed **1,024/1,024** with all 16 distinct rules, composed gates and a persisted `boolean_foundation.nmg`. |
 | Hermes-managed secrets | PASS | Credential-policy tests scan every plugin module; live pairing and CLOCKED calls used the same secret-scope path as production. |
-| Full plugin demo | PASS | [DEMO_RESULTS.md](DEMO_RESULTS.md): all 35 registered-tool calls passed with the real native binary, a loopback NANNET authority, and local CLOCKED/head-cortex contract stubs. |
-| Live deployed services | PASS | [LIVE_SMOKE.md](LIVE_SMOKE.md): 7/7 checks passed for NANNET pairing, status, scope authorization, revocation, and live CLOCKED plan/execute/scratch. |
+| Full plugin demo | PASS | [DEMO_RESULTS.md](DEMO_RESULTS.md): all 36 calls across 33 registered tools passed with the real native binary, a loopback NANNET authority, and local CLOCKED/head-cortex contract stubs. |
+| Demo transcript | PASS | [HERMES_DEMO.md](HERMES_DEMO.md): real local chat, native training metrics, live CLOCKED, live head-cortex, and isolated candidate evaluation. |
+| Live deployed services | PASS | [LIVE_SMOKE.md](LIVE_SMOKE.md): 11/11 checks passed on the single `nannet.apps.mistral.run` service, including head-cortex process and candidate endpoints. |
 
 Live checks are deployment smoke tests, not CI claims. Exact commands and the
 resulting artifacts are recorded in the release notes.
@@ -121,6 +122,6 @@ capabilities:
 
 The upstream entry must also set `name: nanlmind-hermes`,
 `repo: https://github.com/shemshallah/NaNLMind_HERMES`,
-`requires_hermes: ">=0.23.0"`, `version: "1.2.2"`, `maintainer: shemshallah`,
+`requires_hermes: ">=0.23.0"`, `version: "1.2.3"`, `maintainer: shemshallah`,
 `tier: community`, `category: tools`, and a full 40-character SHA for the
 reviewed release commit.

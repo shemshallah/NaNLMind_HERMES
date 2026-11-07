@@ -24,7 +24,7 @@ class HeadCortexClient:
             raise ValueError("head cortex requires HTTPS except on localhost")
         self.endpoint = endpoint.rstrip("/")
         self.token = token or ""
-        if not self.token or len(self.token) > 512:
+        if not self.token or len(self.token) > 4096:
             raise ValueError("NANLM_DEVICE_TOKEN is missing or invalid")
         if not 1 <= timeout <= 300:
             raise ValueError("timeout must be between 1 and 300 seconds")

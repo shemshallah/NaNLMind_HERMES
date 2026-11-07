@@ -1,5 +1,5 @@
 name: nanlmind-hermes
-version: 1.2.2
+version: 1.2.3
 manifest_version: 2
 api_version: 1
 requires_hermes: ">=0.23.0"

@@ -5,7 +5,7 @@ learning, explicit native training, durable mathematical memory, and approved
 CLOCKED evidence plans. Training and inference stay local; NANNET is the
 identity/authorization boundary and CLOCKED is an evidence service.
 
-**Version 1.2.2 — catalog submission pending.**
+**Version 1.2.3 — catalog submission pending.**
 
 ## What it does
 
@@ -168,14 +168,14 @@ Report security issues privately as described in [SECURITY.md](SECURITY.md).
 
 ## Verification
 
-- 133 unit/integration tests pass locally; CI runs Python 3.10, 3.11, and 3.12.
+- 134 unit/integration tests pass locally; CI runs Python 3.10, 3.11, and 3.12.
 - Hermes Agent v0.23.0 `plugins validate` and `plugins doctor` pass in CI.
 - Wheel and source distribution builds, metadata checks, installation/import,
   and SHA-256 checksums pass in CI.
-- The full-feature demo passed all 35 registered-tool calls against a real
-  `nanlm-universal` build, a loopback NANNET authority, and local CLOCKED and
-  head-cortex contract stubs. A separate live smoke test passed 7/7 checks
-  against deployed NANNET and CLOCKED services.
+- The exhaustive demo passed 36/36 calls across all 33 registered tools.
+- A separate transcript demo ran real local chat, native training, live
+  CLOCKED, and the live head-cortex service. Live smoke passed 11/11 checks
+  against the single deployed `nannet.apps.mistral.run` service.
 - Exact commits, commands, and evidence are recorded in
   [docs/HERMES_CATALOG_ADMISSION.md](docs/HERMES_CATALOG_ADMISSION.md).
 
@@ -184,8 +184,9 @@ Report security issues privately as described in [SECURITY.md](SECURITY.md).
 | document | contents |
 |---|---|
 | [Demo guide](docs/DEMO.md) | offline, NANNET, and CLOCKED scenarios with success signals |
-| [Demo results](docs/DEMO_RESULTS.md) | 35/35 local tool-call results |
-| [Live smoke results](docs/LIVE_SMOKE.md) | 7/7 deployed-service checks |
+| [Demo transcript](docs/HERMES_DEMO.md) | chat, native training, CLOCKED, and live head-cortex output |
+| [Demo results](docs/DEMO_RESULTS.md) | 36/36 exhaustive tool-call results |
+| [Live smoke results](docs/LIVE_SMOKE.md) | 11/11 deployed-service checks |
 | [Install and validate](docs/HERMES_PLUGIN_INSTALL.md) | install paths, doctor output, upgrade/uninstall |
 | [Tools reference](docs/TOOLS_REFERENCE.md) | every tool, schema, scope, and approval gate |
 | [Walkthroughs](docs/WALKTHROUGHS.md) | chat, training, memory, CLOCKED, and recovery |

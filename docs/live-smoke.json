@@ -3,7 +3,7 @@
     {
       "check": "nanlm_auth_init",
       "detail": {
-        "installation_id": "0b2873ca-4107-4548-b3dc-bd8be9aa8586"
+        "installation_id": "c48150be-91bb-4db5-acdc-5475814b8fb4"
       },
       "status": "pass"
     },
@@ -38,6 +38,85 @@
       "status": "pass"
     },
     {
+      "check": "nanlm_device_register",
+      "detail": {
+        "address": "nan://GM0:SC0:MC0:BS0:HW7",
+        "token_length": 514
+      },
+      "status": "pass"
+    },
+    {
+      "check": "nanlm_head_process",
+      "detail": {
+        "generation": 0,
+        "schema": "nanlm.head-cortex-response",
+        "state_digest": "aca7b7d2542ab1879656e1d7bcb0dfa66fa2d2f1a7e647fe2b6955036e2f1019",
+        "truth_state": "UNKNOWN"
+      },
+      "status": "pass"
+    },
+    {
+      "check": "nanlm_head_candidate",
+      "detail": {
+        "candidate_digest": "a65aaf9ae9c4450bb243825f8f62091eec818bd626b0f6c5eb4f121fe6dd7be0",
+        "canonical_state_modified": false,
+        "status": "candidate_only"
+      },
+      "status": "pass"
+    },
+    {
+      "check": "nanlm_head_candidate_evaluate",
+      "detail": {
+        "baseline": {
+          "accuracy": 0.0,
+          "balanced_accuracy": 0.0,
+          "by_resolution": {
+            "5": {
+              "accuracy": 0.0,
+              "coverage": 0.0,
+              "decisive": 0,
+              "total": 1
+            }
+          },
+          "confusion": {
+            "fn": 0,
+            "fp": 0,
+            "tn": 0,
+            "tp": 0
+          },
+          "coverage": 0.0,
+          "decisive": 0,
+          "rows": 1,
+          "utility": 0.0
+        },
+        "candidate": {
+          "accuracy": 0.0,
+          "balanced_accuracy": 0.0,
+          "by_resolution": {
+            "5": {
+              "accuracy": 0.0,
+              "coverage": 0.0,
+              "decisive": 0,
+              "total": 1
+            }
+          },
+          "confusion": {
+            "fn": 0,
+            "fp": 0,
+            "tn": 0,
+            "tp": 0
+          },
+          "coverage": 0.0,
+          "decisive": 0,
+          "rows": 1,
+          "utility": 0.0
+        },
+        "recommendation": "retain_baseline",
+        "utility_delta": 0.0
+      },
+      "status": "pass"
+    },
+    {
       "check": "nanlm_clocked_execute",
       "detail": {
         "result_count": 1,
@@ -66,10 +145,10 @@
       "status": "pass"
     }
   ],
-  "clocked_url": "https://deeprepo-qtcl-9c8fea15.apps.mistral.run",
+  "clocked_url": "https://nannet.apps.mistral.run",
   "failed": 0,
-  "generated_at": "2026-11-07T17:00:28Z",
-  "nannet_url": "https://deeprepo-qtcl-9c8fea15.apps.mistral.run",
-  "passed": 7,
+  "generated_at": "2026-11-07T18:36:28Z",
+  "nannet_url": "https://nannet.apps.mistral.run",
+  "passed": 11,
   "schema": "nanlmind-hermes-live-smoke/1"
 }
