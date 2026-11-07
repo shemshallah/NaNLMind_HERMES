@@ -66,7 +66,14 @@ class HermesChatTests(unittest.TestCase):
             self.assertEqual(len(result["clocked_mode"]["approval_digest"]), 64)
             self.assertTrue(result["clocked_mode"]["mode_plan"]["requires_approval"])
             self.assertTrue(result["clocked_scratch_id"].startswith("chat-"))
-            self.assertIn("approval_digest", ctx.llm.calls[0]["messages"][1]["content"])
+            chat_call = next(call for call in ctx.llm.calls
+                             if call.get("purpose") == "nanlmind-hermes-chat")
+            self.assertIn("approval_digest", chat_call["messages"][1]["content"])
+            selector_call = next(call for call in ctx.llm.calls
+                                 if call.get("purpose") == "nanlm-hermes-clocked-mode-selection")
+            selector_payload = selector_call["messages"][1]["content"]
+            self.assertNotIn("The system uses NaN16.", selector_payload)
+            self.assertNotIn("The system uses Boolean heads.", selector_payload)
             self.assertEqual(len(chat_history(ctx, "clocked-proposal")["messages"]), 2)
 
     def test_chat_system_prompt_includes_architecture_context(self):
