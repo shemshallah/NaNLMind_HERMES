@@ -68,7 +68,3 @@ config_schema:
     type: str
     default: ""
     description: NaNLMind_CLOCKED participant gateway URL; use HTTPS except localhost. The participant token is supplied separately as CLOCKED_GATEWAY_TOKEN.
-  clocked_auto_policy:
-    type: str
-    default: approval
-    description: CLOCKED execution policy; approval is the only supported default. Source text is not transmitted until explicit approval.
