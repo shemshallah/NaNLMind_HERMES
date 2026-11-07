@@ -6,7 +6,7 @@ import os
 from pathlib import Path
 
 from .clocked_client import ClockedGatewayClient
-from .clocked_mode import execute_multi_source, propose_mode
+from .clocked_mode import execute_multi_source, make_task_plan, propose_mode, validate_task_plan
 from .evidence import build_evidence_package
 from .head_cortex import HeadCortexClient
 from .scratch import Scratch
@@ -26,27 +26,61 @@ def _scratch(ctx, scratch_id):
 
 def clocked_plan(ctx, question, sources=None, scratch_id="default"):
     sources = sources or []
-    plan = propose_mode(question, sources)
+    mode = propose_mode(question, sources)
     scratch = _scratch(ctx, scratch_id)
     snap = scratch.snapshot()
     if not snap["entry_count"]:
-        scratch.append("user", "user", {"question": question, "source_count": len(sources)})
-    scratch.append("hermes_plan", "hermes", plan)
-    return {"mode_plan": plan, "scratch": scratch.snapshot()}
+        snap_entry = scratch.append("user", "user", {
+            "question": question, "source_count": len(sources),
+        }, snap["revision"])
+        snap = scratch.snapshot()
+    if sources:
+        plan = make_task_plan(sources, question)
+        validation = validate_task_plan(plan, {
+            "max_requests": 16, "max_bytes": 1_048_576,
+        })
+        recorded = scratch.append("hermes_plan", "hermes", {
+            "mode": mode["mode"], "plan": plan, "validation": validation,
+            "requires_approval": True,
+        }, snap["revision"])
+        return {"mode_plan": mode, "task_plan": plan,
+                "approval_digest": validation["plan_sha256"],
+                "scratch_revision": recorded["revision"],
+                "scratch": scratch.snapshot()}
+    recorded = scratch.append("hermes_plan", "hermes", {
+        "mode": mode["mode"], "requires_approval": False,
+    }, snap["revision"])
+    return {"mode_plan": mode, "scratch_revision": recorded["revision"],
+            "scratch": scratch.snapshot()}
 
 
 def clocked_execute(ctx, question, sources, scratch_id="default",
-                    approved=False, max_requests=16, max_bytes=1_048_576):
+                    approved=False, plan_sha256="", max_requests=16,
+                    max_bytes=1_048_576):
     if approved is not True:
         raise PermissionError("CLOCKED execution requires explicit approved=true after reviewing the plan")
-    if os.environ.get("CLOCKED_GATEWAY_URL") is None or not os.environ.get("CLOCKED_GATEWAY_TOKEN"):
+    if not isinstance(plan_sha256, str) or len(plan_sha256) != 64:
+        raise ValueError("the exact reviewed approval_digest is required")
+    if not os.environ.get("CLOCKED_GATEWAY_URL") or not os.environ.get("CLOCKED_GATEWAY_TOKEN"):
         raise RuntimeError("configure CLOCKED_GATEWAY_URL and CLOCKED_GATEWAY_TOKEN for the scoped participant gateway")
     scratch = _scratch(ctx, scratch_id)
+    plan_rows = scratch.lane("hermes_plan")
+    reviewed = next((row["payload"] for row in reversed(plan_rows)
+                     if isinstance(row.get("payload"), dict)
+                     and isinstance(row["payload"].get("plan"), dict)), None)
+    if reviewed is None:
+        raise ValueError("create and review a CLOCKED plan before execution")
+    plan = reviewed["plan"]
+    fresh = make_task_plan(sources, question)
+    if plan.get("tasks") != fresh.get("tasks"):
+        raise ValueError("question or sources differ from the reviewed CLOCKED plan")
     budget = {"max_requests": max_requests, "max_bytes": max_bytes}
+    validation = validate_task_plan(plan, budget)
+    if validation["plan_sha256"] != plan_sha256:
+        raise PermissionError("approval digest does not match the reviewed task plan")
     client = ClockedGatewayClient()
     return execute_multi_source(client, scratch, question, sources,
-                                budget=budget)
-
+                                budget=budget, plan=plan)
 
 def scratch_show(ctx, scratch_id="default", lane=None):
     scratch = _scratch(ctx, scratch_id)
