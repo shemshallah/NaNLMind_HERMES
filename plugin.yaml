@@ -63,7 +63,7 @@ config_schema:
   state_dir:
     type: str
     default: ~/.local/share/nanlmind-hermes
-    description: Per-installation local universe, corpus, run logs and manifests.
+    description: Local working directory and native checkpoint path for the one HW0::BS0 state. All BS0 workers and attached clients must share this canonical state path; do not create per-runner or per-endpoint universes.
   clocked_gateway_url:
     type: str
     default: ""
