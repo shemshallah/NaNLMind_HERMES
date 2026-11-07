@@ -570,9 +570,12 @@ The same flow is available from the CLI using a JSON request file:
 
 The approved request JSON includes the exact `plan_sha256` returned by the
 plan step. Configure `CLOCKED_GATEWAY_URL` and `CLOCKED_GATEWAY_TOKEN` for
-the participant gateway. Configure `NANLM_HEAD_CORTEX_URL` and a NANNET
-`NANLM_DEVICE_TOKEN` for the NaNLMind receiving service. Neither service
-credential is the privileged upstream `CLOCKED_API_KEY`.
+the participant gateway. `CLOCKED_GATEWAY_TOKEN` is the issued participant
+token (`clu_...`), normally a `HERMES_DEMO_API` token for HERMES. It is not
+the privileged upstream `CLOCKED_API_KEY`, which stays server-side. Configure
+`NANLM_HEAD_CORTEX_URL` and a NANNET `NANLM_DEVICE_TOKEN` for the NaNLMind
+receiving service. For the standalone CLOCKED CLI, use a `CLOCKED_USER_API`
+token so the legacy `/v1/experience` route is also in scope.
 
 
 ### CLOCKED weak-supervision candidate CLI
