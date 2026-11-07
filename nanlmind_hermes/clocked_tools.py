@@ -189,3 +189,24 @@ def clocked_synthesize(ctx, question, scratch_id="default", max_tokens=2048):
             "head_validation": validation["head_response"],
             "final_revision": final_entry["revision"],
             "scratch": scratch.snapshot()}
+
+def head_candidate(ctx, mutation_id, head_index, patch_mask,
+                   base_topology_digest, approved=False):
+    if approved is not True:
+        raise PermissionError("candidate head mutation requires explicit approved=true")
+    if isinstance(head_index, bool) or not isinstance(head_index, int) or not 0 <= head_index <= 255:
+        raise ValueError("head_index must be 0..255")
+    if isinstance(patch_mask, bool) or not isinstance(patch_mask, int) or not 1 <= patch_mask <= 65535:
+        raise ValueError("patch_mask must be 1..65535")
+    if not isinstance(base_topology_digest, str) or len(base_topology_digest) != 64:
+        raise ValueError("base_topology_digest must be a SHA-256 digest")
+    if not os.environ.get("NANLM_HEAD_CORTEX_URL") or not os.environ.get("NANLM_DEVICE_TOKEN"):
+        raise RuntimeError("configure NANLM_HEAD_CORTEX_URL and a NANNET training:execute device token")
+    request = {
+        "schema": "nanlm.head-candidate-request/1",
+        "mutation_id": mutation_id,
+        "head_index": head_index,
+        "patch_mask": patch_mask,
+        "base_topology_digest": base_topology_digest,
+    }
+    return HeadCortexClient().create_candidate(request)
