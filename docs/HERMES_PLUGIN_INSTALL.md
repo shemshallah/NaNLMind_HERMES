@@ -37,10 +37,10 @@ The manifest is catalog-oriented:
 - `manifest_version: 2`
 - `api_version: 1`
 - `provides_tools` matches `register(ctx)`
-- core dependencies are empty
-- optional `[auth]` extra enables the audited `cryptography` backend
-- the dependency-free Ed25519/AES-GCM/HKDF fallback keeps the plugin usable on
-  minimal Alpine/Termux images
+- the manifest declares bounded `cryptography>=42,<47` for production NANNET identity protection
+- NANNET, CLOCKED and head-cortex secrets are declared as masked `config_schema` secrets
+- the plugin reads those secrets only through `agent.secret_scope.get_secret()`
+- a pure-Python crypto compatibility path remains for constrained development/test hosts
 
 ## Alpine test
 
