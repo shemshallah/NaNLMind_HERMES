@@ -204,6 +204,11 @@ class ScratchTests(unittest.TestCase):
             scratch.append("clocked_result", "clocked", {
                 "task_id": "extract-a", "endpoint": "extract", "source_id": "source-a",
                 "status": "ok", "provenance": {"input_sha256": "a" * 64},
+                "result": {"fields": {"claims": ["PRIVATE-SSN-DO-NOT-LEARN"]}},
+            })
+            scratch.append("clocked_result", "clocked", {
+                "task_id": "extract-clean", "endpoint": "extract", "source_id": "source-b",
+                "status": "ok", "provenance": {"input_sha256": "f" * 64},
                 "result": {"fields": {"claims": ["The river flows."]}},
             })
             scratch.append("clocked_result", "clocked", {
@@ -239,6 +244,8 @@ class ScratchTests(unittest.TestCase):
             self.assertGreaterEqual(len(request["records"]), 5)
             self.assertFalse(any("PRIVATE-SSN-DO-NOT-LEARN" in row["object"]
                                  for row in request["records"]))
+            self.assertTrue(any(row["object"] == "The river flows."
+                                for row in request["records"]))
             self.assertEqual(result["scratch"]["entries"][-1]["lane"], "learning_proposal")
         with self.assertRaises(PermissionError):
             clocked_tools.head_learn_candidate(None, "candidate", "d" * 64, False)
