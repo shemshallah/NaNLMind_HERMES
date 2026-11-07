@@ -119,8 +119,9 @@ def make_task_plan(sources: list[dict], question: str) -> dict:
 def execute_multi_source(client: ClockedGatewayClient, scratch: Scratch,
                          question: str, sources: list[dict],
                          expected_revision: str | None = None,
-                         budget: dict | None = None) -> dict:
-    plan = make_task_plan(sources, question)
+                         budget: dict | None = None,
+                         plan: dict | None = None) -> dict:
+    plan = plan or make_task_plan(sources, question)
     validation = validate_task_plan(plan, budget)
     scratch.append("hermes_plan", "hermes", {
         "mode": "CLOCKED_MULTI_SOURCE", "plan": plan, "validation": validation,
