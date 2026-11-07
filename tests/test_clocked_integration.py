@@ -77,6 +77,52 @@ class ScratchTests(unittest.TestCase):
             self.assertTrue(package["policy"]["clocked_outputs_are_not_ground_truth"])
             self.assertEqual(len(package["evidence_entries"]), 2)
 
+    def test_compare_endpoint_builds_explicit_conflict_map_in_shared_scratch(self):
+        class Context:
+            def __init__(self, root):
+                self.root = root
+            def get_config(self, key, default=None):
+                return str(self.root) if key == "state_dir" else default
+        class Client:
+            def execute(self, plan, idempotency_key=None):
+                rows = []
+                for task in plan["tasks"]:
+                    if task["endpoint"] == "compare":
+                        result = {"fields": {
+                            "verdict": "partial_conflict",
+                            "conflicts": ["source-a asserts 12; source-b asserts 14"],
+                        }}
+                    elif task["endpoint"] == "extract":
+                        result = {"fields": {"claims": ["A source claim"]}}
+                    else:
+                        result = {"fields": {"verdict": "supported"}}
+                    rows.append({
+                        "task_id": task["id"], "source_id": task.get("source_id"),
+                        "endpoint": task["endpoint"], "result_type": task["endpoint"],
+                        "status": "ok", "result": result,
+                        "provenance": {"input_sha256": "a" * 64},
+                    })
+                return {"protocol": "nanlm.clocked-task-results", "version": 1,
+                        "results": rows}
+        with tempfile.TemporaryDirectory() as tmp:
+            ctx = Context(Path(tmp))
+            question = "Compare these sources and identify conflicts."
+            sources = [{"id": "source-a", "text": "The value is 12."},
+                       {"id": "source-b", "text": "The value is 14."}]
+            preview = clocked_tools.clocked_plan(ctx, question, sources, "conflict-turn")
+            with patch.dict("os.environ", {
+                "CLOCKED_GATEWAY_URL": "https://clocked.example",
+                "CLOCKED_GATEWAY_TOKEN": "scoped-participant-token",
+            }), patch("nanlmind_hermes.clocked_tools.ClockedGatewayClient", return_value=Client()):
+                result = clocked_tools.clocked_execute(
+                    ctx, question, sources, "conflict-turn", True,
+                    preview["approval_digest"])
+            conflicts = [row for row in result["scratch"]["entries"]
+                         if row["lane"] == "conflict_map"]
+            self.assertEqual(len(conflicts), 1)
+            self.assertIn("source-a asserts 12", conflicts[0]["payload"]["conflicts"][0])
+            self.assertGreaterEqual(result["result_count"], 6)
+
     def test_multi_source_plan_is_bounded_and_dependency_ordered(self):
         plan = make_task_plan([{"id": "a", "text": "A"}, {"id": "b", "text": "B"}], "compare")
         result = validate_task_plan(plan)
