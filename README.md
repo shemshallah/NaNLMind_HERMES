@@ -509,3 +509,45 @@ The code and offline CI contracts are committed, but the services are not yet
 deployed or connected through the live Router/Koyeb topology. Live upstream
 CLOCKED endpoint calls and candidate self-modification/promotion remain
 outstanding.
+
+
+### Using autonomous CLOCKED mode
+
+Pass source material to `nanlm_chat` using its optional `sources` array. HERMES
+creates a local task plan and returns an `approval_digest`; it does not send
+the source text to CLOCKED at planning time. After reviewing the proposed
+endpoints and sources, approve the exact plan by calling
+`nanlm_clocked_execute` with the same question, `scratch_id`,
+`approved=true`, and the returned `plan_sha256`. The sources can be omitted
+from this second call because the immutable task plan is already in scratch.
+
+Then use `nanlm_clocked_synthesize` with the same question and scratch ID.
+HERMES synthesizes a draft, submits the draft and evidence through
+NaNLMind's head-cortex interface, and composes the final answer from the
+evidence plus the diagnostic head response. The head response is not treated
+as a ground-truth oracle.
+
+The same flow is available from the CLI using a JSON request file:
+
+```json
+{
+  "question": "Compare these two technical sources.",
+  "scratch_id": "comparison-001",
+  "sources": [
+    {"id": "source-a", "text": "First source text..."},
+    {"id": "source-b", "text": "Second source text..."}
+  ]
+}
+```
+
+```text
+/nanlm clocked plan request.json
+/nanlm clocked run approved-request.json --approved
+/nanlm clocked synthesize "Compare these two technical sources."
+```
+
+The approved request JSON includes the exact `plan_sha256` returned by the
+plan step. Configure `CLOCKED_GATEWAY_URL` and `CLOCKED_GATEWAY_TOKEN` for
+the participant gateway. Configure `NANLM_HEAD_CORTEX_URL` and a NANNET
+`NANLM_DEVICE_TOKEN` for the NaNLMind receiving service. Neither service
+credential is the privileged upstream `CLOCKED_API_KEY`.
