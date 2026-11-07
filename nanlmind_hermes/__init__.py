@@ -39,7 +39,8 @@ def register(ctx):
         _require_scope("training:execute")
         return clocked_tools.head_candidate(ctx, params["mutation_id"],
             params["head_index"], params["patch_mask"],
-            params["base_topology_digest"], params.get("approved", False))
+            params["base_topology_digest"], params.get("approved", False),
+            params.get("scratch_id", "default"))
 
     def handle_status(params, **kwargs):
         result = tools.status(ctx)
@@ -289,7 +290,8 @@ def register(ctx):
           "head_index": {"type": "integer", "minimum": 0, "maximum": 255},
           "patch_mask": {"type": "integer", "minimum": 1, "maximum": 65535},
           "base_topology_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
-          "approved": {"type": "boolean", "default": false}},
+          "approved": {"type": "boolean", "default": false},
+          "scratch_id": {"type": "string", "maxLength": 80}},
          ["mutation_id", "head_index", "patch_mask", "base_topology_digest", "approved"],
          handle_head_candidate),
         ("nanlm_status", "Inspect local NaNLMind universe and durable mathematical-memory status.", {}, [], handle_status),
