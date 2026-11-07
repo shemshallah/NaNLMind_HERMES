@@ -9,11 +9,11 @@ from urllib.request import Request, urlopen
 
 
 class HeadCortexError(RuntimeError):
-    pass
+    """A transport or contract failure from the NaNLMind head-cortex service."""
 
 
 class HeadCortexClient:
-    """Calls a NaNLMind receiving endpoint; never owns or mutates head state."""
+    """Calls NaNLMind receiving endpoints; never owns or mutates canonical head state."""
 
     def __init__(self, endpoint: str | None = None, token: str | None = None,
                  timeout: int = 90):
@@ -31,110 +31,60 @@ class HeadCortexClient:
             raise ValueError("timeout must be between 1 and 300 seconds")
         self.timeout = timeout
 
-    def process(self, package: dict) -> dict:
-        if package.get("schema") != "nanlm.hermes-evidence-package":
-            raise ValueError("unsupported evidence package")
-        body = json.dumps(package, sort_keys=True, separators=(",", ":"),
+    def _post(self, path: str, payload: dict, request_schema: str,
+              response_schema: str, max_bytes: int,
+              require_non_promotion: bool = False) -> dict:
+        if not isinstance(payload, dict) or payload.get("schema") != request_schema:
+            raise ValueError("unsupported request schema: " + request_schema)
+        body = json.dumps(payload, sort_keys=True, separators=(",", ":"),
                           ensure_ascii=False).encode("utf-8")
-        request = Request(
-            self.endpoint + "/v1/head-cortex/process", data=body,
+        if len(body) > max_bytes:
+            raise ValueError("head-cortex request exceeds configured size limit")
+        call = Request(
+            self.endpoint + path, data=body,
             headers={"Authorization": "Bearer " + self.token,
                      "Content-Type": "application/json", "Accept": "application/json"},
             method="POST",
         )
         try:
-            with urlopen(request, timeout=self.timeout) as response:
-                result = json.loads(response.read(4_194_305).decode("utf-8"))
+            with urlopen(call, timeout=self.timeout) as response:
+                raw = response.read(max_bytes + 1)
+                if len(raw) > max_bytes:
+                    raise HeadCortexError("head-cortex response exceeds configured size limit")
+                result = json.loads(raw.decode("utf-8"))
         except HTTPError as exc:
             raise HeadCortexError("NaNLMind head cortex returned HTTP %d" % exc.code) from exc
         except (URLError, TimeoutError, OSError) as exc:
             raise HeadCortexError("NaNLMind head cortex is unavailable") from exc
         except (UnicodeError, json.JSONDecodeError) as exc:
             raise HeadCortexError("NaNLMind head cortex returned invalid JSON") from exc
-        if not isinstance(result, dict) or result.get("schema") != "nanlm.head-cortex-response":
-            raise HeadCortexError("unsupported NaNLMind head-cortex response")
-        return result
-
-    def create_candidate(self, request: dict) -> dict:
-        if not isinstance(request, dict) or request.get("schema") != "nanlm.head-candidate-request/1":
-            raise ValueError("unsupported head-candidate request")
-        body = json.dumps(request, sort_keys=True, separators=(",", ":"),
-                          ensure_ascii=False).encode("utf-8")
-        call = Request(
-            self.endpoint + "/v1/head-cortex/candidate", data=body,
-            headers={"Authorization": "Bearer " + self.token,
-                     "Content-Type": "application/json", "Accept": "application/json"},
-            method="POST",
-        )
-        try:
-            with urlopen(call, timeout=self.timeout) as response:
-                result = json.loads(response.read(65537).decode("utf-8"))
-        except HTTPError as exc:
-            raise HeadCortexError("NaNLMind candidate endpoint returned HTTP %d" % exc.code) from exc
-        except (URLError, TimeoutError, OSError) as exc:
-            raise HeadCortexError("NaNLMind candidate endpoint is unavailable") from exc
-        except (UnicodeError, json.JSONDecodeError) as exc:
-            raise HeadCortexError("NaNLMind candidate endpoint returned invalid JSON") from exc
-        if not isinstance(result, dict) or result.get("schema") != "nanlm.head-candidate-response/1":
-            raise HeadCortexError("unsupported NaNLMind candidate response")
-        return result
-
-    def evaluate_candidate(self, request: dict) -> dict:
-        if not isinstance(request, dict) or request.get("schema") != "nanlm.head-candidate-evaluation-request/1":
-            raise ValueError("unsupported candidate evaluation request")
-        body = json.dumps(request, sort_keys=True, separators=(",", ":"),
-                          ensure_ascii=False).encode("utf-8")
-        call = Request(
-            self.endpoint + "/v1/head-cortex/candidate/evaluate", data=body,
-            headers={"Authorization": "Bearer " + self.token,
-                     "Content-Type": "application/json", "Accept": "application/json"},
-            method="POST",
-        )
-        try:
-            with urlopen(call, timeout=self.timeout) as response:
-                raw = response.read(1_048_577)
-                if len(raw) > 1_048_576:
-                    raise HeadCortexError("candidate evaluation response exceeds 1 MiB")
-                result = json.loads(raw.decode("utf-8"))
-        except HTTPError as exc:
-            raise HeadCortexError("NaNLMind candidate evaluation returned HTTP %d" % exc.code) from exc
-        except (URLError, TimeoutError, OSError) as exc:
-            if isinstance(exc, HeadCortexError):
-                raise
-            raise HeadCortexError("NaNLMind candidate evaluation is unavailable") from exc
-        except (UnicodeError, json.JSONDecodeError) as exc:
-            raise HeadCortexError("NaNLMind candidate evaluation returned invalid JSON") from exc
-        if not isinstance(result, dict) or result.get("schema") != "nanlm.head-candidate-evaluation-response/1":
-            raise HeadCortexError("unsupported NaNLMind candidate evaluation response")
-        if result.get("promotion_allowed") is not False or result.get("canonical_state_modified") is not False:
+        if not isinstance(result, dict) or result.get("schema") != response_schema:
+            raise HeadCortexError("unsupported NaNLMind response schema: " + response_schema)
+        if require_non_promotion and (
+            result.get("promotion_allowed") is not False
+            or result.get("canonical_state_modified") is not False
+        ):
             raise HeadCortexError("candidate evaluation violated non-promotion contract")
         return result
 
-    def evaluate_candidate(self, request: dict) -> dict:
-        if not isinstance(request, dict) or request.get("schema") != "nanlm.head-candidate-evaluation-request/1":
-            raise ValueError("unsupported head-candidate evaluation request")
-        body = json.dumps(request, sort_keys=True, separators=(",", ":"),
-                          ensure_ascii=False).encode("utf-8")
-        if len(body) > 1_048_576:
-            raise ValueError("candidate evaluation request exceeds 1 MiB")
-        call = Request(
-            self.endpoint + "/v1/head-cortex/candidate/evaluate", data=body,
-            headers={"Authorization": "Bearer " + self.token,
-                     "Content-Type": "application/json", "Accept": "application/json"},
-            method="POST",
+    def process(self, package: dict) -> dict:
+        return self._post(
+            "/v1/head-cortex/process", package,
+            "nanlm.hermes-evidence-package", "nanlm.head-cortex-response",
+            4_194_304,
         )
-        try:
-            with urlopen(call, timeout=self.timeout) as response:
-                raw = response.read(1_048_577)
-                if len(raw) > 1_048_576:
-                    raise HeadCortexError("candidate evaluation response exceeds 1 MiB")
-                result = json.loads(raw.decode("utf-8"))
-        except HTTPError as exc:
-            raise HeadCortexError("NaNLMind candidate evaluation returned HTTP %d" % exc.code) from exc
-        except (URLError, TimeoutError, OSError) as exc:
-            raise HeadCortexError("NaNLMind candidate evaluation is unavailable") from exc
-        except (UnicodeError, json.JSONDecodeError) as exc:
-            raise HeadCortexError("NaNLMind candidate evaluation returned invalid JSON") from exc
-        if not isinstance(result, dict) or result.get("schema") != "nanlm.head-candidate-evaluation-response/1":
-            raise HeadCortexError("unsupported NaNLMind candidate evaluation response")
-        return result
+
+    def create_candidate(self, request: dict) -> dict:
+        return self._post(
+            "/v1/head-cortex/candidate", request,
+            "nanlm.head-candidate-request/1", "nanlm.head-candidate-response/1",
+            65_536,
+        )
+
+    def evaluate_candidate(self, request: dict) -> dict:
+        return self._post(
+            "/v1/head-cortex/candidate/evaluate", request,
+            "nanlm.head-candidate-evaluation-request/1",
+            "nanlm.head-candidate-evaluation-response/1", 1_048_576,
+            require_non_promotion=True,
+        )
