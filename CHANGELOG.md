@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.1.0 — 2026-11-07
+
+- Added autonomous CLOCKED mode planning, task-plan validation, scoped gateway
+  execution, and revisioned scratch.
+- Added `/nanlm clocked` commands for plan, execute, scratch, head processing,
+  candidate learning, candidate evaluation, and synthesis.
+- Added isolated NaN head-cortex candidate creation/learning/evaluation with
+  explicit non-promotion guarantees and held-out validation.
+- Added dataset SHA-256 attestation and CLOCKED weak-supervision boundaries.
+- Added PII fail-closed filtering and strict task-plan schema enforcement.
+- Merged HERMES PR #4 and aligned all version references at 1.1.0.
+
 ## 1.0.1 — 2026-11-06
 
 - Added a mandatory full-Boolean foundation gate: 256 heads × 4 truth rows,

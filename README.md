@@ -78,7 +78,7 @@ plugins:
 The plugin itself needs no Google API key. It uses the model provider configured
 in Hermes (local Ollama, a custom endpoint, or any configured provider).
 
-**Version 1.0.1 — released 2026-11-06**
+**Version 1.1.0 — released 2026-11-07**
 
 NaNLMind Hermes connects a Hermes agent to a local NaNLMind 256-head universe.
 It provides:
@@ -488,6 +488,10 @@ and the limits of the experiment.
 
 ## 12. Versioning
 
+- `1.1.0` — 2026-11-07: CLOCKED gateway planning/execution and scratch tools,
+  weak-supervision candidate learning, isolated NaN head-cortex evaluation,
+  dataset attestation and held-out validation, plus the full-Boolean foundation
+  gate and architecture-aware training baselines.
 - `1.0.1` — 2026-11-06: mandatory full-Boolean foundation gate, architecture-aware
   model planning, chat checkpoints after logic/words/sentences rounds, baseline
   metrics, and no-robust-learning conclusion.
