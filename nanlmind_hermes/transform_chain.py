@@ -362,11 +362,17 @@ def postflight(package: dict, response: dict, prepared: dict) -> dict:
     abstentions = response.get("abstentions", [])
     if not isinstance(abstentions, list):
         abstentions = [{"reason": "malformed_abstention_receipt"}]
-    decision = ("abstain" if consensus in ("UNKNOWN", "CONFLICT") or abstentions
+    hard_abstentions = [
+        item for item in abstentions
+        if not (isinstance(item, dict)
+                and item.get("reason") == "model_output_is_inference_not_ground_truth")
+    ]
+    decision = ("abstain" if consensus in ("UNKNOWN", "CONFLICT") or hard_abstentions
                 else "review_only")
     control = {
         "decision": decision,
         "truth_state": consensus,
+        "hard_abstention_count": len(hard_abstentions),
         "canonical_mutation_allowed": False,
         "promotion_allowed": False,
         "clocked_outputs_are_ground_truth": False,
