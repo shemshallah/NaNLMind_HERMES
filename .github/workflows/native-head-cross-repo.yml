@@ -6,10 +6,11 @@ on:
       - 'nanlmind_hermes/head_bank_transport.py'
       - 'nanlmind_hermes/native_head_fence.py'
       - 'nanlmind_hermes/native_head_checkpoint.py'
-      - 'nanlmind_hermes/chart_storage.py'
       - 'nanlmind_hermes/universe_chart.py'
       - 'nanlmind_hermes/universe_root.py'
       - 'nanlmind_hermes/universe_pack.py'
+      - 'tests/test_native_head_checkpoint.py'
+      - 'tests/test_local_runner_native_rebase.py'
       - '.github/workflows/native-head-cross-repo.yml'
   pull_request:
     paths:
@@ -21,6 +22,8 @@ on:
       - 'nanlmind_hermes/universe_chart.py'
       - 'nanlmind_hermes/universe_root.py'
       - 'nanlmind_hermes/universe_pack.py'
+      - 'tests/test_native_head_checkpoint.py'
+      - 'tests/test_local_runner_native_rebase.py'
       - '.github/workflows/native-head-cross-repo.yml'
   workflow_dispatch:
 permissions:
@@ -40,7 +43,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: shemshallah/NaNROUTER
-          ref: 5a5e7e2d1921ac079b54844d20e975ba94fcc3ba
+          ref: e46f4294493cdc1bd5b0bfdc0284ff6365d97dde
           path: router
       - uses: actions/checkout@v4
         with:
