@@ -1,4 +1,119 @@
 {
+  "all_heads": {
+    "active_per_context": 256,
+    "dictionary_in_superposition": true,
+    "head_0": "NaNNet + polarity prior",
+    "heads": 256,
+    "heads_with_distribution": 256,
+    "letter_to_head_mapping": false,
+    "letters_per_head": 27,
+    "observations": 67196,
+    "stored_words": 0,
+    "superposition_heads": 256
+  },
+  "all_heads_examples": {
+    "in": {
+      "head_votes": {
+        "$": 136,
+        "e": 20
+      },
+      "top": [
+        [
+          "$",
+          0.122096
+        ],
+        [
+          "e",
+          0.103683
+        ],
+        [
+          "i",
+          0.083207
+        ],
+        [
+          "a",
+          0.076401
+        ],
+        [
+          "n",
+          0.06684
+        ],
+        [
+          "r",
+          0.065531
+        ]
+      ]
+    },
+    "qu": {
+      "head_votes": {
+        "$": 144,
+        "e": 20
+      },
+      "top": [
+        [
+          "$",
+          0.12244
+        ],
+        [
+          "e",
+          0.103758
+        ],
+        [
+          "i",
+          0.083909
+        ],
+        [
+          "a",
+          0.076799
+        ],
+        [
+          "n",
+          0.067367
+        ],
+        [
+          "r",
+          0.066009
+        ]
+      ]
+    },
+    "th": {
+      "head_votes": {
+        "$": 141,
+        "e": 20
+      },
+      "top": [
+        [
+          "$",
+          0.122434
+        ],
+        [
+          "e",
+          0.104822
+        ],
+        [
+          "i",
+          0.083696
+        ],
+        [
+          "a",
+          0.076045
+        ],
+        [
+          "n",
+          0.067358
+        ],
+        [
+          "r",
+          0.066575
+        ]
+      ]
+    }
+  },
+  "all_heads_result": {
+    "accuracy": 0.1167,
+    "letters": 33444,
+    "top3": 0.3032
+  },
   "archive": "/storage/emulated/0/Download/NaNLMind/wn3.1.dict.zip",
   "bigram_result": {
     "accuracy": 0.1903,
@@ -269,6 +384,7 @@
       ]
     }
   },
+  "frequency_weighted_train": 8000,
   "letter_to_head_mapping": false,
   "note": "each head holds a distribution over the whole alphabet; a context activates a population and the distributions collapse; the dictionary is the superposition, not a word list",
   "population": {

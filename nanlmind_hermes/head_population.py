@@ -21,15 +21,19 @@ def fnv(text: str, salt: int = 0) -> int:
 
 
 class HeadPopulation:
-    def __init__(self, heads: int = 256, active: int = 16):
+    def __init__(self, heads: int = 256, active: int = 16,
+                 prior_weight: float = 1.0):
         self.head_count = heads
         self.active_count = active
+        self.prior_weight = prior_weight
         self.heads: list[Counter] = [Counter() for _ in range(heads)]
         self.prior = Counter()
         self.observations = 0
 
     def _active(self, context: str) -> list[int]:
         # Head 0 is the shared NaNNet/polarity prior; 1..255 are population heads.
+        if self.active_count >= self.head_count - 1:
+            return list(range(self.head_count))
         result = {0}
         for salt in range(self.active_count):
             result.add(fnv(context, salt) % (self.head_count - 1) + 1)
@@ -67,7 +71,11 @@ class HeadPopulation:
     def distribution(self, context: str) -> dict[str, float]:
         scores: Counter = Counter()
         for head in self._active(context):
-            scores.update(self.heads[head])
+            if head == 0:
+                for letter, count in self.heads[head].items():
+                    scores[letter] += count * self.prior_weight
+            else:
+                scores.update(self.heads[head])
         total = sum(scores.values())
         if not total:
             scores.update(self.prior)
@@ -78,6 +86,8 @@ class HeadPopulation:
     def head_votes(self, context: str) -> dict[str, int]:
         votes: Counter = Counter()
         for head in self._active(context):
+            if head == 0 and self.prior_weight <= 0.0:
+                continue
             counts = self.heads[head]
             if not counts:
                 continue
@@ -133,6 +143,7 @@ class HeadPopulation:
             "observations": self.observations,
             "letters_per_head": len(ALPHABET),
             "letter_to_head_mapping": False,
+            "prior_weight": self.prior_weight,
             "dictionary_in_superposition": True,
             "stored_words": 0,
             "superposition_heads": nonzero,

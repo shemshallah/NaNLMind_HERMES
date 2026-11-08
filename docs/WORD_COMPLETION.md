@@ -19,6 +19,133 @@ Training streams words and partial words; no dictionary text is kept.
 |---|---:|---:|
 | head population | 0.1136 | 0.3062 |
 | bigram baseline | 0.1903 |  |
+| all 256 heads, frequency-weighted (8k) | 0.1167 | 0.3032 |
+
+## All-256-head run
+
+Head 0 is the void/NaNNet prior; heads 1–255 all participate. Training
+uses an 8k frequency-weighted curriculum (common words count more;
+counts are order-independent).
+
+```json
+{
+  "examples": {
+    "in": {
+      "head_votes": {
+        "$": 136,
+        "e": 20
+      },
+      "top": [
+        [
+          "$",
+          0.122096
+        ],
+        [
+          "e",
+          0.103683
+        ],
+        [
+          "i",
+          0.083207
+        ],
+        [
+          "a",
+          0.076401
+        ],
+        [
+          "n",
+          0.06684
+        ],
+        [
+          "r",
+          0.065531
+        ]
+      ]
+    },
+    "qu": {
+      "head_votes": {
+        "$": 144,
+        "e": 20
+      },
+      "top": [
+        [
+          "$",
+          0.12244
+        ],
+        [
+          "e",
+          0.103758
+        ],
+        [
+          "i",
+          0.083909
+        ],
+        [
+          "a",
+          0.076799
+        ],
+        [
+          "n",
+          0.067367
+        ],
+        [
+          "r",
+          0.066009
+        ]
+      ]
+    },
+    "th": {
+      "head_votes": {
+        "$": 141,
+        "e": 20
+      },
+      "top": [
+        [
+          "$",
+          0.122434
+        ],
+        [
+          "e",
+          0.104822
+        ],
+        [
+          "i",
+          0.083696
+        ],
+        [
+          "a",
+          0.076045
+        ],
+        [
+          "n",
+          0.067358
+        ],
+        [
+          "r",
+          0.066575
+        ]
+      ]
+    }
+  },
+  "result": {
+    "accuracy": 0.1167,
+    "letters": 33444,
+    "top3": 0.3032
+  },
+  "status": {
+    "active_per_context": 256,
+    "dictionary_in_superposition": true,
+    "head_0": "NaNNet + polarity prior",
+    "heads": 256,
+    "heads_with_distribution": 256,
+    "letter_to_head_mapping": false,
+    "letters_per_head": 27,
+    "observations": 67196,
+    "stored_words": 0,
+    "superposition_heads": 256
+  }
+}
+```
 
 ## Collapse examples
 

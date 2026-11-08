@@ -32,6 +32,13 @@ class HeadPopulationTests(unittest.TestCase):
                          if hasattr(population.distribution("th"), "most_common")
                          else next(iter(population.distribution("th"))), "e")
 
+    def test_all_256_heads_activate_with_head_zero_as_prior(self):
+        population = HeadPopulation(heads=256, active=255)
+        active = population._active("th")
+        self.assertEqual(len(active), 256)
+        self.assertIn(0, active)
+        self.assertEqual(active, list(range(256)))
+
     def test_bigram_baseline_trains(self):
         baseline = BigramBaseline()
         baseline.train(["the", "then", "there"])

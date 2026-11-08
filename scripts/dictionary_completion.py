@@ -24,9 +24,10 @@ FALLBACK = "/storage/emulated/0/Download/hyperllm/builder/wn3.1.dict.zip"
 MAX_WORDS = 20_000
 
 
-def load_lemmas() -> list[str]:
+def load_lemmas() -> tuple[list[str], dict[str, int]]:
     path = ARCHIVE if Path(ARCHIVE).exists() else FALLBACK
     words: set[str] = set()
+    frequency: dict[str, int] = {}
     with zipfile.ZipFile(path) as archive:
         for name in archive.namelist():
             if "/index." not in name or name.endswith("index.sense"):
@@ -44,16 +45,23 @@ def load_lemmas() -> list[str]:
                     if "_" in lemma or not lemma.isalpha() or not 2 <= len(lemma) <= 24:
                         continue
                     words.add(lemma)
+                    try:
+                        pointer_count = int(parts[3])
+                        sense_index = 4 + pointer_count
+                        tagsense = int(parts[sense_index + 1])
+                        frequency[lemma] = max(frequency.get(lemma, 0), tagsense)
+                    except (IndexError, ValueError):
+                        frequency.setdefault(lemma, 0)
     ordered = sorted(words)
     if len(ordered) > MAX_WORDS:
         rng = random.Random(7)
         ordered = sorted(rng.sample(ordered, MAX_WORDS))
-    return ordered
+    return ordered, frequency
 
 
 def main():
     output = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "docs/WORD_COMPLETION.md"
-    words = load_lemmas()
+    words, frequency = load_lemmas()
     train = [word for word in words if fnv(word) % 5 != 0]
     test = [word for word in words if fnv(word) % 5 == 0]
 
@@ -77,6 +85,23 @@ def main():
             "head_votes": population.head_votes(context),
         }
 
+    # All 256 heads, head 0 as the void/prior; frequency-weighted curriculum.
+    all_heads = HeadPopulation(heads=256, active=255)
+    weighted_train = sorted(train, key=lambda word: -frequency.get(word, 0))[:8000]
+    for word in weighted_train:
+        weight = 1.0 + min(4.0, frequency.get(word, 0) ** 0.5)
+        all_heads.observe(word, weight=weight)
+    all_heads_result = all_heads.evaluate(test)
+    all_heads.prior_weight = 0.0
+    all_heads_no_prior = all_heads.evaluate(test)
+    all_heads.prior_weight = 1.0
+    all_example = {}
+    for context in ("th", "qu", "in"):
+        all_example[context] = {
+            "top": list(all_heads.distribution(context).items())[:6],
+            "head_votes": all_heads.head_votes(context),
+        }
+
     prefix = {}
     for length in (2, 3, 4, 5):
         correct = total = 0
@@ -97,6 +122,11 @@ def main():
         "population": population.status(),
         "population_result": population_result,
         "bigram_result": baseline_result,
+        "all_heads_result": all_heads_result,
+        "all_heads_no_prior": all_heads_no_prior,
+        "all_heads": all_heads.status(),
+        "all_heads_examples": all_example,
+        "frequency_weighted_train": len(weighted_train),
         "prefix_accuracy": prefix,
         "examples": examples,
         "superposition": population.superposition()[:8],
@@ -132,6 +162,17 @@ def main():
         "|---|---:|---:|",
         f"| head population | {population_result['accuracy']} | {population_result['top3']} |",
         f"| bigram baseline | {baseline_result['accuracy']} |  |",
+        "",
+        "## All-256-head run",
+        "",
+        "Head 0 is the void/NaNNet prior; heads 1–255 all participate. Training",
+        "uses an 8k frequency-weighted curriculum (common words count more;",
+        "counts are order-independent).",
+        "",
+        "```json",
+        json.dumps({"result": all_heads_result, "status": all_heads.status(),
+                    "examples": all_example}, indent=2, sort_keys=True)[:6000],
+        "```",
         "",
         "## Collapse examples",
         "",
