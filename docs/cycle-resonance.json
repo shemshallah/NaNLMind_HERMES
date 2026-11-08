@@ -1,0 +1,70 @@
+{
+  "cycle_dimension": 32385,
+  "edges": 32640,
+  "energy_relative_error": 2.207739901964501e-15,
+  "fundamental_cycles": 32385,
+  "n": 256,
+  "nonuniform": {
+    "cycle_norm": 129.57599317462302,
+    "fundamental_fluxes": 32385,
+    "gradient_cycle_orthogonality": 7.307127125599777e-12,
+    "gradient_norm": 205.5840473915731,
+    "max_cycle_divergence": 3.861502235561494e-13,
+    "mirror_residual": 0.0,
+    "phase_locking_order": 0.890169224085449,
+    "reconstruction_error": 2.482534153247273e-16,
+    "spectral_gap": 192.6755784729074,
+    "top_eigenvalues": [
+      228.45491757735027,
+      35.77933910444286,
+      34.24583991877743,
+      15.94093479299104,
+      12.198547016283062,
+      8.590489957448243,
+      7.092497846072505,
+      6.766625981745913
+    ],
+    "top_ipr": [
+      0.004097,
+      0.006908,
+      0.00675,
+      0.007392
+    ],
+    "triangle_coherence_fraction_above_half": 0.9576347074262775,
+    "triangle_coherence_mean": 0.9044070508430594,
+    "triangle_coherence_p90": 0.9992008757136881
+  },
+  "note": "classical cycle/Hodge and resonance math; not quantum hardware",
+  "schema": "nanlmind-hermes-cycle-space/1",
+  "triangles": 2763520,
+  "uniform": {
+    "cycle_norm": 146.935359937627,
+    "fundamental_fluxes": 32385,
+    "gradient_cycle_orthogonality": 0.0,
+    "gradient_norm": 209.02152999152983,
+    "max_cycle_divergence": 0.0,
+    "mirror_residual": 0.0,
+    "phase_locking_order": 1.0,
+    "reconstruction_error": 0.0,
+    "spectral_gap": 256.0,
+    "top_eigenvalues": [
+      256.00000000000006,
+      6.459788272744712e-14,
+      5.778247542636387e-16,
+      3.8612826491253854e-16,
+      2.833797931155454e-16,
+      1.5243502401128247e-16,
+      1.1977783690987349e-16,
+      1.1092780610713426e-16
+    ],
+    "top_ipr": [
+      0.003906,
+      0.290791,
+      0.298695,
+      0.223923
+    ],
+    "triangle_coherence_fraction_above_half": 1.0,
+    "triangle_coherence_mean": 1.0,
+    "triangle_coherence_p90": 1.0
+  }
+}
