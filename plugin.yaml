@@ -26,6 +26,8 @@ provides_tools:
   - nanlm_universe_resolve
   - nanlm_universe_renew
   - nanlm_universe_release
+  - nanlm_universe_dispatch
+  - nanlm_universe_ack
   - nanlm_generate_curriculum
   - nanlm_curriculum_experiment
   - nanlm_logic_session
