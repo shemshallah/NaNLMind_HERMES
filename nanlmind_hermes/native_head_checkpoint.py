@@ -65,14 +65,15 @@ class NativeHeadCheckpointCoordinator:
             raise NativeHeadCheckpointConflict("native result not in exact next durable chart")
         return state
 
-    def _result(self, *, request, universe_id, after_sha256, recovered):
+    def _result(self, *, request, lease_receipt, network_head,
+                universe_id, after_sha256, recovered):
         state = self._after(
             request=request, universe_id=universe_id,
             bank_after_sha256=after_sha256,
         )
         confirmed = self.journal.confirm_local_checkpoint(
-            request=request, lease_receipt=self._receipt,
-            network_head=self._network_head,
+            request=request, lease_receipt=lease_receipt,
+            network_head=network_head,
         )
         if (confirmed.get("local_checkpoint_verified") is not True
                 or confirmed.get("bank_after_sha256") != after_sha256
@@ -129,14 +130,13 @@ class NativeHeadCheckpointCoordinator:
             raise NativeHeadCheckpointError("invalid staged bank SHA-256")
         # Do not let an arbitrary universe identifier select a different
         # HERMES chart. The fence itself is bound to trusted deployment IDs.
-        self._receipt = lease_receipt
-        self._network_head = network_head
         state = self.fence(universe_id)
         if state.get("parent_root_sha256") != request.parent_root_sha256:
             raise NativeHeadCheckpointConflict("canonical parent root changed")
         if staged["state"] == "checkpointed_locally":
             return self._result(
-                request=request, universe_id=universe_id,
+                request=request, lease_receipt=lease_receipt,
+                network_head=network_head, universe_id=universe_id,
                 after_sha256=after_sha256, recovered=True,
             )
         raw_bank = staged.get("raw_bank")
@@ -149,7 +149,8 @@ class NativeHeadCheckpointCoordinator:
             # Power loss after successful N16SNAP1 commit but before journal
             # confirmation: don't execute again or perform an extra write.
             return self._result(
-                request=request, universe_id=universe_id,
+                request=request, lease_receipt=lease_receipt,
+                network_head=network_head, universe_id=universe_id,
                 after_sha256=after_sha256, recovered=True,
             )
         if generation != request.chart_generation:
@@ -198,6 +199,7 @@ class NativeHeadCheckpointCoordinator:
         if committed_generation != request.chart_generation + 1:
             raise NativeHeadCheckpointError("snapshot returned unexpected generation")
         return self._result(
-            request=request, universe_id=universe_id,
+            request=request, lease_receipt=lease_receipt,
+            network_head=network_head, universe_id=universe_id,
             after_sha256=after_sha256, recovered=False,
         )
