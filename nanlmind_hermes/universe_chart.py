@@ -724,6 +724,7 @@ class HeadScratchRegister:
 
 
 _RUNNERS: dict[str, "LocalRunner"] = {}
+_RUNNERS_LOCK = threading.RLock()
 
 
 class LocalRunner:
@@ -756,6 +757,13 @@ class LocalRunner:
 
     @classmethod
     def open(cls, ctx) -> "LocalRunner":
+        # One process-level cache entry per state directory. A concurrent
+        # plugin startup must never instantiate two competing HERMES charts.
+        with _RUNNERS_LOCK:
+            return cls._open_serialized(ctx)
+
+    @classmethod
+    def _open_serialized(cls, ctx) -> "LocalRunner":
         state_dir = Path(str(ctx.get_config("state_dir", "~/.local/share/nanlmind-hermes"))).expanduser()
         key = str(state_dir)
         runner = _RUNNERS.get(key)
@@ -773,20 +781,21 @@ class LocalRunner:
             runner = cls(chart, register)
             _RUNNERS[key] = runner
         elif latest is not None:
-            chart = load_chart(state_dir)
-            if chart is not None and runner.chart is not chart \
-                    and (runner.chart is None or runner.chart.root_hash != chart.root_hash):
-                restore_local_chart(chart, state_dir)
-                from .universe_root import attach_universe_root
-                attach_universe_root(chart)
-                runner.chart = chart
-                runner.register.chart = chart
-                runner.register.reason = "trained chart"
-                runner.register._refresh_from_rail()
-                runner.register._sync_extension()
-                runner.heads.chart = chart
-                runner.heads._write_chart()
-                runner.local_memory_bytes = PAGE_BYTES + 2 * REGISTER_BYTES
+            with runner._write_lock:
+                chart = load_chart(state_dir)
+                if chart is not None and runner.chart is not chart \
+                        and (runner.chart is None or runner.chart.root_hash != chart.root_hash):
+                    restore_local_chart(chart, state_dir)
+                    from .universe_root import attach_universe_root
+                    attach_universe_root(chart)
+                    runner.chart = chart
+                    runner.register.chart = chart
+                    runner.register.reason = "trained chart"
+                    runner.register._refresh_from_rail()
+                    runner.register._sync_extension()
+                    runner.heads.chart = chart
+                    runner.heads._write_chart()
+                    runner.local_memory_bytes = PAGE_BYTES + 2 * REGISTER_BYTES
         return runner
 
     def commit_native_head_observation(self, *, coordinator, request,
