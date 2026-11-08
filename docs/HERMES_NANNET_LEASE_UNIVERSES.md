@@ -1,7 +1,11 @@
 # HERMES → NANNET login → NaNROUTER per-lease universe
 
-This is a staged integration, **not** a claim that HERMES already receives
-a live remote universe lease. The native NaN16DE guest lifecycle is now in
+This is a staged integration. The HERMES plugin now contains signed
+`nanlm_universe_open/status/resolve/renew/release` portal clients and
+encrypted local router receipt storage **on this integration branch**, but
+until the portal and router services are deployed with matching secrets,
+HERMES does not receive a live remote universe lease. The native
+NaN16DE guest lifecycle is now in
 `nanlmind_hermes/nan/hermes_lease.nas`, with regression coverage
 `hermes_lease_test.nas` and the GitHub VM gate.
 
@@ -98,3 +102,32 @@ rather than untrusted chat/tool input.
 See NaNROUTER PR #61 and
 `NaNROUTER/docs/HERMES_NANNET_KOYEB_MIGRATION.md` for the
 authoritative native handoff and deployment staging contract.
+
+## New HERMES remote-lease tools and integration limits
+
+`nanlm_universe_status`, `nanlm_universe_open`, `nanlm_universe_resolve`,
+`nanlm_universe_renew` and `nanlm_universe_release` are registered in
+`plugin.yaml` and `register(ctx)`. They use the same encrypted installation
+identity, issuer-pinned NANNET portal origin and Ed25519 request signature as
+existing NANNET scope operations. Each request requires the new guest-eligible
+`hermes:lease` scope from NaNLMind NANNET portal PR #32, so existing paired
+tokens without that scope must be re-paired with explicit authorization.
+
+Remote receipts are router-HMAC-signed opaque records and locally encrypted
+under `NANNET_MASTER_KEY`. Head resolution is rechecked by the remote router
+and guarded against wrong installation, stale revocation, head255, and
+mismatching route/receipt fields. The client does NOT validate the router's
+private HMAC locally; it relies on authenticated NANNET-to-router delegation
+and live router resolution. `native_guest_activated` remains **false**
+until a trusted native VM loader applies the verified receipt and actually
+executes `nhl_open` and `nhl_nannet_route`.
+
+The shared physical HW2 endpoint maps to network point 3 for all independently
+leased HERMES universes, and their 255 computational heads are namespaced by
+universe ID, lease ID and generation. HW255 would map to point 256; local
+head255 is independently reserved for the per-universe NANNET port.
+
+Integration: [NaNROUTER PR #61](https://github.com/shemshallah/NaNROUTER/pull/61)
+and [NaNLMind NANNET portal PR #32](https://github.com/shemshallah/NaNLMind/pull/32).
+The three-repo smoke test checks the real signed HTTP **control plane** with
+disposable test servers, not hosted Koyeb execution.
