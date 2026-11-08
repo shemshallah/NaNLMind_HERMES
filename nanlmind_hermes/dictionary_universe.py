@@ -37,8 +37,13 @@ class DictionaryUniverse:
         for _ in range(depth):
             next_frontier = []
             for node in frontier:
-                for parent in self.synsets.get(node, {}).get("hypernyms", []):
-                    if parent not in found:
+                data = self.synsets.get(node, {})
+                parents = list(data.get("hypernyms", []))
+                parents += [pointer.get("target_offset")
+                            for pointer in data.get("pointers", [])
+                            if pointer.get("relation") in {"hypernym", "instance_hypernym"}]
+                for parent in parents:
+                    if parent is not None and parent not in found:
                         found.add(parent)
                         next_frontier.append(parent)
             frontier = next_frontier
@@ -51,14 +56,80 @@ class DictionaryUniverse:
         return sorted({prop for parent, prop in self.properties.items()
                        if parent in closure})
 
+    def relations(self, offset: int, relation: str | None = None) -> list[dict]:
+        """Typed outgoing edges; hypernym-only records are upgraded on read."""
+        data = self.synsets.get(offset, {})
+        pointers = list(data.get("pointers", []))
+        if not pointers and data.get("hypernyms"):
+            pointers = [{"relation": "hypernym", "target_pos": data.get("pos", "n"),
+                         "target_offset": target}
+                        for target in data["hypernyms"]]
+        result = []
+        for pointer in pointers:
+            name = pointer.get("relation", "unknown")
+            if relation is not None and name != relation:
+                continue
+            target_offset = pointer.get("target_offset")
+            target = self.synsets.get(target_offset, {})
+            result.append({
+                "relation": name,
+                "source": self.synset_address(offset),
+                "target": self.synset_address(target_offset),
+                "target_offset": target_offset,
+                "target_pos": pointer.get("target_pos", target.get("pos")),
+                "target_lemmas": target.get("lemmas", []),
+            })
+        return result
+
+    def define(self, offset: int) -> dict:
+        """Structured definition record; this is a graph readout, not generated prose."""
+        data = self.synsets.get(offset, {})
+        gloss = data.get("gloss", "")
+        definition = data.get("definition") or gloss.split('; "', 1)[0].strip()
+        return {
+            "offset": offset,
+            "address": self.synset_address(offset),
+            "pos": data.get("pos"),
+            "lemmas": data.get("lemmas", []),
+            "lexname": data.get("lexname"),
+            "definition": definition,
+            "examples": data.get("examples", []),
+            "inherited": self.inherit(offset),
+            "hypernyms": self.relations(offset, "hypernym")
+                          + self.relations(offset, "instance_hypernym"),
+            "relations": self.relations(offset),
+        }
+
+    def hypernym_chain(self, offset: int, depth: int = 8) -> list[dict]:
+        chain = []
+        current = offset
+        for _ in range(depth):
+            parents = self.relations(current, "hypernym")
+            parents += self.relations(current, "instance_hypernym")
+            if not parents:
+                break
+            current = parents[0]["target_offset"]
+            chain.append(self.define(current))
+        return chain
+
+    def learn_word(self, word: str, offset: int) -> str:
+        """Attach a new word leaf to an existing synset without a dense matrix."""
+        key = str(word).casefold()
+        offsets = self.index.setdefault(key, [])
+        if offset not in offsets:
+            offsets.append(offset)
+        return self.word_address(word, offset)
+
     def query(self, word: str) -> dict:
         offsets = self.index.get(str(word).casefold(), [])
         results = []
         for offset in offsets:
+            data = self.synsets.get(offset, {})
             results.append({
                 "offset": offset,
                 "address": self.synset_address(offset),
-                "lemmas": self.synsets.get(offset, {}).get("lemmas", []),
+                "lemmas": data.get("lemmas", []),
+                "definition": data.get("definition", data.get("gloss", "")),
                 "inherited": self.inherit(offset),
             })
         return {"word": word, "synsets": results}

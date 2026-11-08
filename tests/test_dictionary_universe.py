@@ -36,6 +36,23 @@ class DictionaryUniverseTests(unittest.TestCase):
         self.assertEqual(interface["upstream"], "HW2:0")
         self.assertTrue(interface["bidirectional"])
 
+    def test_definition_record_and_new_word_leaf(self):
+        self.universe.synsets[4].update({
+            "gloss": "a flightless seabird; \"the penguin swam\"",
+            "definition": "a flightless seabird",
+            "examples": ["the penguin swam"],
+            "pointers": [{"relation": "hypernym", "target_pos": "n",
+                          "target_offset": 3}],
+        })
+        record = self.universe.define(4)
+        self.assertEqual(record["definition"], "a flightless seabird")
+        self.assertEqual(record["hypernyms"][0]["target_offset"], 3)
+        self.assertEqual(record["inherited"], ["living"])
+        self.universe.learn_word("sparklebeak", 4)
+        result = self.universe.query("sparklebeak")
+        self.assertEqual(result["synsets"][0]["offset"], 4)
+        self.assertEqual(result["synsets"][0]["inherited"], ["living"])
+
 
 if __name__ == "__main__":
     unittest.main()

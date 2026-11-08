@@ -1,0 +1,754 @@
+{
+  "archive": "/storage/emulated/0/Download/NaNLMind/wn3.1.dict.zip",
+  "gloss_chars": 8873693,
+  "hypernym_edges": 97761,
+  "interface": {
+    "binary_translation": "NaN16DE",
+    "link": "HW4:0",
+    "route": "nan://HW4:BS0:MC0:SC0:GM0",
+    "upstream": "HW2:0"
+  },
+  "lemmas": 207272,
+  "positions": {
+    "a": {
+      "gloss_chars": 595275,
+      "lemmas": 9688,
+      "pointers": 30169,
+      "synsets": 7468
+    },
+    "n": {
+      "gloss_chars": 6188706,
+      "lemmas": 146547,
+      "pointers": 269711,
+      "synsets": 82192
+    },
+    "r": {
+      "gloss_chars": 279876,
+      "lemmas": 5592,
+      "pointers": 4083,
+      "synsets": 3625
+    },
+    "s": {
+      "gloss_chars": 845930,
+      "lemmas": 20384,
+      "pointers": 19277,
+      "synsets": 10717
+    },
+    "v": {
+      "gloss_chars": 963906,
+      "lemmas": 25061,
+      "pointers": 54963,
+      "synsets": 13789
+    }
+  },
+  "relations": {
+    "also_see": 3276,
+    "antonym": 7983,
+    "attribute": 1278,
+    "cause": 221,
+    "derivationally_related_form": 74680,
+    "domain_region": 1499,
+    "domain_topic": 6690,
+    "domain_usage": 1370,
+    "entailment": 408,
+    "hypernym": 89172,
+    "hyponym": 89172,
+    "instance_hypernym": 8589,
+    "instance_hyponym": 8589,
+    "member_holonym": 12288,
+    "member_meronym": 12288,
+    "member_of_domain_region": 1499,
+    "member_of_domain_topic": 6690,
+    "member_of_domain_usage": 1370,
+    "part_holonym": 9111,
+    "part_meronym": 9111,
+    "participle_of": 73,
+    "pertainym": 8074,
+    "similar_to": 21434,
+    "substance_holonym": 797,
+    "substance_meronym": 797,
+    "verb_group": 1744
+  },
+  "samples": {
+    "animal": {
+      "definition": "a living organism characterized by voluntary movement",
+      "examples": [],
+      "hypernym_chain": [
+        {
+          "definition": "a living organism characterized by voluntary movement",
+          "lemmas": [
+            "animal",
+            "animate being",
+            "beast",
+            "brute"
+          ],
+          "synset": "n:00015568"
+        },
+        {
+          "definition": "a living thing that has (or can develop) the ability to act or function independently",
+          "lemmas": [
+            "organism",
+            "being"
+          ],
+          "synset": "n:00004475"
+        },
+        {
+          "definition": "a living (or once living) entity",
+          "lemmas": [
+            "living thing",
+            "animate thing"
+          ],
+          "synset": "n:00004258"
+        },
+        {
+          "definition": "an assemblage of parts that is regarded as a single entity",
+          "lemmas": [
+            "whole",
+            "unit"
+          ],
+          "synset": "n:00003553"
+        },
+        {
+          "definition": "a tangible and visible entity; an entity that can cast a shadow",
+          "lemmas": [
+            "object",
+            "physical object"
+          ],
+          "synset": "n:00002684"
+        },
+        {
+          "definition": "an entity that has physical existence",
+          "lemmas": [
+            "physical entity"
+          ],
+          "synset": "n:00001930"
+        },
+        {
+          "definition": "that which is perceived or known or inferred to have its own distinct existence (living or nonliving)",
+          "lemmas": [
+            "entity"
+          ],
+          "synset": "n:00001740"
+        }
+      ],
+      "lexname": "noun.artifact",
+      "synset": "n:00015568",
+      "typed_relations": [
+        {
+          "relation": "hypernym",
+          "symbol": "@",
+          "target_offset": 4475,
+          "target_pos": "n"
+        },
+        {
+          "relation": "member_meronym",
+          "symbol": "#m",
+          "target_offset": 1315584,
+          "target_pos": "n"
+        },
+        {
+          "relation": "derivationally_related_form",
+          "symbol": "+",
+          "target_offset": 1620211,
+          "target_pos": "v"
+        },
+        {
+          "relation": "derivationally_related_form",
+          "symbol": "+",
+          "target_offset": 1266555,
+          "target_pos": "a"
+        },
+        {
+          "relation": "derivationally_related_form",
+          "symbol": "+",
+          "target_offset": 1266555,
+          "target_pos": "a"
+        },
+        {
+          "relation": "derivationally_related_form",
+          "symbol": "+",
+          "target_offset": 1684651,
+          "target_pos": "v"
+        },
+        {
+          "relation": "derivationally_related_form",
+          "symbol": "+",
+          "target_offset": 1684651,
+          "target_pos": "v"
+        },
+        {
+          "relation": "member_of_domain_topic",
+          "symbol": "-c",
+          "target_offset": 58232,
+          "target_pos": "a"
+        },
+        {
+          "relation": "member_of_domain_topic",
+          "symbol": "-c",
+          "target_offset": 148320,
+          "target_pos": "a"
+        },
+        {
+          "relation": "member_of_domain_topic",
+          "symbol": "-c",
+          "target_offset": 161553,
+          "target_pos": "a"
+        },
+        {
+          "relation": "member_of_domain_topic",
+          "symbol": "-c",
+          "target_offset": 216053,
+          "target_pos": "a"
+        },
+        {
+          "relation": "member_of_domain_topic",
+          "symbol": "-c",
+          "target_offset": 314598,
+          "target_pos": "a"
+        }
+      ]
+    },
+    "bird": {
+      "definition": "warm-blooded egg-laying vertebrates characterized by feathers and forelimbs modified as wings",
+      "examples": [],
+      "hypernym_chain": [
+        {
+          "definition": "warm-blooded egg-laying vertebrates characterized by feathers and forelimbs modified as wings",
+          "lemmas": [
+            "bird"
+          ],
+          "synset": "n:01505702"
+        },
+        {
+          "definition": "animals having a bony or cartilaginous skeleton with a segmented spinal column and a large brain enclosed in a skull or cranium",
+          "lemmas": [
+            "vertebrate",
+            "craniate"
+          ],
+          "synset": "n:01474323"
+        },
+        {
+          "definition": "any animal of the phylum Chordata having a notochord or spinal column",
+          "lemmas": [
+            "chordate"
+          ],
+          "synset": "n:01468898"
+        },
+        {
+          "definition": "a living organism characterized by voluntary movement",
+          "lemmas": [
+            "animal",
+            "animate being",
+            "beast",
+            "brute"
+          ],
+          "synset": "n:00015568"
+        },
+        {
+          "definition": "a living thing that has (or can develop) the ability to act or function independently",
+          "lemmas": [
+            "organism",
+            "being"
+          ],
+          "synset": "n:00004475"
+        },
+        {
+          "definition": "a living (or once living) entity",
+          "lemmas": [
+            "living thing",
+            "animate thing"
+          ],
+          "synset": "n:00004258"
+        },
+        {
+          "definition": "an assemblage of parts that is regarded as a single entity",
+          "lemmas": [
+            "whole",
+            "unit"
+          ],
+          "synset": "n:00003553"
+        },
+        {
+          "definition": "a tangible and visible entity; an entity that can cast a shadow",
+          "lemmas": [
+            "object",
+            "physical object"
+          ],
+          "synset": "n:00002684"
+        },
+        {
+          "definition": "an entity that has physical existence",
+          "lemmas": [
+            "physical entity"
+          ],
+          "synset": "n:00001930"
+        }
+      ],
+      "lexname": "noun.body",
+      "synset": "n:01505702",
+      "typed_relations": [
+        {
+          "relation": "hypernym",
+          "symbol": "@",
+          "target_offset": 1474323,
+          "target_pos": "n"
+        },
+        {
+          "relation": "member_meronym",
+          "symbol": "#m",
+          "target_offset": 1504903,
+          "target_pos": "n"
+        },
+        {
+          "relation": "member_meronym",
+          "symbol": "#m",
+          "target_offset": 8007398,
+          "target_pos": "n"
+        },
+        {
+          "relation": "derivationally_related_form",
+          "symbol": "+",
+          "target_offset": 1142291,
+          "target_pos": "v"
+        },
+        {
+          "relation": "member_of_domain_topic",
+          "symbol": "-c",
+          "target_offset": 2705521,
+          "target_pos": "a"
+        },
+        {
+          "relation": "hyponym",
+          "symbol": "~",
+          "target_offset": 1506617,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "symbol": "~",
+          "target_offset": 1517309,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "symbol": "~",
+          "target_offset": 1517500,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "symbol": "~",
+          "target_offset": 1517567,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "symbol": "~",
+          "target_offset": 1517719,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "symbol": "~",
+          "target_offset": 1517944,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "symbol": "~",
+          "target_offset": 1518224,
+          "target_pos": "n"
+        }
+      ]
+    },
+    "car": {
+      "definition": "a conveyance for passengers or freight on a cable railway",
+      "examples": [
+        "they took a cable car to the top of the mountain"
+      ],
+      "hypernym_chain": [
+        {
+          "definition": "a conveyance for passengers or freight on a cable railway",
+          "lemmas": [
+            "cable car",
+            "car"
+          ],
+          "synset": "n:02937835"
+        },
+        {
+          "definition": "a partitioned section, chamber, or separate room within a larger enclosed area",
+          "lemmas": [
+            "compartment"
+          ],
+          "synset": "n:03083745"
+        },
+        {
+          "definition": "an area within a building enclosed by walls and floor and ceiling",
+          "lemmas": [
+            "room"
+          ],
+          "synset": "n:04112987"
+        },
+        {
+          "definition": "a part of a structure having some specific characteristic or function",
+          "lemmas": [
+            "area"
+          ],
+          "synset": "n:02738693"
+        },
+        {
+          "definition": "a thing constructed; a complex entity constructed of many parts",
+          "lemmas": [
+            "structure",
+            "construction"
+          ],
+          "synset": "n:04348764"
+        },
+        {
+          "definition": "a man-made object taken as a whole",
+          "lemmas": [
+            "artifact",
+            "artefact"
+          ],
+          "synset": "n:00022119"
+        },
+        {
+          "definition": "an assemblage of parts that is regarded as a single entity",
+          "lemmas": [
+            "whole",
+            "unit"
+          ],
+          "synset": "n:00003553"
+        },
+        {
+          "definition": "a tangible and visible entity; an entity that can cast a shadow",
+          "lemmas": [
+            "object",
+            "physical object"
+          ],
+          "synset": "n:00002684"
+        },
+        {
+          "definition": "an entity that has physical existence",
+          "lemmas": [
+            "physical entity"
+          ],
+          "synset": "n:00001930"
+        }
+      ],
+      "lexname": "noun.cognition",
+      "synset": "n:02937835",
+      "typed_relations": [
+        {
+          "relation": "hypernym",
+          "symbol": "@",
+          "target_offset": 3083745,
+          "target_pos": "n"
+        },
+        {
+          "relation": "part_meronym",
+          "symbol": "#p",
+          "target_offset": 2938025,
+          "target_pos": "n"
+        }
+      ]
+    },
+    "entity": {
+      "definition": "that which is perceived or known or inferred to have its own distinct existence (living or nonliving)",
+      "examples": [],
+      "hypernym_chain": [
+        {
+          "definition": "that which is perceived or known or inferred to have its own distinct existence (living or nonliving)",
+          "lemmas": [
+            "entity"
+          ],
+          "synset": "n:00001740"
+        }
+      ],
+      "lexname": "noun.artifact",
+      "synset": "n:00001740",
+      "typed_relations": [
+        {
+          "relation": "hyponym",
+          "symbol": "~",
+          "target_offset": 1930,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "symbol": "~",
+          "target_offset": 2137,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "symbol": "~",
+          "target_offset": 4431553,
+          "target_pos": "n"
+        }
+      ]
+    },
+    "penguin": {
+      "definition": "short-legged flightless birds of cold southern especially Antarctic regions having webbed feet and wings modified as flippers",
+      "examples": [],
+      "hypernym_chain": [
+        {
+          "definition": "short-legged flightless birds of cold southern especially Antarctic regions having webbed feet and wings modified as flippers",
+          "lemmas": [
+            "penguin"
+          ],
+          "synset": "n:02058457"
+        },
+        {
+          "definition": "flightless cold-water seabirds: penguins",
+          "lemmas": [
+            "sphenisciform seabird"
+          ],
+          "synset": "n:02058312"
+        },
+        {
+          "definition": "a bird that frequents coastal waters and the open ocean: gulls; pelicans; gannets; cormorants; albatrosses; petrels; etc.",
+          "lemmas": [
+            "seabird",
+            "sea bird",
+            "seafowl"
+          ],
+          "synset": "n:02024449"
+        },
+        {
+          "definition": "wading and swimming and diving birds of either fresh or salt water",
+          "lemmas": [
+            "aquatic bird"
+          ],
+          "synset": "n:01847558"
+        },
+        {
+          "definition": "warm-blooded egg-laying vertebrates characterized by feathers and forelimbs modified as wings",
+          "lemmas": [
+            "bird"
+          ],
+          "synset": "n:01505702"
+        },
+        {
+          "definition": "animals having a bony or cartilaginous skeleton with a segmented spinal column and a large brain enclosed in a skull or cranium",
+          "lemmas": [
+            "vertebrate",
+            "craniate"
+          ],
+          "synset": "n:01474323"
+        },
+        {
+          "definition": "any animal of the phylum Chordata having a notochord or spinal column",
+          "lemmas": [
+            "chordate"
+          ],
+          "synset": "n:01468898"
+        },
+        {
+          "definition": "a living organism characterized by voluntary movement",
+          "lemmas": [
+            "animal",
+            "animate being",
+            "beast",
+            "brute"
+          ],
+          "synset": "n:00015568"
+        },
+        {
+          "definition": "a living thing that has (or can develop) the ability to act or function independently",
+          "lemmas": [
+            "organism",
+            "being"
+          ],
+          "synset": "n:00004475"
+        }
+      ],
+      "lexname": "noun.body",
+      "synset": "n:02058457",
+      "typed_relations": [
+        {
+          "relation": "hypernym",
+          "symbol": "@",
+          "target_offset": 2058312,
+          "target_pos": "n"
+        },
+        {
+          "relation": "member_meronym",
+          "symbol": "#m",
+          "target_offset": 2058085,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "symbol": "~",
+          "target_offset": 2058882,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "symbol": "~",
+          "target_offset": 2059224,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "symbol": "~",
+          "target_offset": 2059382,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "symbol": "~",
+          "target_offset": 2059689,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "symbol": "~",
+          "target_offset": 2059984,
+          "target_pos": "n"
+        }
+      ]
+    },
+    "vehicle": {
+      "definition": "a conveyance that transports people or objects",
+      "examples": [],
+      "hypernym_chain": [
+        {
+          "definition": "a conveyance that transports people or objects",
+          "lemmas": [
+            "vehicle"
+          ],
+          "synset": "n:04531608"
+        },
+        {
+          "definition": "something that serves as a means of transportation",
+          "lemmas": [
+            "conveyance",
+            "transport"
+          ],
+          "synset": "n:03105141"
+        },
+        {
+          "definition": "an artifact (or system of artifacts) that is instrumental in accomplishing some end",
+          "lemmas": [
+            "instrumentality",
+            "instrumentation"
+          ],
+          "synset": "n:03580409"
+        },
+        {
+          "definition": "a man-made object taken as a whole",
+          "lemmas": [
+            "artifact",
+            "artefact"
+          ],
+          "synset": "n:00022119"
+        },
+        {
+          "definition": "an assemblage of parts that is regarded as a single entity",
+          "lemmas": [
+            "whole",
+            "unit"
+          ],
+          "synset": "n:00003553"
+        },
+        {
+          "definition": "a tangible and visible entity; an entity that can cast a shadow",
+          "lemmas": [
+            "object",
+            "physical object"
+          ],
+          "synset": "n:00002684"
+        },
+        {
+          "definition": "an entity that has physical existence",
+          "lemmas": [
+            "physical entity"
+          ],
+          "synset": "n:00001930"
+        },
+        {
+          "definition": "that which is perceived or known or inferred to have its own distinct existence (living or nonliving)",
+          "lemmas": [
+            "entity"
+          ],
+          "synset": "n:00001740"
+        }
+      ],
+      "lexname": "noun.cognition",
+      "synset": "n:04531608",
+      "typed_relations": [
+        {
+          "relation": "hypernym",
+          "symbol": "@",
+          "target_offset": 3105141,
+          "target_pos": "n"
+        },
+        {
+          "relation": "derivationally_related_form",
+          "symbol": "+",
+          "target_offset": 3139995,
+          "target_pos": "a"
+        },
+        {
+          "relation": "hyponym",
+          "symbol": "~",
+          "target_offset": 2922348,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "symbol": "~",
+          "target_offset": 3130521,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "symbol": "~",
+          "target_offset": 3769811,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "symbol": "~",
+          "target_offset": 4106523,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "symbol": "~",
+          "target_offset": 4235484,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "symbol": "~",
+          "target_offset": 4242397,
+          "target_pos": "n"
+        },
+        {
+          "relation": "part_holonym",
+          "symbol": "%p",
+          "target_offset": 4288513,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "symbol": "~",
+          "target_offset": 4317295,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "symbol": "~",
+          "target_offset": 4583497,
+          "target_pos": "n"
+        }
+      ]
+    }
+  },
+  "schema": "nanlmind-hermes-wordnet-typed/1",
+  "synsets": 117791,
+  "typed_edges": 378203
+}

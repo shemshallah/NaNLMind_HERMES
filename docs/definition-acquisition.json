@@ -1,0 +1,1180 @@
+{
+  "definition": {
+    "address": "nan://HW4:BS0:MC0:SC0:GM0::synset/02058457",
+    "definition": "short-legged flightless birds of cold southern especially Antarctic regions having webbed feet and wings modified as flippers",
+    "examples": [],
+    "hypernyms": [
+      {
+        "relation": "hypernym",
+        "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/02058457",
+        "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/02058312",
+        "target_lemmas": [
+          "sphenisciform seabird"
+        ],
+        "target_offset": 2058312,
+        "target_pos": "n"
+      }
+    ],
+    "inherited": [
+      "living",
+      "winged"
+    ],
+    "lemmas": [
+      "penguin"
+    ],
+    "lexname": "noun.body",
+    "offset": 2058457,
+    "pos": "n",
+    "relations": [
+      {
+        "relation": "hypernym",
+        "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/02058457",
+        "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/02058312",
+        "target_lemmas": [
+          "sphenisciform seabird"
+        ],
+        "target_offset": 2058312,
+        "target_pos": "n"
+      },
+      {
+        "relation": "member_meronym",
+        "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/02058457",
+        "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/02058085",
+        "target_lemmas": [
+          "spheniscidae",
+          "family spheniscidae"
+        ],
+        "target_offset": 2058085,
+        "target_pos": "n"
+      },
+      {
+        "relation": "hyponym",
+        "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/02058457",
+        "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/02058882",
+        "target_lemmas": [
+          "adelie",
+          "adelie penguin",
+          "pygoscelis adeliae"
+        ],
+        "target_offset": 2058882,
+        "target_pos": "n"
+      },
+      {
+        "relation": "hyponym",
+        "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/02058457",
+        "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/02059224",
+        "target_lemmas": [
+          "king penguin",
+          "aptenodytes patagonica"
+        ],
+        "target_offset": 2059224,
+        "target_pos": "n"
+      },
+      {
+        "relation": "hyponym",
+        "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/02058457",
+        "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/02059382",
+        "target_lemmas": [
+          "emperor penguin",
+          "aptenodytes forsteri"
+        ],
+        "target_offset": 2059382,
+        "target_pos": "n"
+      },
+      {
+        "relation": "hyponym",
+        "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/02058457",
+        "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/02059689",
+        "target_lemmas": [
+          "jackass penguin",
+          "spheniscus demersus"
+        ],
+        "target_offset": 2059689,
+        "target_pos": "n"
+      },
+      {
+        "relation": "hyponym",
+        "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/02058457",
+        "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/02059984",
+        "target_lemmas": [
+          "rock hopper",
+          "crested penguin"
+        ],
+        "target_offset": 2059984,
+        "target_pos": "n"
+      }
+    ]
+  },
+  "hypernym_chain": [
+    {
+      "address": "nan://HW4:BS0:MC0:SC0:GM0::synset/02058312",
+      "definition": "flightless cold-water seabirds: penguins",
+      "examples": [],
+      "hypernyms": [
+        {
+          "relation": "hypernym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/02058312",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/02024449",
+          "target_lemmas": [
+            "seabird",
+            "sea bird",
+            "seafowl"
+          ],
+          "target_offset": 2024449,
+          "target_pos": "n"
+        }
+      ],
+      "inherited": [
+        "living",
+        "winged"
+      ],
+      "lemmas": [
+        "sphenisciform seabird"
+      ],
+      "lexname": "noun.body",
+      "offset": 2058312,
+      "pos": "n",
+      "relations": [
+        {
+          "relation": "hypernym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/02058312",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/02024449",
+          "target_lemmas": [
+            "seabird",
+            "sea bird",
+            "seafowl"
+          ],
+          "target_offset": 2024449,
+          "target_pos": "n"
+        },
+        {
+          "relation": "member_meronym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/02058312",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/02057934",
+          "target_lemmas": [
+            "sphenisciformes",
+            "order sphenisciformes"
+          ],
+          "target_offset": 2057934,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/02058312",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/02058457",
+          "target_lemmas": [
+            "penguin"
+          ],
+          "target_offset": 2058457,
+          "target_pos": "n"
+        }
+      ]
+    },
+    {
+      "address": "nan://HW4:BS0:MC0:SC0:GM0::synset/02024449",
+      "definition": "a bird that frequents coastal waters and the open ocean: gulls; pelicans; gannets; cormorants; albatrosses; petrels; etc.",
+      "examples": [],
+      "hypernyms": [
+        {
+          "relation": "hypernym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/02024449",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01847558",
+          "target_lemmas": [
+            "aquatic bird"
+          ],
+          "target_offset": 1847558,
+          "target_pos": "n"
+        }
+      ],
+      "inherited": [
+        "living",
+        "winged"
+      ],
+      "lemmas": [
+        "seabird",
+        "sea bird",
+        "seafowl"
+      ],
+      "lexname": "noun.body",
+      "offset": 2024449,
+      "pos": "n",
+      "relations": [
+        {
+          "relation": "hypernym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/02024449",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01847558",
+          "target_lemmas": [
+            "aquatic bird"
+          ],
+          "target_offset": 1847558,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/02024449",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/02043159",
+          "target_lemmas": [
+            "coastal diving bird"
+          ],
+          "target_offset": 2043159,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/02024449",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/02048023",
+          "target_lemmas": [
+            "auk"
+          ],
+          "target_offset": 2048023,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/02024449",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/02050268",
+          "target_lemmas": [
+            "puffin"
+          ],
+          "target_offset": 2050268,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/02024449",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/02051352",
+          "target_lemmas": [
+            "gaviiform seabird"
+          ],
+          "target_offset": 2051352,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/02024449",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/02052186",
+          "target_lemmas": [
+            "podicipitiform seabird"
+          ],
+          "target_offset": 2052186,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/02024449",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/02054128",
+          "target_lemmas": [
+            "pelecaniform seabird"
+          ],
+          "target_offset": 2054128,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/02024449",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/02058312",
+          "target_lemmas": [
+            "sphenisciform seabird"
+          ],
+          "target_offset": 2058312,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/02024449",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/02060385",
+          "target_lemmas": [
+            "pelagic bird",
+            "oceanic bird"
+          ],
+          "target_offset": 2060385,
+          "target_pos": "n"
+        }
+      ]
+    },
+    {
+      "address": "nan://HW4:BS0:MC0:SC0:GM0::synset/01847558",
+      "definition": "wading and swimming and diving birds of either fresh or salt water",
+      "examples": [],
+      "hypernyms": [
+        {
+          "relation": "hypernym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01847558",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target_lemmas": [
+            "bird"
+          ],
+          "target_offset": 1505702,
+          "target_pos": "n"
+        }
+      ],
+      "inherited": [
+        "living",
+        "winged"
+      ],
+      "lemmas": [
+        "aquatic bird"
+      ],
+      "lexname": "noun.body",
+      "offset": 1847558,
+      "pos": "n",
+      "relations": [
+        {
+          "relation": "hypernym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01847558",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target_lemmas": [
+            "bird"
+          ],
+          "target_offset": 1505702,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01847558",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01847773",
+          "target_lemmas": [
+            "waterfowl",
+            "water bird",
+            "waterbird"
+          ],
+          "target_offset": 1847773,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01847558",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01861082",
+          "target_lemmas": [
+            "swan"
+          ],
+          "target_offset": 1861082,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01847558",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/02003608",
+          "target_lemmas": [
+            "wading bird",
+            "wader"
+          ],
+          "target_offset": 2003608,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01847558",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/02019012",
+          "target_lemmas": [
+            "gallinule",
+            "marsh hen",
+            "water hen",
+            "swamphen"
+          ],
+          "target_offset": 2019012,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01847558",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/02024449",
+          "target_lemmas": [
+            "seabird",
+            "sea bird",
+            "seafowl"
+          ],
+          "target_offset": 2024449,
+          "target_pos": "n"
+        }
+      ]
+    },
+    {
+      "address": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+      "definition": "warm-blooded egg-laying vertebrates characterized by feathers and forelimbs modified as wings",
+      "examples": [],
+      "hypernyms": [
+        {
+          "relation": "hypernym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01474323",
+          "target_lemmas": [
+            "vertebrate",
+            "craniate"
+          ],
+          "target_offset": 1474323,
+          "target_pos": "n"
+        }
+      ],
+      "inherited": [
+        "living"
+      ],
+      "lemmas": [
+        "bird"
+      ],
+      "lexname": "noun.body",
+      "offset": 1505702,
+      "pos": "n",
+      "relations": [
+        {
+          "relation": "hypernym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01474323",
+          "target_lemmas": [
+            "vertebrate",
+            "craniate"
+          ],
+          "target_offset": 1474323,
+          "target_pos": "n"
+        },
+        {
+          "relation": "member_meronym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01504903",
+          "target_lemmas": [
+            "aves",
+            "class aves"
+          ],
+          "target_offset": 1504903,
+          "target_pos": "n"
+        },
+        {
+          "relation": "member_meronym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/08007398",
+          "target_lemmas": [
+            "flock"
+          ],
+          "target_offset": 8007398,
+          "target_pos": "n"
+        },
+        {
+          "relation": "derivationally_related_form",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01142291",
+          "target_lemmas": [],
+          "target_offset": 1142291,
+          "target_pos": "v"
+        },
+        {
+          "relation": "member_of_domain_topic",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/02705521",
+          "target_lemmas": [],
+          "target_offset": 2705521,
+          "target_pos": "a"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01506617",
+          "target_lemmas": [
+            "dickeybird",
+            "dickey-bird",
+            "dickybird",
+            "dicky-bird"
+          ],
+          "target_offset": 1506617,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01517309",
+          "target_lemmas": [
+            "cock"
+          ],
+          "target_offset": 1517309,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01517500",
+          "target_lemmas": [
+            "hen"
+          ],
+          "target_offset": 1517500,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01517567",
+          "target_lemmas": [
+            "nester"
+          ],
+          "target_offset": 1517567,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01517719",
+          "target_lemmas": [
+            "night bird"
+          ],
+          "target_offset": 1517719,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01517944",
+          "target_lemmas": [
+            "bird of passage"
+          ],
+          "target_offset": 1517944,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01518224",
+          "target_lemmas": [
+            "protoavis"
+          ],
+          "target_offset": 1518224,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01518853",
+          "target_lemmas": [
+            "archaeopteryx",
+            "archeopteryx",
+            "archaeopteryx lithographica"
+          ],
+          "target_offset": 1518853,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01519250",
+          "target_lemmas": [
+            "sinornis"
+          ],
+          "target_offset": 1519250,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01519677",
+          "target_lemmas": [
+            "ibero-mesornis"
+          ],
+          "target_offset": 1519677,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01520030",
+          "target_lemmas": [
+            "archaeornis"
+          ],
+          "target_offset": 1520030,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01520206",
+          "target_lemmas": [
+            "ratite",
+            "ratite bird",
+            "flightless bird"
+          ],
+          "target_offset": 1520206,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01520607",
+          "target_lemmas": [
+            "carinate",
+            "carinate bird",
+            "flying bird"
+          ],
+          "target_offset": 1520607,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01527000",
+          "target_lemmas": [
+            "passerine",
+            "passeriform bird"
+          ],
+          "target_offset": 1527000,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01527402",
+          "target_lemmas": [
+            "nonpasserine bird"
+          ],
+          "target_offset": 1527402,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01606971",
+          "target_lemmas": [
+            "bird of prey",
+            "raptor",
+            "raptorial bird"
+          ],
+          "target_offset": 1606971,
+          "target_pos": "n"
+        },
+        {
+          "relation": "part_holonym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01760949",
+          "target_lemmas": [
+            "beak",
+            "bill",
+            "neb",
+            "nib",
+            "pecker"
+          ],
+          "target_offset": 1760949,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01792027",
+          "target_lemmas": [
+            "gallinaceous bird",
+            "gallinacean"
+          ],
+          "target_offset": 1792027,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01819528",
+          "target_lemmas": [
+            "parrot"
+          ],
+          "target_offset": 1819528,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01825243",
+          "target_lemmas": [
+            "cuculiform bird"
+          ],
+          "target_offset": 1825243,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01828571",
+          "target_lemmas": [
+            "coraciiform bird"
+          ],
+          "target_offset": 1828571,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01834353",
+          "target_lemmas": [
+            "apodiform bird"
+          ],
+          "target_offset": 1834353,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01837559",
+          "target_lemmas": [
+            "caprimulgiform bird"
+          ],
+          "target_offset": 1837559,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01840679",
+          "target_lemmas": [
+            "piciform bird"
+          ],
+          "target_offset": 1840679,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01846872",
+          "target_lemmas": [
+            "trogon"
+          ],
+          "target_offset": 1846872,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01847558",
+          "target_lemmas": [
+            "aquatic bird"
+          ],
+          "target_offset": 1847558,
+          "target_pos": "n"
+        },
+        {
+          "relation": "part_holonym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01897996",
+          "target_lemmas": [
+            "furcula"
+          ],
+          "target_offset": 1897996,
+          "target_pos": "n"
+        },
+        {
+          "relation": "part_holonym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01898672",
+          "target_lemmas": [
+            "feather",
+            "plume",
+            "plumage"
+          ],
+          "target_offset": 1898672,
+          "target_pos": "n"
+        },
+        {
+          "relation": "part_holonym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/02154277",
+          "target_lemmas": [
+            "wing"
+          ],
+          "target_offset": 2154277,
+          "target_pos": "n"
+        },
+        {
+          "relation": "part_holonym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/02155098",
+          "target_lemmas": [
+            "pennon",
+            "pinion"
+          ],
+          "target_offset": 2155098,
+          "target_pos": "n"
+        },
+        {
+          "relation": "part_holonym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/02157068",
+          "target_lemmas": [
+            "bird's foot"
+          ],
+          "target_offset": 2157068,
+          "target_pos": "n"
+        },
+        {
+          "relation": "part_holonym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/02161006",
+          "target_lemmas": [
+            "uropygium"
+          ],
+          "target_offset": 2161006,
+          "target_pos": "n"
+        },
+        {
+          "relation": "part_holonym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/02466242",
+          "target_lemmas": [
+            "hindquarters",
+            "croup",
+            "croupe",
+            "rump"
+          ],
+          "target_offset": 2466242,
+          "target_pos": "n"
+        },
+        {
+          "relation": "part_holonym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/02470377",
+          "target_lemmas": [
+            "air sac"
+          ],
+          "target_offset": 2470377,
+          "target_pos": "n"
+        },
+        {
+          "relation": "part_holonym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/02470648",
+          "target_lemmas": [
+            "uropygial gland",
+            "preen gland"
+          ],
+          "target_offset": 2470648,
+          "target_pos": "n"
+        },
+        {
+          "relation": "part_holonym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/02514264",
+          "target_lemmas": [
+            "syrinx"
+          ],
+          "target_offset": 2514264,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/02514361",
+          "target_lemmas": [
+            "twitterer"
+          ],
+          "target_offset": 2514361,
+          "target_pos": "n"
+        },
+        {
+          "relation": "part_holonym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/07659991",
+          "target_lemmas": [
+            "bird",
+            "fowl"
+          ],
+          "target_offset": 7659991,
+          "target_pos": "n"
+        }
+      ]
+    },
+    {
+      "address": "nan://HW4:BS0:MC0:SC0:GM0::synset/01474323",
+      "definition": "animals having a bony or cartilaginous skeleton with a segmented spinal column and a large brain enclosed in a skull or cranium",
+      "examples": [],
+      "hypernyms": [
+        {
+          "relation": "hypernym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01474323",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01468898",
+          "target_lemmas": [
+            "chordate"
+          ],
+          "target_offset": 1468898,
+          "target_pos": "n"
+        }
+      ],
+      "inherited": [
+        "living"
+      ],
+      "lemmas": [
+        "vertebrate",
+        "craniate"
+      ],
+      "lexname": "noun.body",
+      "offset": 1474323,
+      "pos": "n",
+      "relations": [
+        {
+          "relation": "hypernym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01474323",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01468898",
+          "target_lemmas": [
+            "chordate"
+          ],
+          "target_offset": 1468898,
+          "target_pos": "n"
+        },
+        {
+          "relation": "member_meronym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01474323",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01473711",
+          "target_lemmas": [
+            "vertebrata",
+            "subphylum vertebrata",
+            "craniata",
+            "subphylum craniata"
+          ],
+          "target_offset": 1473711,
+          "target_pos": "n"
+        },
+        {
+          "relation": "derivationally_related_form",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01474323",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/02520120",
+          "target_lemmas": [],
+          "target_offset": 2520120,
+          "target_pos": "a"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01474323",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01462432",
+          "target_lemmas": [
+            "fetus",
+            "foetus"
+          ],
+          "target_offset": 1462432,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01474323",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01474944",
+          "target_lemmas": [
+            "amniota"
+          ],
+          "target_offset": 1474944,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01474323",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01475143",
+          "target_lemmas": [
+            "amniote"
+          ],
+          "target_offset": 1475143,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01474323",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01476447",
+          "target_lemmas": [
+            "aquatic vertebrate"
+          ],
+          "target_offset": 1476447,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01474323",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01482461",
+          "target_lemmas": [
+            "gnathostome"
+          ],
+          "target_offset": 1482461,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01474323",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01505702",
+          "target_lemmas": [
+            "bird"
+          ],
+          "target_offset": 1505702,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01474323",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01630065",
+          "target_lemmas": [
+            "amphibian"
+          ],
+          "target_offset": 1630065,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01474323",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01663732",
+          "target_lemmas": [
+            "reptile",
+            "reptilian"
+          ],
+          "target_offset": 1663732,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01474323",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/01864419",
+          "target_lemmas": [
+            "mammal",
+            "mammalian"
+          ],
+          "target_offset": 1864419,
+          "target_pos": "n"
+        },
+        {
+          "relation": "hyponym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01474323",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/02159384",
+          "target_lemmas": [
+            "tetrapod"
+          ],
+          "target_offset": 2159384,
+          "target_pos": "n"
+        },
+        {
+          "relation": "part_holonym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01474323",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/02160067",
+          "target_lemmas": [
+            "belly"
+          ],
+          "target_offset": 2160067,
+          "target_pos": "n"
+        },
+        {
+          "relation": "part_holonym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01474323",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/02160209",
+          "target_lemmas": [
+            "tail"
+          ],
+          "target_offset": 2160209,
+          "target_pos": "n"
+        },
+        {
+          "relation": "part_holonym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01474323",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/02160865",
+          "target_lemmas": [
+            "caudal appendage"
+          ],
+          "target_offset": 2160865,
+          "target_pos": "n"
+        },
+        {
+          "relation": "part_holonym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01474323",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/05286525",
+          "target_lemmas": [
+            "rib",
+            "costa"
+          ],
+          "target_offset": 5286525,
+          "target_pos": "n"
+        },
+        {
+          "relation": "member_of_domain_topic",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01474323",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/05286525",
+          "target_lemmas": [
+            "rib",
+            "costa"
+          ],
+          "target_offset": 5286525,
+          "target_pos": "n"
+        },
+        {
+          "relation": "member_of_domain_topic",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01474323",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/05407190",
+          "target_lemmas": [
+            "blood"
+          ],
+          "target_offset": 5407190,
+          "target_pos": "n"
+        },
+        {
+          "relation": "member_of_domain_topic",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01474323",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/05522938",
+          "target_lemmas": [
+            "ovary"
+          ],
+          "target_offset": 5522938,
+          "target_pos": "n"
+        },
+        {
+          "relation": "part_holonym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01474323",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/05560240",
+          "target_lemmas": [
+            "thorax",
+            "chest",
+            "pectus"
+          ],
+          "target_offset": 5560240,
+          "target_pos": "n"
+        },
+        {
+          "relation": "part_holonym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01474323",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/05570667",
+          "target_lemmas": [
+            "vertebrate foot",
+            "pedal extremity"
+          ],
+          "target_offset": 5570667,
+          "target_pos": "n"
+        },
+        {
+          "relation": "part_holonym",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01474323",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/05573730",
+          "target_lemmas": [
+            "digit",
+            "dactyl"
+          ],
+          "target_offset": 5573730,
+          "target_pos": "n"
+        },
+        {
+          "relation": "member_of_domain_topic",
+          "source": "nan://HW4:BS0:MC0:SC0:GM0::synset/01474323",
+          "target": "nan://HW4:BS0:MC0:SC0:GM0::synset/05594096",
+          "target_lemmas": [
+            "endoskeleton"
+          ],
+          "target_offset": 5594096,
+          "target_pos": "n"
+        }
+      ]
+    }
+  ],
+  "linked_synset": "nan://HW4:BS0:MC0:SC0:GM0::synset/02058457",
+  "new_word": "sparklebeak",
+  "note": "graph-level acquisition only: the new word leaf is attached to an existing synset; prose definitions are not parsed yet",
+  "properties": {
+    "1505702": "winged",
+    "15568": "living"
+  },
+  "query": {
+    "synsets": [
+      {
+        "address": "nan://HW4:BS0:MC0:SC0:GM0::synset/02058457",
+        "definition": "short-legged flightless birds of cold southern especially Antarctic regions having webbed feet and wings modified as flippers",
+        "inherited": [
+          "living",
+          "winged"
+        ],
+        "lemmas": [
+          "penguin"
+        ],
+        "offset": 2058457
+      }
+    ],
+    "word": "sparklebeak"
+  },
+  "schema": "nanlmind-hermes-definition-acquisition/1",
+  "word_address": "nan://HW4:BS0:MC0:SC0:GM0::word/sparklebeak/02058457"
+}

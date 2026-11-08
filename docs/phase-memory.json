@@ -1,0 +1,131 @@
+{
+  "schema": "hermes-phase-memory/1",
+  "rows": [
+    {
+      "dimensions": 16,
+      "patterns": 64,
+      "queries_per_seed": 60,
+      "seeds": [
+        1,
+        2,
+        3
+      ],
+      "noise_std_radians": 0.25,
+      "gauge_accuracy_mean": 1.0,
+      "naive_accuracy_mean": 0.3833333333333333,
+      "real_channel_agreement_mean": 1.0
+    },
+    {
+      "dimensions": 16,
+      "patterns": 64,
+      "queries_per_seed": 60,
+      "seeds": [
+        1,
+        2,
+        3
+      ],
+      "noise_std_radians": 1.0,
+      "gauge_accuracy_mean": 0.8388888888888889,
+      "naive_accuracy_mean": 0.2888888888888889,
+      "real_channel_agreement_mean": 1.0
+    },
+    {
+      "dimensions": 16,
+      "patterns": 64,
+      "queries_per_seed": 60,
+      "seeds": [
+        1,
+        2,
+        3
+      ],
+      "noise_std_radians": 2.0,
+      "gauge_accuracy_mean": 0.03333333333333333,
+      "naive_accuracy_mean": 0.02777777777777778,
+      "real_channel_agreement_mean": 1.0
+    },
+    {
+      "dimensions": 32,
+      "patterns": 64,
+      "queries_per_seed": 60,
+      "seeds": [
+        1,
+        2,
+        3
+      ],
+      "noise_std_radians": 0.25,
+      "gauge_accuracy_mean": 1.0,
+      "naive_accuracy_mean": 0.4166666666666667,
+      "real_channel_agreement_mean": 1.0
+    },
+    {
+      "dimensions": 32,
+      "patterns": 64,
+      "queries_per_seed": 60,
+      "seeds": [
+        1,
+        2,
+        3
+      ],
+      "noise_std_radians": 1.0,
+      "gauge_accuracy_mean": 0.9944444444444445,
+      "naive_accuracy_mean": 0.3222222222222222,
+      "real_channel_agreement_mean": 1.0
+    },
+    {
+      "dimensions": 32,
+      "patterns": 64,
+      "queries_per_seed": 60,
+      "seeds": [
+        1,
+        2,
+        3
+      ],
+      "noise_std_radians": 2.0,
+      "gauge_accuracy_mean": 0.07222222222222223,
+      "naive_accuracy_mean": 0.05555555555555556,
+      "real_channel_agreement_mean": 1.0
+    },
+    {
+      "dimensions": 64,
+      "patterns": 64,
+      "queries_per_seed": 60,
+      "seeds": [
+        1,
+        2,
+        3
+      ],
+      "noise_std_radians": 0.25,
+      "gauge_accuracy_mean": 1.0,
+      "naive_accuracy_mean": 0.4444444444444445,
+      "real_channel_agreement_mean": 1.0
+    },
+    {
+      "dimensions": 64,
+      "patterns": 64,
+      "queries_per_seed": 60,
+      "seeds": [
+        1,
+        2,
+        3
+      ],
+      "noise_std_radians": 1.0,
+      "gauge_accuracy_mean": 1.0,
+      "naive_accuracy_mean": 0.3833333333333333,
+      "real_channel_agreement_mean": 1.0
+    },
+    {
+      "dimensions": 64,
+      "patterns": 64,
+      "queries_per_seed": 60,
+      "seeds": [
+        1,
+        2,
+        3
+      ],
+      "noise_std_radians": 2.0,
+      "gauge_accuracy_mean": 0.12222222222222222,
+      "naive_accuracy_mean": 0.07777777777777778,
+      "real_channel_agreement_mean": 1.0
+    }
+  ]
+}

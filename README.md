@@ -186,7 +186,7 @@ Report security issues privately as described in [SECURITY.md](SECURITY.md).
 
 ## Verification
 
-- 216 unit/integration tests pass locally; CI runs Python 3.10, 3.11, and 3.12.
+- 230 unit/integration tests pass locally; CI runs Python 3.10, 3.11, and 3.12.
 - Hermes Agent v0.23.0 `plugins validate` and `plugins doctor` pass in CI.
 - Wheel and source distribution builds, metadata checks, installation/import,
   and SHA-256 checksums pass in CI.
@@ -235,7 +235,11 @@ Report security issues privately as described in [SECURITY.md](SECURITY.md).
 | [Gauge memory](docs/GAUGE_MEMORY.md) | gauge-aware cycle retrieval, strong baseline, erasure robustness |
 | [WordNet graph](docs/WORDNET_GRAPH.md) | real synset/lemma/hypernym graph, definition inheritance, HW4:0 interface |
 | [WordNet topology](docs/WORDNET_TOPOLOGY.md) | all-POS cycle-rank audit, sparse WordNet vs dense NaN substrate |
-| [WordNet directions](docs/WORDNET_DIRECTED.md) | directional AUC result, typed non-Abelian operators, next cycle-loss test |
+| [WordNet directions](docs/WORDNET_DIRECTED.md) | directional replication audit, typed operators, next cycle-loss test |
+| [Typed WordNet](docs/WORDNET_TYPED.md) | 378,203 typed edges, glosses, 26 relation types |
+| [Definition acquisition](docs/DEFINITION_ACQUISITION.md) | new word leaf, inherited properties, honest boundaries |
+| [Phase memory](docs/PHASE_MEMORY.md) | gauge-invariant phase retrieval, real-channel equivalence, noise limits |
+| [Rounds 010–011](docs/ROUND010_011.md) | quantum controls, directional replication, phase-memory and NaN-palindrome limits |
 | [Long chat session](docs/LONG_CHAT_DEMO.md) | exposure, temporal predictions, held-out session, feedback re-deliberation |
 | [Demo results](docs/DEMO_RESULTS.md) | 38/38 exhaustive tool-call results |
 | [Live smoke results](docs/LIVE_SMOKE.md) | 11/11 deployed-service checks |
