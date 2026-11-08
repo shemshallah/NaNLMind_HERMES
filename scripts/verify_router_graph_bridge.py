@@ -11,6 +11,7 @@ from nanlmind_hermes.mirror_topology import TOPOLOGY_DIGEST as HERMES_TOPOLOGY
 from nanlmind_hermes.router_graph_page import (
     RouterGraphPageError, RouterGraphPageVerifier,
 )
+from nanlmind_hermes.router_graph_history import RouterGraphHistoryVerifier
 from nanlmind_hermes.universe_chart import Chart8MiB
 from nanlmind_hermes.universe_root import attach_universe_root
 from runner_riddle.math_objects import MathLeaf
@@ -73,6 +74,24 @@ def main():
         assert not complete["sender_authenticated"]
         assert not complete["native_mth_executed"]
 
+        # Independently replay all three actual MC0DB revisions, including
+        # the retraction, against the already verified present-state graph.
+        replay_history = RouterGraphHistoryVerifier(chart)
+        replay_history.add_state_page(first)
+        replay_history.add_state_page(second)
+        for index in range(3):
+            history_page = graph.master_graph_page(
+                parent_root_sha256=chart.root_hash,
+                chart_generation=chart.snapshot_generation,
+                limit=1, history_offset=index, history_limit=1,
+            )
+            status = replay_history.add_history_page(history_page)
+        assert status["history_verified"]
+        assert status["verified_history_revisions"] == 3
+        assert not status["sender_authenticated"]
+        assert not status["native_mth_executed"]
+        assert not status["learning_admitted"]
+
         replay = RouterGraphPageVerifier(chart)
         replay.add_page(first)
         assert_denied(lambda: replay.add_page(first))
@@ -86,7 +105,8 @@ def main():
         chart.snapshot_generation += 1
         assert_denied(lambda: mixed.add_page(second))
     print("PASS: real NaNROUTER graph -> HERMES chart-root-bound "
-          "2-page verification, tombstone, tamper, replay, stale epoch")
+          "2-page state, 3-revision history replay, tombstone, "
+          "tamper, replay, stale epoch; no sender/MTH promotion")
 
 
 if __name__ == "__main__":
