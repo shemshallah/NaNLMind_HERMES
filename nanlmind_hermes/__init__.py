@@ -166,6 +166,29 @@ def register(ctx):
     def handle_auth_pair(params, **kwargs): return _auth_tools().auth_pair(ctx, params["pairing_code"])
     def handle_auth_revoke(params, **kwargs): return _auth_tools().auth_revoke(ctx)
 
+    def handle_hw_register(params, **kwargs):
+        from . import nannet_device_client
+        return nannet_device_client.register(ctx, params.get("consent", False))
+
+    def handle_hw_status(params, **kwargs):
+        from . import nannet_device_client
+        return nannet_device_client.status(ctx)
+
+    def handle_hw_heartbeat(params, **kwargs):
+        from . import nannet_device_client
+        return nannet_device_client.heartbeat(ctx)
+
+    def handle_hw_release(params, **kwargs):
+        from . import nannet_device_client
+        return nannet_device_client.release(ctx)
+
+    def handle_hw_report(params, **kwargs):
+        from . import nannet_device_client
+        return nannet_device_client.report(
+            ctx, params["report_type"], params["summary"],
+            params.get("details", ""))
+
+
     def handle_nan16de_route(params, **kwargs):
         _require_scope("universe:read")
         from .auth import load_installation, decrypt_payload
@@ -318,6 +341,16 @@ def register(ctx):
         ("nanlm_auth_pair", "Pair this installation using a one-time code from the trusted NANNET authority.",
          {"pairing_code": {"type": "string", "minLength": 12, "maxLength": 256}}, ["pairing_code"], handle_auth_pair),
         ("nanlm_auth_revoke", "Revoke this installation token and erase its local encrypted copy.", {}, [], handle_auth_revoke),
+        ("nanlm_hw_register", "Explicitly register a new HW5–HW255 NANNET hardware node using Android-compatible consent-based HTTPS enrollment; does not issue a guest universe.",
+         {"consent": {"type": "boolean", "const": True}}, ["consent"], handle_hw_register),
+        ("nanlm_hw_status", "Inspect only sanitized local NANNET hardware-token and lease metadata; never reveal the bearer.", {}, [], handle_hw_status),
+        ("nanlm_hw_heartbeat", "Renew an enrolled NANNET hardware-node lease with its encrypted bearer; preserves the bound hardware identity.", {}, [], handle_hw_heartbeat),
+        ("nanlm_hw_release", "Release a NANNET hardware-node lease after server approval; retain installation key for later explicit re-registration.", {}, [], handle_hw_release),
+        ("nanlm_hw_report", "Send an authenticated bounded device/system issue report through NANNET.",
+         {"report_type": {"type": "string", "enum": ["device_error", "system_error", "network_error", "security_concern", "other"]},
+          "summary": {"type": "string", "minLength": 1, "maxLength": 240},
+          "details": {"type": "string", "maxLength": 4000}},
+         ["report_type", "summary"], handle_hw_report),
         ("nanlm_generate_curriculum", "Generate a balanced 12-stage logic-to-language curriculum corpus, including Boolean inverses, deep relations, exceptions, word choice, sentences, paragraphs and stories.",
          {"topic": {"type": "string", "minLength": 1, "maxLength": 500},
           "records_per_stage": {"type": "integer", "minimum": 3, "maximum": 64, "default": 12}},
