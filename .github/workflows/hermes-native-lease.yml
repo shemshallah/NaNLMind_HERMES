@@ -4,10 +4,12 @@ on:
   push:
     paths:
       - "nanlmind_hermes/nan/hermes_lease*.nas"
+      - "nanlmind_hermes/nan/hermes_nannet_route*.nas"
       - ".github/workflows/hermes-native-lease.yml"
   pull_request:
     paths:
       - "nanlmind_hermes/nan/hermes_lease*.nas"
+      - "nanlmind_hermes/nan/hermes_nannet_route*.nas"
       - ".github/workflows/hermes-native-lease.yml"
 
 permissions:
@@ -32,3 +34,11 @@ jobs:
           awk -f nan0s/tools/nmk.awk -v CMD=emit nanlmind_hermes/nan/hermes_lease_test.nas > /tmp/hermes-lease.nan
           nan0s/aarch64/android/nan_cli --img /tmp/hermes-lease.nan --steps 1000000 --serial | tee /tmp/hermes-lease.out
           grep -q '^HERMES LEASE PASS' /tmp/hermes-lease.out
+
+      - name: Assemble and run authenticated NANNET route gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          awk -f nan0s/tools/nmk.awk -v CMD=emit nanlmind_hermes/nan/hermes_nannet_route_test.nas > /tmp/hermes-route.nan
+          nan0s/aarch64/android/nan_cli --img /tmp/hermes-route.nan --steps 1000000 --serial | tee /tmp/hermes-route.out
+          grep -q '^HERMES NANNET ROUTE PASS' /tmp/hermes-route.out
