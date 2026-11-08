@@ -166,6 +166,64 @@ def register(ctx):
     def handle_auth_pair(params, **kwargs): return _auth_tools().auth_pair(ctx, params["pairing_code"])
     def handle_auth_revoke(params, **kwargs): return _auth_tools().auth_revoke(ctx)
 
+    def handle_hw_register(params, **kwargs):
+        from . import nannet_device_client
+        return nannet_device_client.register(ctx, params.get("consent", False))
+
+    def handle_hw_status(params, **kwargs):
+        from . import nannet_device_client
+        return nannet_device_client.status(ctx)
+
+    def handle_hw_heartbeat(params, **kwargs):
+        from . import nannet_device_client
+        return nannet_device_client.heartbeat(ctx)
+
+    def handle_hw_release(params, **kwargs):
+        from . import nannet_device_client
+        return nannet_device_client.release(ctx)
+
+    def handle_hw_report(params, **kwargs):
+        from . import nannet_device_client
+        return nannet_device_client.report(
+            ctx, params["report_type"], params["summary"],
+            params.get("details", ""))
+
+
+    def handle_universe_status(params, **kwargs):
+        from . import router_universe_client
+        return router_universe_client.status(ctx)
+
+    def handle_universe_open(params, **kwargs):
+        from . import router_universe_client
+        return router_universe_client.open_universe(
+            ctx, params.get("alias", "primary"), params.get("ttl_seconds", 900))
+
+    def handle_universe_resolve(params, **kwargs):
+        from . import router_universe_client
+        return router_universe_client.resolve(
+            ctx, params.get("alias", "primary"), params.get("head_index", 0))
+
+    def handle_universe_renew(params, **kwargs):
+        from . import router_universe_client
+        return router_universe_client.renew(
+            ctx, params.get("alias", "primary"), params.get("ttl_seconds", 900))
+
+    def handle_universe_release(params, **kwargs):
+        from . import router_universe_client
+        return router_universe_client.release(ctx, params.get("alias", "primary"))
+
+    def handle_universe_dispatch(params, **kwargs):
+        from . import router_universe_client
+        return router_universe_client.dispatch(
+            ctx, params.get("alias", "primary"),
+            params.get("head_index", 0), params["dispatch_id"], params["frame_hex"])
+
+    def handle_universe_ack(params, **kwargs):
+        from . import router_universe_client
+        return router_universe_client.acknowledge(
+            ctx, params.get("alias", "primary"), params.get("head_index", 0),
+            params["dispatch_id"], params["response_sha256"])
+
     def handle_nan16de_route(params, **kwargs):
         _require_scope("universe:read")
         from .auth import load_installation, decrypt_payload
@@ -318,6 +376,40 @@ def register(ctx):
         ("nanlm_auth_pair", "Pair this installation using a one-time code from the trusted NANNET authority.",
          {"pairing_code": {"type": "string", "minLength": 12, "maxLength": 256}}, ["pairing_code"], handle_auth_pair),
         ("nanlm_auth_revoke", "Revoke this installation token and erase its local encrypted copy.", {}, [], handle_auth_revoke),
+        ("nanlm_hw_register", "Explicitly register a new HW5–HW255 NANNET hardware node using Android-compatible consent-based HTTPS enrollment; does not issue a guest universe.",
+         {"consent": {"type": "boolean", "const": True}}, ["consent"], handle_hw_register),
+        ("nanlm_hw_status", "Inspect only sanitized local NANNET hardware-token and lease metadata; never reveal the bearer.", {}, [], handle_hw_status),
+        ("nanlm_hw_heartbeat", "Renew an enrolled NANNET hardware-node lease with its encrypted bearer; preserves the bound hardware identity.", {}, [], handle_hw_heartbeat),
+        ("nanlm_hw_release", "Release a NANNET hardware-node lease after server approval; retain installation key for later explicit re-registration.", {}, [], handle_hw_release),
+        ("nanlm_hw_report", "Send an authenticated bounded device/system issue report through NANNET.",
+         {"report_type": {"type": "string", "enum": ["device_error", "system_error", "network_error", "security_concern", "other"]},
+          "summary": {"type": "string", "minLength": 1, "maxLength": 240},
+          "details": {"type": "string", "maxLength": 4000}},
+         ["report_type", "summary"], handle_hw_report),
+        ("nanlm_universe_status", "Inspect encrypted local HERMES router leases without returning bearer credentials or receipt MACs.", {}, [], handle_universe_status),
+        ("nanlm_universe_open", "Request a distinct router-issued universe via NANNET's hermes:lease signed installation scope; never local allocation.",
+         {"alias": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,40}$", "default": "primary"},
+          "ttl_seconds": {"type": "integer", "minimum": 60, "maximum": 3600, "default": 900}}, [], handle_universe_open),
+        ("nanlm_universe_resolve", "Live-verify one local 0..254 head against the authenticated router lease; does not execute NaN16 guest code.",
+         {"alias": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,40}$", "default": "primary"},
+          "head_index": {"type": "integer", "minimum": 0, "maximum": 254, "default": 0}}, [], handle_universe_resolve),
+        ("nanlm_universe_renew", "Extend a router-issued lease while rotating its receipt revision; older receipts are rejected.",
+         {"alias": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,40}$", "default": "primary"},
+          "ttl_seconds": {"type": "integer", "minimum": 60, "maximum": 3600, "default": 900}}, [], handle_universe_renew),
+        ("nanlm_universe_release", "Revoke a router-issued universe and erase its local encrypted receipt after router confirmation.",
+         {"alias": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,40}$", "default": "primary"}}, [], handle_universe_release),
+        ("nanlm_universe_dispatch", "Submit one bounded opaque N16T frame to router-authenticated native HERMES guest with stable dispatch_id for at-most-once processing; not a training commit.",
+         {"alias": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,40}$", "default": "primary"},
+          "head_index": {"type": "integer", "minimum": 0, "maximum": 254, "default": 0},
+          "dispatch_id": {"type": "string", "pattern": "^[A-Za-z0-9_.:-]{12,128}$"},
+          "frame_hex": {"type": "string", "minLength": 72, "maxLength": 131144, "pattern": "^[0-9a-fA-F]+$"}},
+         ["dispatch_id", "frame_hex"], handle_universe_dispatch),
+        ("nanlm_universe_ack", "Confirm SHA-256 of a completed native N16T response in the durable router journal without implying model training.",
+         {"alias": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,40}$", "default": "primary"},
+          "head_index": {"type": "integer", "minimum": 0, "maximum": 254, "default": 0},
+          "dispatch_id": {"type": "string", "pattern": "^[A-Za-z0-9_.:-]{12,128}$"},
+          "response_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}},
+         ["dispatch_id", "response_sha256"], handle_universe_ack),
         ("nanlm_generate_curriculum", "Generate a balanced 12-stage logic-to-language curriculum corpus, including Boolean inverses, deep relations, exceptions, word choice, sentences, paragraphs and stories.",
          {"topic": {"type": "string", "minLength": 1, "maxLength": 500},
           "records_per_stage": {"type": "integer", "minimum": 3, "maximum": 64, "default": 12}},

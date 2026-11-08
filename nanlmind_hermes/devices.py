@@ -1,9 +1,10 @@
 """Consent-based NANNET device leases and issue reporting.
 
 Device identity is a random client-held secret, never a MAC/IMEI/serial.
-A copied credential cannot obtain a second simultaneous lease. HW4+ addresses
-identify scoped participants attached to the one HW0::BS0 universe; they are not
-independent model universes.
+A copied credential cannot obtain a second simultaneous lease. BS0:0 is the
+shared runner-ring NANNET port; HW0..HW3 are fixed hardware endpoints, HW4
+belongs to WordNet, and HW5..HW255 are available device leases. A hardware
+lease and a separately router-authorized guest universe are different records.
 """
 from __future__ import annotations
 import hashlib, json, secrets, sqlite3, time, uuid
@@ -37,21 +38,21 @@ class DeviceRegistry:
                 details TEXT NOT NULL, system_report TEXT NOT NULL,
                 created_at INTEGER NOT NULL)""")
         # Upgrade active legacy participant leases out of the fixed endpoints.
-        # HW0::BS0, HW1, HW2 and HW3 are reserved; HW4+ is allocatable.
+        # HW0..HW3 and WordNet HW4 are reserved; only HW5+ is allocatable.
         # Preserve credentials and lease IDs; only the participant address moves.
         now = int(time.time())
         with self._connect() as db:
             legacy = db.execute(
                 "SELECT lease_id FROM device_leases WHERE hw_slot IS NOT NULL "
-                "AND hw_slot<4 AND released_at IS NULL AND expires_at>?",
+                "AND hw_slot<5 AND released_at IS NULL AND expires_at>?",
                 (now,)).fetchall()
             used = {row[0] for row in db.execute(
-                "SELECT hw_slot FROM device_leases WHERE hw_slot>=4 "
+                "SELECT hw_slot FROM device_leases WHERE hw_slot>=5 "
                 "AND released_at IS NULL AND expires_at>?", (now,))}
             for row in legacy:
-                slot = next((n for n in range(4, 256) if n not in used), None)
+                slot = next((n for n in range(5, 256) if n not in used), None)
                 if slot is None:
-                    raise RuntimeError("cannot migrate reserved HW0-HW3 lease: no HW4+ participant address")
+                    raise RuntimeError("cannot migrate reserved HW0-HW4 lease: no HW5+ hardware address")
                 db.execute("UPDATE device_leases SET hw_slot=? WHERE lease_id=?",
                            (slot, row["lease_id"]))
                 used.add(slot)
@@ -98,13 +99,13 @@ class DeviceRegistry:
             else:
                 device_id = uuid.uuid4().hex
                 db.execute("INSERT INTO devices VALUES (?,?,?,?)", (device_id, secret_hash, now, now))
-            # HW0::BS0 is the one canonical universe and runner ring. HW1-HW3
-            # are fixed endpoints. HW4+ is the allocatable participant space;
-            # it never creates a private universe or training state.
+            # BS0:0 is the shared runner-ring NANNET port. HW0..HW3 are
+            # reserved hardware nodes, HW4 is WordNet; HW5+ is allocatable.
+            # A leased hardware node alone does not grant guest universe access.
             used = {r[0] for r in db.execute(
                 "SELECT hw_slot FROM device_leases WHERE hw_slot IS NOT NULL "
                 "AND released_at IS NULL AND expires_at>?", (now,))}
-            slot = next((n for n in range(4, 256) if n not in used), None)
+            slot = next((n for n in range(5, 256) if n not in used), None)
             if slot is None:
                 raise ValueError("no participant addresses currently available")
             expires = now + self.lease_seconds

@@ -1,0 +1,97 @@
+name: Real Hermes Agent + local Gemma Ollama smoke
+
+on:
+  push:
+    paths:
+      - ".github/workflows/hermes-ollama-gemma-smoke.yml"
+      - "tests/test_nannet_device_client.py"
+      - "nanlmind_hermes/nannet_device_client.py"
+  pull_request:
+    paths:
+      - ".github/workflows/hermes-ollama-gemma-smoke.yml"
+      - "tests/test_nannet_device_client.py"
+      - "nanlmind_hermes/nannet_device_client.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  real-hermes-gemma:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      HERMES_INSTALL_CHANNEL: main
+      HERMES_GATEWAY_NO_SUPERVISE: "1"
+      OLLAMA_HOST: 127.0.0.1:11434
+      OLLAMA_NUM_PARALLEL: "1"
+      OLLAMA_MAX_LOADED_MODELS: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned Hermes Agent (real CLI, not mock)
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL https://raw.githubusercontent.com/NousResearch/hermes-agent/v0.23.0/scripts/install.sh -o /tmp/hermes-install.sh
+          bash /tmp/hermes-install.sh --commit 2bd378ed1b8d6bf2192cb26e0a55ff3091e6bd19 --channel main --non-interactive --skip-browser --skip-computer-use
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - name: Check real Hermes CLI and plugin manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          hermes --help >/tmp/hermes-help.txt
+          hermes plugins validate . --install-deps
+          hermes plugins doctor . --ci
+      - name: Install Ollama engine and start the local CPU model server
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL https://ollama.com/install.sh -o /tmp/ollama-install.sh
+          bash /tmp/ollama-install.sh
+          nohup ollama serve >/tmp/ollama.log 2>&1 &
+          ready=0
+          for i in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:11434/api/version >/dev/null; then ready=1; break; fi
+            sleep 2
+          done
+          test "$ready" = 1
+          ollama pull gemma3:270m
+      - name: Exercise real Gemma inference with Ollama OpenAI-compatible API
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,urllib.request
+          endpoint = "http://127.0.0.1:11434/v1/chat/completions"
+          body = json.dumps({
+              "model": "gemma3:270m",
+              "stream": False,
+              "messages": [{"role":"user","content":"Reply with a short greeting to a NaN16 development agent."}],
+              "max_tokens": 45,
+          }).encode()
+          req = urllib.request.Request(endpoint,data=body,headers={"Content-Type":"application/json"},method="POST")
+          with urllib.request.urlopen(req,timeout=180) as r:
+              response=json.load(r)
+          text=response["choices"][0]["message"]["content"]
+          assert isinstance(text,str) and text.strip(),"Gemma returned an empty completion"
+          print("REAL GEMMA CHAT PASS; model=gemma3:270m; chars="+str(len(text)))
+          PY
+      - name: Run actual Hermes Agent one-shot on Gemma local endpoint
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 240 hermes-agent --query "In one short sentence, explain that this is a local Gemma-to-Hermes integration test." \
+            --model gemma3:270m \
+            --base-url http://127.0.0.1:11434/v1 \
+            --max-turns 1 > /tmp/hermes-gemma-answer.txt 2>&1 || {
+              echo "Hermes agent one-shot failure (redacted terminal output):"
+              sed -E 's#(Bearer |api[_-]?key[=: ]+)[A-Za-z0-9_-]+#\\1[REDACTED]#gi' /tmp/hermes-gemma-answer.txt | tail -n 45
+              exit 1
+            }
+          test -s /tmp/hermes-gemma-answer.txt
+          echo "REAL HERMES + LOCAL GEMMA PASS"
+          tail -n 10 /tmp/hermes-gemma-answer.txt
+      - name: Check hardware-bound test suite (no external NANNET secrets)
+        shell: bash
+        run: |
+          python3 -m unittest discover -s tests -p 'test_nannet_device_client.py' -v

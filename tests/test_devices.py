@@ -14,15 +14,15 @@ class DeviceLeaseTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             registry=DeviceRegistry(Path(tmp)/"authority.sqlite")
             first=registry.register(payload("a"*43),now=1000)
-            self.assertEqual(first["address"],"nan://GM0:SC0:MC0:BS0:HW4")
+            self.assertEqual(first["address"],"nan://GM0:SC0:MC0:BS0:HW5")
             with sqlite3.connect(Path(tmp)/"authority.sqlite") as db:
                 self.assertEqual(db.execute(
                     "SELECT hw_slot FROM device_leases WHERE lease_id=?",
-                    (first["lease_id"],)).fetchone()[0], 4)
+                    (first["lease_id"],)).fetchone()[0], 5)
             with self.assertRaisesRegex(ValueError,"active lease"):
                 registry.register(payload("a"*43),now=1001)
             parallel=registry.register(payload("b"*43),now=1001)
-            self.assertEqual(parallel["address"],"nan://GM0:SC0:MC0:BS0:HW5")
+            self.assertEqual(parallel["address"],"nan://GM0:SC0:MC0:BS0:HW6")
             hb=registry.heartbeat(first["token"],now=1100)
             self.assertGreater(hb["lease_expires_at"],first["lease_expires_at"])
             self.assertNotEqual(hb["token"], first["token"])
@@ -30,7 +30,7 @@ class DeviceLeaseTests(unittest.TestCase):
             self.assertTrue(released["released"])
             second=registry.register(payload("c"*43),now=1201)
             self.assertEqual(second["address"],released["address"])
-            self.assertEqual(second["address"],"nan://GM0:SC0:MC0:BS0:HW4")
+            self.assertEqual(second["address"],"nan://GM0:SC0:MC0:BS0:HW5")
             self.assertNotEqual(second["participant_id"],first["participant_id"])
             with self.assertRaisesRegex(ValueError,"invalid, expired, or released"):
                 registry.heartbeat(first["token"],now=1202)
@@ -48,7 +48,7 @@ class DeviceLeaseTests(unittest.TestCase):
                 registry.heartbeat(first["token"],now=1101)
             self.assertEqual(registry.heartbeat(rotated["token"],now=1102)["lease_id"],first["lease_id"])
 
-    def test_legacy_reserved_slot_leases_migrate_to_hw4_plus(self):
+    def test_legacy_reserved_slot_leases_migrate_to_hw5_plus(self):
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "authority.sqlite"
             DeviceRegistry(path)
@@ -64,9 +64,26 @@ class DeviceLeaseTests(unittest.TestCase):
             with sqlite3.connect(path) as db:
                 self.assertEqual(db.execute(
                     "SELECT hw_slot FROM device_leases WHERE lease_id='legacy-lease'"
-                ).fetchone()[0], 4)
+                ).fetchone()[0], 5)
             next_lease = migrated.register(payload("m" * 43), now=now + 1)
-            self.assertEqual(next_lease["address"], "nan://GM0:SC0:MC0:BS0:HW5")
+            self.assertEqual(next_lease["address"], "nan://GM0:SC0:MC0:BS0:HW6")
+
+    def test_wordnet_hw4_is_migrated_not_leased(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path=Path(tmp)/"authority.sqlite"
+            DeviceRegistry(path)
+            now=int(time.time())
+            with sqlite3.connect(path) as db:
+                db.execute("INSERT INTO devices VALUES (?,?,?,?)",
+                           ("older", hashlib.sha256(b"device").hexdigest(), now, now))
+                db.execute("INSERT INTO device_leases VALUES (?,?,?,?,?,?,NULL)",
+                           ("old-lease", "older", 4,
+                            hashlib.sha256(b"old-token").hexdigest(), now, now + 3600))
+            DeviceRegistry(path)
+            with sqlite3.connect(path) as db:
+                self.assertEqual(db.execute("SELECT hw_slot FROM device_leases WHERE lease_id='old-lease'").fetchone()[0], 5)
+            new=DeviceRegistry(path).register(payload("fresh"*10), now=now + 1)
+            self.assertEqual(new["address"], "nan://GM0:SC0:MC0:BS0:HW6")
 
     def test_registration_requires_consent_and_terms(self):
         with tempfile.TemporaryDirectory() as tmp:

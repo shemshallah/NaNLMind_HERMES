@@ -37,10 +37,7 @@ identity/authorization boundary and CLOCKED is an evidence service.
 - **Hermes secrets** — NANNET, CLOCKED, and head-cortex credentials are read
   through `agent.secret_scope.get_secret()`.
 
-The topology is one canonical `HW0::BS0` universe: HW0 is RunnerLink, BS0 owns
-the six-worker RunnerRing, HW1 is the phone endpoint, HW2 is Hermes, and HW3 is
-CLOCKED. HW4 and above are allocatable participant addresses attached to that
-same universe; they are not separate model instances.
+**BS0:0 is the shared NANNET runner-ring port**; `HW0:0` is the separate hardware root. HW1 is Android, HW2 is HERMES, HW3 is CLOCKED, HW4 is the **permanently reserved WordNet universe**, and HW5–HW255 are allocatable hardware-node slots within BS0. The six runner IDs are internal to BS0, not separate HW allocations. HERMES guest universes are independently leased and isolated; the canonical training ring under BS0 remains shared. The remote universe-lease issuance path is not yet live (see `docs/HERMES_NANNET_LEASE_UNIVERSES.md`).
 
 The plugin does not ship a model, download code, or run a background service.
 The optional `cryptography` extra supplies the audited crypto backend; a
@@ -172,8 +169,7 @@ privileged upstream CLOCKED API key. See
 
 ## Security boundaries
 
-- One installation identity, one `HW0::BS0` universe. No per-endpoint model
-  universes, implicit hardware registration, or environment credential reads.
+- BS0:0 has one shared runner-ring NANNET port. Each HERMES guest universe must be explicitly leased and bound to its own NANNET identity; a hardware-node registration alone grants no model-state access. No implicit registration or environment credential reads.
 - Endpoint URLs and the pinned issuer key are plugin configuration; secrets are
   Hermes-managed.
 - Protected operations fail closed when pairing, scope authorization, or the

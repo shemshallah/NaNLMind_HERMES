@@ -285,6 +285,109 @@ def main(argv=None):
         call("nanlm_auth_status")
         call("nanlm_auth_pair", {"pairing_code": code})
         call("nanlm_auth_status")
+
+        # Android-compatible NANNET HW hardware-node lifecycle is a separate
+        # encrypted login, not a HERMES native-universe authorization. Use
+        # a deterministic loopback stub, never production endpoint tokens.
+        from nanlmind_hermes import nannet_device_client as _hw
+        def fake_hw_http(context, endpoint, body=None, token=""):
+            identity = {"address": "nan://GM0:SC0:MC0:BS0:HW5",
+                        "node_point": 6, "lease_id": "demo-hw-lease",
+                        "lease_expires_at": 2000000000}
+            if endpoint == "/v1/devices/register":
+                assert body["consent"] is True
+                return {**identity, "device_id": "demo-hw-device",
+                        "token": "nnt_demo_hw"}
+            if endpoint == "/v1/devices/rotate":
+                assert token.startswith("nnt_")
+                return {**identity, "token": "nnt_rotated_hw"}
+            if endpoint == "/v1/devices/heartbeat":
+                assert token == "nnt_demo_hw"
+                return identity
+            if endpoint == "/v1/devices/report":
+                return {"accepted": True, "report_id": "demo-report"}
+            if endpoint == "/v1/devices/release":
+                return {"released": True, "address": identity["address"]}
+            raise AssertionError(endpoint)
+        with patch.object(_hw, "_http_json", side_effect=fake_hw_http):
+            call("nanlm_hw_register", {"consent": True})
+            call("nanlm_hw_status")
+            call("nanlm_hw_heartbeat")
+            call("nanlm_hw_report", {"report_type": "network_error",
+                                     "summary": "Offline deterministic demo"})
+            call("nanlm_hw_release")
+
+        # Deterministic independent-universe *router receipt* fixture.
+        # These calls exercise the real Hermes tool handlers and local
+        # encryption, not a live router, guest execution, or canonical merge.
+        from nanlmind_hermes import router_universe_client as _leased
+        installation_id = auth_tools.auth_status(ctx)["installation_id"]
+        fixture = {
+            "schema": "nanrouter.hermes-lease.v1",
+            "issuer": "nanrouter/BS0:0", "network_port": "BS0:0",
+            "hardware_root": "HW0:0", "installation_id": installation_id,
+            "slot": 0, "lease_id": 101, "universe_id": 501,
+            "generation": 1, "revision": 1, "owner_tag": 97,
+            "node_point": 3, "expires_at": int(time.time()) + 900,
+            "heads": 255, "nannet_port_head": 255, "receipt_mac": "a" * 64,
+        }
+        def fake_router_lease(context, action, request):
+            if action == "open":
+                return installation_id, {"receipt": dict(fixture)}
+            if action == "resolve":
+                assert request["head_index"] == 254
+                return installation_id, {"route": {
+                    "admitted": True, "slot": fixture["slot"],
+                    "lease_id": fixture["lease_id"],
+                    "universe_id": fixture["universe_id"],
+                    "generation": fixture["generation"],
+                    "owner_tag": fixture["owner_tag"],
+                    "node_point": fixture["node_point"],
+                    "expires_at": fixture["expires_at"],
+                    "network_port": "BS0:0", "head_index": 254,
+                    "native_execution_committed": False,
+                }}
+            if action == "dispatch":
+                frame = bytes.fromhex(request["frame_hex"])
+                return installation_id, {
+                    "dispatch_id": request["dispatch_id"], "head_index": request["head_index"],
+                    "lease_id": fixture["lease_id"], "universe_id": fixture["universe_id"],
+                    "native_guest_route_admitted": True, "n16t_native_guest_exchange": True,
+                    "frame_sha256": hashlib.sha256(frame).hexdigest(),
+                    "response_frame_hex": frame.hex(),
+                    "response_sha256": hashlib.sha256(frame).hexdigest(),
+                    "acknowledged": False, "replayed_from_journal": False,
+                    "model_training_committed": False,
+                }
+            if action == "ack":
+                return installation_id, {
+                    "acknowledged": True, "dispatch_id": request["dispatch_id"],
+                    "response_sha256": request["response_sha256"],
+                    "model_training_committed": False,
+                }
+            if action == "renew":
+                fixture["revision"] += 1
+                fixture["expires_at"] += 900
+                return installation_id, {"receipt": dict(fixture)}
+            if action == "release":
+                return installation_id, {
+                    "released": True, "lease_id": fixture["lease_id"]}
+            raise AssertionError(action)
+        with patch.object(_leased, "_post", side_effect=fake_router_lease):
+            call("nanlm_universe_status")
+            call("nanlm_universe_open", {"alias": "demo"})
+            call("nanlm_universe_resolve", {"alias": "demo", "head_index": 254})
+            _, dispatched = call("nanlm_universe_dispatch", {
+                "alias": "demo", "head_index": 254,
+                "dispatch_id": "demo-n16t-dispatch-0001",
+                "frame_hex": (b"N16T" + bytes(32)).hex()})
+            call("nanlm_universe_ack", {
+                "alias": "demo", "head_index": 254,
+                "dispatch_id": "demo-n16t-dispatch-0001",
+                "response_sha256": (dispatched or {}).get("response_sha256", "0" * 64)})
+            call("nanlm_universe_renew", {"alias": "demo"})
+            call("nanlm_universe_release", {"alias": "demo"})
+
         call("nanlm_status")
 
         # Chat and transcripts.

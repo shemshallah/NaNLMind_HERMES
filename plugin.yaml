@@ -16,6 +16,18 @@ provides_tools:
   - nanlm_auth_status
   - nanlm_auth_pair
   - nanlm_auth_revoke
+  - nanlm_hw_register
+  - nanlm_hw_status
+  - nanlm_hw_heartbeat
+  - nanlm_hw_release
+  - nanlm_hw_report
+  - nanlm_universe_status
+  - nanlm_universe_open
+  - nanlm_universe_resolve
+  - nanlm_universe_renew
+  - nanlm_universe_release
+  - nanlm_universe_dispatch
+  - nanlm_universe_ack
   - nanlm_generate_curriculum
   - nanlm_curriculum_experiment
   - nanlm_logic_session
@@ -66,7 +78,7 @@ config_schema:
   state_dir:
     type: str
     default: ~/.local/share/nanlmind-hermes
-    description: Local working directory and native checkpoint path for the one HW0::BS0 state. All BS0 workers and attached clients must share this canonical state path; do not create per-runner or per-endpoint universes.
+    description: Local working directory for HERMES state. BS0:0 is the shared runner-ring NANNET port; HW0:0 is a distinct hardware node. HERMES guest universes require independent authorized leases and must never alias canonical BS0 training state.
   clocked_gateway_url:
     type: str
     default: ""
