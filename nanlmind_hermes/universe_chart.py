@@ -417,7 +417,11 @@ class TemporalRegister:
 
     @classmethod
     def open(cls, ctx, chart: "Chart8MiB | None" = None) -> "TemporalRegister":
-        state_dir = Path(str(ctx.get_config("state_dir", "~/.local/share/nanlmind-hermes"))).expanduser()
+        # Pin sidecars and checkpoint writes to the resolved state directory.
+        # A symlink used at first boot may be repointed after the cache opens;
+        # retaining its original spelling would redirect durable writes into
+        # a different universe even though the cached chart stays the same.
+        state_dir = Path(str(ctx.get_config("state_dir", "~/.local/share/nanlmind-hermes"))).expanduser().resolve()
         if chart is None:
             try:
                 chart = load_chart(state_dir)
