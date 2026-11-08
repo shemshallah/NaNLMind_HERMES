@@ -27,14 +27,83 @@
       "7": 0.0
     }
   },
+  "dictionary": {
+    "note": "orthography only; definitions and relations are learned",
+    "seed_spellings": 20,
+    "semantics_preloaded": false
+  },
   "heads": {
-    "admissions": 804,
-    "leaves": 370,
+    "admissions": 866,
+    "leaves": 378,
     "nannet_head": 0,
     "nannet_head_role": "NaNNet + polarity",
     "transforms": 64,
     "usable": 255,
     "used": 256
+  },
+  "letter_example": {
+    "canonical_head": 65,
+    "derivatives": {
+      "bit_complement": 125,
+      "bit_reverse": 65,
+      "case_flip": 32,
+      "identity": 0,
+      "nibble_swap": 211,
+      "predecessor": 255,
+      "rotate_left": 65,
+      "successor": 1
+    },
+    "letter": "A",
+    "superposition": [
+      {
+        "derivative": 0,
+        "head": 65,
+        "name": "identity",
+        "weight": 1.0
+      },
+      {
+        "derivative": 32,
+        "head": 97,
+        "name": "case_flip",
+        "weight": 0.6
+      },
+      {
+        "derivative": 125,
+        "head": 190,
+        "name": "bit_complement",
+        "weight": 0.4
+      },
+      {
+        "derivative": 65,
+        "head": 130,
+        "name": "bit_reverse",
+        "weight": 0.4
+      },
+      {
+        "derivative": 211,
+        "head": 20,
+        "name": "nibble_swap",
+        "weight": 0.3
+      },
+      {
+        "derivative": 65,
+        "head": 130,
+        "name": "rotate_left",
+        "weight": 0.3
+      },
+      {
+        "derivative": 1,
+        "head": 66,
+        "name": "successor",
+        "weight": 0.2
+      },
+      {
+        "derivative": 255,
+        "head": 64,
+        "name": "predecessor",
+        "weight": 0.2
+      }
+    ]
   },
   "letters": 95,
   "matrix": {
@@ -55,7 +124,7 @@
     "L1_functions": 19,
     "L2_bytes": 256,
     "L3_letters": 95,
-    "L4_words": 12,
+    "L4_words": 20,
     "L5_vectors": 1
   },
   "vector": {

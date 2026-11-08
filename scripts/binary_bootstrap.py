@@ -12,6 +12,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from nanlmind_hermes.leaf_algebra import (  # noqa: E402
+    SEED_WORDS,
     ByteCompletion,
     LeafAlgebra,
     build_mapping_tree,
@@ -54,6 +55,8 @@ def main():
                        "members": [algebra.leaves[member].value
                                    for member in leaf.provenance["members"]],
                        "hyperedge": leaf.provenance["hyperedge"]}
+    letter = algebra.letter("A")
+    letter_superposition = algebra.head_superposition(letter)
     vector = algebra.vector((1, 0, 1), dtype="BOOLEAN")
     matrix = algebra.matrix(((1, 0), (0, 1)))
 
@@ -66,6 +69,12 @@ def main():
         "letters": len([leaf for leaf in algebra.leaves.values()
                         if leaf.kind == "LETTER"]),
         "words": words,
+        "letter_example": {"letter": "A", "canonical_head": letter.tags["canonical_head"],
+                           "superposition": letter_superposition,
+                           "derivatives": letter.tags["derivatives"]},
+        "dictionary": {"seed_spellings": len(SEED_WORDS),
+                        "semantics_preloaded": False,
+                        "note": "orthography only; definitions and relations are learned"},
         "vector": {"rank": vector.rank, "shape": vector.shape,
                    "dtype": vector.dtype, "value": vector.value,
                    "address": vector.address},
@@ -122,6 +131,19 @@ def main():
         "```json",
         json.dumps(completion_interleaved, indent=2, sort_keys=True),
         "```",
+        "",
+        "## Hard-mapped letters with transform superposition",
+        "",
+        "A is fixed at ASCII 65; the leaf carries the transform family and",
+        "derivatives. The identity transform is dominant; no letter mapping is",
+        "learned.",
+        "",
+        "```json",
+        json.dumps(report["letter_example"], indent=2, sort_keys=True),
+        "```",
+        "",
+        "Structural dictionary only: " + str(report["dictionary"]["seed_spellings"])
+        + " seed spellings; no definitions or semantic relations are preloaded.",
         "",
         "## Word leaves as hyperedges",
         "",

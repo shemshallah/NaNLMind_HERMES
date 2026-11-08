@@ -63,6 +63,20 @@ class LeafAlgebraTests(unittest.TestCase):
                       if leaf.tags.get("head") == 0)
         self.assertEqual(anchor.tags.get("anchor"), "NaNNet+polarity")
 
+    def test_letters_are_hard_mapped_with_transform_superposition(self):
+        letter = self.algebra.letter("A")
+        self.assertEqual(letter.tags["canonical_head"], ord("A"))
+        superposition = self.algebra.head_superposition(letter)
+        names = {entry["name"] for entry in superposition}
+        self.assertIn("identity", names)
+        self.assertIn("case_flip", names)
+        self.assertIn("bit_complement", names)
+        case = next(entry for entry in superposition if entry["name"] == "case_flip")
+        self.assertEqual(case["head"], ord("a"))
+        self.assertEqual(case["derivative"], 32)
+        identity = next(entry for entry in superposition if entry["name"] == "identity")
+        self.assertGreaterEqual(identity["weight"], case["weight"])
+
     def test_heads_admit_leaves_and_ledger_transforms(self):
         self.algebra.word("YES")
         self.assertTrue(self.algebra.heads)

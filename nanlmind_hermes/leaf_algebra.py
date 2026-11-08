@@ -19,6 +19,31 @@ from .mth_layers import ROOT_NAMES, apply_bits
 
 BASE = "nan://HW2:BS0:MC0:SC0:GM0"
 PRINTABLE = tuple(chr(code) for code in range(32, 127))
+SEED_WORDS = ("NO", "YES", "ON", "NOT", "ONE", "ZERO", "BOTH", "EITHER",
+              "DIFFERENT", "TRUE", "FALSE", "LEAF", "AND", "OR", "IF", "THEN",
+              "ALL", "SOME", "NONE", "MORE")
+
+
+def reverse8(value: int) -> int:
+    return int(format(value & 0xFF, "08b")[::-1], 2)
+
+
+def letter_superposition(code: int) -> list[dict]:
+    """Fixed ASCII letter plus mathematical transforms and derivatives."""
+    nibble = ((code & 0x0F) << 4) | ((code >> 4) & 0x0F)
+    rotate = ((code << 1) & 0xFF) | ((code >> 7) & 1)
+    transforms = [
+        ("identity", code, 1.0),
+        ("case_flip", code ^ 0x20, 0.6),
+        ("bit_complement", (~code) & 0xFF, 0.4),
+        ("bit_reverse", reverse8(code), 0.4),
+        ("nibble_swap", nibble, 0.3),
+        ("rotate_left", rotate, 0.3),
+        ("successor", (code + 1) & 0xFF, 0.2),
+        ("predecessor", (code - 1) & 0xFF, 0.2),
+    ]
+    return [{"name": name, "head": head, "weight": weight,
+             "derivative": (head - code) % 256} for name, head, weight in transforms]
 
 
 def digest(*parts: Any) -> str:
@@ -112,10 +137,15 @@ class LeafAlgebra:
         value = ord(char)
         byte_leaf = self.byte(value)
         leaf_id = digest("LETTER", char, value)
+        superposition = letter_superposition(value)
         leaf = Leaf(leaf_id, "LETTER", char, dtype="CHAR", rank=1, shape=(),
                     provenance={"constructor": "letter", "byte": byte_leaf.leaf_id,
                                 "code": value},
-                    tags={"byte_leaf": byte_leaf.leaf_id, "ascii": value})
+                    tags={"byte_leaf": byte_leaf.leaf_id, "ascii": value,
+                          "canonical_head": value,
+                          "superposition": superposition,
+                          "derivatives": {entry["name"]: entry["derivative"]
+                                          for entry in superposition}})
         return self._admit(leaf)
 
     def hyperedge(self, members: list[Leaf], relation: str = "sequence") -> Leaf:
@@ -221,6 +251,14 @@ class LeafAlgebra:
             head ^= apply_bits(mask, left, right, 8)
         return head & 0xFF, mask
 
+    def head_superposition(self, leaf: Leaf) -> list[dict]:
+        superposition = leaf.tags.get("superposition")
+        if not isinstance(superposition, list):
+            head, _mask = self.head_for(leaf)
+            return [{"name": "identity", "head": head, "weight": 1.0,
+                     "derivative": 0}]
+        return superposition
+
     def self_modify(self, leaf: Leaf, note: str) -> dict:
         head = int(leaf.tags.get("head", 0)) & 0xFF
         event = {"event": "self_modify", "head": head, "leaf": leaf.leaf_id,
@@ -242,8 +280,7 @@ def build_mapping_tree(algebra: LeafAlgebra) -> dict:
         levels["L2_bytes"].append(algebra.byte(value).leaf_id)
     for char in PRINTABLE:
         levels["L3_letters"].append(algebra.letter(char).leaf_id)
-    for word in ("NO", "YES", "ON", "NOT", "ONE", "ZERO", "BOTH", "EITHER",
-                 "DIFFERENT", "TRUE", "FALSE", "LEAF"):
+    for word in SEED_WORDS:
         levels["L4_words"].append(algebra.word(word).leaf_id)
     pair = algebra.vector((1, 0), dtype="BOOLEAN",
                           provenance={"constructor": "PACK_VECTOR",

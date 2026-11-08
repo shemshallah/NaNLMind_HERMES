@@ -18,7 +18,7 @@ dimension-aware leaves. No free-floating linguistic labels.
 | L1 | functions | 19 |
 | L2 | byte leaves (0x00 anchors head 0; 0x01–0xFF use heads 1–255) | 256 |
 | L3 | printable letter leaves | 95 |
-| L4 | word hyperedges | 12 |
+| L4 | word hyperedges | 20 |
 | L5 | constructed vector leaves | 1 |
 
 ## Bytewise completion
@@ -60,6 +60,81 @@ Interleaved split (train values not divisible by 4):
   }
 }
 ```
+
+## Hard-mapped letters with transform superposition
+
+A is fixed at ASCII 65; the leaf carries the transform family and
+derivatives. The identity transform is dominant; no letter mapping is
+learned.
+
+```json
+{
+  "canonical_head": 65,
+  "derivatives": {
+    "bit_complement": 125,
+    "bit_reverse": 65,
+    "case_flip": 32,
+    "identity": 0,
+    "nibble_swap": 211,
+    "predecessor": 255,
+    "rotate_left": 65,
+    "successor": 1
+  },
+  "letter": "A",
+  "superposition": [
+    {
+      "derivative": 0,
+      "head": 65,
+      "name": "identity",
+      "weight": 1.0
+    },
+    {
+      "derivative": 32,
+      "head": 97,
+      "name": "case_flip",
+      "weight": 0.6
+    },
+    {
+      "derivative": 125,
+      "head": 190,
+      "name": "bit_complement",
+      "weight": 0.4
+    },
+    {
+      "derivative": 65,
+      "head": 130,
+      "name": "bit_reverse",
+      "weight": 0.4
+    },
+    {
+      "derivative": 211,
+      "head": 20,
+      "name": "nibble_swap",
+      "weight": 0.3
+    },
+    {
+      "derivative": 65,
+      "head": 130,
+      "name": "rotate_left",
+      "weight": 0.3
+    },
+    {
+      "derivative": 1,
+      "head": 66,
+      "name": "successor",
+      "weight": 0.2
+    },
+    {
+      "derivative": 255,
+      "head": 64,
+      "name": "predecessor",
+      "weight": 0.2
+    }
+  ]
+}
+```
+
+Structural dictionary only: 20 seed spellings; no definitions or semantic relations are preloaded.
 
 ## Word leaves as hyperedges
 
@@ -105,8 +180,8 @@ Interleaved split (train values not divisible by 4):
 
 ```json
 {
-  "admissions": 804,
-  "leaves": 370,
+  "admissions": 866,
+  "leaves": 378,
   "nannet_head": 0,
   "nannet_head_role": "NaNNet + polarity",
   "transforms": 64,
