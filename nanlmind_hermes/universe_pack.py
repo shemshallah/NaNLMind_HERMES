@@ -13,7 +13,7 @@ is research/transport evidence, NOT a canonical NANNET merge/restore.
 """
 from __future__ import annotations
 
-from contextlib import closing
+from contextlib import closing, nullcontext
 import hashlib
 import json
 import os
@@ -24,7 +24,7 @@ import tempfile
 from types import SimpleNamespace
 from urllib.parse import quote
 
-from .chart_storage import load_chart_snapshot, PAGE_BYTES
+from .chart_storage import load_chart_snapshot, PAGE_BYTES, _validate_chart as _validate_page
 from .universe_root import read_universe_root
 
 MAGIC = b"N16PACK1"
@@ -95,8 +95,10 @@ def _validate_chart(page: bytes, parent_root: str) -> dict:
             raise ValueError("mixed-case digest")
     except ValueError as exc:
         raise UniversePackError("expected canonical parent root digest") from exc
-    if len(page) != PAGE_BYTES:
-        raise UniversePackError("chart is not exactly 8 MiB")
+    try:
+        _validate_page(page)
+    except (ValueError, struct.error) as exc:
+        raise UniversePackError("N16PACK chart header or geometry is invalid") from exc
     try:
         root = read_universe_root(SimpleNamespace(bytes=page, root_hash=parent_root))
     except ValueError as exc:
@@ -104,6 +106,28 @@ def _validate_chart(page: bytes, parent_root: str) -> dict:
     if not root["mounted"]:
         raise UniversePackError("N16ROOT1 was not mounted before checkpoint")
     return root
+
+
+
+def _verify_sqlite_section(path: Path, identity: str) -> None:
+    """Validate a private immutable copy, never attaching to a live universe.
+
+    A valid SHA-256 only proves the bytes match the manifest: untrusted
+    archives can have a recomputed hash for a corrupt or swapped SQLite file.
+    """
+    uri = "file:" + quote(path.resolve().as_posix(), safe="/") + "?mode=ro&immutable=1"
+    try:
+        with closing(sqlite3.connect(uri, uri=True, timeout=15)) as conn:
+            conn.execute("PRAGMA query_only=ON")
+            if conn.execute("PRAGMA quick_check").fetchall() != [("ok",)]:
+                raise UniversePackError(f"{identity} carried database fails integrity check")
+            row = conn.execute(
+                "SELECT version FROM math_schema WHERE store=?", (identity,)
+            ).fetchone()
+            if row is None or type(row[0]) is not int or row[0] < 1:
+                raise UniversePackError(f"{identity} carried math schema missing")
+    except sqlite3.DatabaseError as exc:
+        raise UniversePackError(f"{identity} carried SQLite database is invalid") from exc
 
 
 def _write_stream(out, source):
@@ -229,44 +253,52 @@ def inspect_n16pack(path: str | Path) -> dict:
         if (type(specs) is not list or len(specs) != 3
                 or [s.get("name") for s in specs if isinstance(s, dict)] != list(SECTIONS)):
             raise UniversePackError("missing or reordered N16PACK sections")
-        for i, spec in enumerate(specs):
-            name = spec["name"]
-            limit = PAGE_BYTES if name == "chart" else MAX_DB_BYTES
-            length = spec.get("length")
-            digest = spec.get("sha256")
-            if (type(length) is not int or length < 0 or length > limit
-                    or name == "chart" and length != PAGE_BYTES
-                    or type(digest) is not str or len(digest) != 64):
-                raise UniversePackError("invalid section length/digest")
-            try:
-                if bytes.fromhex(digest).hex() != digest:
-                    raise ValueError("mixed case")
-            except ValueError as exc:
-                raise UniversePackError("invalid section SHA-256") from exc
-            sha = hashlib.sha256()
-            remaining = length
-            chart = bytearray() if name == "chart" else None
-            prefix = b""
-            while remaining:
-                data = stream.read(min(remaining, CHUNK))
-                if not data:
-                    raise UniversePackError("truncated N16PACK payload")
-                if len(prefix) < 16:
-                    prefix += data[:16-len(prefix)]
-                sha.update(data)
-                if chart is not None:
-                    chart.extend(data)
-                remaining -= len(data)
-            if sha.hexdigest() != digest:
-                raise UniversePackError("section checksum mismatch")
-            if name == "chart":
-                root = _validate_chart(bytes(chart), manifest["parent_root_sha256"])
-                if root["mount_block_sha256"] != manifest.get("root_block_sha256"):
-                    raise UniversePackError("N16ROOT1 manifest digest mismatch")
-            elif prefix != b"SQLite format 3\0":
-                raise UniversePackError("not an SQLite database snapshot")
-        if stream.read(1):
-            raise UniversePackError("N16PACK contains unlisted trailing payload")
+        # Inspect private temporary copies only: no live DB or WAL mutation.
+        with tempfile.TemporaryDirectory(prefix=".n16pack-verify-") as inspection_tmp:
+            for spec in specs:
+                name = spec["name"]
+                limit = PAGE_BYTES if name == "chart" else MAX_DB_BYTES
+                length = spec.get("length")
+                digest = spec.get("sha256")
+                if (type(length) is not int or length < 0 or length > limit
+                        or name == "chart" and length != PAGE_BYTES
+                        or type(digest) is not str or len(digest) != 64):
+                    raise UniversePackError("invalid section length/digest")
+                try:
+                    if bytes.fromhex(digest).hex() != digest:
+                        raise ValueError("mixed case")
+                except ValueError as exc:
+                    raise UniversePackError("invalid section SHA-256") from exc
+                sha = hashlib.sha256()
+                remaining = length
+                chart = bytearray() if name == "chart" else None
+                prefix = b""
+                db_path = Path(inspection_tmp) / (name + ".sqlite")
+                with (db_path.open("xb") if name != "chart" else nullcontext()) as db_out:
+                    while remaining:
+                        data = stream.read(min(remaining, CHUNK))
+                        if not data:
+                            raise UniversePackError("truncated N16PACK payload")
+                        if len(prefix) < 16:
+                            prefix += data[:16-len(prefix)]
+                        sha.update(data)
+                        if chart is not None:
+                            chart.extend(data)
+                        if db_out is not None:
+                            db_out.write(data)
+                        remaining -= len(data)
+                if sha.hexdigest() != digest:
+                    raise UniversePackError("section checksum mismatch")
+                if name == "chart":
+                    root = _validate_chart(bytes(chart), manifest["parent_root_sha256"])
+                    if root["mount_block_sha256"] != manifest.get("root_block_sha256"):
+                        raise UniversePackError("N16ROOT1 manifest digest mismatch")
+                elif prefix != b"SQLite format 3\0":
+                    raise UniversePackError("not an SQLite database snapshot")
+                else:
+                    _verify_sqlite_section(db_path, name.upper())
+            if stream.read(1):
+                raise UniversePackError("N16PACK contains unlisted trailing payload")
     return {
         "schema": SCHEMA,
         "verified": True,
