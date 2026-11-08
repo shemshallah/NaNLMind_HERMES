@@ -497,7 +497,8 @@ SHL r5,r5,24
 BOOL.14 r4,r4,r5
 LD r7,r0,@hb_ww_dst
 LD r8,r0,@hb_ww_nib
-STW r4,r7,r8MOVI r3,0
+STW r4,r7,r8
+MOVI r3,0
 LD r15,r0,@hb_ww_ret
 RET
 hb_ww_bad:
