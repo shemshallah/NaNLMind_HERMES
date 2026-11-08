@@ -27,6 +27,7 @@ was used.
 from __future__ import annotations
 
 import struct
+import threading
 from pathlib import Path
 
 from .chart_storage import load_chart_snapshot, save_chart_snapshot, ChartStorageError
@@ -747,6 +748,9 @@ class LocalRunner:
     def __init__(self, chart: Chart8MiB | None, register: TemporalRegister):
         self.chart = chart
         self.register = register
+        # Serialize the live chart's native bank rebase and ordinary writers.
+        # Durable N16SNAP1 CAS separately fences other processes.
+        self._write_lock = threading.RLock()
         self.heads = HeadScratchRegister(chart, register.state_dir)
         self.local_memory_bytes = PAGE_BYTES + (2 * REGISTER_BYTES if chart else 0)
 
@@ -787,6 +791,15 @@ class LocalRunner:
 
     def commit_native_head_observation(self, *, coordinator, request,
                                        lease_receipt, network_head: int) -> dict:
+        """Serialize authenticated native rebase against local chart writers."""
+        with self._write_lock:
+            return self._commit_native_head_observation_locked(
+                coordinator=coordinator, request=request,
+                lease_receipt=lease_receipt, network_head=network_head,
+            )
+
+    def _commit_native_head_observation_locked(self, *, coordinator, request,
+                                               lease_receipt, network_head: int) -> dict:
         """Rebase one verified native NaN16 bank into THIS existing chart.
 
         The router journal and HERMES N16SNAP1 writer must already be
@@ -794,7 +807,7 @@ class LocalRunner:
         Preserve any pending temporal/MP/MTH edits in memory while replacing
         ONLY the native bank's reserved byte region with its durable output.
         This method does not allocate another chart or train a second model.
-        The caller must serialize in-process chart writers during handoff.
+        The runner serializes its ordinary in-process writers during handoff.
         """
         import hashlib
         from .head_bank_transport import BANK_OFFSET, BANK_END, BANK_BYTES
@@ -880,6 +893,11 @@ class LocalRunner:
         }
 
     def checkpoint(self) -> dict:
+        """Serialize ordinary full-page CAS against native in-process rebase."""
+        with self._write_lock:
+            return self._checkpoint_locked()
+
+    def _checkpoint_locked(self) -> dict:
         """Durably store local chart bytes with full-page source CAS."""
         import hashlib
         if self.chart is None:
@@ -904,13 +922,16 @@ class LocalRunner:
                 "canonical_training_committed": False}
 
     def commit(self, head: int) -> int:
-        return self.register.commit(head)
+        with self._write_lock:
+            return self.register.commit(head)
 
     def plan(self, heads: list[int]) -> list[int]:
-        return [self.register.commit(head) for head in heads]
+        with self._write_lock:
+            return [self.register.commit(head) for head in heads]
 
     def organize(self, rows: list[dict], mapper=None) -> dict:
-        return self.heads.organize(rows, mapper)
+        with self._write_lock:
+            return self.heads.organize(rows, mapper)
 
     def status(self) -> dict:
         return {
