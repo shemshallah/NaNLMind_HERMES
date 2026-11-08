@@ -1,0 +1,18 @@
+{
+  "ancestry_multi_hop_balanced_accuracy": 0.9833333333333333,
+  "ancestry_negative_queries": 300,
+  "ancestry_positive_queries": 300,
+  "definition_queries": 100,
+  "definition_same_category": 1.0,
+  "definition_top1": 0.97,
+  "direct_edge_only_balanced_accuracy": 0.5,
+  "new_word": "sparklebeak",
+  "new_word_definition": "short-legged flightless birds of cold southern especially Antarctic regions having webbed feet and wings modified as flippers",
+  "new_word_is_a_animal": true,
+  "new_word_is_a_bird": true,
+  "new_word_is_a_vehicle": false,
+  "note": "definition prefixes are retrieval queries, not free-form prose understanding; ancestry uses exact typed graph traversal",
+  "noun_synsets": 82192,
+  "sample_synsets": 2000,
+  "schema": "nanlmind-hermes-definition-qa/1"
+}

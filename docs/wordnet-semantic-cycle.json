@@ -1,0 +1,36 @@
+{
+  "anchors": 256,
+  "classes": 26,
+  "fixed_nonzero_weights": {
+    "attribute": 0.5,
+    "hypernym": 1.0,
+    "meronym": 0.5,
+    "test_cycle": 0.20390948170978992,
+    "test_principal": 0.2009084272852624,
+    "test_random": 0.19312190769729906,
+    "validation_cycle": 0.19523075675237245,
+    "validation_principal": 0.19206748316976235
+  },
+  "note": "WordNet quotient experiment; labels are lexicographer classes, features are hashed gloss/lemma vectors, and D is assembled from typed edges. This is not a language model or a quantum test.",
+  "noun_synsets": 82192,
+  "schema": "nanlmind-hermes-wordnet-semantic-cycle/1",
+  "selected_weights": {
+    "attribute": 0.0,
+    "hypernym": 0.0,
+    "meronym": 0.0
+  },
+  "test": 12329,
+  "test_accuracy": {
+    "cycle_projected": 0.2136426311947441,
+    "ordinary_linear_ridge": 0.2599562008273177,
+    "principal": 0.2136426311947441,
+    "random_graph": 0.2136426311947441
+  },
+  "train": 57534,
+  "validation": 12329,
+  "validation_accuracy": {
+    "cycle_projected": 0.20755941276664774,
+    "principal": 0.20755941276664774,
+    "random_graph": 0.20755941276664774
+  }
+}
