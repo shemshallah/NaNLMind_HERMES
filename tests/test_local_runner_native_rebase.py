@@ -240,8 +240,9 @@ class SingleLiveRunnerRebaseTests(unittest.TestCase):
         finally:
             _RUNNERS.pop(key, None)
 
-    def test_boot_via_symlink_cannot_redirect_state_after_retarget(self):
-        """A cached live universe must retain its physical home if alias moves."""
+    def test_boot_via_symlink_cannot_redirect_state_during_retarget(self):
+        """An alias moved mid-open cannot split the cached chart from its IO."""
+        from unittest.mock import patch
         from nanlmind_hermes.universe_chart import _RUNNERS
         real = self.state / "pinned-universe-real"
         decoy = self.state / "pinned-universe-other"
@@ -252,11 +253,20 @@ class SingleLiveRunnerRebaseTests(unittest.TestCase):
         key = str(real.resolve())
         _RUNNERS.pop(key, None)
         try:
-            runner = LocalRunner.open(TestContext(alias))
+            real_genesis = Chart8MiB.genesis
+
+            def move_alias_during_boot():
+                # LocalRunner has already resolved the real cache key, but
+                # the register has not yet been instantiated.
+                alias.unlink()
+                alias.symlink_to(decoy, target_is_directory=True)
+                return real_genesis()
+
+            with patch.object(Chart8MiB, "genesis", side_effect=move_alias_during_boot):
+                runner = LocalRunner.open(TestContext(alias))
+            self.assertEqual(alias.resolve(), decoy.resolve())
             self.assertEqual(runner.register.state_dir, real.resolve())
             self.assertEqual(runner.heads.state_dir, real.resolve())
-            alias.unlink()
-            alias.symlink_to(decoy, target_is_directory=True)
             # Sidecars and the durable chart checkpoint must remain under the
             # original resolved directory, not follow the changed alias.
             runner.register.save()
