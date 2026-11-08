@@ -126,7 +126,7 @@ class PackTests(unittest.TestCase):
         for p in (self.mc,self.bs):
             with sqlite3.connect(p) as db:
                 self.assertEqual(db.execute("SELECT count(*) FROM sample").fetchone()[0], 2)
-                self.assertTrue(db.execute("PRAGMA quick_check").fetchone()[0], "ok")
+                self.assertEqual(db.execute("PRAGMA quick_check").fetchone()[0], "ok")
 
 
 if __name__ == "__main__":
