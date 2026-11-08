@@ -365,6 +365,19 @@ def main(argv=None):
                     "response_sha256": request["response_sha256"],
                     "model_training_committed": False,
                 }
+            if action == "inspect":
+                response = b"N16T" + bytes(32)
+                return installation_id, {
+                    "dispatch_id": request["dispatch_id"],
+                    "head_index": request["head_index"],
+                    "lease_id": fixture["lease_id"],
+                    "universe_id": fixture["universe_id"],
+                    "state": "acknowledged",
+                    "response_frame_hex": response.hex(),
+                    "response_sha256": hashlib.sha256(response).hexdigest(),
+                    "n16t_native_guest_exchange": True,
+                    "model_training_committed": False,
+                }
             if action == "renew":
                 fixture["revision"] += 1
                 fixture["expires_at"] += 900
@@ -385,6 +398,9 @@ def main(argv=None):
                 "alias": "demo", "head_index": 254,
                 "dispatch_id": "demo-n16t-dispatch-0001",
                 "response_sha256": (dispatched or {}).get("response_sha256", "0" * 64)})
+            call("nanlm_universe_inspect", {
+                "alias": "demo", "head_index": 254,
+                "dispatch_id": "demo-n16t-dispatch-0001"})
             call("nanlm_universe_renew", {"alias": "demo"})
             call("nanlm_universe_release", {"alias": "demo"})
 
