@@ -306,7 +306,42 @@ def register(ctx):
         _require_scope("universe:read")
         return tools.memory_assessments(ctx, params.get("subject"), params.get("limit", 100))
 
+    def handle_tree_inspect(params, **kwargs):
+        _require_scope("universe:read")
+        from . import experimental_register
+        return experimental_register.inspect(
+            ctx, params.get("head"), params.get("branch"),
+            params.get("leaf"), params.get("limit", 128))
+
+    def handle_tree_mutate(params, **kwargs):
+        _require_scope("training:execute")
+        from . import experimental_register
+        return experimental_register.mutate(
+            ctx, params["head"], params["branch"], params["leaf"],
+            params["data_hex"], params.get("expected_revision", 0))
+
+    def handle_tree_audit(params, **kwargs):
+        _require_scope("universe:read")
+        from . import experimental_register
+        return experimental_register.audit(ctx, params.get("limit", 64))
+
     specs = [
+        ("nanlm_tree_inspect", "Inspect the experimental HW0:1-255 head -> numbered math branch -> data leaf hierarchy, without claiming a canonical merge.",
+         {"head": {"type": "integer", "minimum": 1, "maximum": 255},
+          "branch": {"type": "string", "maxLength": 48},
+          "leaf": {"type": "string", "maxLength": 40},
+          "limit": {"type": "integer", "minimum": 1, "maximum": 256}},
+         [], handle_tree_inspect),
+        ("nanlm_tree_mutate", "Stage one experimental data leaf in HERMES isolated 8MiB scratch register; optimistic revision and SHA audit; never changes canonical heads.",
+         {"head": {"type": "integer", "minimum": 1, "maximum": 255},
+          "branch": {"type": "string", "pattern": "^(vector|hyperedge|matrix|transform|math|relation|word|logic)[0-9]{1,6}$"},
+          "leaf": {"type": "string", "pattern": "^[a-z][a-z0-9_]{0,39}$"},
+          "data_hex": {"type": "string", "maxLength": 131072},
+          "expected_revision": {"type": "integer", "minimum": 0}},
+         ["head", "branch", "leaf", "data_hex"], handle_tree_mutate),
+        ("nanlm_tree_audit", "Inspect SHA-256 logged experimental register mutations without accessing canonical BS0 or MC0 merge gates.",
+         {"limit": {"type": "integer", "minimum": 1, "maximum": 256}},
+         [], handle_tree_audit),
         ("nanlm_clocked_plan", "Propose an autonomous local/CLOCKED mode and record a bounded multi-source plan without transmitting source text.",
          {"question": {"type": "string", "minLength": 1, "maxLength": 65536},
           "sources": {"type": "array", "maxItems": 7, "items": {"type": "object",
