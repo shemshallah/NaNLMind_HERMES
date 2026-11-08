@@ -15,6 +15,7 @@ provides_tools:
   - nanlm_wordnet_ingest
   - nanlm_scratch_register
   - nanlm_mirror_topology
+  - nanlm_router_graph_verify
   - nanlm_self_modify
   - nanlm_mth_tools
   - nanlm_teacher_teach
