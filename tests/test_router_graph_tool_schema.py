@@ -26,6 +26,7 @@ class RouterGraphToolContract(unittest.TestCase):
             self.assertEqual(prop["type"], "array")
             self.assertEqual(prop["minItems"], 1)
             self.assertEqual(prop["maxItems"], 128)
+        self.assertEqual(parameters["properties"]["attestation"]["type"], "object")
         self.assertTrue(callable(tool["handler"]))
 
 

@@ -66,3 +66,35 @@ the history replay validates immutable MathLeaf evidence from a trusted
 source, establishes a native N16T/MTH execution receipt, authorizes a learning
 transaction, or promotes a canonical NANNET model. All corresponding status
 flags remain false until separate, verifiable gates exist.
+
+## Ed25519 sender verification (optional; never learning authorization)
+
+A separate detached `nanrouter.graph-sender-attestation/1` envelope can
+cryptographically authenticate **who signed the graph commitment** after
+independent state **and** revision-history replay. The signed envelope binds
+the current state/history commitment, topology, parent root, chart generation,
+operator-configured `router_id`/`key_id`, nonce and timestamp.
+
+Set three **trusted HERMES deployment configuration** values:
+`router_graph_sender_id`, `router_graph_sender_key_id`, and
+`router_graph_sender_public_key_hex` (a 32-byte Ed25519 public key, lowercase
+hex). No key supplied in an envelope or tool request can install trust.
+An empty key configuration denies sender verification.
+
+With complete, chart-bound `pages` and `history_pages`, the existing
+protected `nanlm_router_graph_verify` tool can optionally accept
+`attestation`. It checks the independently pinned sender ID/key and Ed25519
+signature, the unchanged commitment, the already verified revision digest and
+a five-minute age / 30-second future-skew window. Missing signatures, changed
+chart epochs, wrong keys, incorrect timestamp, overclaiming flags and partial
+histories fail closed. `sender_authenticated=true` means the detached
+statement's cryptographic source matched the configured pin.
+
+**Important:** The nonce is covered by the signature but is **not** stored in
+a durable anti-replay ledger here. The response therefore explicitly returns
+`nonce_replay_protected=false`. It cannot be used to reserve work or authorize
+a learning transaction. `native_mth_executed`, `learning_admitted`, and
+`mathematical_truth_promoted` remain false. Those require their own native
+receipt, evidence validity, capability/lease enforcement, transactional
+idempotency and canonical promotion protocols. This change creates neither
+an additional graph nor a model instance.

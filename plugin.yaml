@@ -72,6 +72,18 @@ provides_tools:
   - nanlm_head_candidate_evaluate
   - nanlm_head_learn_candidate
 config_schema:
+  router_graph_sender_id:
+    type: str
+    default: ""
+    description: Trusted expected NaNROUTER sender ID for detached graph attestation; never accept a peer-supplied value as authority.
+  router_graph_sender_key_id:
+    type: str
+    default: ""
+    description: Trusted expected Ed25519 signing key ID, managed by the operator.
+  router_graph_sender_public_key_hex:
+    type: str
+    default: ""
+    description: Trusted operator-pinned 32-byte Ed25519 public key in lowercase hex. Empty disables graph sender authentication.
   duration_minutes:
     type: int
     default: 30
