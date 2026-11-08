@@ -11,8 +11,10 @@
 ; [generation_high_watermark, lease_id, universe_id, owner_tag,
 ;  nannet_node_point, deadline_tick, state, reserved]
 ; States: 0 virgin, 1 live, 2 revoked, 3 expired.
-; Slot reuse requires strictly increasing generation. Active lease IDs,
-; universe IDs, and NANNET node points must be distinct across slots.
+; Slot reuse requires strictly increasing generation. Active lease IDs and universe IDs must be distinct across slots.
+; Multiple independently leased universes may share the same server-bound
+; NANNET hardware point: the full (universe, lease, generation, owner) tuple
+; isolates routes. A network point alone is NOT a universe identifier.
 ; All times are monotonic tick values supplied by trusted router context.
 ; Prevent 32-bit wrapping by rolling over to a NEW registry generation
 ; before the high-water or tick counters approach 0xFFFFFFFF.
@@ -95,9 +97,6 @@ CMP r12,r3
 JMP[EQ] @nhl_open_busy
 LD r12,r9,2
 CMP r12,r4
-JMP[EQ] @nhl_open_busy
-LD r12,r9,4
-CMP r12,r6
 JMP[EQ] @nhl_open_busy
 nhl_open_next:
 MOVI r13,8
