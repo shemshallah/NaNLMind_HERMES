@@ -105,7 +105,8 @@ def load_chart_snapshot(state_dir: str | Path, root_hash: str):
 
 
 def save_chart_snapshot(state_dir: str | Path, root_hash: str,
-                        page: bytes | bytearray, expected_generation: int):
+                        page: bytes | bytearray, expected_generation: int,
+                        *, expected_page_sha256: str | None = None):
     """Atomically publish the alternate slot, using a generation lease.
 
     Refuses stale writers instead of silently overwriting another runner's
@@ -113,6 +114,13 @@ def save_chart_snapshot(state_dir: str | Path, root_hash: str,
     """
     if type(expected_generation) is not int or expected_generation < 0:
         raise ChartStorageError("invalid expected generation")
+    if expected_page_sha256 is not None:
+        if (type(expected_page_sha256) is not str
+                or len(expected_page_sha256) != 64
+                or any(c not in "0123456789abcdef" for c in expected_page_sha256)):
+            raise ChartStorageError("invalid expected chart page digest")
+        if expected_generation < 1:
+            raise ChartStorageError("chart page digest requires an existing generation")
     data = bytes(page)
     _validate_chart(data)
     root = _parent(root_hash)
@@ -136,6 +144,15 @@ def save_chart_snapshot(state_dir: str | Path, root_hash: str,
             generation = current[0] if current else 0
             if generation != expected_generation:
                 raise ChartStorageError("stale snapshot generation; reload before writing")
+            # The digest fence must be checked UNDER the same exclusive file
+            # lock as the generation check. A valid same-generation but
+            # different chart page must not be overwritten by a native bank
+            # handoff that was prepared against unrelated chart bytes.
+            if expected_page_sha256 is not None:
+                if current is None or (
+                    hashlib.sha256(current[2]).hexdigest() != expected_page_sha256
+                ):
+                    raise ChartStorageError("stale chart page digest; reload before writing")
             if generation == 0xFFFFFFFFFFFFFFFF:
                 raise ChartStorageError("snapshot generation exhausted")
             target_slot = (current[1] ^ 1) if current else 0
