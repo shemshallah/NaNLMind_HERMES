@@ -155,8 +155,15 @@ class HistoryReplayTests(unittest.TestCase):
         forged = fixture(self.chart, self.history, history_offset=0)
         forged["history_entries"][0]["payload"] = forged[
             "history_entries"][0]["payload"].replace("supports", "refutes")
+        # The first altered record is still syntactically valid. The
+        # verifier detects inconsistency during the subsequent transition
+        # (or, for a different edit, the final full-history digest).
+        altered.add_history_page(forged)
         with self.assertRaises(RouterGraphPageError):
-            altered.add_history_page(forged)
+            for index in range(1, len(self.history)):
+                altered.add_history_page(fixture(
+                    self.chart, self.history, history_offset=index))
+        self.assertTrue(altered.status()["failed"])
         stale = RouterGraphHistoryVerifier(self.chart)
         for i in range(2):
             stale.add_state_page(fixture(self.chart, self.history,
