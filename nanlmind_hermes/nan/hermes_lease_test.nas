@@ -98,26 +98,14 @@ CALL @nhl_open
 MOVI r9,3
 CMP r3,r9
 JMP[NE] @fail
-; NANNET point cannot be bound to two live universes.
+; Two independent universes may share one authenticated NANNET endpoint.
+; Distinct lease/universe shares node point 3 in slot 1.
 MOVI r1,1
 MOVI r2,1
 MOVI r3,102
 MOVI r4,502
 MOVI r5,98
 MOVI r6,3
-MOVI r7,200
-MOVI r8,20
-CALL @nhl_open
-MOVI r9,3
-CMP r3,r9
-JMP[NE] @fail
-; Distinct lease/universe/node in slot 1 succeeds.
-MOVI r1,1
-MOVI r2,1
-MOVI r3,102
-MOVI r4,502
-MOVI r5,98
-MOVI r6,4
 MOVI r7,200
 MOVI r8,20
 CALL @nhl_open
@@ -247,7 +235,7 @@ JMP[NE] @fail
 MOVI r9,17
 CMP r2,r9
 JMP[NE] @fail
-MOVI r9,4
+MOVI r9,3
 CMP r4,r9
 JMP[NE] @fail
 ; Invalid network point and invalid expired opening are rejected.
