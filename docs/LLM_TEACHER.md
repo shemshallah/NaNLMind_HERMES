@@ -37,6 +37,21 @@ The parser accepts a bare array or `{"records":[...]}`. Records are validated,
 bounded and written as evidence into the L0-L9 scratch learner. They never
 commit canonical NaNLMind state.
 
+## Parallel CLI
+
+`scripts/llm_teacher_run.py` runs the same teacher contract as a separate
+process:
+
+```sh
+python scripts/llm_teacher_run.py --provider ollama \
+  --model gemma4:31b-cloud --topic "basic metals" --count 3
+```
+
+`--cycles 0 --interval 60` runs it as a bounded parallel teaching loop. Add
+`--approve` to apply the local promotion gate after each batch. A verified
+local run produced 3 Gemma records and 10 L0-L9 scratch records with
+`canonical_training_committed=false`.
+
 ## Parallel use
 
 The teacher can run as its own process against the same state directory, or as

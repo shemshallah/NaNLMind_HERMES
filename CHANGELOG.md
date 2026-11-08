@@ -13,6 +13,9 @@
   `nanlm_teacher_teach` tool (Hermes LLM, Ollama/Gemma, OpenAI-compatible).
 - Added `nanlm_mirror_topology`, `nanlm_self_modify`, `nanlm_mth_tools`, and
   `nanlm_teacher_teach` with demo coverage.
+- Added `scripts/llm_teacher_run.py` for a parallel provider-universal teacher
+  loop; a real local Gemma batch produced 3 records and 10 L0-L9 scratch
+  records without canonical promotion.
 - Added a 1 GiB logical paged scratch register space (128 x 8 MiB, sparse),
   L0-L9 layer projections, a deterministic 255-head ensemble, conservative
   promotion into the local 8 MiB head register, and sparse HW4 WordNet
