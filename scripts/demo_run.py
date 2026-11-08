@@ -285,6 +285,38 @@ def main(argv=None):
         call("nanlm_auth_status")
         call("nanlm_auth_pair", {"pairing_code": code})
         call("nanlm_auth_status")
+
+        # Android-compatible NANNET HW hardware-node lifecycle is a separate
+        # encrypted login, not a HERMES native-universe authorization. Use
+        # a deterministic loopback stub, never production endpoint tokens.
+        from nanlmind_hermes import nannet_device_client as _hw
+        def fake_hw_http(context, endpoint, body=None, token=""):
+            identity = {"address": "nan://GM0:SC0:MC0:BS0:HW5",
+                        "node_point": 6, "lease_id": "demo-hw-lease",
+                        "lease_expires_at": 2000000000}
+            if endpoint == "/v1/devices/register":
+                assert body["consent"] is True
+                return {**identity, "device_id": "demo-hw-device",
+                        "token": "nnt_demo_hw"}
+            if endpoint == "/v1/devices/rotate":
+                assert token.startswith("nnt_")
+                return {**identity, "token": "nnt_rotated_hw"}
+            if endpoint == "/v1/devices/heartbeat":
+                assert token == "nnt_demo_hw"
+                return identity
+            if endpoint == "/v1/devices/report":
+                return {"accepted": True, "report_id": "demo-report"}
+            if endpoint == "/v1/devices/release":
+                return {"released": True, "address": identity["address"]}
+            raise AssertionError(endpoint)
+        with patch.object(_hw, "_http_json", side_effect=fake_hw_http):
+            call("nanlm_hw_register", {"consent": True})
+            call("nanlm_hw_status")
+            call("nanlm_hw_heartbeat")
+            call("nanlm_hw_report", {"report_type": "network_error",
+                                     "summary": "Offline deterministic demo"})
+            call("nanlm_hw_release")
+
         call("nanlm_status")
 
         # Chat and transcripts.
