@@ -44,7 +44,7 @@ class HeadBankTransportTests(unittest.TestCase):
     def test_stale_root_generation_digest_and_invalid_length_atomicity(self):
         chart = Chart8MiB.genesis()
         initial = describe_guest_bank(chart)
-        raw = b"\\xA6" * BANK_BYTES
+        raw = bytes([0xA6]) * BANK_BYTES
         base = dict(payload_sha256=hashlib.sha256(raw).hexdigest(),
                     expected_region_sha256=initial["region_sha256"],
                     expected_parent_root=chart.root_hash,
@@ -69,7 +69,7 @@ class HeadBankTransportTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             chart = Chart8MiB.genesis()
             initial = describe_guest_bank(chart)
-            raw = b"\\x11" * BANK_BYTES
+            raw = bytes([0x11]) * BANK_BYTES
             stage_guest_bank_bytes(
                 chart, raw, payload_sha256=hashlib.sha256(raw).hexdigest(),
                 expected_region_sha256=initial["region_sha256"],
