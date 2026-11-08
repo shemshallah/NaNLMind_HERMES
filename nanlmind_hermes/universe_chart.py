@@ -764,7 +764,12 @@ class LocalRunner:
 
     @classmethod
     def _open_serialized(cls, ctx) -> "LocalRunner":
-        state_dir = Path(str(ctx.get_config("state_dir", "~/.local/share/nanlmind-hermes"))).expanduser()
+        # Normalize directory aliases before cache lookup. Without resolve(),
+        # ./state and a symlink to that same deployment could instantiate
+        # competing live charts despite the one-cache global writer lock.
+        state_dir = Path(str(ctx.get_config(
+            "state_dir", "~/.local/share/nanlmind-hermes"
+        ))).expanduser().resolve()
         key = str(state_dir)
         runner = _RUNNERS.get(key)
         latest = None

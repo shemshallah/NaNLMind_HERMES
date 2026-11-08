@@ -215,6 +215,31 @@ class SingleLiveRunnerRebaseTests(unittest.TestCase):
             self.fence(self.universe)["chart_sha256"],
         )
 
+    def test_symlink_and_real_state_dir_share_single_cached_chart(self):
+        """Two names for one storage home must not create two minds."""
+        from nanlmind_hermes.universe_chart import _RUNNERS
+        real = self.state / "same-universe-real"
+        real.mkdir()
+        alias = self.state / "same-universe-link"
+        alias.symlink_to(real, target_is_directory=True)
+        key = str(real.resolve())
+        _RUNNERS.pop(key, None)
+        try:
+            first = LocalRunner.open(TestContext(real))
+            second = LocalRunner.open(TestContext(alias))
+            self.assertIs(first, second)
+            self.assertIs(first.chart, second.chart)
+            self.assertIs(first.register.chart, first.chart)
+            self.assertIs(first.heads.chart, first.chart)
+            self.assertEqual(len(first.chart.bytes), 8 * 1024 * 1024)
+            self.assertIs(_RUNNERS[key], first)
+            # The writer's own checkpoint sequence remains shared.
+            generation = first.checkpoint()["generation"]
+            self.assertEqual(generation, 1)
+            self.assertEqual(second.chart.snapshot_generation, generation)
+        finally:
+            _RUNNERS.pop(key, None)
+
     def test_concurrent_plugin_opens_share_one_chart_object(self):
         """Two simultaneous HERMES boots must not split one state directory."""
         import threading
