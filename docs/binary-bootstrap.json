@@ -1,0 +1,143 @@
+{
+  "byte_completion": {
+    "accuracy": 0.375,
+    "bits": 512,
+    "by_prefix": {
+      "0": 0.0,
+      "1": 0.0,
+      "2": 0.5,
+      "3": 0.5,
+      "4": 0.5,
+      "5": 0.5,
+      "6": 0.5,
+      "7": 0.5
+    }
+  },
+  "byte_completion_interleaved": {
+    "accuracy": 0.375,
+    "bits": 512,
+    "by_prefix": {
+      "0": 0.5,
+      "1": 0.5,
+      "2": 0.5,
+      "3": 0.5,
+      "4": 0.5,
+      "5": 0.5,
+      "6": 0.0,
+      "7": 0.0
+    }
+  },
+  "heads": {
+    "admissions": 804,
+    "leaves": 370,
+    "transforms": 64,
+    "used": 64
+  },
+  "letters": 95,
+  "matrix": {
+    "dtype": "RATIONAL",
+    "rank": 2,
+    "shape": [
+      2,
+      2
+    ]
+  },
+  "root_functions": {
+    "total": 64,
+    "verified": 64
+  },
+  "schema": "nanlmind-hermes-binary-bootstrap/1",
+  "tree": {
+    "L0_bits": 2,
+    "L1_functions": 19,
+    "L2_bytes": 256,
+    "L3_letters": 95,
+    "L4_words": 12,
+    "L5_vectors": 1
+  },
+  "vector": {
+    "address": "nan://HW2:BS0:MC0:SC0:GM0::leaf/vector/585c6434a6b5b102",
+    "dtype": "BOOLEAN",
+    "rank": 1,
+    "shape": [
+      3
+    ],
+    "value": [
+      1,
+      0,
+      1
+    ]
+  },
+  "words": {
+    "BOTH": {
+      "address": "nan://HW2:BS0:MC0:SC0:GM0::leaf/word/f74a2219d83ef4d3",
+      "hyperedge": "b239bf6406d76c28148ca286e5e396c70f38147c59b1c858ba0fa0863df87c26",
+      "leaf": "f74a2219d83ef4d3638c594ebd35f8aab5dd60efd6c877fd8ca727dcf9b4a525",
+      "members": [
+        "B",
+        "O",
+        "T",
+        "H"
+      ]
+    },
+    "NO": {
+      "address": "nan://HW2:BS0:MC0:SC0:GM0::leaf/word/6b3c2ea7f8b88064",
+      "hyperedge": "f3b47eb81d37518205812cc1b79354be64dca897f97bcf0c5372039c5147db45",
+      "leaf": "6b3c2ea7f8b8806400227429e4108e46e7e25960713986ee6ae25a721ec0fe6e",
+      "members": [
+        "N",
+        "O"
+      ]
+    },
+    "NOT": {
+      "address": "nan://HW2:BS0:MC0:SC0:GM0::leaf/word/923893882a558d23",
+      "hyperedge": "449f36a1bcbc58940ee4686bc44f1870dd01c8ab0e3b0b4aa56f593604d39dcd",
+      "leaf": "923893882a558d23254c4d83bec7612cebf2d233c4b8cb270329bb374c5d534b",
+      "members": [
+        "N",
+        "O",
+        "T"
+      ]
+    },
+    "ON": {
+      "address": "nan://HW2:BS0:MC0:SC0:GM0::leaf/word/21c98e9a9eed623d",
+      "hyperedge": "8c9c74a348bc2e171cb12299e15020d9d4e98c95f6e6905c76fba9b1fd475a81",
+      "leaf": "21c98e9a9eed623d941c315bae6b9ef793fbe7413395005703100957e7b0807e",
+      "members": [
+        "O",
+        "N"
+      ]
+    },
+    "ONE": {
+      "address": "nan://HW2:BS0:MC0:SC0:GM0::leaf/word/b41516fa2cc43e4a",
+      "hyperedge": "c9f54cd60dd1a004081faecfba1a08e1caf9d2fe3d881563fb5e8592da1b18e7",
+      "leaf": "b41516fa2cc43e4a6691fbd91376957d67d6edf27207517d06a83b901bb4136a",
+      "members": [
+        "O",
+        "N",
+        "E"
+      ]
+    },
+    "YES": {
+      "address": "nan://HW2:BS0:MC0:SC0:GM0::leaf/word/ce9eabcdaaa617e1",
+      "hyperedge": "46023e702ddb8a1ba0ed2b2217a9277469ec89e2ae8a781fc034b60151250bc2",
+      "leaf": "ce9eabcdaaa617e1ff0633d8e187859b6b689204a3fe997766cbebeabb31cc1b",
+      "members": [
+        "Y",
+        "E",
+        "S"
+      ]
+    },
+    "ZERO": {
+      "address": "nan://HW2:BS0:MC0:SC0:GM0::leaf/word/8e2efdb6f2c07abe",
+      "hyperedge": "61598df00f856e5a71cc2c031de4ff5ed8c35697eda89c9783a3147cde07fc7b",
+      "leaf": "8e2efdb6f2c07abeb8e25971a43367d12f2fadcc4b21da40496c2a26fb2bc636",
+      "members": [
+        "Z",
+        "E",
+        "R",
+        "O"
+      ]
+    }
+  }
+}
