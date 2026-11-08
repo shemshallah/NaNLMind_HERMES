@@ -12,6 +12,7 @@ loaded a NaN16 guest registry, committed a route, or merged training state.
 from __future__ import annotations
 
 import ipaddress
+import hashlib
 import json
 import os
 import re
@@ -96,7 +97,7 @@ def _origin(ctx):
 
 
 def _post(ctx, action, payload):
-    if action not in ("open", "resolve", "renew", "release"):
+    if action not in ("open", "resolve", "renew", "release", "dispatch", "ack"):
         raise UniverseLeaseError("unknown router universe operation")
     require_scope(ctx, "hermes:lease")  # includes online revocation and scope check
     root = _universe_dir(ctx)
@@ -107,7 +108,7 @@ def _post(ctx, action, payload):
         ("nannet-token-v1:" + doc["installation_id"]).encode()).decode()
     path = "/v1/hermes/leases/" + action
     raw = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()
-    if len(raw) > 16384:
+    if len(raw) > (150000 if action == "dispatch" else 16384):
         raise UniverseLeaseError("HERMES lease request exceeds portal limit")
     headers = {"Authorization": "Bearer " + token, "Content-Type": "application/json",
                "Accept": "application/json", "Cache-Control": "no-store"}
@@ -117,9 +118,10 @@ def _post(ctx, action, payload):
         with urllib.request.build_opener(_NoRedirect).open(request, timeout=15) as response:
             if response.status != 200 or response.headers.get_content_type() != "application/json":
                 raise UniverseLeaseError("unsupported NANNET router response")
-            data = response.read(32769)
-            if len(data) > 32768:
-                raise UniverseLeaseError("NANNET router response exceeds 32 KiB")
+            limit = 155000 if action == "dispatch" else 32768
+            data = response.read(limit + 1)
+            if len(data) > limit:
+                raise UniverseLeaseError("NANNET router response exceeds size bound")
     except urllib.error.HTTPError as exc:
         raise UniverseLeaseError("NANNET portal rejected router lease operation (HTTP " + str(exc.code) + ")") from None
     except (OSError, TimeoutError, urllib.error.URLError) as exc:
@@ -239,8 +241,9 @@ def resolve(ctx, alias="primary", head_index=0):
     return {"admitted": True, "alias": alias, "head_index": head_index,
             "universe_id": receipt["universe_id"],
             "slot": receipt["slot"], "generation": receipt["generation"],
-            "node_point": receipt["node_point"], "native_guest_activated": False,
-            "execution_committed": False}
+            "node_point": receipt["node_point"],
+            "native_guest_activated": route.get("native_guest_route_admitted") is True,
+            "execution_committed": route.get("native_execution_committed") is True}
 
 
 def renew(ctx, alias="primary", ttl_seconds=900):
@@ -270,3 +273,83 @@ def release(ctx, alias="primary"):
     state["leases"].pop(alias)
     _write(ctx, state)
     return {"released": True, "alias": alias, "universe_id": old["universe_id"]}
+
+
+def dispatch(ctx, alias="primary", head_index=0, dispatch_id="", frame_hex=""):
+    """Send exactly one opaque N16T frame to the verified native guest.
+
+    A caller-chosen dispatch_id is mandatory for safe retries. The router
+    journals ambiguous failures and refuses to execute them twice.
+    """
+    alias = _alias(alias)
+    if type(head_index) is not int or not 0 <= head_index <= 254:
+        raise UniverseLeaseError("head 255 is reserved for NANNET")
+    if (not isinstance(dispatch_id, str)
+            or not re.fullmatch(r"[A-Za-z0-9_.:-]{12,128}", dispatch_id)):
+        raise UniverseLeaseError("stable dispatch_id must be 12..128 safe ASCII characters")
+    if (not isinstance(frame_hex, str) or len(frame_hex) % 2 != 0
+            or not 72 <= len(frame_hex) <= 131144
+            or re.fullmatch("[0-9a-fA-F]+", frame_hex) is None):
+        raise UniverseLeaseError("N16T frame_hex must be 36..65572 bytes")
+    receipt = _read(ctx)["leases"].get(alias)
+    if receipt is None:
+        raise UniverseLeaseError("cannot dispatch without an active local universe receipt")
+    installation, result = _post(ctx, "dispatch", {
+        "receipt": receipt, "head_index": head_index,
+        "dispatch_id": dispatch_id, "frame_hex": frame_hex})
+    _valid_receipt(receipt, installation)
+    if (result.get("dispatch_id") != dispatch_id
+            or result.get("head_index") != head_index
+            or result.get("lease_id") != receipt["lease_id"]
+            or result.get("universe_id") != receipt["universe_id"]
+            or result.get("native_guest_route_admitted") is not True
+            or result.get("n16t_native_guest_exchange") is not True):
+        raise UniverseLeaseError("router did not attest native guest dispatch")
+    expected_request = hashlib.sha256(bytes.fromhex(frame_hex)).hexdigest()
+    if result.get("frame_sha256") != expected_request:
+        raise UniverseLeaseError("router request frame digest mismatch")
+    answer_hex = result.get("response_frame_hex")
+    if (not isinstance(answer_hex, str)
+            or not 72 <= len(answer_hex) <= 131144 or len(answer_hex) % 2
+            or re.fullmatch("[0-9a-fA-F]+", answer_hex) is None):
+        raise UniverseLeaseError("router returned an invalid N16T response")
+    response_sha = hashlib.sha256(bytes.fromhex(answer_hex)).hexdigest()
+    if result.get("response_sha256") != response_sha:
+        raise UniverseLeaseError("router response frame digest mismatch")
+    return {
+        "alias": alias, "dispatch_id": dispatch_id, "head_index": head_index,
+        "universe_id": receipt["universe_id"], "response_frame_hex": answer_hex,
+        "response_sha256": response_sha,
+        "native_guest_route_admitted": True,
+        "n16t_native_guest_exchange": True,
+        "acknowledged": result.get("acknowledged") is True,
+        "replayed_from_journal": result.get("replayed_from_journal") is True,
+        "model_training_committed": False,
+    }
+
+
+def acknowledge(ctx, alias="primary", head_index=0,
+                dispatch_id="", response_sha256=""):
+    alias = _alias(alias)
+    if type(head_index) is not int or not 0 <= head_index <= 254:
+        raise UniverseLeaseError("head 255 is reserved for NANNET")
+    if (not isinstance(dispatch_id, str)
+            or not re.fullmatch(r"[A-Za-z0-9_.:-]{12,128}", dispatch_id)):
+        raise UniverseLeaseError("invalid N16T dispatch_id")
+    if (not isinstance(response_sha256, str)
+            or not re.fullmatch("[a-f0-9]{64}", response_sha256)):
+        raise UniverseLeaseError("invalid response SHA-256")
+    receipt = _read(ctx)["leases"].get(alias)
+    if receipt is None:
+        raise UniverseLeaseError("cannot acknowledge without a local lease")
+    installation, result = _post(ctx, "ack", {
+        "receipt": receipt, "head_index": head_index,
+        "dispatch_id": dispatch_id, "response_sha256": response_sha256})
+    _valid_receipt(receipt, installation)
+    if (result.get("acknowledged") is not True
+            or result.get("dispatch_id") != dispatch_id
+            or result.get("response_sha256") != response_sha256):
+        raise UniverseLeaseError("router did not acknowledge matching N16T result")
+    return {"acknowledged": True, "alias": alias,
+            "dispatch_id": dispatch_id, "response_sha256": response_sha256,
+            "model_training_committed": False}
