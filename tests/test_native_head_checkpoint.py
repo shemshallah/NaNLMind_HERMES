@@ -57,6 +57,12 @@ class FakeCompletedJournal:
             "raw_bank": self.raw if self.state == "completed_staging_only" else None,
             "bank_after_sha256": self.after,
             "canonical_training_committed": False,
+            "local_checkpoint_verified": self.state == "checkpointed_locally",
+            "checkpoint_generation": (
+                self.confirmed_generation
+                if self.state == "checkpointed_locally" else None
+            ),
+            "request_sha256": sha(b"test-verified-request"),
         }
 
     def confirm_local_checkpoint(self, *, request, lease_receipt, network_head):
@@ -70,6 +76,7 @@ class FakeCompletedJournal:
         if fence["bank_sha256"] != self.after:
             raise AssertionError("wrong bank ack")
         self.state = "checkpointed_locally"
+        self.confirmed_generation = fence["chart_generation"]
         return {
             "local_checkpoint_verified": True,
             "request_sha256": sha(b"test-verified-request"),
@@ -165,6 +172,35 @@ class NativeHeadCheckpointTests(unittest.TestCase):
         self.assertTrue(result["recovered_prior_local_checkpoint"])
         self.assertEqual(self.fence(self.universe)["chart_generation"], 2)
         self.assertEqual(self.journal.state, "checkpointed_locally")
+
+    def test_historical_tombstone_valid_after_more_native_chart_generations(self):
+        first = self.commit()
+        self.assertEqual(first["chart_generation"], 2)
+        # Next independent local checkpoint advances the chart and may
+        # replace the bank; historical dispatch must remain acknowledged.
+        _, page = load_chart_snapshot(self.path, self.parent)
+        different = bytearray(page)
+        different[BANK_OFFSET:BANK_END] = bytes([0x6F]) * BANK_BYTES
+        save_chart_snapshot(self.path, self.parent, different, 2)
+        older = self.commit()
+        self.assertTrue(older["historical_local_checkpoint_verified"])
+        self.assertEqual(older["chart_generation"], 2)
+        self.assertEqual(older["current_chart_generation"], 3)
+        self.assertFalse(older["current_chart_contains_result"])
+        self.assertFalse(older["canonical_training_committed"])
+
+    def test_same_bank_result_plus_unrelated_chart_change_is_not_acknowledged(self):
+        # A competing writer can write the same resulting bank together with
+        # unrelated chart changes. Matching the bank SHA and generation is
+        # insufficient: the actual snapshot transition must be bank-only.
+        patched = bytearray(self.original_page)
+        patched[BANK_OFFSET:BANK_END] = self.raw
+        patched[0x7000] ^= 1  # ordinary chart area, not the head bank
+        save_chart_snapshot(self.path, self.parent, patched, 1)
+        with self.assertRaisesRegex(
+                NativeHeadCheckpointConflict, "unrelated chart cells"):
+            self.commit()
+        self.assertEqual(self.journal.confirmations, 0)
 
     def test_pending_or_ambiguous_does_not_touch_chart(self):
         self.journal.pending = True
