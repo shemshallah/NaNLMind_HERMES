@@ -1,0 +1,2228 @@
+{
+  "chat_learning": false,
+  "messages": [
+    {
+      "anchor": "hello",
+      "considered": [
+        {
+          "anchor": "hello",
+          "ended": true,
+          "mth": {
+            "category_error": 0.0,
+            "coherence": 1.0,
+            "frame": 0.0,
+            "layers": {
+              "bit": 1.0,
+              "byte": 1.0,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 1.0,
+              "paragraph": 1.0,
+              "phonetic": 1.0,
+              "sentence": 0.0,
+              "word_completion": 1.0
+            },
+            "score": 0.5,
+            "truth": 0.0
+          },
+          "score": -0.6247,
+          "text": "Hello nanlm."
+        },
+        {
+          "anchor": "hello",
+          "ended": true,
+          "mth": {
+            "category_error": 0.0,
+            "coherence": 1.0,
+            "frame": 0.0,
+            "layers": {
+              "bit": 0.5,
+              "byte": 0.5,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.5,
+              "paragraph": 1.0,
+              "phonetic": 1.0,
+              "sentence": 0.0,
+              "word_completion": 1.0
+            },
+            "score": 0.45,
+            "truth": 0.0
+          },
+          "score": -0.7021,
+          "text": "Hello nanlm hello nanlm."
+        }
+      ],
+      "coverage": 1.0,
+      "forced": true,
+      "heads": {
+        "leaves": 0,
+        "used": 0
+      },
+      "mth_layers": {
+        "bit": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 64
+        },
+        "byte": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 256
+        },
+        "lexical": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 2
+        },
+        "morpheme": {
+          "accuracy": 0.0,
+          "coverage": 1.0,
+          "examples": 0
+        },
+        "narrative": {
+          "accuracy": 0.0,
+          "coverage": 0.0,
+          "examples": 0
+        },
+        "nibble": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 4096
+        },
+        "paragraph": {
+          "accuracy": 0.0,
+          "coverage": 0.0,
+          "examples": 0
+        },
+        "phonetic": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 2
+        },
+        "sentence": {
+          "accuracy": 0.0,
+          "coverage": 0.0,
+          "examples": 0
+        },
+        "word_completion": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 4
+        }
+      },
+      "nanlm": "Hello nanlm.",
+      "response_templates": 0,
+      "retrieval": 0,
+      "seed": [
+        "hello",
+        "nanlm"
+      ],
+      "sentences": [
+        "Hello nanlm."
+      ],
+      "user": "Hello NaNLM."
+    },
+    {
+      "anchor": "am",
+      "considered": [
+        {
+          "anchor": "am",
+          "ended": true,
+          "mth": {
+            "category_error": 0.0,
+            "coherence": 1.0,
+            "frame": 0.0,
+            "layers": {
+              "bit": 0.125,
+              "byte": 0.125,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.125,
+              "paragraph": 1.0,
+              "phonetic": 1.0,
+              "sentence": 0.0,
+              "word_completion": 0.5
+            },
+            "score": 0.3925,
+            "truth": 0.0
+          },
+          "score": 0.6223,
+          "text": "Am going to ask you a few things directly."
+        },
+        {
+          "anchor": "few",
+          "ended": true,
+          "mth": {
+            "category_error": 0.0,
+            "coherence": 0.5,
+            "frame": 0.0,
+            "layers": {
+              "bit": 0.125,
+              "byte": 0.125,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.125,
+              "paragraph": 0.5,
+              "phonetic": 1.0,
+              "sentence": 0.0,
+              "word_completion": 0.6667
+            },
+            "score": 0.3342,
+            "truth": 0.0
+          },
+          "score": 0.603,
+          "text": "Few things directly."
+        }
+      ],
+      "coverage": 1.0,
+      "forced": true,
+      "heads": {
+        "leaves": 0,
+        "used": 0
+      },
+      "mth_layers": {
+        "bit": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 64
+        },
+        "byte": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 256
+        },
+        "lexical": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 8
+        },
+        "morpheme": {
+          "accuracy": 0.25,
+          "coverage": 1.0,
+          "examples": 2
+        },
+        "narrative": {
+          "accuracy": 0.0,
+          "coverage": 0.0,
+          "examples": 0
+        },
+        "nibble": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 4096
+        },
+        "paragraph": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 1
+        },
+        "phonetic": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 8
+        },
+        "sentence": {
+          "accuracy": 0.0,
+          "coverage": 0.0,
+          "examples": 0
+        },
+        "word_completion": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 10
+        }
+      },
+      "nanlm": "Am going to ask you a few things directly.",
+      "response_templates": 0,
+      "retrieval": 0,
+      "seed": [
+        "am",
+        "going",
+        "ask",
+        "few",
+        "things",
+        "directly"
+      ],
+      "sentences": [
+        "Am going to ask you a few things directly."
+      ],
+      "user": "I am going to ask you a few things directly."
+    },
+    {
+      "anchor": "<s>",
+      "considered": [
+        {
+          "anchor": "<s>",
+          "ended": true,
+          "mth": {
+            "category_error": 0.0,
+            "coherence": 0.0,
+            "frame": 0.0,
+            "layers": {
+              "bit": 0.5,
+              "byte": 0.5,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.5,
+              "paragraph": 0.0,
+              "phonetic": 1.0,
+              "sentence": 0.0,
+              "word_completion": 0.5
+            },
+            "score": 0.3,
+            "truth": 0.0
+          },
+          "score": -0.6912,
+          "text": "I am going to ask you a few things directly."
+        },
+        {
+          "anchor": "<s>",
+          "ended": true,
+          "mth": {
+            "category_error": 0.0,
+            "coherence": 0.0,
+            "frame": 0.0,
+            "layers": {
+              "bit": 0.25,
+              "byte": 0.25,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.25,
+              "paragraph": 0.0,
+              "phonetic": 1.0,
+              "sentence": 0.0,
+              "word_completion": 0.3333
+            },
+            "score": 0.2683,
+            "truth": 0.0
+          },
+          "score": -0.7741,
+          "text": "I am going to ask you."
+        }
+      ],
+      "coverage": 1.0,
+      "forced": true,
+      "heads": {
+        "leaves": 0,
+        "used": 0
+      },
+      "mth_layers": {
+        "bit": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 64
+        },
+        "byte": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 256
+        },
+        "lexical": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 9
+        },
+        "morpheme": {
+          "accuracy": 0.2222222222222222,
+          "coverage": 1.0,
+          "examples": 2
+        },
+        "narrative": {
+          "accuracy": 0.0,
+          "coverage": 0.0,
+          "examples": 0
+        },
+        "nibble": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 4096
+        },
+        "paragraph": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 2
+        },
+        "phonetic": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 9
+        },
+        "sentence": {
+          "accuracy": 0.0,
+          "coverage": 0.0,
+          "examples": 0
+        },
+        "word_completion": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 10
+        }
+      },
+      "nanlm": "I am going to ask you a few things directly.",
+      "response_templates": 0,
+      "retrieval": 0,
+      "seed": [
+        "<s>"
+      ],
+      "sentences": [
+        "I am going to ask you a few things directly."
+      ],
+      "user": "Can you hear me?"
+    },
+    {
+      "anchor": "<s>",
+      "considered": [
+        {
+          "anchor": "<s>",
+          "ended": true,
+          "mth": {
+            "category_error": 0.0,
+            "coherence": 0.0,
+            "frame": 0.0,
+            "layers": {
+              "bit": 0.125,
+              "byte": 0.125,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.125,
+              "paragraph": 0.0,
+              "phonetic": 1.0,
+              "sentence": 0.0,
+              "word_completion": 0.3333
+            },
+            "score": 0.2558,
+            "truth": 0.0
+          },
+          "score": -0.8105,
+          "text": "I am going to ask you."
+        },
+        {
+          "anchor": "<s>",
+          "ended": true,
+          "mth": {
+            "category_error": 0.0,
+            "coherence": 0.0,
+            "frame": 0.0,
+            "layers": {
+              "bit": 0.0625,
+              "byte": 0.0625,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.0625,
+              "paragraph": 0.0,
+              "phonetic": 1.0,
+              "sentence": 0.0,
+              "word_completion": 0.3333
+            },
+            "score": 0.2496,
+            "truth": 0.0
+          },
+          "score": -0.8154,
+          "text": "I am going to ask you a."
+        }
+      ],
+      "coverage": 1.0,
+      "forced": true,
+      "heads": {
+        "leaves": 0,
+        "used": 0
+      },
+      "mth_layers": {
+        "bit": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 64
+        },
+        "byte": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 256
+        },
+        "lexical": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 9
+        },
+        "morpheme": {
+          "accuracy": 0.2222222222222222,
+          "coverage": 1.0,
+          "examples": 2
+        },
+        "narrative": {
+          "accuracy": 0.0,
+          "coverage": 0.0,
+          "examples": 0
+        },
+        "nibble": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 4096
+        },
+        "paragraph": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 1
+        },
+        "phonetic": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 9
+        },
+        "sentence": {
+          "accuracy": 0.0,
+          "coverage": 0.0,
+          "examples": 0
+        },
+        "word_completion": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 10
+        }
+      },
+      "nanlm": "I am going to ask you.",
+      "response_templates": 0,
+      "retrieval": 0,
+      "seed": [
+        "<s>"
+      ],
+      "sentences": [
+        "I am going to ask you."
+      ],
+      "user": "What are you?"
+    },
+    {
+      "anchor": "<s>",
+      "considered": [
+        {
+          "anchor": "<s>",
+          "ended": true,
+          "mth": {
+            "category_error": 0.0,
+            "coherence": 0.0,
+            "frame": 0.0,
+            "layers": {
+              "bit": 0.25,
+              "byte": 0.25,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.25,
+              "paragraph": 0.0,
+              "phonetic": 1.0,
+              "sentence": 0.0,
+              "word_completion": 0.5
+            },
+            "score": 0.275,
+            "truth": 0.0
+          },
+          "score": -0.7556,
+          "text": "Ask you a few things directly."
+        },
+        {
+          "anchor": "<s>",
+          "ended": true,
+          "mth": {
+            "category_error": 0.0,
+            "coherence": 0.0,
+            "frame": 0.0,
+            "layers": {
+              "bit": 0.25,
+              "byte": 0.25,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.25,
+              "paragraph": 0.0,
+              "phonetic": 1.0,
+              "sentence": 0.0,
+              "word_completion": 0.3333
+            },
+            "score": 0.2683,
+            "truth": 0.0
+          },
+          "score": -0.8186,
+          "text": "I am going to ask."
+        }
+      ],
+      "coverage": 1.0,
+      "forced": true,
+      "heads": {
+        "leaves": 0,
+        "used": 0
+      },
+      "mth_layers": {
+        "bit": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 64
+        },
+        "byte": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 256
+        },
+        "lexical": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 11
+        },
+        "morpheme": {
+          "accuracy": 0.18181818181818182,
+          "coverage": 1.0,
+          "examples": 2
+        },
+        "narrative": {
+          "accuracy": 0.0,
+          "coverage": 0.0,
+          "examples": 0
+        },
+        "nibble": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 4096
+        },
+        "paragraph": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 2
+        },
+        "phonetic": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 11
+        },
+        "sentence": {
+          "accuracy": 0.0,
+          "coverage": 0.0,
+          "examples": 0
+        },
+        "word_completion": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 12
+        }
+      },
+      "nanlm": "Ask you a few things directly.",
+      "response_templates": 0,
+      "retrieval": 0,
+      "seed": [
+        "<s>"
+      ],
+      "sentences": [
+        "Ask you a few things directly."
+      ],
+      "user": "Do you have a self?"
+    },
+    {
+      "anchor": "<s>",
+      "considered": [
+        {
+          "anchor": "<s>",
+          "ended": true,
+          "mth": {
+            "category_error": 0.0,
+            "coherence": 0.0,
+            "frame": 0.0,
+            "layers": {
+              "bit": 0.125,
+              "byte": 0.125,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.125,
+              "paragraph": 0.0,
+              "phonetic": 1.0,
+              "sentence": 0.0,
+              "word_completion": 0.3333
+            },
+            "score": 0.2558,
+            "truth": 0.0
+          },
+          "score": -0.8344,
+          "text": "I am going to ask."
+        },
+        {
+          "anchor": "<s>",
+          "ended": true,
+          "mth": {
+            "category_error": 0.0,
+            "coherence": 0.0,
+            "frame": 0.0,
+            "layers": {
+              "bit": 0.25,
+              "byte": 0.25,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.25,
+              "paragraph": 0.0,
+              "phonetic": 1.0,
+              "sentence": 0.0,
+              "word_completion": 0.3333
+            },
+            "score": 0.2683,
+            "truth": 0.0
+          },
+          "score": -0.8385,
+          "text": "I am going to ask you a."
+        }
+      ],
+      "coverage": 1.0,
+      "forced": true,
+      "heads": {
+        "leaves": 0,
+        "used": 0
+      },
+      "mth_layers": {
+        "bit": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 64
+        },
+        "byte": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 256
+        },
+        "lexical": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 14
+        },
+        "morpheme": {
+          "accuracy": 0.21428571428571427,
+          "coverage": 1.0,
+          "examples": 3
+        },
+        "narrative": {
+          "accuracy": 0.0,
+          "coverage": 0.0,
+          "examples": 0
+        },
+        "nibble": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 4096
+        },
+        "paragraph": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 3
+        },
+        "phonetic": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 14
+        },
+        "sentence": {
+          "accuracy": 0.0,
+          "coverage": 0.0,
+          "examples": 0
+        },
+        "word_completion": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 14
+        }
+      },
+      "nanlm": "I am going to ask.",
+      "response_templates": 0,
+      "retrieval": 0,
+      "seed": [
+        "<s>"
+      ],
+      "sentences": [
+        "I am going to ask."
+      ],
+      "user": "What are you thinking about right now?"
+    },
+    {
+      "anchor": "<s>",
+      "considered": [
+        {
+          "anchor": "<s>",
+          "ended": true,
+          "mth": {
+            "category_error": 0.0,
+            "coherence": 0.0,
+            "frame": 0.0,
+            "layers": {
+              "bit": 0.0625,
+              "byte": 0.0625,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.0625,
+              "paragraph": 0.0,
+              "phonetic": 1.0,
+              "sentence": 0.0,
+              "word_completion": 0.3333
+            },
+            "score": 0.2496,
+            "truth": 0.0
+          },
+          "score": -0.8127,
+          "text": "I am going to ask you a."
+        },
+        {
+          "anchor": "<s>",
+          "ended": true,
+          "mth": {
+            "category_error": 0.0,
+            "coherence": 0.0,
+            "frame": 0.0,
+            "layers": {
+              "bit": 0.125,
+              "byte": 0.125,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.125,
+              "paragraph": 0.0,
+              "phonetic": 1.0,
+              "sentence": 0.0,
+              "word_completion": 0.6
+            },
+            "score": 0.2665,
+            "truth": 0.0
+          },
+          "score": -0.9046,
+          "text": "Going to ask you a few things directly."
+        }
+      ],
+      "coverage": 1.0,
+      "forced": true,
+      "heads": {
+        "leaves": 0,
+        "used": 0
+      },
+      "mth_layers": {
+        "bit": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 64
+        },
+        "byte": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 256
+        },
+        "lexical": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 16
+        },
+        "morpheme": {
+          "accuracy": 0.25,
+          "coverage": 1.0,
+          "examples": 4
+        },
+        "narrative": {
+          "accuracy": 0.0,
+          "coverage": 0.0,
+          "examples": 0
+        },
+        "nibble": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 4096
+        },
+        "paragraph": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 4
+        },
+        "phonetic": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 16
+        },
+        "sentence": {
+          "accuracy": 0.0,
+          "coverage": 0.0,
+          "examples": 0
+        },
+        "word_completion": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 18
+        }
+      },
+      "nanlm": "I am going to ask you a.",
+      "response_templates": 0,
+      "retrieval": 0,
+      "seed": [
+        "<s>"
+      ],
+      "sentences": [
+        "I am going to ask you a."
+      ],
+      "user": "Are you aware that we are talking?"
+    },
+    {
+      "anchor": "<s>",
+      "considered": [
+        {
+          "anchor": "<s>",
+          "ended": true,
+          "mth": {
+            "category_error": 0.0,
+            "coherence": 0.0,
+            "frame": 0.0,
+            "layers": {
+              "bit": 0.125,
+              "byte": 0.125,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.125,
+              "paragraph": 0.0,
+              "phonetic": 1.0,
+              "sentence": 0.0,
+              "word_completion": 0.5
+            },
+            "score": 0.2625,
+            "truth": 0.0
+          },
+          "score": -0.9599,
+          "text": "I am going to."
+        },
+        {
+          "anchor": "<s>",
+          "ended": true,
+          "mth": {
+            "category_error": 0.0,
+            "coherence": 0.0,
+            "frame": 0.0,
+            "layers": {
+              "bit": 0.25,
+              "byte": 0.25,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.25,
+              "paragraph": 0.0,
+              "phonetic": 1.0,
+              "sentence": 0.0,
+              "word_completion": 0.6667
+            },
+            "score": 0.2817,
+            "truth": 0.0
+          },
+          "score": -0.9702,
+          "text": "A few things directly."
+        }
+      ],
+      "coverage": 1.0,
+      "forced": true,
+      "heads": {
+        "leaves": 0,
+        "used": 0
+      },
+      "mth_layers": {
+        "bit": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 64
+        },
+        "byte": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 256
+        },
+        "lexical": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 18
+        },
+        "morpheme": {
+          "accuracy": 0.2222222222222222,
+          "coverage": 1.0,
+          "examples": 4
+        },
+        "narrative": {
+          "accuracy": 0.0,
+          "coverage": 0.0,
+          "examples": 0
+        },
+        "nibble": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 4096
+        },
+        "paragraph": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 5
+        },
+        "phonetic": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 18
+        },
+        "sentence": {
+          "accuracy": 0.0,
+          "coverage": 0.0,
+          "examples": 0
+        },
+        "word_completion": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 19
+        }
+      },
+      "nanlm": "I am going to.",
+      "response_templates": 0,
+      "retrieval": 0,
+      "seed": [
+        "<s>"
+      ],
+      "sentences": [
+        "I am going to."
+      ],
+      "user": "What did you just say?"
+    },
+    {
+      "anchor": "<s>",
+      "considered": [
+        {
+          "anchor": "<s>",
+          "ended": true,
+          "mth": {
+            "category_error": 0.0,
+            "coherence": 0.0,
+            "frame": 0.0,
+            "layers": {
+              "bit": 0.0625,
+              "byte": 0.0625,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.0625,
+              "paragraph": 0.0,
+              "phonetic": 1.0,
+              "sentence": 0.0,
+              "word_completion": 0.5
+            },
+            "score": 0.2563,
+            "truth": 0.0
+          },
+          "score": -0.8798,
+          "text": "To ask you a few things directly."
+        },
+        {
+          "anchor": "<s>",
+          "ended": true,
+          "mth": {
+            "category_error": 0.0,
+            "coherence": 0.0,
+            "frame": 0.0,
+            "layers": {
+              "bit": 0.125,
+              "byte": 0.125,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.125,
+              "paragraph": 0.0,
+              "phonetic": 1.0,
+              "sentence": 0.0,
+              "word_completion": 0.6
+            },
+            "score": 0.2665,
+            "truth": 0.0
+          },
+          "score": -0.9566,
+          "text": "Going to ask you a few things directly."
+        }
+      ],
+      "coverage": 1.0,
+      "forced": true,
+      "heads": {
+        "leaves": 0,
+        "used": 0
+      },
+      "mth_layers": {
+        "bit": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 64
+        },
+        "byte": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 256
+        },
+        "lexical": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 20
+        },
+        "morpheme": {
+          "accuracy": 0.25,
+          "coverage": 1.0,
+          "examples": 5
+        },
+        "narrative": {
+          "accuracy": 0.0,
+          "coverage": 0.0,
+          "examples": 0
+        },
+        "nibble": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 4096
+        },
+        "paragraph": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 6
+        },
+        "phonetic": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 20
+        },
+        "sentence": {
+          "accuracy": 0.0,
+          "coverage": 0.0,
+          "examples": 0
+        },
+        "word_completion": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 21
+        }
+      },
+      "nanlm": "To ask you a few things directly.",
+      "response_templates": 0,
+      "retrieval": 0,
+      "seed": [
+        "<s>"
+      ],
+      "sentences": [
+        "To ask you a few things directly."
+      ],
+      "user": "Why did you answer that way?"
+    },
+    {
+      "anchor": "<s>",
+      "considered": [
+        {
+          "anchor": "<s>",
+          "ended": true,
+          "mth": {
+            "category_error": 0.0,
+            "coherence": 0.0,
+            "frame": 0.0,
+            "layers": {
+              "bit": 0.0625,
+              "byte": 0.0625,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.0625,
+              "paragraph": 0.0,
+              "phonetic": 1.0,
+              "sentence": 0.0,
+              "word_completion": 1.0
+            },
+            "score": 0.2763,
+            "truth": 0.0
+          },
+          "score": -0.1384,
+          "text": "Hello nanlm."
+        },
+        {
+          "anchor": "<s>",
+          "ended": true,
+          "mth": {
+            "category_error": 0.0,
+            "coherence": 0.0,
+            "frame": 0.0,
+            "layers": {
+              "bit": 0.25,
+              "byte": 0.25,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.25,
+              "paragraph": 0.0,
+              "phonetic": 1.0,
+              "sentence": 0.0,
+              "word_completion": 0.25
+            },
+            "score": 0.265,
+            "truth": 0.0
+          },
+          "score": -0.8866,
+          "text": "I am going to ask you a few."
+        }
+      ],
+      "coverage": 1.0,
+      "forced": true,
+      "heads": {
+        "leaves": 0,
+        "used": 0
+      },
+      "mth_layers": {
+        "bit": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 64
+        },
+        "byte": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 256
+        },
+        "lexical": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 21
+        },
+        "morpheme": {
+          "accuracy": 0.2857142857142857,
+          "coverage": 1.0,
+          "examples": 6
+        },
+        "narrative": {
+          "accuracy": 0.0,
+          "coverage": 0.0,
+          "examples": 0
+        },
+        "nibble": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 4096
+        },
+        "paragraph": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 7
+        },
+        "phonetic": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 21
+        },
+        "sentence": {
+          "accuracy": 0.0,
+          "coverage": 0.0,
+          "examples": 0
+        },
+        "word_completion": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 23
+        }
+      },
+      "nanlm": "Hello nanlm.",
+      "response_templates": 0,
+      "retrieval": 0,
+      "seed": [
+        "<s>"
+      ],
+      "sentences": [
+        "Hello nanlm."
+      ],
+      "user": "Are you guessing?"
+    },
+    {
+      "anchor": "<s>",
+      "considered": [
+        {
+          "anchor": "<s>",
+          "ended": true,
+          "mth": {
+            "category_error": 0.0,
+            "coherence": 0.0,
+            "frame": 0.0,
+            "layers": {
+              "bit": 0.125,
+              "byte": 0.125,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.125,
+              "paragraph": 0.0,
+              "phonetic": 1.0,
+              "sentence": 0.0,
+              "word_completion": 0.25
+            },
+            "score": 0.2525,
+            "truth": 0.0
+          },
+          "score": -0.8985,
+          "text": "I am going to ask you a few."
+        },
+        {
+          "anchor": "<s>",
+          "ended": true,
+          "mth": {
+            "category_error": 0.0,
+            "coherence": 0.0,
+            "frame": 0.0,
+            "layers": {
+              "bit": 0.25,
+              "byte": 0.25,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.25,
+              "paragraph": 0.0,
+              "phonetic": 1.0,
+              "sentence": 0.0,
+              "word_completion": 0.4
+            },
+            "score": 0.271,
+            "truth": 0.0
+          },
+          "score": -0.9912,
+          "text": "I am going to ask you a few things."
+        }
+      ],
+      "coverage": 1.0,
+      "forced": true,
+      "heads": {
+        "leaves": 0,
+        "used": 0
+      },
+      "mth_layers": {
+        "bit": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 64
+        },
+        "byte": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 256
+        },
+        "lexical": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 23
+        },
+        "morpheme": {
+          "accuracy": 0.2608695652173913,
+          "coverage": 1.0,
+          "examples": 6
+        },
+        "narrative": {
+          "accuracy": 0.0,
+          "coverage": 0.0,
+          "examples": 0
+        },
+        "nibble": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 4096
+        },
+        "paragraph": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 8
+        },
+        "phonetic": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 23
+        },
+        "sentence": {
+          "accuracy": 0.0,
+          "coverage": 0.0,
+          "examples": 0
+        },
+        "word_completion": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 24
+        }
+      },
+      "nanlm": "I am going to ask you a few.",
+      "response_templates": 0,
+      "retrieval": 0,
+      "seed": [
+        "<s>"
+      ],
+      "sentences": [
+        "I am going to ask you a few."
+      ],
+      "user": "Do you know that you do not know?"
+    },
+    {
+      "anchor": "<s>",
+      "considered": [
+        {
+          "anchor": "<s>",
+          "ended": true,
+          "mth": {
+            "category_error": 0.0,
+            "coherence": 0.0,
+            "frame": 0.0,
+            "layers": {
+              "bit": 0.0625,
+              "byte": 0.0625,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.0625,
+              "paragraph": 0.0,
+              "phonetic": 1.0,
+              "sentence": 0.0,
+              "word_completion": 0.5
+            },
+            "score": 0.2563,
+            "truth": 0.0
+          },
+          "score": -0.7334,
+          "text": "I am going to ask you a few things directly."
+        },
+        {
+          "anchor": "<s>",
+          "ended": true,
+          "mth": {
+            "category_error": 0.0,
+            "coherence": 0.0,
+            "frame": 0.0,
+            "layers": {
+              "bit": 0.125,
+              "byte": 0.125,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.125,
+              "paragraph": 0.0,
+              "phonetic": 1.0,
+              "sentence": 0.0,
+              "word_completion": 0.4
+            },
+            "score": 0.2585,
+            "truth": 0.0
+          },
+          "score": -0.9968,
+          "text": "I am going to ask you a few things."
+        }
+      ],
+      "coverage": 1.0,
+      "forced": true,
+      "heads": {
+        "leaves": 0,
+        "used": 0
+      },
+      "mth_layers": {
+        "bit": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 64
+        },
+        "byte": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 256
+        },
+        "lexical": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 25
+        },
+        "morpheme": {
+          "accuracy": 0.24,
+          "coverage": 1.0,
+          "examples": 6
+        },
+        "narrative": {
+          "accuracy": 0.0,
+          "coverage": 0.0,
+          "examples": 0
+        },
+        "nibble": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 4096
+        },
+        "paragraph": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 9
+        },
+        "phonetic": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 25
+        },
+        "sentence": {
+          "accuracy": 0.0,
+          "coverage": 0.0,
+          "examples": 0
+        },
+        "word_completion": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 28
+        }
+      },
+      "nanlm": "I am going to ask you a few things directly.",
+      "response_templates": 0,
+      "retrieval": 0,
+      "seed": [
+        "<s>"
+      ],
+      "sentences": [
+        "I am going to ask you a few things directly."
+      ],
+      "user": "What is the capital of France?"
+    },
+    {
+      "anchor": "<s>",
+      "considered": [
+        {
+          "anchor": "<s>",
+          "ended": true,
+          "mth": {
+            "category_error": 0.0,
+            "coherence": 0.0,
+            "frame": 0.0,
+            "layers": {
+              "bit": 0.25,
+              "byte": 0.25,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.25,
+              "paragraph": 0.0,
+              "phonetic": 1.0,
+              "sentence": 0.0,
+              "word_completion": 0.3333
+            },
+            "score": 0.2683,
+            "truth": 0.0
+          },
+          "score": -0.8714,
+          "text": "I am going to ask you."
+        },
+        {
+          "anchor": "<s>",
+          "ended": true,
+          "mth": {
+            "category_error": 0.0,
+            "coherence": 0.0,
+            "frame": 0.0,
+            "layers": {
+              "bit": 0.125,
+              "byte": 0.125,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.125,
+              "paragraph": 0.0,
+              "phonetic": 1.0,
+              "sentence": 0.0,
+              "word_completion": 0.4
+            },
+            "score": 0.2585,
+            "truth": 0.0
+          },
+          "score": -1.0141,
+          "text": "I am going to ask you a few things."
+        }
+      ],
+      "coverage": 1.0,
+      "forced": true,
+      "heads": {
+        "leaves": 0,
+        "used": 0
+      },
+      "mth_layers": {
+        "bit": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 64
+        },
+        "byte": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 256
+        },
+        "lexical": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 26
+        },
+        "morpheme": {
+          "accuracy": 0.23076923076923078,
+          "coverage": 1.0,
+          "examples": 6
+        },
+        "narrative": {
+          "accuracy": 0.0,
+          "coverage": 0.0,
+          "examples": 0
+        },
+        "nibble": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 4096
+        },
+        "paragraph": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 10
+        },
+        "phonetic": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 26
+        },
+        "sentence": {
+          "accuracy": 0.0,
+          "coverage": 0.0,
+          "examples": 0
+        },
+        "word_completion": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 30
+        }
+      },
+      "nanlm": "I am going to ask you.",
+      "response_templates": 0,
+      "retrieval": 0,
+      "seed": [
+        "<s>"
+      ],
+      "sentences": [
+        "I am going to ask you."
+      ],
+      "user": "What is a quark?"
+    },
+    {
+      "anchor": "<s>",
+      "considered": [
+        {
+          "anchor": "<s>",
+          "ended": true,
+          "mth": {
+            "category_error": 0.0,
+            "coherence": 0.0,
+            "frame": 0.0,
+            "layers": {
+              "bit": 0.125,
+              "byte": 0.125,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.125,
+              "paragraph": 0.0,
+              "phonetic": 1.0,
+              "sentence": 0.0,
+              "word_completion": 0.5
+            },
+            "score": 0.2625,
+            "truth": 0.0
+          },
+          "score": -0.8325,
+          "text": "Ask you a few things directly."
+        },
+        {
+          "anchor": "<s>",
+          "ended": true,
+          "mth": {
+            "category_error": 0.0,
+            "coherence": 0.0,
+            "frame": 0.0,
+            "layers": {
+              "bit": 0.25,
+              "byte": 0.25,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.25,
+              "paragraph": 0.0,
+              "phonetic": 1.0,
+              "sentence": 0.0,
+              "word_completion": 0.6
+            },
+            "score": 0.279,
+            "truth": 0.0
+          },
+          "score": -0.9458,
+          "text": "Going to ask you a few things directly."
+        }
+      ],
+      "coverage": 1.0,
+      "forced": true,
+      "heads": {
+        "leaves": 0,
+        "used": 0
+      },
+      "mth_layers": {
+        "bit": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 64
+        },
+        "byte": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 256
+        },
+        "lexical": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 29
+        },
+        "morpheme": {
+          "accuracy": 0.2413793103448276,
+          "coverage": 1.0,
+          "examples": 7
+        },
+        "narrative": {
+          "accuracy": 0.0,
+          "coverage": 0.0,
+          "examples": 0
+        },
+        "nibble": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 4096
+        },
+        "paragraph": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 11
+        },
+        "phonetic": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 29
+        },
+        "sentence": {
+          "accuracy": 0.0,
+          "coverage": 0.0,
+          "examples": 0
+        },
+        "word_completion": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 35
+        }
+      },
+      "nanlm": "Ask you a few things directly.",
+      "response_templates": 0,
+      "retrieval": 0,
+      "seed": [
+        "<s>"
+      ],
+      "sentences": [
+        "Ask you a few things directly."
+      ],
+      "user": "How many moons does Neptune have?"
+    },
+    {
+      "anchor": "<s>",
+      "considered": [
+        {
+          "anchor": "<s>",
+          "ended": true,
+          "mth": {
+            "category_error": 0.0,
+            "coherence": 0.0,
+            "frame": 0.0,
+            "layers": {
+              "bit": 0.125,
+              "byte": 0.125,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.125,
+              "paragraph": 0.0,
+              "phonetic": 1.0,
+              "sentence": 0.0,
+              "word_completion": 0.3333
+            },
+            "score": 0.2558,
+            "truth": 0.0
+          },
+          "score": -0.7971,
+          "text": "I am going to ask."
+        },
+        {
+          "anchor": "<s>",
+          "ended": true,
+          "mth": {
+            "category_error": 0.0,
+            "coherence": 0.0,
+            "frame": 0.0,
+            "layers": {
+              "bit": 0.25,
+              "byte": 0.25,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.25,
+              "paragraph": 0.0,
+              "phonetic": 1.0,
+              "sentence": 0.0,
+              "word_completion": 0.4
+            },
+            "score": 0.271,
+            "truth": 0.0
+          },
+          "score": -1.0011,
+          "text": "I am going to ask you a few things."
+        }
+      ],
+      "coverage": 1.0,
+      "forced": true,
+      "heads": {
+        "leaves": 0,
+        "used": 0
+      },
+      "mth_layers": {
+        "bit": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 64
+        },
+        "byte": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 256
+        },
+        "lexical": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 32
+        },
+        "morpheme": {
+          "accuracy": 0.25,
+          "coverage": 1.0,
+          "examples": 8
+        },
+        "narrative": {
+          "accuracy": 0.0,
+          "coverage": 0.0,
+          "examples": 0
+        },
+        "nibble": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 4096
+        },
+        "paragraph": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 12
+        },
+        "phonetic": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 32
+        },
+        "sentence": {
+          "accuracy": 0.0,
+          "coverage": 0.0,
+          "examples": 0
+        },
+        "word_completion": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 39
+        }
+      },
+      "nanlm": "I am going to ask.",
+      "response_templates": 0,
+      "retrieval": 0,
+      "seed": [
+        "<s>"
+      ],
+      "sentences": [
+        "I am going to ask."
+      ],
+      "user": "Can you learn something new?"
+    },
+    {
+      "anchor": "<s>",
+      "considered": [
+        {
+          "anchor": "<s>",
+          "ended": true,
+          "mth": {
+            "category_error": 0.0,
+            "coherence": 0.0,
+            "frame": 0.0,
+            "layers": {
+              "bit": 0.125,
+              "byte": 0.125,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.125,
+              "paragraph": 0.0,
+              "phonetic": 1.0,
+              "sentence": 0.0,
+              "word_completion": 0.3333
+            },
+            "score": 0.2558,
+            "truth": 0.0
+          },
+          "score": -0.8575,
+          "text": "I am going to ask you a."
+        },
+        {
+          "anchor": "<s>",
+          "ended": true,
+          "mth": {
+            "category_error": 0.0,
+            "coherence": 0.0,
+            "frame": 0.0,
+            "layers": {
+              "bit": 0.25,
+              "byte": 0.25,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.25,
+              "paragraph": 0.0,
+              "phonetic": 1.0,
+              "sentence": 0.0,
+              "word_completion": 0.6
+            },
+            "score": 0.279,
+            "truth": 0.0
+          },
+          "score": -0.9656,
+          "text": "Going to ask you a few things directly."
+        }
+      ],
+      "coverage": 1.0,
+      "forced": true,
+      "heads": {
+        "leaves": 0,
+        "used": 0
+      },
+      "mth_layers": {
+        "bit": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 64
+        },
+        "byte": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 256
+        },
+        "lexical": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 34
+        },
+        "morpheme": {
+          "accuracy": 0.23529411764705882,
+          "coverage": 1.0,
+          "examples": 8
+        },
+        "narrative": {
+          "accuracy": 0.0,
+          "coverage": 0.0,
+          "examples": 0
+        },
+        "nibble": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 4096
+        },
+        "paragraph": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 13
+        },
+        "phonetic": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 34
+        },
+        "sentence": {
+          "accuracy": 0.0,
+          "coverage": 0.0,
+          "examples": 0
+        },
+        "word_completion": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 40
+        }
+      },
+      "nanlm": "I am going to ask you a.",
+      "response_templates": 0,
+      "retrieval": 0,
+      "seed": [
+        "<s>"
+      ],
+      "sentences": [
+        "I am going to ask you a."
+      ],
+      "user": "What do you want to talk about?"
+    },
+    {
+      "anchor": "<s>",
+      "considered": [
+        {
+          "anchor": "<s>",
+          "ended": true,
+          "mth": {
+            "category_error": 0.0,
+            "coherence": 0.0,
+            "frame": 0.0,
+            "layers": {
+              "bit": 0.125,
+              "byte": 0.125,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.125,
+              "paragraph": 0.0,
+              "phonetic": 1.0,
+              "sentence": 0.0,
+              "word_completion": 0.6667
+            },
+            "score": 0.2692,
+            "truth": 0.0
+          },
+          "score": -0.9314,
+          "text": "A few things directly."
+        },
+        {
+          "anchor": "<s>",
+          "ended": true,
+          "mth": {
+            "category_error": 0.0,
+            "coherence": 0.0,
+            "frame": 0.0,
+            "layers": {
+              "bit": 0.125,
+              "byte": 0.125,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.125,
+              "paragraph": 0.0,
+              "phonetic": 1.0,
+              "sentence": 0.0,
+              "word_completion": 0.5
+            },
+            "score": 0.2625,
+            "truth": 0.0
+          },
+          "score": -0.9982,
+          "text": "I am going to."
+        }
+      ],
+      "coverage": 1.0,
+      "forced": true,
+      "heads": {
+        "leaves": 0,
+        "used": 0
+      },
+      "mth_layers": {
+        "bit": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 64
+        },
+        "byte": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 256
+        },
+        "lexical": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 35
+        },
+        "morpheme": {
+          "accuracy": 0.22857142857142856,
+          "coverage": 1.0,
+          "examples": 8
+        },
+        "narrative": {
+          "accuracy": 0.0,
+          "coverage": 0.0,
+          "examples": 0
+        },
+        "nibble": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 4096
+        },
+        "paragraph": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 14
+        },
+        "phonetic": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 35
+        },
+        "sentence": {
+          "accuracy": 0.0,
+          "coverage": 0.0,
+          "examples": 0
+        },
+        "word_completion": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 41
+        }
+      },
+      "nanlm": "A few things directly.",
+      "response_templates": 0,
+      "retrieval": 0,
+      "seed": [
+        "<s>"
+      ],
+      "sentences": [
+        "A few things directly."
+      ],
+      "user": "Tell me something you do not know."
+    },
+    {
+      "anchor": "<s>",
+      "considered": [
+        {
+          "anchor": "<s>",
+          "ended": true,
+          "mth": {
+            "category_error": 0.0,
+            "coherence": 0.0,
+            "frame": 0.0,
+            "layers": {
+              "bit": 0.25,
+              "byte": 0.25,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.25,
+              "paragraph": 0.0,
+              "phonetic": 1.0,
+              "sentence": 0.0,
+              "word_completion": 0.5
+            },
+            "score": 0.275,
+            "truth": 0.0
+          },
+          "score": -0.973,
+          "text": "I am going to."
+        },
+        {
+          "anchor": "<s>",
+          "ended": true,
+          "mth": {
+            "category_error": 0.0,
+            "coherence": 0.0,
+            "frame": 0.0,
+            "layers": {
+              "bit": 0.125,
+              "byte": 0.125,
+              "lexical": 1.0,
+              "morpheme": 1.0,
+              "narrative": 0.5,
+              "nibble": 0.125,
+              "paragraph": 0.0,
+              "phonetic": 1.0,
+              "sentence": 0.0,
+              "word_completion": 0.4
+            },
+            "score": 0.2585,
+            "truth": 0.0
+          },
+          "score": -0.9881,
+          "text": "I am going to ask you a few things."
+        }
+      ],
+      "coverage": 1.0,
+      "forced": true,
+      "heads": {
+        "leaves": 0,
+        "used": 0
+      },
+      "mth_layers": {
+        "bit": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 64
+        },
+        "byte": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 256
+        },
+        "lexical": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 39
+        },
+        "morpheme": {
+          "accuracy": 0.28205128205128205,
+          "coverage": 1.0,
+          "examples": 11
+        },
+        "narrative": {
+          "accuracy": 0.0,
+          "coverage": 0.0,
+          "examples": 0
+        },
+        "nibble": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 4096
+        },
+        "paragraph": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 15
+        },
+        "phonetic": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 39
+        },
+        "sentence": {
+          "accuracy": 0.0,
+          "coverage": 0.0,
+          "examples": 0
+        },
+        "word_completion": {
+          "accuracy": 1.0,
+          "coverage": 1.0,
+          "examples": 48
+        }
+      },
+      "nanlm": "I am going to.",
+      "response_templates": 0,
+      "retrieval": 0,
+      "seed": [
+        "<s>"
+      ],
+      "sentences": [
+        "I am going to."
+      ],
+      "user": "What happens after we finish this conversation?"
+    }
+  ],
+  "mode": "native",
+  "schema": "nanlmind-hermes-free-chat/1",
+  "training_calls": 0
+}

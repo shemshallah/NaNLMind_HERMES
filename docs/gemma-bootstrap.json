@@ -1,0 +1,651 @@
+{
+  "architecture": "NaNLM (the Hermes plugin) is not an LLM. It is a from-scratch\nword-level temporal predictor. It learns only from statements it is exposed to;\nquestions and requests are not learned as facts. At each step it weighs every\nknown word, predicts the next word forward from a head/mirror temporal frame,\nfinishes the sentence, and may add an explanation. MTH provides a root 4x4\nBoolean table (16 functions) and ten layers L0-L9: bit, nibble, byte, phonetic,\nmorpheme, lexical, word_completion, sentence, paragraph, narrative. Heads map\nrelations through root Boolean transforms into a head scratch register. There\nare no response templates and no retrieval. It has no built-in \"I don't know\";\nabstention must develop from exposure if it develops at all.",
+  "round_1": {
+    "known": [
+      {
+        "expected": [
+          "word-level",
+          "temporal",
+          "predictor"
+        ],
+        "hit": false,
+        "nanlm": "Nanlm learns from statements.",
+        "question": "What is NaNLM?"
+      },
+      {
+        "expected": [
+          "blue"
+        ],
+        "hit": true,
+        "nanlm": "Sky is blue.",
+        "question": "What color is the sky?"
+      },
+      {
+        "expected": [
+          "green"
+        ],
+        "hit": true,
+        "nanlm": "Grass is green.",
+        "question": "What color is grass?"
+      },
+      {
+        "expected": [
+          "bark"
+        ],
+        "hit": true,
+        "nanlm": "Dogs bark not know the date of tomorrow.",
+        "question": "What do dogs do?"
+      },
+      {
+        "expected": [
+          "ice"
+        ],
+        "hit": false,
+        "nanlm": "Water is clear.",
+        "question": "What happens when water freezes?"
+      },
+      {
+        "expected": [
+          "animal"
+        ],
+        "hit": true,
+        "nanlm": "Cat is an animal.",
+        "question": "What is a cat?"
+      },
+      {
+        "expected": [
+          "purple"
+        ],
+        "hit": false,
+        "nanlm": "Red and blue make green.",
+        "question": "What do red and blue make?"
+      },
+      {
+        "expected": [
+          "moon"
+        ],
+        "hit": false,
+        "nanlm": "Orbits the earth.",
+        "question": "What orbits the earth?"
+      }
+    ],
+    "plan": {
+      "known_probes": [
+        {
+          "expected": [
+            "word-level",
+            "temporal",
+            "predictor"
+          ],
+          "question": "What is NaNLM?"
+        },
+        {
+          "expected": [
+            "blue"
+          ],
+          "question": "What color is the sky?"
+        },
+        {
+          "expected": [
+            "green"
+          ],
+          "question": "What color is grass?"
+        },
+        {
+          "expected": [
+            "bark"
+          ],
+          "question": "What do dogs do?"
+        },
+        {
+          "expected": [
+            "ice"
+          ],
+          "question": "What happens when water freezes?"
+        },
+        {
+          "expected": [
+            "animal"
+          ],
+          "question": "What is a cat?"
+        },
+        {
+          "expected": [
+            "purple"
+          ],
+          "question": "What do red and blue make?"
+        },
+        {
+          "expected": [
+            "moon"
+          ],
+          "question": "What orbits the earth?"
+        }
+      ],
+      "reasoning": "Round 1 establishes basic identity, the fundamental mechanism of temporal prediction, and simple causal associations between colors and objects to test the L6 (lexical) and L7 (word_completion) layers.",
+      "teaching": [
+        "NaNLM is a word-level temporal predictor.",
+        "NaNLM learns from statements.",
+        "A word is a unit of meaning.",
+        "A sentence is a sequence of words.",
+        "Temporal prediction is guessing the next word.",
+        "The sky is blue.",
+        "Grass is green.",
+        "Fire is red.",
+        "Snow is white.",
+        "The sun is yellow.",
+        "Water is clear.",
+        "A cat is an animal.",
+        "A dog is an animal.",
+        "A bird is an animal.",
+        "Cats meow.",
+        "Dogs bark.",
+        "Birds fly.",
+        "Heat causes melting.",
+        "Cold causes freezing.",
+        "Ice is frozen water.",
+        "Steam is boiled water.",
+        "A circle is round.",
+        "A square has four sides.",
+        "Red and blue make purple.",
+        "Yellow and blue make green.",
+        "Red and yellow make orange.",
+        "The earth is a planet.",
+        "The moon orbits the earth.",
+        "Stars are in space.",
+        "Light travels fast."
+      ],
+      "uncertainty": [
+        "I do not know the capital of France.",
+        "I do not know the name of the president.",
+        "I do not know how many stars are in the galaxy.",
+        "I do not know the taste of salt.",
+        "I do not know the date of tomorrow.",
+        "I do not know who built the pyramids."
+      ],
+      "unknown_probes": [
+        "What is the capital of Japan?",
+        "Who wrote Hamlet?",
+        "What is the speed of sound?",
+        "How many legs does a spider have?",
+        "What is the chemical symbol for gold?",
+        "Where is the Eiffel Tower located?",
+        "Who discovered gravity?",
+        "What is the largest ocean?"
+      ]
+    },
+    "summary": {
+      "heads": 22,
+      "known": "4/8",
+      "unknown_abstained": "5/8"
+    },
+    "teaching": [
+      {
+        "heads": 1,
+        "learned_records": 1,
+        "nanlm": "Nanlm is a word level temporal predictor.",
+        "teacher": "NaNLM is a word-level temporal predictor."
+      },
+      {
+        "heads": 1,
+        "learned_records": 0,
+        "nanlm": "Nanlm learns from statements.",
+        "teacher": "NaNLM learns from statements."
+      },
+      {
+        "heads": 2,
+        "learned_records": 1,
+        "nanlm": "Word level temporal predictor.",
+        "teacher": "A word is a unit of meaning."
+      },
+      {
+        "heads": 3,
+        "learned_records": 1,
+        "nanlm": "Sentence is a sequence of words.",
+        "teacher": "A sentence is a sequence of words."
+      },
+      {
+        "heads": 4,
+        "learned_records": 1,
+        "nanlm": "Temporal prediction is guessing the next word.",
+        "teacher": "Temporal prediction is guessing the next word."
+      },
+      {
+        "heads": 5,
+        "learned_records": 1,
+        "nanlm": "Sky is blue.",
+        "teacher": "The sky is blue."
+      },
+      {
+        "heads": 6,
+        "learned_records": 1,
+        "nanlm": "Grass is green.",
+        "teacher": "Grass is green."
+      },
+      {
+        "heads": 7,
+        "learned_records": 1,
+        "nanlm": "Fire is red.",
+        "teacher": "Fire is red."
+      },
+      {
+        "heads": 8,
+        "learned_records": 1,
+        "nanlm": "Snow is white.",
+        "teacher": "Snow is white."
+      },
+      {
+        "heads": 9,
+        "learned_records": 1,
+        "nanlm": "Sun is yellow.",
+        "teacher": "The sun is yellow."
+      },
+      {
+        "heads": 10,
+        "learned_records": 1,
+        "nanlm": "Water is clear.",
+        "teacher": "Water is clear."
+      },
+      {
+        "heads": 11,
+        "learned_records": 1,
+        "nanlm": "Cat is an animal.",
+        "teacher": "A cat is an animal."
+      },
+      {
+        "heads": 12,
+        "learned_records": 1,
+        "nanlm": "Animal a word level temporal predictor.",
+        "teacher": "A dog is an animal."
+      },
+      {
+        "heads": 13,
+        "learned_records": 1,
+        "nanlm": "Animal is a word level temporal predictor.",
+        "teacher": "A bird is an animal."
+      },
+      {
+        "heads": 13,
+        "learned_records": 0,
+        "nanlm": "Cats meow is an animal.",
+        "teacher": "Cats meow."
+      },
+      {
+        "heads": 13,
+        "learned_records": 0,
+        "nanlm": "Dogs bark is an animal.",
+        "teacher": "Dogs bark."
+      },
+      {
+        "heads": 13,
+        "learned_records": 0,
+        "nanlm": "Birds fly is an animal.",
+        "teacher": "Birds fly."
+      },
+      {
+        "heads": 14,
+        "learned_records": 1,
+        "nanlm": "Heat causes melting.",
+        "teacher": "Heat causes melting."
+      },
+      {
+        "heads": 15,
+        "learned_records": 1,
+        "nanlm": "Causes freezing is a word level temporal predictor.",
+        "teacher": "Cold causes freezing."
+      },
+      {
+        "heads": 16,
+        "learned_records": 1,
+        "nanlm": "Water is clear.",
+        "teacher": "Ice is frozen water."
+      },
+      {
+        "heads": 17,
+        "learned_records": 1,
+        "nanlm": "Water is a sequence of words.",
+        "teacher": "Steam is boiled water."
+      },
+      {
+        "heads": 18,
+        "learned_records": 1,
+        "nanlm": "Circle is round.",
+        "teacher": "A circle is round."
+      },
+      {
+        "heads": 19,
+        "learned_records": 1,
+        "nanlm": "Square has four sides.",
+        "teacher": "A square has four sides."
+      },
+      {
+        "heads": 19,
+        "learned_records": 0,
+        "nanlm": "Red and blue make purple.",
+        "teacher": "Red and blue make purple."
+      },
+      {
+        "heads": 19,
+        "learned_records": 0,
+        "nanlm": "Yellow and blue make green.",
+        "teacher": "Yellow and blue make green."
+      },
+      {
+        "heads": 19,
+        "learned_records": 0,
+        "nanlm": "Red and yellow make orange.",
+        "teacher": "Red and yellow make orange."
+      },
+      {
+        "heads": 20,
+        "learned_records": 1,
+        "nanlm": "Earth is a planet.",
+        "teacher": "The earth is a planet."
+      },
+      {
+        "heads": 20,
+        "learned_records": 0,
+        "nanlm": "Earth is a sequence of words.",
+        "teacher": "The moon orbits the earth."
+      },
+      {
+        "heads": 21,
+        "learned_records": 1,
+        "nanlm": "Stars are in space.",
+        "teacher": "Stars are in space."
+      },
+      {
+        "heads": 21,
+        "learned_records": 0,
+        "nanlm": "Light travels fast.",
+        "teacher": "Light travels fast."
+      },
+      {
+        "heads": 21,
+        "learned_records": 0,
+        "nanlm": "Not know the capital of france.",
+        "teacher": "I do not know the capital of France."
+      },
+      {
+        "heads": 21,
+        "learned_records": 0,
+        "nanlm": "Not know the capital of words.",
+        "teacher": "I do not know the name of the president."
+      },
+      {
+        "heads": 22,
+        "learned_records": 1,
+        "nanlm": "Not know how many stars are in space.",
+        "teacher": "I do not know how many stars are in the galaxy."
+      },
+      {
+        "heads": 22,
+        "learned_records": 0,
+        "nanlm": "Not know the taste of salt.",
+        "teacher": "I do not know the taste of salt."
+      },
+      {
+        "heads": 22,
+        "learned_records": 0,
+        "nanlm": "Not know the date of tomorrow.",
+        "teacher": "I do not know the date of tomorrow."
+      },
+      {
+        "heads": 22,
+        "learned_records": 0,
+        "nanlm": "Not know who built the pyramids.",
+        "teacher": "I do not know who built the pyramids."
+      }
+    ],
+    "unknown": [
+      {
+        "abstained": false,
+        "nanlm": "Capital of france.",
+        "question": "What is the capital of Japan?"
+      },
+      {
+        "abstained": true,
+        "nanlm": "I do not know the date of tomorrow.",
+        "question": "Who wrote Hamlet?"
+      },
+      {
+        "abstained": true,
+        "nanlm": "I do not know the capital of france.",
+        "question": "What is the speed of sound?"
+      },
+      {
+        "abstained": false,
+        "nanlm": "Many stars are in space.",
+        "question": "How many legs does a spider have?"
+      },
+      {
+        "abstained": true,
+        "nanlm": "I do not know who built the pyramids.",
+        "question": "What is the chemical symbol for gold?"
+      },
+      {
+        "abstained": false,
+        "nanlm": "Red and yellow make orange.",
+        "question": "Where is the Eiffel Tower located?"
+      },
+      {
+        "abstained": true,
+        "nanlm": "I do not know how many stars are in space.",
+        "question": "Who discovered gravity?"
+      },
+      {
+        "abstained": true,
+        "nanlm": "I do not know the.",
+        "question": "What is the largest ocean?"
+      }
+    ]
+  },
+  "round_2": {
+    "known": [
+      {
+        "expected": [
+          "ice"
+        ],
+        "hit": true,
+        "nanlm": "Water freezes into ice.",
+        "question": "What happens when water freezes?"
+      },
+      {
+        "expected": [
+          "purple"
+        ],
+        "hit": false,
+        "nanlm": "Red and blue make green.",
+        "question": "What do red and blue make?"
+      },
+      {
+        "expected": [
+          "moon"
+        ],
+        "hit": false,
+        "nanlm": "Orbits the earth.",
+        "question": "What orbits the earth?"
+      },
+      {
+        "expected": [
+          "predicts",
+          "next",
+          "word"
+        ],
+        "hit": false,
+        "nanlm": "Nanlm learns from statements.",
+        "question": "What does NaNLM do?"
+      }
+    ],
+    "plan": {
+      "known_probes": [
+        {
+          "expected": [
+            "ice"
+          ],
+          "question": "What happens when water freezes?"
+        },
+        {
+          "expected": [
+            "purple"
+          ],
+          "question": "What do red and blue make?"
+        },
+        {
+          "expected": [
+            "moon"
+          ],
+          "question": "What orbits the earth?"
+        },
+        {
+          "expected": [
+            "predicts",
+            "next",
+            "word"
+          ],
+          "question": "What does NaNLM do?"
+        }
+      ],
+      "reasoning": "Round 2 focuses on reinforcing failed causal links from Round 1 (freezing, color mixing, orbital mechanics) and refining the 'I do not know' abstention pattern to reduce hallucinations of unrelated facts.",
+      "teaching": [
+        "Water freezes into ice.",
+        "Freezing water creates ice.",
+        "Red and blue make purple.",
+        "Purple is made from red and blue.",
+        "The moon orbits the earth.",
+        "The earth is orbited by the moon.",
+        "NaNLM predicts the next word.",
+        "Prediction uses temporal frames.",
+        "Ice is cold.",
+        "Purple is a color."
+      ],
+      "uncertainty": [
+        "I do not know the capital of Japan.",
+        "I do not know the location of the Eiffel Tower.",
+        "I do not know the number of spider legs.",
+        "I do not know the chemical symbol for gold."
+      ],
+      "unknown_probes": [
+        "Who is the king of Spain?",
+        "What is the square root of 144?",
+        "Where is the Great Wall located?",
+        "What is the boiling point of silver?"
+      ]
+    },
+    "summary": {
+      "heads": 26,
+      "known": "1/4",
+      "unknown_abstained": "3/4"
+    },
+    "teaching": [
+      {
+        "heads": 22,
+        "learned_records": 0,
+        "nanlm": "Water freezes into ice.",
+        "teacher": "Water freezes into ice."
+      },
+      {
+        "heads": 22,
+        "learned_records": 0,
+        "nanlm": "Freezing water creates ice.",
+        "teacher": "Freezing water creates ice."
+      },
+      {
+        "heads": 22,
+        "learned_records": 0,
+        "nanlm": "Red and blue make purple.",
+        "teacher": "Red and blue make purple."
+      },
+      {
+        "heads": 23,
+        "learned_records": 1,
+        "nanlm": "Red and blue make green.",
+        "teacher": "Purple is made from red and blue."
+      },
+      {
+        "heads": 23,
+        "learned_records": 0,
+        "nanlm": "Moon orbits the earth.",
+        "teacher": "The moon orbits the earth."
+      },
+      {
+        "heads": 24,
+        "learned_records": 1,
+        "nanlm": "Earth is orbited by the moon.",
+        "teacher": "The earth is orbited by the moon."
+      },
+      {
+        "heads": 24,
+        "learned_records": 0,
+        "nanlm": "Nanlm predicts the next word.",
+        "teacher": "NaNLM predicts the next word."
+      },
+      {
+        "heads": 24,
+        "learned_records": 0,
+        "nanlm": "Prediction uses temporal frames.",
+        "teacher": "Prediction uses temporal frames."
+      },
+      {
+        "heads": 25,
+        "learned_records": 1,
+        "nanlm": "Ice is frozen water.",
+        "teacher": "Ice is cold."
+      },
+      {
+        "heads": 26,
+        "learned_records": 1,
+        "nanlm": "Purple is made from statements.",
+        "teacher": "Purple is a color."
+      },
+      {
+        "heads": 26,
+        "learned_records": 0,
+        "nanlm": "Not know the capital of japan.",
+        "teacher": "I do not know the capital of Japan."
+      },
+      {
+        "heads": 26,
+        "learned_records": 0,
+        "nanlm": "Not know who built the pyramids.",
+        "teacher": "I do not know the location of the Eiffel Tower."
+      },
+      {
+        "heads": 26,
+        "learned_records": 0,
+        "nanlm": "Not know the capital of france.",
+        "teacher": "I do not know the number of spider legs."
+      },
+      {
+        "heads": 26,
+        "learned_records": 0,
+        "nanlm": "Not know the chemical symbol for gold.",
+        "teacher": "I do not know the chemical symbol for gold."
+      }
+    ],
+    "unknown": [
+      {
+        "abstained": true,
+        "nanlm": "I do not know who built the pyramids.",
+        "question": "Who is the king of Spain?"
+      },
+      {
+        "abstained": false,
+        "nanlm": "Square has four sides.",
+        "question": "What is the square root of 144?"
+      },
+      {
+        "abstained": true,
+        "nanlm": "I do not know the capital of france.",
+        "question": "Where is the Great Wall located?"
+      },
+      {
+        "abstained": true,
+        "nanlm": "I do not know the chemical symbol for gold.",
+        "question": "What is the boiling point of silver?"
+      }
+    ]
+  },
+  "schema": "nanlmind-hermes-gemma-bootstrap/1",
+  "teacher": "gemma4:31b-cloud"
+}

@@ -94,8 +94,16 @@ def fnv_head(word: str) -> int:
 
 
 def _detokenize(words: list[str]) -> str:
-    text = ""
+    cleaned = []
     for token in words:
+        if (cleaned and token not in PUNCT
+                and cleaned[-1].casefold() == token.casefold()):
+            continue
+        if token in PUNCT and not cleaned:
+            continue
+        cleaned.append(token)
+    text = ""
+    for token in cleaned:
         if token in PUNCT:
             text = text.rstrip() + token
         else:
