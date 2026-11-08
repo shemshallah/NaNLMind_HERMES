@@ -1,0 +1,96 @@
+{
+  "cycle_audit": {
+    "encoded_features": 96,
+    "independent_triangles": 32385,
+    "max_cycle_divergence": 1.9984014443252818e-15,
+    "max_encoded_recovery_error": 0.0,
+    "max_gauge_flux_error": 8.881784197001252e-16,
+    "max_projected_flux_error": 2.220446049250313e-16,
+    "max_projected_gauge_error": 1.4346163146328195e-15,
+    "pairs": 32640,
+    "vertices": 256
+  },
+  "eligible": 400,
+  "examples": [
+    {
+      "correct": true,
+      "hop": 2,
+      "parent": "pelican",
+      "resolved": true,
+      "target": "pelecaniform seabird"
+    },
+    {
+      "correct": true,
+      "hop": 2,
+      "parent": "christian",
+      "resolved": true,
+      "target": "religious person"
+    },
+    {
+      "correct": true,
+      "hop": 2,
+      "parent": "dairy cattle",
+      "resolved": true,
+      "target": "cattle"
+    },
+    {
+      "correct": true,
+      "hop": 3,
+      "parent": "calamint",
+      "resolved": true,
+      "target": "vascular plant"
+    },
+    {
+      "correct": true,
+      "hop": 3,
+      "parent": "protoctist genus",
+      "resolved": true,
+      "target": "taxonomic group"
+    },
+    {
+      "correct": true,
+      "hop": 2,
+      "parent": "caryophylloid dicot genus",
+      "resolved": true,
+      "target": "dicot genus"
+    },
+    {
+      "correct": true,
+      "hop": 3,
+      "parent": "surgeon",
+      "resolved": true,
+      "target": "medical practitioner"
+    },
+    {
+      "correct": true,
+      "hop": 2,
+      "parent": "dental surgery",
+      "resolved": true,
+      "target": "dentistry"
+    },
+    {
+      "correct": true,
+      "hop": 3,
+      "parent": "mammal genus",
+      "resolved": true,
+      "target": "taxonomic group"
+    },
+    {
+      "correct": true,
+      "hop": 2,
+      "parent": "marmoset",
+      "resolved": true,
+      "target": "new world monkey"
+    }
+  ],
+  "head_resolution_rate": 0.9975,
+  "mean_inferred_hops": 2.598997493734336,
+  "multi_hop_correct_rate": 0.9975,
+  "new_terms_taught": 400,
+  "note": "controlled grammar: the definition names one unambiguous WordNet parent; this is symbolic composition, not unrestricted NLP",
+  "noun_synsets": 82192,
+  "schema": "nanlmind-hermes-semantic-acquisition/1",
+  "unique_noun_labels": 117953,
+  "unrelated_category_abstentions": 398,
+  "unrelated_category_trials": 398
+}

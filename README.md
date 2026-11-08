@@ -186,7 +186,7 @@ Report security issues privately as described in [SECURITY.md](SECURITY.md).
 
 ## Verification
 
-- 260 unit/integration tests pass locally; CI runs Python 3.10, 3.11, and 3.12.
+- 265 unit/integration tests pass locally; CI runs Python 3.10, 3.11, and 3.12.
 - Hermes Agent v0.23.0 `plugins validate` and `plugins doctor` pass in CI.
 - Wheel and source distribution builds, metadata checks, installation/import,
   and SHA-256 checksums pass in CI.
@@ -249,6 +249,7 @@ Report security issues privately as described in [SECURITY.md](SECURITY.md).
 | [Definition QA](docs/DEFINITION_QA.md) | definition retrieval, exact ancestry, one/two-hop new-word probe |
 | [Semantic cycle D](docs/WORDNET_SEMANTIC_CYCLE.md) | typed WordNet quotient, learned weights, null cycle/random/linear controls |
 | [Round 018](docs/ROUND018.md) | tied recurrent controls, persistent glossary, null semantic-cycle result |
+| [Round 019](docs/ROUND019.md) | controlled definition acquisition, abstention, exact Hodge/cycle audit |
 | [Long chat session](docs/LONG_CHAT_DEMO.md) | exposure, temporal predictions, held-out session, feedback re-deliberation |
 | [Demo results](docs/DEMO_RESULTS.md) | 38/38 exhaustive tool-call results |
 | [Live smoke results](docs/LIVE_SMOKE.md) | 11/11 deployed-service checks |
