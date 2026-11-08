@@ -3,17 +3,21 @@ on:
   pull_request:
     paths:
       - 'nanlmind_hermes/router_graph_page.py'
+      - 'nanlmind_hermes/router_graph_history.py'
       - 'nanlmind_hermes/__init__.py'
       - 'plugin.yaml'
       - 'tests/test_router_graph_page.py'
+      - 'tests/test_router_graph_history.py'
       - 'scripts/verify_router_graph_bridge.py'
       - '.github/workflows/real-router-graph-bridge.yml'
   push:
     paths:
       - 'nanlmind_hermes/router_graph_page.py'
+      - 'nanlmind_hermes/router_graph_history.py'
       - 'nanlmind_hermes/__init__.py'
       - 'plugin.yaml'
       - 'tests/test_router_graph_page.py'
+      - 'tests/test_router_graph_history.py'
       - 'scripts/verify_router_graph_bridge.py'
       - '.github/workflows/real-router-graph-bridge.yml'
   workflow_dispatch:
@@ -41,4 +45,7 @@ jobs:
       - name: Run real MC0DB graph to resident HERMES chart verifier
         env:
           PYTHONPATH: .:router
-        run: python scripts/verify_router_graph_bridge.py
+        run: |
+          python -m unittest discover -s tests -p 'test_router_graph_page.py' -v
+          python -m unittest discover -s tests -p 'test_router_graph_history.py' -v
+          python scripts/verify_router_graph_bridge.py
