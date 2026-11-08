@@ -1,0 +1,546 @@
+{
+  "base_eigenvalues": [
+    16.358767,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "base_regions": {
+    "average": {
+      "inner": 0.085938,
+      "outer": 0.097656,
+      "ring": 0.066406
+    },
+    "modes": [
+      {
+        "inner": 0.34375,
+        "outer": 0.390625,
+        "ring": 0.265625
+      },
+      {
+        "inner": 0.0,
+        "outer": 0.0,
+        "ring": 0.0
+      },
+      {
+        "inner": 0.0,
+        "outer": 0.0,
+        "ring": 0.0
+      },
+      {
+        "inner": 0.0,
+        "outer": 0.0,
+        "ring": 0.0
+      }
+    ]
+  },
+  "centrosymmetry_residual": 0.0,
+  "eigen_reference_error": 0.0,
+  "fold_error": 0.0,
+  "folded_eigenvalues": [
+    16.358767,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "heads": 256,
+  "laplacian_low_eigenvalues": [
+    0.0,
+    16.358767,
+    16.358767,
+    16.358767
+  ],
+  "laplacian_low_nonconstant": {
+    "inner": 0.001359,
+    "outer": 0.997591,
+    "ring": 0.00105
+  },
+  "laplacian_low_regions": {
+    "average": {
+      "inner": 0.086957,
+      "outer": 0.84585,
+      "ring": 0.067194
+    },
+    "modes": [
+      {
+        "inner": 0.34375,
+        "outer": 0.390625,
+        "ring": 0.265625
+      },
+      {
+        "inner": 0.001348,
+        "outer": 0.99761,
+        "ring": 0.001042
+      },
+      {
+        "inner": 0.001359,
+        "outer": 0.997591,
+        "ring": 0.00105
+      },
+      {
+        "inner": 0.001369,
+        "outer": 0.997572,
+        "ring": 0.001058
+      }
+    ]
+  },
+  "note": "tunneling is spectral leakage: the inner-region mass of an eigenmode; it is not a quantum claim",
+  "numpy_reference": [
+    16.358767,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "rank": 1,
+  "schema": "nanlmind-hermes-spectral-wave/1",
+  "status": {
+    "barrier_radius": 5.5,
+    "centrosymmetric": true,
+    "size": 256,
+    "symmetric": true,
+    "void_head": 0
+  },
+  "symmetry_residual": 0.0,
+  "top_modes": [
+    {
+      "heads": [
+        {
+          "amplitude": 0.0625,
+          "head": 0,
+          "letters": [
+            [
+              "$",
+              1500.0
+            ],
+            [
+              "i",
+              1147.0
+            ],
+            [
+              "e",
+              1068.0
+            ]
+          ],
+          "region": "outer"
+        },
+        {
+          "amplitude": 0.0625,
+          "head": 1,
+          "letters": [
+            [
+              "$",
+              1500.0
+            ],
+            [
+              "i",
+              1147.0
+            ],
+            [
+              "e",
+              1068.0
+            ]
+          ],
+          "region": "outer"
+        },
+        {
+          "amplitude": 0.0625,
+          "head": 2,
+          "letters": [
+            [
+              "$",
+              1500.0
+            ],
+            [
+              "i",
+              1147.0
+            ],
+            [
+              "e",
+              1068.0
+            ]
+          ],
+          "region": "outer"
+        },
+        {
+          "amplitude": 0.0625,
+          "head": 3,
+          "letters": [
+            [
+              "$",
+              1500.0
+            ],
+            [
+              "i",
+              1147.0
+            ],
+            [
+              "e",
+              1068.0
+            ]
+          ],
+          "region": "outer"
+        },
+        {
+          "amplitude": 0.0625,
+          "head": 4,
+          "letters": [
+            [
+              "$",
+              1500.0
+            ],
+            [
+              "i",
+              1147.0
+            ],
+            [
+              "e",
+              1068.0
+            ]
+          ],
+          "region": "outer"
+        },
+        {
+          "amplitude": 0.0625,
+          "head": 5,
+          "letters": [
+            [
+              "$",
+              1500.0
+            ],
+            [
+              "i",
+              1147.0
+            ],
+            [
+              "e",
+              1068.0
+            ]
+          ],
+          "region": "outer"
+        }
+      ],
+      "mode": 0
+    },
+    {
+      "heads": [
+        {
+          "amplitude": 0.0,
+          "head": 0,
+          "letters": [
+            [
+              "$",
+              1500.0
+            ],
+            [
+              "i",
+              1147.0
+            ],
+            [
+              "e",
+              1068.0
+            ]
+          ],
+          "region": "outer"
+        },
+        {
+          "amplitude": 0.0,
+          "head": 1,
+          "letters": [
+            [
+              "$",
+              1500.0
+            ],
+            [
+              "i",
+              1147.0
+            ],
+            [
+              "e",
+              1068.0
+            ]
+          ],
+          "region": "outer"
+        },
+        {
+          "amplitude": 0.0,
+          "head": 2,
+          "letters": [
+            [
+              "$",
+              1500.0
+            ],
+            [
+              "i",
+              1147.0
+            ],
+            [
+              "e",
+              1068.0
+            ]
+          ],
+          "region": "outer"
+        },
+        {
+          "amplitude": 0.0,
+          "head": 3,
+          "letters": [
+            [
+              "$",
+              1500.0
+            ],
+            [
+              "i",
+              1147.0
+            ],
+            [
+              "e",
+              1068.0
+            ]
+          ],
+          "region": "outer"
+        },
+        {
+          "amplitude": 0.0,
+          "head": 4,
+          "letters": [
+            [
+              "$",
+              1500.0
+            ],
+            [
+              "i",
+              1147.0
+            ],
+            [
+              "e",
+              1068.0
+            ]
+          ],
+          "region": "outer"
+        },
+        {
+          "amplitude": 0.0,
+          "head": 5,
+          "letters": [
+            [
+              "$",
+              1500.0
+            ],
+            [
+              "i",
+              1147.0
+            ],
+            [
+              "e",
+              1068.0
+            ]
+          ],
+          "region": "outer"
+        }
+      ],
+      "mode": 1
+    },
+    {
+      "heads": [
+        {
+          "amplitude": 0.0,
+          "head": 0,
+          "letters": [
+            [
+              "$",
+              1500.0
+            ],
+            [
+              "i",
+              1147.0
+            ],
+            [
+              "e",
+              1068.0
+            ]
+          ],
+          "region": "outer"
+        },
+        {
+          "amplitude": 0.0,
+          "head": 1,
+          "letters": [
+            [
+              "$",
+              1500.0
+            ],
+            [
+              "i",
+              1147.0
+            ],
+            [
+              "e",
+              1068.0
+            ]
+          ],
+          "region": "outer"
+        },
+        {
+          "amplitude": 0.0,
+          "head": 2,
+          "letters": [
+            [
+              "$",
+              1500.0
+            ],
+            [
+              "i",
+              1147.0
+            ],
+            [
+              "e",
+              1068.0
+            ]
+          ],
+          "region": "outer"
+        },
+        {
+          "amplitude": 0.0,
+          "head": 3,
+          "letters": [
+            [
+              "$",
+              1500.0
+            ],
+            [
+              "i",
+              1147.0
+            ],
+            [
+              "e",
+              1068.0
+            ]
+          ],
+          "region": "outer"
+        },
+        {
+          "amplitude": 0.0,
+          "head": 4,
+          "letters": [
+            [
+              "$",
+              1500.0
+            ],
+            [
+              "i",
+              1147.0
+            ],
+            [
+              "e",
+              1068.0
+            ]
+          ],
+          "region": "outer"
+        },
+        {
+          "amplitude": 0.0,
+          "head": 5,
+          "letters": [
+            [
+              "$",
+              1500.0
+            ],
+            [
+              "i",
+              1147.0
+            ],
+            [
+              "e",
+              1068.0
+            ]
+          ],
+          "region": "outer"
+        }
+      ],
+      "mode": 2
+    }
+  ],
+  "training_words": 1500,
+  "tunneling_reduction": 0.4172,
+  "void_eigenvalues": [
+    16.454071,
+    1.475718,
+    0.485804,
+    0.295986
+  ],
+  "void_laplacian_low_eigenvalues": [
+    0.090351,
+    16.374023,
+    16.376104,
+    16.378335
+  ],
+  "void_laplacian_low_nonconstant": {
+    "inner": 0.000792,
+    "outer": 0.997919,
+    "ring": 0.001289
+  },
+  "void_laplacian_low_regions": {
+    "average": {
+      "inner": 0.085316,
+      "outer": 0.846901,
+      "ring": 0.067782
+    },
+    "modes": [
+      {
+        "inner": 0.338889,
+        "outer": 0.393847,
+        "ring": 0.267264
+      },
+      {
+        "inner": 0.000787,
+        "outer": 0.997939,
+        "ring": 0.001274
+      },
+      {
+        "inner": 0.000792,
+        "outer": 0.997919,
+        "ring": 0.001289
+      },
+      {
+        "inner": 0.000797,
+        "outer": 0.9979,
+        "ring": 0.001303
+      }
+    ]
+  },
+  "void_regions": {
+    "average": {
+      "inner": 0.827154,
+      "outer": 0.102628,
+      "ring": 0.070219
+    },
+    "modes": [
+      {
+        "inner": 0.349147,
+        "outer": 0.387091,
+        "ring": 0.263761
+      },
+      {
+        "inner": 0.988389,
+        "outer": 0.006846,
+        "ring": 0.004765
+      },
+      {
+        "inner": 0.980409,
+        "outer": 0.011309,
+        "ring": 0.008282
+      },
+      {
+        "inner": 0.99067,
+        "outer": 0.005264,
+        "ring": 0.004066
+      }
+    ]
+  },
+  "void_shift": [
+    -0.095304,
+    -1.475718,
+    -0.485804,
+    -0.295986
+  ]
+}
