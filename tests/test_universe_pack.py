@@ -94,7 +94,7 @@ class PackTests(unittest.TestCase):
         self.export()
         _, payloads = self._forge_sections({}, "copy.n16pack")
         corrupted = bytearray(payloads["mc0db"])
-        self.assertTrue(corrupted.startswith(b"SQLite format 3\\0"))
+        self.assertTrue(corrupted.startswith(b"SQLite format 3\0"))
         # SQLite page-size field is at offsets 16..17: 3 is invalid.
         corrupted[16:18] = bytes((0, 3))
         forged, _ = self._forge_sections(
