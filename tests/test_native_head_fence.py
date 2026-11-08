@@ -6,7 +6,7 @@ from pathlib import Path
 
 from nanlmind_hermes.chart_storage import save_chart_snapshot
 from nanlmind_hermes.head_bank_transport import (
-    BANK_BYTES, describe_guest_bank, stage_guest_bank_bytes,
+    BANK_BYTES, BANK_OFFSET, describe_guest_bank, stage_guest_bank_bytes,
 )
 from nanlmind_hermes.native_head_fence import (
     NativeHeadFenceError, SnapshotHeadBankFence,
@@ -97,6 +97,21 @@ class NativeHeadCheckpointFenceTests(unittest.TestCase):
         recovered = self.reader(self.universe)
         self.assertEqual(recovered["chart_generation"], 1)
         self.assertEqual(recovered["bank_sha256"], sha(bytes(BANK_BYTES)))
+
+    def test_ambiguous_valid_same_generation_chart_denies_native_dispatch(self):
+        from nanlmind_hermes.chart_storage import HEADER, MAGIC, SLOT_NAMES
+        self.checkpoint(0)
+        page = bytearray(self.chart.bytes)
+        page[BANK_OFFSET] ^= 0x01
+        folder = self.path / "language" / "chart-checkpoints"
+        (folder / SLOT_NAMES[1]).write_bytes(
+            HEADER.pack(MAGIC, 1, bytes.fromhex(self.parent),
+                        hashlib.sha256(page).digest()) + page
+        )
+        with self.assertRaisesRegex(NativeHeadFenceError, "checkpoint unavailable"):
+            self.reader(self.universe)
+        self.assertEqual((folder / SLOT_NAMES[0]).stat().st_size,
+                         HEADER.size + len(page))
 
     def test_invalid_root_is_denied_even_with_valid_snapshot_sha(self):
         # N16SNAP1 validates page SHA, but a rootless valid chart MUST NOT be
