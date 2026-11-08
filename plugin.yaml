@@ -9,6 +9,7 @@ homepage: https://github.com/shemshallah/NaNLMind_HERMES
 tags: [nanlmind, training, corpus, local-runner, nannet]
 provides_tools:
   - nanlm_status
+  - nanlm_chart_storage
   - nanlm_chat
   - nanlm_chat_history
   - nanlm_phone_call
