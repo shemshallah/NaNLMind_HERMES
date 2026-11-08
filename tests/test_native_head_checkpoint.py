@@ -206,7 +206,7 @@ class NativeHeadCheckpointTests(unittest.TestCase):
         # insufficient: the actual snapshot transition must be bank-only.
         patched = bytearray(self.original_page)
         patched[BANK_OFFSET:BANK_END] = self.raw
-        patched[0x7000] ^= 1  # ordinary chart area, not the head bank
+        patched[0x300000] ^= 1  # mutable descriptor region, not index or bank
         save_chart_snapshot(self.path, self.parent, patched, 1)
         with self.assertRaisesRegex(
                 NativeHeadCheckpointConflict, "unrelated chart cells"):
