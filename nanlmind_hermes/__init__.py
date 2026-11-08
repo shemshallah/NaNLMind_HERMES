@@ -143,6 +143,9 @@ def register(ctx):
         if type(pages) is not list or not 1 <= len(pages) <= 128:
             raise RouterGraphPageError("requires 1..128 ordered graph pages")
         history_pages = params.get("history_pages")
+        attestation = params.get("attestation")
+        if attestation is not None and history_pages is None:
+            raise RouterGraphPageError("signed graph requires complete history pages")
         chart = LocalRunner.open(ctx).chart
         if history_pages is None:
             verifier = RouterGraphPageVerifier(chart)
@@ -164,6 +167,20 @@ def register(ctx):
         result = verifier.status()
         if not result["history_verified"]:
             raise RouterGraphPageError("incomplete graph history; no partial acceptance")
+        if attestation is not None:
+            # Public key and sender identity are independently pinned by the
+            # installed HERMES configuration. Never trust request-provided
+            # keys or caller claims as an identity/authority registry.
+            from .router_graph_attestation import verify_graph_sender_attestation
+            return verify_graph_sender_attestation(
+                verifier, attestation,
+                expected_router_id=ctx.get_config(
+                    "router_graph_sender_id", default=""),
+                expected_key_id=ctx.get_config(
+                    "router_graph_sender_key_id", default=""),
+                public_key_hex=ctx.get_config(
+                    "router_graph_sender_public_key_hex", default=""),
+            )
         return result
 
     def handle_self_modify(params, **kwargs):
@@ -547,11 +564,12 @@ def register(ctx):
           "layer": {"type": "integer", "minimum": 0, "maximum": 9}},
          [], handle_mirror_topology),
         ("nanlm_router_graph_verify",
-         "Read-only chart-bound NaNROUTER graph state verification. Optional ordered history_pages add full independent revision/tombstone replay; neither path authenticates the sender or admits learning.",
+         "Read-only chart-bound NaNROUTER state/history verification. Optional attestation cryptographically authenticates sender against operator-pinned Ed25519 public key; no native execution or learning admission.",
          {"pages": {"type": "array", "minItems": 1, "maxItems": 128,
                     "items": {"type": "object"}},
           "history_pages": {"type": "array", "minItems": 1, "maxItems": 128,
-                            "items": {"type": "object"}}},
+                            "items": {"type": "object"}},
+          "attestation": {"type": "object"}},
          ["pages"], handle_router_graph_verify),
         ("nanlm_self_modify", "Boolean-gated self-modification of scratch leaves and MP relations: propose a relation, version a leaf, promote under the local approval gate, or inspect status.",
          {"action": {"type": "string", "enum": ["status", "relation", "leaf", "promote"]},
