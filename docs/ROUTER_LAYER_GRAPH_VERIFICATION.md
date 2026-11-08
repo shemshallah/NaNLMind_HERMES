@@ -53,10 +53,12 @@ its history is compared; this does **not** create another durable graph or
 modify the resident chart.
 
 The state-only `RouterGraphPageVerifier` and the existing
-`nanlm_router_graph_verify` tool remain backward-compatible. Their result
-still says history is not replayed. Callers requiring revision-history
-verification must use the new two-phase class (or a future tool that exposes
-it), and require `history_verified=true` explicitly.
+`nanlm_router_graph_verify` tool remain backward-compatible. By default
+the tool still verifies state only and declares history unreplayed. Supply
+a bounded nonempty `history_pages` array together with the existing
+`pages` to invoke both phases, requiring *complete* state and history
+before returning `history_verified=true`. Callers relying on history must
+require that field explicitly; missing or truncated history does not qualify.
 
 **Security boundary remains unchanged:** An entirely self-consistent forged
 history is not thereby sender-authenticated. Neither the state verifier nor
