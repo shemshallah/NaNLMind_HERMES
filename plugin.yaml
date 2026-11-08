@@ -30,6 +30,9 @@ provides_tools:
   - nanlm_universe_ack
   - nanlm_universe_inspect
   - nanlm_native_mth_u32
+  - nanlm_tree_inspect
+  - nanlm_tree_mutate
+  - nanlm_tree_audit
   - nanlm_generate_curriculum
   - nanlm_curriculum_experiment
   - nanlm_logic_session
