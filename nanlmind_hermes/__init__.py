@@ -98,6 +98,81 @@ def register(ctx):
             "records": records,
         }
 
+    _self_modification_cache: dict[str, object] = {}
+
+    def _self_modification(ctx):
+        from .mirror_topology import MirrorLeafBindings
+        from .self_modification import SelfModificationEngine, SelfModificationPolicy
+        root, _corpora, universe = tools._paths(ctx)
+        key = str(root)
+        engine = _self_modification_cache.get(key)
+        if engine is not None:
+            return engine
+        def setting(name, default):
+            try:
+                return ctx.get_config(name, default=default)
+            except Exception:
+                return default
+        policy = SelfModificationPolicy(
+            min_boolean_confidence=float(setting("self_mod_min_boolean", 0.5)),
+            require_evidence=bool(setting("self_mod_require_evidence", True)),
+            allow_negative_memory=bool(setting("self_mod_allow_negative", True)),
+            require_approval_for_promotion=bool(setting("self_mod_require_approval", True)),
+        )
+        bindings = MirrorLeafBindings(universe / "mathematical_memory.sqlite3")
+        engine = SelfModificationEngine(_learning(ctx), bindings, policy=policy)
+        _self_modification_cache[key] = engine
+        return engine
+
+    def handle_mirror_topology(params, **kwargs):
+        _require_scope("universe:read")
+        from .mirror_topology import MirrorTopology
+        result = MirrorTopology.status()
+        if params.get("route"):
+            result["route"] = MirrorTopology.parse_route(params["route"])
+        elif params.get("head") is not None or params.get("mp") is not None:
+            result["microtable"] = MirrorTopology.route(
+                head=params.get("head"), mp=params.get("mp"),
+                target_mp=params.get("target_mp"), layer=params.get("layer", 5))
+        return result
+
+    def handle_self_modify(params, **kwargs):
+        _require_scope("training:execute")
+        engine = _self_modification(ctx)
+        action = params.get("action", "status")
+        if action == "status":
+            return engine.status()
+        if action == "relation":
+            return engine.propose_relation(
+                params["relation"], layer=params.get("layer", 5),
+                source_head=params["source_head"],
+                evidence_sha256=params["evidence_sha256"],
+                strength_q16=params.get("strength_q16", 32768),
+                polarity=params.get("polarity", 1),
+                expected_generation=params.get("expected_generation", 0),
+                tick=params.get("tick", 0))
+        if action == "leaf":
+            return engine.modify_leaf(
+                mp=params["mp"], leaf_id=params["leaf_id"],
+                payload=params["payload"], source_head=params["source_head"],
+                evidence_sha256=params["evidence_sha256"],
+                expected_generation=params["expected_generation"],
+                tick=params.get("tick", 0))
+        if action == "promote":
+            return engine.promote(approved=params.get("approved", False))
+        raise ValueError("unknown self-modification action")
+
+    def handle_mth_tools(params, **kwargs):
+        _require_scope("universe:read")
+        engine = _self_modification(ctx)
+        return engine.use_mth_tool(params["tool"], params.get("arguments"))
+
+    def handle_teacher_teach(params, **kwargs):
+        _require_scope("training:execute")
+        from .gemma_teacher import teacher_for_context
+        teacher = teacher_for_context(ctx)
+        return teacher.teach(_learning(ctx), params["topic"], params.get("count", 8))
+
     def handle_clocked_plan(params, **kwargs):
         _require_scope("universe:read")
         return clocked_tools.clocked_plan(ctx, params["question"],
@@ -434,6 +509,36 @@ def register(ctx):
         return experimental_register.audit(ctx, params.get("limit", 64))
 
     specs = [
+        ("nanlm_mirror_topology", "Inspect the resident 256-head / 32,640-MP / 65,536-address mirror topology and recursive nan:// L0-L9 routes.",
+         {"route": {"type": "string", "maxLength": 256},
+          "head": {"type": "integer", "minimum": 0, "maximum": 255},
+          "mp": {"type": "integer", "minimum": 0, "maximum": 32639},
+          "target_mp": {"type": "integer", "minimum": 0, "maximum": 32639},
+          "layer": {"type": "integer", "minimum": 0, "maximum": 9}},
+         [], handle_mirror_topology),
+        ("nanlm_self_modify", "Boolean-gated self-modification of scratch leaves and MP relations: propose a relation, version a leaf, promote under the local approval gate, or inspect status.",
+         {"action": {"type": "string", "enum": ["status", "relation", "leaf", "promote"]},
+          "relation": {"type": "object"},
+          "layer": {"type": "integer", "minimum": 0, "maximum": 9},
+          "source_head": {"type": "integer", "minimum": 1, "maximum": 255},
+          "evidence_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "strength_q16": {"type": "integer", "minimum": 0, "maximum": 65536},
+          "polarity": {"type": "integer", "minimum": -1, "maximum": 1},
+          "expected_generation": {"type": "integer", "minimum": 0},
+          "mp": {"type": "integer", "minimum": 0, "maximum": 32639},
+          "leaf_id": {"type": "string", "maxLength": 256},
+          "payload": {},
+          "approved": {"type": "boolean"},
+          "tick": {"type": "integer", "minimum": 0}},
+         ["action"], handle_self_modify),
+        ("nanlm_mth_tools", "Use the bounded HERMES MTH tool facade: catalog, inspect, categories, compose, prepare or route over L0-L9.",
+         {"tool": {"type": "string", "enum": ["mth.catalog", "mth.inspect", "mth.categories", "mth.compose", "mth.prepare", "mth.route"]},
+          "arguments": {"type": "object"}},
+         ["tool"], handle_mth_tools),
+        ("nanlm_teacher_teach", "Ask the configured teacher provider (Hermes LLM, Ollama/Gemma, or OpenAI-compatible) for a bounded typed record batch and feed it into the L0-L9 scratch learner. Teacher records are evidence, never canonical truth.",
+         {"topic": {"type": "string", "minLength": 1, "maxLength": 512},
+          "count": {"type": "integer", "minimum": 1, "maximum": 64}},
+         ["topic"], handle_teacher_teach),
         ("nanlm_learning_cycle", "Run one L0-L9 layered learning cycle: project the message through all ten layers, distribute it across all 255 HW0 heads, write paged scratch leaves, update concepts and optionally promote under the conservative policy.",
          {"message": {"type": "string", "minLength": 1, "maxLength": 1048576},
           "source": {"type": "string", "maxLength": 128},

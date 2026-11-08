@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+- Mounted the NaNROUTER mirror topology in HERMES: 256 fixed heads, 32,640
+  microtables, 32,896 canonical cells, 65,536 directional addresses, exact
+  topology digest, recursive `nan://...::HW0:<head|MPn>::L<n>` routes.
+- Added versioned MP leaf bindings (`hermes_mp_binding` and history) in the
+  existing mathematical-memory SQLite database with CAS/generation checks.
+- Added Boolean-gated self-modification of scratch leaves/relations using the
+  MTH root truth table; rejected relations become negative memory.
+- Added the six-tool MTH planning facade and the provider-universal
+  `nanlm_teacher_teach` tool (Hermes LLM, Ollama/Gemma, OpenAI-compatible).
+- Added `nanlm_mirror_topology`, `nanlm_self_modify`, `nanlm_mth_tools`, and
+  `nanlm_teacher_teach` with demo coverage.
 - Added a 1 GiB logical paged scratch register space (128 x 8 MiB, sparse),
   L0-L9 layer projections, a deterministic 255-head ensemble, conservative
   promotion into the local 8 MiB head register, and sparse HW4 WordNet
