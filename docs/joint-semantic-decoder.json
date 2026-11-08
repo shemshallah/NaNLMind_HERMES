@@ -1,0 +1,44 @@
+{
+  "decoder": "ridge-linear, one shared family per variant",
+  "eligible_parents": 5000,
+  "feature_width": 384,
+  "maximum_parents": 5000,
+  "note": "Novel parent labels are disjoint across splits. One deterministic split and target sample is used. The task is a controlled yes/no category question; the symbolic graph can answer it exactly, while this decoder tests a trainable state path.",
+  "noun_synsets": 82192,
+  "results": {
+    "cycle": {
+      "accuracy": 0.6953333333333334,
+      "hallucination_rate": 0.24666666666666667,
+      "n": 1500,
+      "negative_accuracy": 0.7533333333333333,
+      "positive_accuracy": 0.6373333333333333,
+      "ridge": 10.0,
+      "threshold": 0.5244324253073476
+    },
+    "none": {
+      "accuracy": 0.6846666666666666,
+      "hallucination_rate": 0.25466666666666665,
+      "n": 1500,
+      "negative_accuracy": 0.7453333333333333,
+      "positive_accuracy": 0.624,
+      "ridge": 0.01,
+      "threshold": 0.5194099183978442
+    },
+    "ordinary": {
+      "accuracy": 0.7033333333333334,
+      "hallucination_rate": 0.3253333333333333,
+      "n": 1500,
+      "negative_accuracy": 0.6746666666666666,
+      "positive_accuracy": 0.732,
+      "ridge": 10.0,
+      "threshold": 0.48730005535712745
+    }
+  },
+  "schema": "nanlmind-hermes-joint-semantic-decoder/1",
+  "seed": 20020,
+  "splits": {
+    "test": 750,
+    "train": 3500,
+    "validation": 750
+  }
+}

@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased
+
+- Added deterministic UTF-8 corpus ingestion, exact-passage deduplication,
+  hash-based train/validation/test splits, atomic JSON manifests and
+  IDF-weighted source retrieval (`nanlmind_hermes/corpus_memory.py`).
+- Added sparse ordinary and cycle-projected semantic-state features and a
+  controlled novel-term answer-decoder benchmark. The ordinary state scored
+  0.7033, cycle projection 0.6953 and the no-state control 0.6847; no
+  cycle-specific advantage is claimed.
+- Documented the Round 020 corpus-training tie and the next joint-state
+  experiment. Test suite: 272 tests.
+
 ## 1.3.2 — 2026-11-07
 
 - Made the MTH/L0-L9 stack coherent: every layer produces a signal used in
