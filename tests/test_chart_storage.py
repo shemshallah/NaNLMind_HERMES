@@ -126,5 +126,32 @@ class ChartSnapshotTests(unittest.TestCase):
             self.assertEqual(slot.stat().st_mode & 0o777, 0o600)
 
 
+    def test_plugin_storage_inspect_and_explicit_checkpoint(self):
+        from nanlmind_hermes.tools import chart_storage_tool
+        with tempfile.TemporaryDirectory() as temp:
+            folder = Path(temp)
+            key = str(folder)
+            ctx = Context(folder)
+            try:
+                initial = chart_storage_tool(ctx, "inspect")
+                self.assertEqual(initial["disk_generation"], 0)
+                self.assertFalse(initial["canonical_training_committed"])
+                self.assertFalse(initial["native_head_bank_attached"])
+                with self.assertRaisesRegex(ValueError, "approved"):
+                    chart_storage_tool(ctx, "checkpoint", False)
+                committed = chart_storage_tool(ctx, "checkpoint", True)
+                self.assertEqual(committed["generation"], 1)
+                self.assertTrue(committed["storage_only"])
+                self.assertFalse(committed["nannet_merge_issued"])
+                recovered = chart_storage_tool(ctx, "inspect")
+                self.assertEqual(recovered["disk_generation"], 1)
+                self.assertEqual(recovered["recovery"],
+                                 "dual-slot-sha256-generation-fenced")
+                with self.assertRaises(ValueError):
+                    chart_storage_tool(ctx, "restore")
+            finally:
+                _RUNNERS.pop(key, None)
+
+
 if __name__ == "__main__":
     unittest.main()
