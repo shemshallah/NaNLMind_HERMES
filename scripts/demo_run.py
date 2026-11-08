@@ -317,6 +317,51 @@ def main(argv=None):
                                      "summary": "Offline deterministic demo"})
             call("nanlm_hw_release")
 
+        # Deterministic independent-universe *router receipt* fixture.
+        # These calls exercise the real Hermes tool handlers and local
+        # encryption, not a live router, guest execution, or canonical merge.
+        from nanlmind_hermes import router_universe_client as _leased
+        installation_id = auth_tools.auth_status(ctx)["installation_id"]
+        fixture = {
+            "schema": "nanrouter.hermes-lease.v1",
+            "issuer": "nanrouter/BS0:0", "network_port": "BS0:0",
+            "hardware_root": "HW0:0", "installation_id": installation_id,
+            "slot": 0, "lease_id": 101, "universe_id": 501,
+            "generation": 1, "revision": 1, "owner_tag": 97,
+            "node_point": 3, "expires_at": int(time.time()) + 900,
+            "heads": 255, "nannet_port_head": 255, "receipt_mac": "a" * 64,
+        }
+        def fake_router_lease(context, action, request):
+            if action == "open":
+                return installation_id, {"receipt": dict(fixture)}
+            if action == "resolve":
+                assert request["head_index"] == 254
+                return installation_id, {"route": {
+                    "admitted": True, "slot": fixture["slot"],
+                    "lease_id": fixture["lease_id"],
+                    "universe_id": fixture["universe_id"],
+                    "generation": fixture["generation"],
+                    "owner_tag": fixture["owner_tag"],
+                    "node_point": fixture["node_point"],
+                    "expires_at": fixture["expires_at"],
+                    "network_port": "BS0:0", "head_index": 254,
+                    "native_execution_committed": False,
+                }}
+            if action == "renew":
+                fixture["revision"] += 1
+                fixture["expires_at"] += 900
+                return installation_id, {"receipt": dict(fixture)}
+            if action == "release":
+                return installation_id, {
+                    "released": True, "lease_id": fixture["lease_id"]}
+            raise AssertionError(action)
+        with patch.object(_leased, "_post", side_effect=fake_router_lease):
+            call("nanlm_universe_status")
+            call("nanlm_universe_open", {"alias": "demo"})
+            call("nanlm_universe_resolve", {"alias": "demo", "head_index": 254})
+            call("nanlm_universe_renew", {"alias": "demo"})
+            call("nanlm_universe_release", {"alias": "demo"})
+
         call("nanlm_status")
 
         # Chat and transcripts.
