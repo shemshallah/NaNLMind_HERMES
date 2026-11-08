@@ -39,6 +39,10 @@ class FakeCompletedJournal:
         self.universe = universe
         self.raw = raw
         self.after = sha(raw)
+        certified = fence(universe)
+        self.source_chart_sha256 = certified["chart_sha256"]
+        self.source_root_block_sha256 = certified["root_block_sha256"]
+        self.source_snapshot_bound = True
         self.state = "completed_staging_only"
         self.confirmations = 0
         self.fail_confirm_once = False
@@ -60,6 +64,9 @@ class FakeCompletedJournal:
                          self.state == "completed_staging_only" else None),
             "bank_after_sha256": self.after,
             "canonical_training_committed": False,
+            "source_snapshot_bound": self.source_snapshot_bound,
+            "source_chart_sha256": self.source_chart_sha256,
+            "source_root_block_sha256": self.source_root_block_sha256,
             "local_checkpoint_verified": self.state == "checkpointed_locally",
             "checkpoint_generation": (
                 self.confirmed_generation
@@ -228,6 +235,40 @@ class NativeHeadCheckpointTests(unittest.TestCase):
             self.commit()
         self.assertEqual(self.fence(self.universe)["chart_generation"], 1)
         self.assertEqual(calls[0], 2)
+
+    def test_unbound_legacy_native_staging_refuses_new_chart_commit(self):
+        self.journal.source_snapshot_bound = False
+        with self.assertRaisesRegex(
+                NativeHeadCheckpointConflict, "no certified source chart"):
+            self.commit()
+        self.assertEqual(self.fence(self.universe)["chart_generation"], 1)
+        self.assertEqual(self.journal.confirmations, 0)
+
+    def test_stage_with_correct_bank_but_different_source_chart_refused(self):
+        self.journal.source_chart_sha256 = sha(b"another exact chart page")
+        with self.assertRaisesRegex(
+                NativeHeadCheckpointConflict, "router source chart differs"):
+            self.commit()
+        self.assertEqual(self.fence(self.universe)["chart_generation"], 1)
+
+    def test_stage_with_wrong_mounted_root_digest_refused(self):
+        self.journal.source_root_block_sha256 = sha(b"wrong-root-descriptor")
+        with self.assertRaisesRegex(
+                NativeHeadCheckpointConflict, "native source root block changed"):
+            self.commit()
+        self.assertEqual(self.fence(self.universe)["chart_generation"], 1)
+
+    def test_crash_recovery_demands_original_precommit_chart_identity(self):
+        self.journal.fail_confirm_once = True
+        with self.assertRaisesRegex(RuntimeError, "power failure"):
+            self.commit()
+        self.assertEqual(self.fence(self.universe)["chart_generation"], 2)
+        self.journal.source_chart_sha256 = sha(b"forged-crash-source")
+        with self.assertRaisesRegex(
+                NativeHeadCheckpointConflict, "unrelated chart cells or lost source"):
+            self.commit()
+        self.assertEqual(self.fence(self.universe)["chart_generation"], 2)
+        self.assertEqual(self.journal.state, "completed_staging_only")
 
     def test_pending_or_ambiguous_does_not_touch_chart(self):
         self.journal.pending = True
