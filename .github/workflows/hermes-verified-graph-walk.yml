@@ -7,6 +7,7 @@ on:
       - 'nanlmind_hermes/router_graph_page.py'
       - 'tests/test_router_graph_walk.py'
       - 'tests/test_router_graph_history.py'
+      - 'scripts/verify_real_router_graph_walk.py'
       - '.github/workflows/hermes-verified-graph-walk.yml'
   push:
     paths:
@@ -15,6 +16,7 @@ on:
       - 'nanlmind_hermes/router_graph_page.py'
       - 'tests/test_router_graph_walk.py'
       - 'tests/test_router_graph_history.py'
+      - 'scripts/verify_real_router_graph_walk.py'
       - '.github/workflows/hermes-verified-graph-walk.yml'
   workflow_dispatch:
 permissions:
@@ -35,3 +37,12 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_router_graph_history.py' -v
       - name: Verify candidate graph walk and adversarial bounds
         run: python -m unittest discover -s tests -p 'test_router_graph_walk.py' -v
+      - name: Check out real NaNROUTER graph provider
+        uses: actions/checkout@v4
+        with:
+          repository: shemshallah/NaNROUTER
+          path: router
+      - name: Verify signed live MC0DB graph and unchanged resident chart
+        env:
+          PYTHONPATH: .:router
+        run: python scripts/verify_real_router_graph_walk.py
