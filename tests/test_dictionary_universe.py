@@ -29,6 +29,8 @@ class DictionaryUniverseTests(unittest.TestCase):
         self.assertTrue(address.startswith(HW4_ROUTE + "::synset/"))
         word = self.universe.word_address("penguin", 4)
         self.assertIn("::word/penguin/", word)
+        relation = self.universe.relation_address(4, 2, "hypernym")
+        self.assertTrue(relation.startswith(HW4_ROUTE + "::relation/"))
         interface = self.universe.interface()
         self.assertEqual(interface["link"], HW4_LINK)
         self.assertEqual(interface["upstream"], "HW2:0")

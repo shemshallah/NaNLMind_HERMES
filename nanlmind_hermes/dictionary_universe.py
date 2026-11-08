@@ -26,6 +26,11 @@ class DictionaryUniverse:
     def word_address(self, word: str, offset: int) -> str:
         return f"{HW4_ROUTE}::word/{quote(str(word).casefold())}/{offset:08d}"
 
+    def relation_address(self, source_offset: int, target_offset: int,
+                         relation: str = "hypernym") -> str:
+        return (f"{HW4_ROUTE}::relation/{quote(str(relation).casefold())}/"
+                f"{source_offset:08d}/{target_offset:08d}")
+
     def ancestors(self, offset: int, depth: int = 8) -> set[int]:
         found = set()
         frontier = [offset]

@@ -1,0 +1,40 @@
+{
+  "complete_nan": {
+    "cycle_rank": 32385,
+    "undirected_edges": 32640,
+    "vertices": 256
+  },
+  "graphs": {
+    "adj": {
+      "components": 18185,
+      "cycle_rank": 0,
+      "undirected_edges": 0,
+      "vertices": 18185
+    },
+    "adv": {
+      "components": 3625,
+      "cycle_rank": 0,
+      "undirected_edges": 0,
+      "vertices": 3625
+    },
+    "all": {
+      "components": 22356,
+      "cycle_rank": 2326,
+      "undirected_edges": 97761,
+      "vertices": 117791
+    },
+    "noun": {
+      "components": 1,
+      "cycle_rank": 2314,
+      "undirected_edges": 84505,
+      "vertices": 82192
+    },
+    "verb": {
+      "components": 545,
+      "cycle_rank": 12,
+      "undirected_edges": 13256,
+      "vertices": 13789
+    }
+  },
+  "schema": "nanlmind-hermes-wordnet-topology/1"
+}

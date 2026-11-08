@@ -85,7 +85,7 @@ LLM/native relay without dropping the call.
 
 ## Verification
 
-- `python -m unittest discover -s tests`: **213 tests pass**; 18 of them are
+- `python -m unittest discover -s tests`: **216 tests pass**; 18 of them are
   NaN16-specific (`tests/test_nanvm.py`, `tests/test_phone_call.py`).
 - Cross-machine parity: the identical kernel image and input matrix were run
   on the native nan0s C core (`nan_cli --peek 1024:8 --peek 1088:32`) and on
