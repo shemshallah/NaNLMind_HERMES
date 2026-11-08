@@ -273,6 +273,24 @@ class NativeHeadCheckpointTests(unittest.TestCase):
         with self.assertRaisesRegex(NativeHeadCheckpointConflict, "exact next durable chart"):
             self.commit()
 
+    def test_chart_changed_between_fence_and_snapshot_read_is_denied(self):
+        from unittest.mock import patch
+        import nanlmind_hermes.native_head_checkpoint as module
+        read_real_snapshot = module.load_chart_snapshot
+
+        def racy_snapshot(*args, **kwargs):
+            generation, page = read_real_snapshot(*args, **kwargs)
+            altered = bytearray(page)
+            altered[0x7000] ^= 1
+            return generation, bytes(altered)
+
+        with patch.object(module, "load_chart_snapshot",
+                          side_effect=racy_snapshot):
+            with self.assertRaisesRegex(
+                    NativeHeadCheckpointConflict, "full-page digest changed"):
+                self.commit()
+        self.assertEqual(self.fence(self.universe)["chart_generation"], 1)
+
     def test_new_same_generation_chart_replacement_denied(self):
         # Directly exercise the under-lock digest fence against an altered
         # page that still claims the same generation, without use of a
