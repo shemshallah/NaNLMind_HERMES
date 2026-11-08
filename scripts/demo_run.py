@@ -526,6 +526,34 @@ def main(argv=None):
 
         # Resident mirror topology, Boolean-gated self-modification and MTH facade.
         call("nanlm_mirror_topology")
+        # Empty real graph commitment exercises the protected read-only bridge
+        # without fabricating a router sender signature or native MTH receipt.
+        from nanlmind_hermes.universe_chart import LocalRunner
+        from nanlmind_hermes.mirror_topology import TOPOLOGY_DIGEST
+        graph_chart = LocalRunner.open(ctx).chart
+        graph_header = {
+            "schema": "nanrouter.nan-layer-master-commitment/1",
+            "topology_sha256": TOPOLOGY_DIGEST,
+            "parent_root_sha256": graph_chart.root_hash,
+            "chart_generation": graph_chart.snapshot_generation,
+            "total_edges": 0, "candidate_edges": 0, "retracted_edges": 0,
+            "layer_counts": [0] * 10,
+            "state_sha256": hashlib.sha256(
+                b"nanrouter.nan-layer-state/1\\0").hexdigest(),
+            "history_sha256": hashlib.sha256(
+                b"nanrouter.nan-layer-history/1\\0").hexdigest(),
+        }
+        graph_commit = hashlib.sha256(
+            b"nanrouter.nan-layer-commitment/1\\0" +
+            json.dumps(graph_header,sort_keys=True,separators=(",",":")).encode()
+        ).hexdigest()
+        call("nanlm_router_graph_verify", {"pages": [{
+            **graph_header,
+            "graph_commitment_sha256": graph_commit,
+            "entries": [], "offset": 0, "next_offset": None,
+            "signed_by_router": False, "native_mth_receipt": False,
+            "mathematical_truth_promoted": False, "snapshot_consistent": True,
+        }]})
         call("nanlm_mirror_topology", {
             "route": "nan://GM0:0::SC0:0::MC0:0::BS0:0::HW0:0::HW0:7::L5"})
         call("nanlm_self_modify", {
