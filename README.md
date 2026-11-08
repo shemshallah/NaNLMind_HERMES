@@ -186,7 +186,7 @@ Report security issues privately as described in [SECURITY.md](SECURITY.md).
 
 ## Verification
 
-- 243 unit/integration tests pass locally; CI runs Python 3.10, 3.11, and 3.12.
+- 249 unit/integration tests pass locally; CI runs Python 3.10, 3.11, and 3.12.
 - Hermes Agent v0.23.0 `plugins validate` and `plugins doctor` pass in CI.
 - Wheel and source distribution builds, metadata checks, installation/import,
   and SHA-256 checksums pass in CI.
@@ -244,6 +244,8 @@ Report security issues privately as described in [SECURITY.md](SECURITY.md).
 | [WordNet ancestry](docs/WORDNET_ANCESTRY.md) | 2,000/2,000 exact multi-hop vs 50% direct baseline |
 | [Cycle codec](docs/CYCLE_CODEC.md) | gauge-corrected cycle code, joint robust decoder, random-code control |
 | [Rounds 012–015 → MTH](docs/ROUND012_015_MTH.md) | robust recovery, blind semantic code, relation limits, MTH mapping |
+| [Pair-space spectrum](docs/PAIR_QUANTUM.md) | exact J(256,2) spectrum, revival, cycle stationarity, ideal Grover control |
+| [Round 016 → MTH](docs/ROUND016_MTH.md) | three-level warning, cycle-preserving operators, no semantic quantum oracle |
 | [Long chat session](docs/LONG_CHAT_DEMO.md) | exposure, temporal predictions, held-out session, feedback re-deliberation |
 | [Demo results](docs/DEMO_RESULTS.md) | 38/38 exhaustive tool-call results |
 | [Live smoke results](docs/LIVE_SMOKE.md) | 11/11 deployed-service checks |

@@ -1,0 +1,43 @@
+{
+  "schema": "nanlmind-hermes-pair-quantum/1",
+  "vertices": 256,
+  "pairs": 32640,
+  "degree": 508,
+  "spectrum": [
+    {
+      "eigenvalue": 508,
+      "multiplicity": 1
+    },
+    {
+      "eigenvalue": 252,
+      "multiplicity": 255
+    },
+    {
+      "eigenvalue": -2,
+      "multiplicity": 32384
+    }
+  ],
+  "revival_period": 3.141592653589793,
+  "walk": [
+    {
+      "time": 0.0,
+      "return_probability": 1.0
+    },
+    {
+      "time": 1.5707963267948966,
+      "return_probability": 0.968873510188389
+    },
+    {
+      "time": 3.141592653589793,
+      "return_probability": 1.0
+    }
+  ],
+  "grover": {
+    "valid_states": 32640,
+    "hilbert_states": 32768,
+    "ideal_queries": 141,
+    "ideal_probability": 0.9999810166767039,
+    "classical_expected_queries": 16320.5
+  },
+  "boundary": "exact classical linear algebra; no physical quantum hardware, semantic oracle, or NaN-specific speedup"
+}

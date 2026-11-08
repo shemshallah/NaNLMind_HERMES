@@ -2,7 +2,7 @@
 import unittest
 
 from nanlmind_hermes.cycle_state import CycleState
-from nanlmind_hermes.gauge_memory import project_cycle
+from nanlmind_hermes.gauge_memory import divergence, project_cycle
 
 
 class CycleStateTests(unittest.TestCase):
@@ -38,6 +38,19 @@ class CycleStateTests(unittest.TestCase):
         restored.restore(snapshot)
         self.assertEqual(restored.values.keys(), state.values.keys())
         self.assertAlmostEqual(restored.energy(), state.energy(), places=10)
+
+    def test_projected_diagonal_changes_cycle_state_without_gradient(self):
+        state = CycleState(self.nodes)
+        state.observe(self.cycle, rate=1.0)
+        before = state.energy()
+        strengths = {(first, second): 1.0 + 0.1 * (first + second)
+                     for first in range(self.nodes)
+                     for second in range(first + 1, self.nodes)}
+        state.apply_diagonal(strengths)
+        self.assertGreater(state.energy(), 0.0)
+        self.assertNotAlmostEqual(state.energy(), before, places=6)
+        div = divergence(self.nodes, state.values)
+        self.assertLess(max(abs(value) for value in div), 1e-9)
 
     def test_edge_order_is_normalised(self):
         state = CycleState(self.nodes)

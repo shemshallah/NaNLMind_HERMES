@@ -35,6 +35,19 @@ class CycleState:
     def project(self) -> None:
         self.values = project_cycle(self.nodes, self.values)
 
+    def apply_diagonal(self, strengths: dict[tuple[int, int], complex]) -> None:
+        """Apply P_cycle D P_cycle to the stored cycle state.
+
+        This is a classical projected operator. It is the state-update form of
+        the nonuniform Hamiltonian proposed in the pair-space experiments, not
+        a physical quantum evolution.
+        """
+        product = {}
+        for edge, value in self.values.items():
+            strength = strengths.get(edge, strengths.get((edge[1], edge[0]), 1.0))
+            product[edge] = strength * value
+        self.values = project_cycle(self.nodes, product)
+
     def with_gauge(self, potential: list[complex]) -> "CycleState":
         """Return the same cycle content represented in another vertex gauge."""
         if len(potential) != self.nodes:
