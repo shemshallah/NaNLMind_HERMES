@@ -230,6 +230,13 @@ def register(ctx):
             ctx, params.get("alias", "primary"), params.get("head_index", 0),
             params["dispatch_id"])
 
+    def handle_native_mth_u32(params, **kwargs):
+        from . import router_universe_client
+        return router_universe_client.math_u32(
+            ctx, params.get("alias", "primary"), params.get("head_index", 0),
+            params.get("kernel_id", "mth.u32.add_checked"),
+            params["a"], params["b"])
+
     def handle_nan16de_route(params, **kwargs):
         _require_scope("universe:read")
         from .auth import load_installation, decrypt_payload
@@ -421,6 +428,13 @@ def register(ctx):
           "head_index": {"type": "integer", "minimum": 0, "maximum": 254, "default": 0},
           "dispatch_id": {"type": "string", "pattern": "^[A-Za-z0-9_.:-]{12,128}$"}},
          ["dispatch_id"], handle_universe_inspect),
+        ("nanlm_native_mth_u32", "Run a real native NaN16 MTH checked uint32 add/subtract inside a signed HERMES leased hardware universe, with overflow status.",
+         {"alias": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,40}$", "default": "primary"},
+          "head_index": {"type": "integer", "minimum": 0, "maximum": 254, "default": 0},
+          "kernel_id": {"type": "string", "enum": ["mth.u32.add_checked", "mth.u32.sub_checked"], "default": "mth.u32.add_checked"},
+          "a": {"type": "integer", "minimum": 0, "maximum": 4294967295},
+          "b": {"type": "integer", "minimum": 0, "maximum": 4294967295}},
+         ["a", "b"], handle_native_mth_u32),
         ("nanlm_generate_curriculum", "Generate a balanced 12-stage logic-to-language curriculum corpus, including Boolean inverses, deep relations, exceptions, word choice, sentences, paragraphs and stories.",
          {"topic": {"type": "string", "minLength": 1, "maxLength": 500},
           "records_per_stage": {"type": "integer", "minimum": 3, "maximum": 64, "default": 12}},
