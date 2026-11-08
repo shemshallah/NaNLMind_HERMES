@@ -110,9 +110,9 @@ class SignedToolIntegrationTests(unittest.TestCase):
                        return_value=encoded(master)), patch(
                     "nanlmind_hermes.auth_tools.urllib.request.urlopen",
                     return_value=response):
-                status = handler(dict(
+                status = json.loads(handler(dict(
                     pages=pages, history_pages=history_pages,
-                    attestation=signed))
+                    attestation=signed)))
                 self.assertTrue(status["state_verified"])
                 self.assertTrue(status["history_verified"])
                 self.assertTrue(status["sender_authenticated"])
@@ -120,7 +120,7 @@ class SignedToolIntegrationTests(unittest.TestCase):
                 self.assertFalse(status["learning_admitted"])
                 self.assertFalse(status["native_mth_executed"])
                 self.assertFalse(status["mathematical_truth_promoted"])
-                legacy = handler({"pages": pages})
+                legacy = json.loads(handler({"pages": pages}))
                 self.assertTrue(legacy["state_verified"])
                 self.assertFalse(legacy["sender_authenticated"])
                 with self.assertRaises(RouterGraphPageError):
