@@ -135,6 +135,20 @@ def register(ctx):
                 target_mp=params.get("target_mp"), layer=params.get("layer", 5))
         return result
 
+    def handle_router_graph_verify(params, **kwargs):
+        _require_scope("universe:read")
+        from .router_graph_page import RouterGraphPageVerifier, RouterGraphPageError
+        from .universe_chart import LocalRunner
+        pages = params["pages"]
+        if type(pages) is not list or not 1 <= len(pages) <= 128:
+            raise RouterGraphPageError("requires 1..128 ordered graph pages")
+        verifier = RouterGraphPageVerifier(LocalRunner.open(ctx).chart)
+        for page in pages:
+            result = verifier.add_page(page)
+        if not result["state_verified"]:
+            raise RouterGraphPageError("incomplete graph snapshot; no partial acceptance")
+        return result
+
     def handle_self_modify(params, **kwargs):
         _require_scope("training:execute")
         engine = _self_modification(ctx)
@@ -515,6 +529,11 @@ def register(ctx):
           "target_mp": {"type": "integer", "minimum": 0, "maximum": 32639},
           "layer": {"type": "integer", "minimum": 0, "maximum": 9}},
          [], handle_mirror_topology),
+        ("nanlm_router_graph_verify",
+         "Read-only verification of a complete ordered NaNROUTER L0-L9 graph snapshot against the actual HERMES 8 MiB chart root, topology and generation. No mutation or sender authentication.",
+         {"pages": {"type": "array", "minItems": 1, "maxItems": 128,
+                    "items": {"type": "object"}}},
+         ["pages"], handle_router_graph_verify),
         ("nanlm_self_modify", "Boolean-gated self-modification of scratch leaves and MP relations: propose a relation, version a leaf, promote under the local approval gate, or inspect status.",
          {"action": {"type": "string", "enum": ["status", "relation", "leaf", "promote"]},
           "relation": {"type": "object"},
