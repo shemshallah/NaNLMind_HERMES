@@ -1072,6 +1072,7 @@ def chart_storage_tool(ctx, action: str = "inspect", approved: bool = False) -> 
     """
     from .chart_storage import load_chart_snapshot
     from .universe_chart import LocalRunner, PAGE_BYTES
+    from .head_bank_transport import describe_guest_bank
 
     if action not in {"inspect", "checkpoint"}:
         raise ValueError("unknown local chart storage action")
@@ -1082,7 +1083,8 @@ def chart_storage_tool(ctx, action: str = "inspect", approved: bool = False) -> 
         result = runner.checkpoint()
         result.update({"action": "checkpoint", "storage_only": True,
                        "nannet_merge_issued": False,
-                       "native_head_bank_attached": False})
+                       "native_head_bank_attached": False,
+                       "head_bank_transport": describe_guest_bank(runner.chart)})
         return result
     generation, _ = load_chart_snapshot(runner.register.state_dir, runner.chart.root_hash)
     return {
@@ -1090,6 +1092,7 @@ def chart_storage_tool(ctx, action: str = "inspect", approved: bool = False) -> 
         "action": "inspect",
         "storage_only": True,
         "native_head_bank_attached": False,
+        "head_bank_transport": describe_guest_bank(runner.chart),
         "canonical_training_committed": False,
         "nannet_merge_issued": False,
         "parent_root": runner.chart.root_hash,
