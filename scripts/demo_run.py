@@ -422,6 +422,7 @@ def main(argv=None):
             call("nanlm_universe_release", {"alias": "demo"})
 
         call("nanlm_status")
+        call("nanlm_chart_storage", {"action": "inspect"})
 
         # Chat and transcripts.
         call("nanlm_tree_inspect", {})

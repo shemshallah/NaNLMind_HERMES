@@ -139,3 +139,20 @@ auxiliary JSON sidecar may retain higher precision for a live process but
 is not authoritative after checkpoint recovery. Snapshots are currently
 full-page (8 MiB), not incremental, and are created at save boundaries,
 not after every individual word.
+
+## HERMES tool: `nanlm_chart_storage`
+
+- `{"action":"inspect"}` returns sanitized snapshot generation, dirty state,
+  canonical parent digest and storage protocol without reading head payloads
+  into the tool response.
+- `{"action":"checkpoint","approved":true}` requires the installation's
+  `training:execute` authority and publishes an **unmerged local** 8 MiB
+  snapshot. The receipt explicitly states
+  `canonical_training_committed=false` and `nannet_merge_issued=false`.
+- No `restore` mutation is exposed via the tool. Restoring happens at local
+  runner boot only after checking the snapshot and immutable address tables.
+
+The native 255-head COW scratch bank being developed in NaN0S is not yet
+attached to this Python filesystem-transport tool. Until its guest-call ABI
+is integrated, this tool must not claim that native head-bank mutations
+happened.

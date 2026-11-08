@@ -1061,3 +1061,41 @@ def structured_relation_train(ctx, records, epochs=1):
     result = _native_relation_train(ctx, records, "structured_teacher_training", epochs)
     result.update(_merge_relation_memory(ctx, records, train_only=True, reorganize=True))
     return result
+
+
+def chart_storage_tool(ctx, action: str = "inspect", approved: bool = False) -> dict:
+    """HERMES-local chart bytes: inspect metadata or explicitly checkpoint.
+
+    The host is solely the filesystem transport for raw NaN16 chart bytes.
+    This does not execute MTH, mutate canonical .nmg, train heads, or merge.
+    The plugin entry point enforces training:execute for the write action.
+    """
+    from .chart_storage import load_chart_snapshot
+    from .universe_chart import LocalRunner, PAGE_BYTES
+
+    if action not in {"inspect", "checkpoint"}:
+        raise ValueError("unknown local chart storage action")
+    runner = LocalRunner.open(ctx)
+    if action == "checkpoint":
+        if approved is not True:
+            raise ValueError("explicit approved=true required to checkpoint local chart")
+        result = runner.checkpoint()
+        result.update({"action": "checkpoint", "storage_only": True,
+                       "nannet_merge_issued": False,
+                       "native_head_bank_attached": False})
+        return result
+    generation, _ = load_chart_snapshot(runner.register.state_dir, runner.chart.root_hash)
+    return {
+        "schema": "nanlm.hermes-local-chart-storage/1",
+        "action": "inspect",
+        "storage_only": True,
+        "native_head_bank_attached": False,
+        "canonical_training_committed": False,
+        "nannet_merge_issued": False,
+        "parent_root": runner.chart.root_hash,
+        "page_bytes": PAGE_BYTES,
+        "memory_generation": runner.chart.snapshot_generation,
+        "disk_generation": generation,
+        "dirty": bool(runner.chart._dirty),
+        "recovery": "dual-slot-sha256-generation-fenced",
+    }
