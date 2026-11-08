@@ -66,6 +66,12 @@ def register(ctx):
         result["mathematical_memory"] = tools.memory_status(ctx)
         return result
 
+    def handle_chart_storage(params, **kwargs):
+        action = params.get("action", "inspect")
+        if action == "checkpoint":
+            _require_scope("training:execute")
+        return tools.chart_storage_tool(ctx, action, params.get("approved", False))
+
     def handle_curriculum(params, **kwargs):
         return tools.generate_curriculum(ctx, params["topic"], params.get("records_per_stage", 12))
 
@@ -424,6 +430,10 @@ def register(ctx):
           "scratch_id": {"type": "string", "maxLength": 80}},
          ["mutation_id", "records", "approved"], handle_head_candidate_evaluate),
         ("nanlm_status", "Inspect local NaNLMind universe and durable mathematical-memory status.", {}, [], handle_status),
+        ("nanlm_chart_storage", "Inspect the SHA-verified local 8 MiB NaN16 chart snapshot or explicitly checkpoint it; this is never a canonical training or NANNET merge commit.",
+         {"action": {"type": "string", "enum": ["inspect", "checkpoint"], "default": "inspect"},
+          "approved": {"type": "boolean", "default": False}},
+         [], handle_chart_storage),
         ("nanlm_chat", "Open-ended Hermes conversation; reflect evidence and, when explicit supervised relations are present, update native heads, mirror pairs and hyperedges in the shared universe.",
          {"message": {"type": "string", "minLength": 1, "maxLength": 1048576},
           "session_id": {"type": "string", "maxLength": 80}, "system_prompt": {"type": "string"},
