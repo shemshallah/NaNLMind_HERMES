@@ -1,6 +1,7 @@
 """HERMES router-universe lifecycle, encrypted persistence and head protection."""
 import base64
 import json
+import hashlib
 import tempfile
 import time
 import unittest
@@ -124,6 +125,50 @@ class RouterUniverseClientTests(unittest.TestCase):
         self.assertEqual(remote.call_args.args[1], "open")
         self.assertEqual(remote.call_args.args[2]["request_id"], saved_request_id)
         self.assertEqual(client.status(self.ctx)["pending_aliases"], [])
+
+    def test_native_n16t_dispatch_ack_and_mismatched_response_digest(self):
+        lease = receipt(0)
+        with patch.object(client, "_post", return_value=(INSTALL, {"receipt": lease})):
+            client.open_universe(self.ctx, "test")
+        frame = b"N16T" + bytes(32)
+        digest = hashlib.sha256(frame).hexdigest()
+        result = {
+            "dispatch_id": "stable-router-dispatch-001",
+            "head_index": 254, "lease_id": lease["lease_id"],
+            "universe_id": lease["universe_id"],
+            "native_guest_route_admitted": True,
+            "n16t_native_guest_exchange": True,
+            "frame_sha256": digest,
+            "response_frame_hex": frame.hex(),
+            "response_sha256": digest,
+            "acknowledged": False,
+            "replayed_from_journal": False,
+            "model_training_committed": False,
+        }
+        with patch.object(client, "_post", return_value=(INSTALL, result)):
+            sent = client.dispatch(
+                self.ctx, "test", 254, "stable-router-dispatch-001", frame.hex())
+        self.assertTrue(sent["n16t_native_guest_exchange"])
+        self.assertFalse(sent["model_training_committed"])
+        with patch.object(client, "_post",
+                          return_value=(INSTALL, {**result, "response_sha256": "0" * 64})):
+            with self.assertRaises(client.UniverseLeaseError):
+                client.dispatch(
+                    self.ctx, "test", 254, "stable-router-dispatch-001", frame.hex())
+        with self.assertRaises(client.UniverseLeaseError):
+            client.dispatch(self.ctx, "test", 255, "stable-router-dispatch-001", frame.hex())
+        with patch.object(client, "_post",
+                          return_value=(INSTALL, {
+                              "acknowledged": True,
+                              "dispatch_id": "stable-router-dispatch-001",
+                              "response_sha256": digest,
+                          })):
+            self.assertTrue(client.acknowledge(
+                self.ctx, "test", 254, "stable-router-dispatch-001",
+                digest)["acknowledged"])
+        with self.assertRaises(client.UniverseLeaseError):
+            client.acknowledge(
+                self.ctx, "test", 254, "stable-router-dispatch-001", "not-a-digest")
 
 
 if __name__ == "__main__":
