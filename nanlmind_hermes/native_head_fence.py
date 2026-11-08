@@ -70,6 +70,7 @@ class SnapshotHeadBankFence:
             "parent_root_sha256": self._parent,
             "chart_generation": generation,
             "bank_sha256": hashlib.sha256(page[BANK_OFFSET:BANK_END]).hexdigest(),
+            "chart_sha256": hashlib.sha256(page).hexdigest(),
             "root_block_sha256": root["mount_block_sha256"],
             "snapshot_verified": True,
             "native_guest_attached": False,
