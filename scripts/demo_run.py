@@ -23,6 +23,7 @@ import sys
 import tempfile
 import threading
 import time
+import zipfile
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from types import SimpleNamespace
@@ -254,6 +255,21 @@ def main(argv=None):
     }
     code = authority.create_pairing_code(
         ["universe:read", "training:execute", "corpus:write"], ttl_seconds=600)["pairing_code"]
+    wordnet_path = root / "demo-wordnet.zip"
+    with zipfile.ZipFile(wordnet_path, "w") as archive:
+        archive.writestr(
+            "wn3.1.dict/dict/data.noun",
+            "\n".join([
+                "00001740 03 n 01 entity 0 0 0 0 0 0 | something that exists",
+                "00001741 03 n 01 physical_entity 0 0 1 @ 00001740 n 0000 | an entity with physical form",
+                "00001742 03 n 02 copper 0 metal 0 2 @ 00001741 n 0000 #m 00001741 n 0000 | a reddish metal that conducts electricity",
+            ]) + "\n",
+        )
+        for name in ("data.verb", "data.adj", "data.adv"):
+            archive.writestr("wn3.1.dict/dict/" + name, "")
+    config["wordnet_archive"] = str(wordnet_path)
+    config["learning_min_support"] = 1
+    config["learning_require_approval"] = False
     ctx = DemoContext(config)
     register(ctx)
 
@@ -495,6 +511,17 @@ def main(argv=None):
         call("nanlm_memory_merge", {"records": [{"item": discoveries[0], "source_digest": "b" * 64, "head": 0, "layer": 5}]})
         call("nanlm_memory_query", {"subject": "demo-subject", "limit": 20})
         call("nanlm_memory_assessments", {"subject": "demo-subject", "limit": 20})
+
+        # Layered L0-L9 learning, 1 GiB paged scratch and sparse HW4 WordNet.
+        call("nanlm_learning_cycle", {
+            "message": "Copper is a metal because it conducts electricity.",
+            "source": "demo",
+            "relations": [{"subject": "copper", "predicate": "is", "object": "metal"}],
+        })
+        call("nanlm_learning_status")
+        call("nanlm_learning_sync", {"approved": True})
+        call("nanlm_wordnet_ingest", {"word": "copper", "depth": 2})
+        call("nanlm_scratch_register", {"layer": 5, "limit": 8})
 
         # CLOCKED planning, execution, scratch, head process, synthesis.
         _, plan = call("nanlm_clocked_plan", {"question": "Check PII handling in the source", "sources": [

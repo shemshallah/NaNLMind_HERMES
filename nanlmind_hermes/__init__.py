@@ -14,6 +14,90 @@ def register(ctx):
     except Exception:
         pass
 
+    _learning_cache: dict[str, object] = {}
+
+    def _learning_policy():
+        from .layered_learning import LearningPolicy
+        def setting(key, default):
+            try:
+                return ctx.get_config(key, default=default)
+            except Exception:
+                return default
+        return LearningPolicy(
+            min_support=int(setting("learning_min_support", 3)),
+            min_confidence=float(setting("learning_min_confidence", 0.6)),
+            max_candidates=int(setting("learning_max_candidates", 64)),
+            max_promoted_leaves=int(setting("learning_max_promoted_leaves", 100)),
+            require_explicit_approval=bool(setting("learning_require_approval", True)),
+            auto_sync=bool(setting("learning_auto_sync", False)),
+        )
+
+    def _learning(ctx):
+        from .layered_learning import LayeredLearningCoordinator
+        from .universe_chart import LocalRunner
+        root, _corpora, _universe = tools._paths(ctx)
+        key = str(root)
+        coordinator = _learning_cache.get(key)
+        if coordinator is not None:
+            return coordinator
+        runner = LocalRunner.open(ctx)
+        dictionary = None
+        try:
+            archive = ctx.get_config("wordnet_archive", default="")
+        except Exception:
+            archive = ""
+        if archive:
+            try:
+                from .wordnet_store import WordNetStore
+                store = WordNetStore.discover(archive)
+                dictionary = store.universe
+            except Exception:
+                dictionary = None
+        coordinator = LayeredLearningCoordinator(
+            root, chart=runner.chart, dictionary=dictionary,
+            policy=_learning_policy())
+        _learning_cache[key] = coordinator
+        return coordinator
+
+    def handle_learning_cycle(params, **kwargs):
+        _require_scope("training:execute")
+        coordinator = _learning(ctx)
+        result = coordinator.cycle(
+            params["message"], source=params.get("source", "chat"),
+            relations=params.get("relations"), tick=params.get("tick"),
+            approved=params.get("approved", False))
+        return result
+
+    def handle_learning_status(params, **kwargs):
+        _require_scope("universe:read")
+        return _learning(ctx).status()
+
+    def handle_learning_sync(params, **kwargs):
+        _require_scope("training:execute")
+        return _learning(ctx).synchronize(approved=params.get("approved", False))
+
+    def handle_wordnet_ingest(params, **kwargs):
+        _require_scope("training:execute")
+        coordinator = _learning(ctx)
+        result = coordinator.ingest_word(
+            params["word"], depth=params.get("depth", 2))
+        if params.get("approved", False):
+            result["sync"] = coordinator.synchronize(approved=True)
+        return result
+
+    def handle_scratch_register(params, **kwargs):
+        _require_scope("universe:read")
+        coordinator = _learning(ctx)
+        layer = params.get("layer")
+        head = params.get("head")
+        limit = int(params.get("limit", 32))
+        records = list(coordinator.space.records(layer=layer, head=head))[-max(1, min(limit, 256)):]
+        return {
+            "stats": coordinator.space.stats(),
+            "verify": coordinator.space.verify(),
+            "records": records,
+        }
+
     def handle_clocked_plan(params, **kwargs):
         _require_scope("universe:read")
         return clocked_tools.clocked_plan(ctx, params["question"],
@@ -344,6 +428,27 @@ def register(ctx):
         return experimental_register.audit(ctx, params.get("limit", 64))
 
     specs = [
+        ("nanlm_learning_cycle", "Run one L0-L9 layered learning cycle: project the message through all ten layers, distribute it across all 255 HW0 heads, write paged scratch leaves, update concepts and optionally promote under the conservative policy.",
+         {"message": {"type": "string", "minLength": 1, "maxLength": 1048576},
+          "source": {"type": "string", "maxLength": 128},
+          "relations": {"type": "array", "maxItems": 512},
+          "tick": {"type": "integer", "minimum": 0},
+          "approved": {"type": "boolean"}},
+         ["message"], handle_learning_cycle),
+        ("nanlm_learning_status", "Inspect the L0-L9 layered learner, 255-head ensemble, 1 GiB paged scratch register, concept matrix and local head register.",
+         {}, [], handle_learning_status),
+        ("nanlm_learning_sync", "Promote conservative scratch relation candidates into the local 8 MiB head register; canonical BS0/MC0 merge remains a separate gate.",
+         {"approved": {"type": "boolean"}}, ["approved"], handle_learning_sync),
+        ("nanlm_wordnet_ingest", "Read a word from the sparse HW4 WordNet universe, project definitions and typed hypernym relations into L0-L9 scratch leaves and optionally promote them.",
+         {"word": {"type": "string", "minLength": 1, "maxLength": 128},
+          "depth": {"type": "integer", "minimum": 1, "maximum": 8},
+          "approved": {"type": "boolean"}},
+         ["word"], handle_wordnet_ingest),
+        ("nanlm_scratch_register", "Inspect bounded records in the 1 GiB logical scratch register space (128 x 8 MiB pages).",
+         {"layer": {"type": "integer", "minimum": 0, "maximum": 9},
+          "head": {"type": "integer", "minimum": 0, "maximum": 255},
+          "limit": {"type": "integer", "minimum": 1, "maximum": 256}},
+         [], handle_scratch_register),
         ("nanlm_chat_train", "Run free-form conversational learning after the mandatory 256-head native Boolean logic foundation; route user->Hermes->NaNLMind proposals and return evidence without bypassing canonical merge.",
          {"message": {"type": "string", "minLength": 1, "maxLength": 1048576},
           "session_id": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,80}$"},
