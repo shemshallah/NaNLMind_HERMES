@@ -1,0 +1,72 @@
+name: HERMES native head three-repo integration
+on:
+  push:
+    paths:
+      - 'nanlmind_hermes/chart_storage.py'
+      - 'nanlmind_hermes/head_bank_transport.py'
+      - 'nanlmind_hermes/native_head_fence.py'
+      - 'nanlmind_hermes/universe_chart.py'
+      - 'nanlmind_hermes/universe_root.py'
+      - 'nanlmind_hermes/universe_pack.py'
+      - '.github/workflows/native-head-cross-repo.yml'
+  pull_request:
+    paths:
+      - 'nanlmind_hermes/chart_storage.py'
+      - 'nanlmind_hermes/head_bank_transport.py'
+      - 'nanlmind_hermes/native_head_fence.py'
+      - 'nanlmind_hermes/universe_chart.py'
+      - 'nanlmind_hermes/universe_root.py'
+      - 'nanlmind_hermes/universe_pack.py'
+      - '.github/workflows/native-head-cross-repo.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  actual-native-head-banks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.10', '3.12']
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: hermes
+      - uses: actions/checkout@v4
+        with:
+          repository: shemshallah/NaNROUTER
+          ref: d5d85dd5b53148b7f21c7f957ed10e01e4ccaa26
+          path: router
+      - uses: actions/checkout@v4
+        with:
+          repository: shemshallah/NaN0S
+          ref: 3b045ff48c8b862db290c3702789c43bde459048
+          path: nan0s
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Compile pinned class-exact native NaN16 VM
+        run: |
+          cd nan0s/aarch64/android
+          cc -std=gnu99 -O2 -fPIC -shared -ffp-contract=off -fno-fast-math \
+            core/nan16.c core/nan_dev.c core/nan_load.c \
+            core/nan_render.c core/nan_state.c core/nan_net_driver.c \
+            -o ../../libnan_head.so -lm
+      - name: Assemble pinned native head image
+        run: |
+          cd nan0s
+          LC_ALL=C awk -f tools/nmk.awk -v CMD=emit \
+            -v LABELS="$GITHUB_WORKSPACE/nan0s/head.labels" \
+            src/nannet/n16_head_worker.nas > "$GITHUB_WORKSPACE/nan0s/head.nan"
+          test -s head.nan
+          test -s head.labels
+      - name: Verify current HERMES chart against authenticated real NaN16 revisions
+        working-directory: router
+        env:
+          PYTHONPATH: ${{ github.workspace }}/router:${{ github.workspace }}/hermes
+          HERMES_CHECKPOINT_E2E: '1'
+          NAN_HEAD_GUEST_LIBRARY: ${{ github.workspace }}/nan0s/libnan_head.so
+          NAN_HEAD_GUEST_IMAGE: ${{ github.workspace }}/nan0s/head.nan
+          NAN_HEAD_GUEST_LABELS: ${{ github.workspace }}/nan0s/head.labels
+        run: python -m unittest discover -s tests -p 'test_hermes_head_e2e.py' -v
