@@ -86,6 +86,18 @@ def _candidates(folder: Path, parent: bytes):
             corrupt.append(str(exc))
     if valid:
         valid.sort(key=lambda item: (item[0], item[1]))
+        # Two individually SHA-valid slots at the same generation are not
+        # necessarily the same chart. Choosing a slot by filename would
+        # silently fork the one-universe history and authorize arbitrary
+        # native training against one of two equally current pages.
+        # Exact duplicate pages are harmless (e.g. restored copies), but
+        # divergent equal-generation pages must fail closed for readers AND
+        # the under-lock writer/CAS path that calls this helper.
+        if (len(valid) == 2 and valid[0][0] == valid[1][0]
+                and valid[0][2] != valid[1][2]):
+            raise ChartStorageError(
+                "ambiguous same-generation chart snapshots; manual recovery required"
+            )
         return valid[-1]
     if corrupt:
         raise ChartStorageError("no valid snapshot: " + "; ".join(corrupt))
