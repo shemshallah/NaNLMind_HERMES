@@ -56,12 +56,14 @@ class NativeHeadCheckpointCoordinator:
         self.fence = fence
         self.journal = journal
 
-    def _after(self, *, request, universe_id, bank_after_sha256):
+    def _after(self, *, request, universe_id, bank_after_sha256,
+               source_chart_sha256, source_root_block_sha256):
         state = self.fence(universe_id)
         if (state.get("snapshot_verified") is not True
                 or type(request.chart_generation) is not int
                 or state.get("chart_generation") != request.chart_generation + 1
                 or state.get("parent_root_sha256") != request.parent_root_sha256
+                or state.get("root_block_sha256") != source_root_block_sha256
                 or not hmac.compare_digest(
                     str(state.get("bank_sha256")), bank_after_sha256
                 )):
@@ -80,6 +82,7 @@ class NativeHeadCheckpointCoordinator:
                 "cannot prove adjacent native chart checkpoint transition"
             ) from exc
         if (state.get("chart_sha256") != _sha(current)
+                or _sha(prior) != source_chart_sha256
                 or not hmac.compare_digest(
                     _sha(prior[BANK_OFFSET:BANK_END]),
                     request.bank_before_sha256,
@@ -96,10 +99,13 @@ class NativeHeadCheckpointCoordinator:
         return state
 
     def _result(self, *, request, lease_receipt, network_head,
-                universe_id, after_sha256, recovered):
+                universe_id, after_sha256, source_chart_sha256,
+                source_root_block_sha256, recovered):
         state = self._after(
             request=request, universe_id=universe_id,
             bank_after_sha256=after_sha256,
+            source_chart_sha256=source_chart_sha256,
+            source_root_block_sha256=source_root_block_sha256,
         )
         confirmed = self.journal.confirm_local_checkpoint(
             request=request, lease_receipt=lease_receipt,
@@ -113,6 +119,9 @@ class NativeHeadCheckpointCoordinator:
             "schema": "nanlm.native-head-local-checkpoint/1",
             "request_sha256": confirmed["request_sha256"],
             "bank_after_sha256": after_sha256,
+            "source_snapshot_bound": True,
+            "source_chart_sha256": source_chart_sha256,
+            "source_root_block_sha256": source_root_block_sha256,
             "parent_root_sha256": state["parent_root_sha256"],
             "chart_generation": state["chart_generation"],
             "root_block_sha256": state["root_block_sha256"],
@@ -163,6 +172,27 @@ class NativeHeadCheckpointCoordinator:
         state = self.fence(universe_id)
         if state.get("parent_root_sha256") != request.parent_root_sha256:
             raise NativeHeadCheckpointConflict("canonical parent root changed")
+        if staged["state"] == "completed_staging_only":
+            # The router must have reserved this EXACT certified source
+            # page at first native dispatch. A legacy digest-only staging
+            # record is inspectable but must not be newly committed.
+            source_chart_sha256 = staged.get("source_chart_sha256")
+            source_root_block_sha256 = staged.get("source_root_block_sha256")
+            if staged.get("source_snapshot_bound") is not True:
+                raise NativeHeadCheckpointConflict(
+                    "native dispatch has no certified source chart identity"
+                )
+            for name, value in (
+                ("source_chart_sha256", source_chart_sha256),
+                ("source_root_block_sha256", source_root_block_sha256),
+            ):
+                if (type(value) is not str or len(value) != 64
+                        or any(c not in "0123456789abcdef" for c in value)):
+                    raise NativeHeadCheckpointError(
+                        "invalid native journal source identity: " + name
+                    )
+            if state.get("root_block_sha256") != source_root_block_sha256:
+                raise NativeHeadCheckpointConflict("native source root block changed")
         if staged["state"] == "checkpointed_locally":
             # A permanent router tombstone outlives the original two
             # checkpoint slots. Legitimate later training generations must
@@ -183,6 +213,9 @@ class NativeHeadCheckpointCoordinator:
                     and hmac.compare_digest(state["bank_sha256"], after_sha256)
                 ),
                 "historical_local_checkpoint_verified": True,
+                "source_snapshot_bound": staged.get("source_snapshot_bound") is True,
+                "source_chart_sha256": staged.get("source_chart_sha256"),
+                "source_root_block_sha256": staged.get("source_root_block_sha256"),
                 "local_checkpoint_verified": True,
                 "recovered_prior_local_checkpoint": True,
                 "authenticated_router_journal_checked": True,
@@ -202,10 +235,17 @@ class NativeHeadCheckpointCoordinator:
             return self._result(
                 request=request, lease_receipt=lease_receipt,
                 network_head=network_head, universe_id=universe_id,
-                after_sha256=after_sha256, recovered=True,
+                after_sha256=after_sha256,
+                source_chart_sha256=source_chart_sha256,
+                source_root_block_sha256=source_root_block_sha256,
+                recovered=True,
             )
         if generation != request.chart_generation:
             raise NativeHeadCheckpointConflict("chart generation superseded native work")
+        if state.get("chart_sha256") != source_chart_sha256:
+            raise NativeHeadCheckpointConflict(
+                "router source chart differs from current local checkpoint"
+            )
         if not hmac.compare_digest(
             state["bank_sha256"], request.bank_before_sha256
         ):
@@ -257,7 +297,10 @@ class NativeHeadCheckpointCoordinator:
         )
         if (not isinstance(fresh, dict)
                 or fresh.get("state") != "completed_staging_only"
-                or fresh.get("bank_after_sha256") != after_sha256):
+                or fresh.get("bank_after_sha256") != after_sha256
+                or fresh.get("source_snapshot_bound") is not True
+                or fresh.get("source_chart_sha256") != source_chart_sha256
+                or fresh.get("source_root_block_sha256") != source_root_block_sha256):
             raise NativeHeadCheckpointConflict(
                 "authenticated journal stage changed before checkpoint"
             )
@@ -281,5 +324,8 @@ class NativeHeadCheckpointCoordinator:
         return self._result(
             request=request, lease_receipt=lease_receipt,
             network_head=network_head, universe_id=universe_id,
-            after_sha256=after_sha256, recovered=False,
+            after_sha256=after_sha256,
+            source_chart_sha256=source_chart_sha256,
+            source_root_block_sha256=source_root_block_sha256,
+            recovered=False,
         )
