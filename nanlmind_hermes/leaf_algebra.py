@@ -191,6 +191,23 @@ class LeafAlgebra:
 
     # -- heads ----------------------------------------------------------
     def head_for(self, leaf: Leaf) -> tuple[int, int]:
+        # The byte layer is the structural head map: byte 0x00..0xFF maps to
+        # heads 0..255 exactly once. Letters inherit their byte coordinate.
+        if leaf.kind == "BYTE":
+            bits = "".join(str(int(bit) & 1) for bit in leaf.value)
+            value = int(bits, 2) if bits else 0
+            return value & 0xFF, value & 0x0F
+        if leaf.kind == "LETTER":
+            code = ord(str(leaf.value)[0]) & 0xFF
+            return code, code & 0x0F
+        if leaf.kind == "BOOLEAN":
+            return int(leaf.value) & 0xFF, 0x0F
+        if leaf.kind == "WORD":
+            head = 0
+            for char in str(leaf.value):
+                head = (head * 31 + ord(char)) & 0xFF
+            return head, (head & 0x0F)
+        # Other constructed leaves (vectors, matrices) fold by relation value.
         payload = repr(leaf.value) + leaf.kind
         data = payload.encode("utf-8")
         mask = (sum(data) + len(data)) % 16

@@ -108,7 +108,7 @@ Interleaved split (train values not divisible by 4):
   "admissions": 804,
   "leaves": 370,
   "transforms": 64,
-  "used": 64
+  "used": 256
 }
 ```
 

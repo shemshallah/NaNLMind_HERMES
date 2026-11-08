@@ -53,6 +53,12 @@ class LeafAlgebraTests(unittest.TestCase):
         self.assertGreaterEqual(len(tree["L4_words"]), 10)
         self.assertEqual(len(tree["L5_vectors"]), 1)
 
+    def test_byte_layer_uses_all_256_head_coordinates(self):
+        for value in range(256):
+            self.algebra.byte(value)
+        self.assertEqual(len(self.algebra.heads), 256)
+        self.assertEqual(sorted(self.algebra.heads), list(range(256)))
+
     def test_heads_admit_leaves_and_ledger_transforms(self):
         self.algebra.word("YES")
         self.assertTrue(self.algebra.heads)
