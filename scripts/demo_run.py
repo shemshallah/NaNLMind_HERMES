@@ -347,6 +347,24 @@ def main(argv=None):
                     "network_port": "BS0:0", "head_index": 254,
                     "native_execution_committed": False,
                 }}
+            if action == "dispatch":
+                frame = bytes.fromhex(request["frame_hex"])
+                return installation_id, {
+                    "dispatch_id": request["dispatch_id"], "head_index": request["head_index"],
+                    "lease_id": fixture["lease_id"], "universe_id": fixture["universe_id"],
+                    "native_guest_route_admitted": True, "n16t_native_guest_exchange": True,
+                    "frame_sha256": hashlib.sha256(frame).hexdigest(),
+                    "response_frame_hex": frame.hex(),
+                    "response_sha256": hashlib.sha256(frame).hexdigest(),
+                    "acknowledged": False, "replayed_from_journal": False,
+                    "model_training_committed": False,
+                }
+            if action == "ack":
+                return installation_id, {
+                    "acknowledged": True, "dispatch_id": request["dispatch_id"],
+                    "response_sha256": request["response_sha256"],
+                    "model_training_committed": False,
+                }
             if action == "renew":
                 fixture["revision"] += 1
                 fixture["expires_at"] += 900
@@ -359,6 +377,14 @@ def main(argv=None):
             call("nanlm_universe_status")
             call("nanlm_universe_open", {"alias": "demo"})
             call("nanlm_universe_resolve", {"alias": "demo", "head_index": 254})
+            _, dispatched = call("nanlm_universe_dispatch", {
+                "alias": "demo", "head_index": 254,
+                "dispatch_id": "demo-n16t-dispatch-0001",
+                "frame_hex": (b"N16T" + bytes(32)).hex()})
+            call("nanlm_universe_ack", {
+                "alias": "demo", "head_index": 254,
+                "dispatch_id": "demo-n16t-dispatch-0001",
+                "response_sha256": (dispatched or {}).get("response_sha256", "0" * 64)})
             call("nanlm_universe_renew", {"alias": "demo"})
             call("nanlm_universe_release", {"alias": "demo"})
 
