@@ -539,12 +539,12 @@ def main(argv=None):
             "total_edges": 0, "candidate_edges": 0, "retracted_edges": 0,
             "layer_counts": [0] * 10,
             "state_sha256": hashlib.sha256(
-                b"nanrouter.nan-layer-state/1\\0").hexdigest(),
+                b"nanrouter.nan-layer-state/1\0").hexdigest(),
             "history_sha256": hashlib.sha256(
-                b"nanrouter.nan-layer-history/1\\0").hexdigest(),
+                b"nanrouter.nan-layer-history/1\0").hexdigest(),
         }
         graph_commit = hashlib.sha256(
-            b"nanrouter.nan-layer-commitment/1\\0" +
+            b"nanrouter.nan-layer-commitment/1\0" +
             json.dumps(graph_header,sort_keys=True,separators=(",",":")).encode()
         ).hexdigest()
         call("nanlm_router_graph_verify", {"pages": [{
