@@ -3,12 +3,18 @@ on:
   push:
     paths:
       - 'nanlmind_hermes/native_head_fence.py'
+      - 'nanlmind_hermes/native_head_checkpoint.py'
+      - 'nanlmind_hermes/chart_storage.py'
       - 'tests/test_native_head_fence.py'
+      - 'tests/test_native_head_checkpoint.py'
       - '.github/workflows/native-head-fence.yml'
   pull_request:
     paths:
       - 'nanlmind_hermes/native_head_fence.py'
+      - 'nanlmind_hermes/native_head_checkpoint.py'
+      - 'nanlmind_hermes/chart_storage.py'
       - 'tests/test_native_head_fence.py'
+      - 'tests/test_native_head_checkpoint.py'
       - '.github/workflows/native-head-fence.yml'
   workflow_dispatch:
 permissions:
@@ -27,5 +33,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Verify read-only SHA/generation/root fence
         run: python -m unittest discover -s tests -p 'test_native_head_fence.py' -v
+      - name: Verify head journal to checkpoint full-page CAS and crash recovery
+        run: python -m unittest discover -s tests -p 'test_native_head_checkpoint.py' -v
       - name: Verify existing head transport and storage regressions
         run: python -m unittest discover -s tests -p 'test_head_bank_transport.py' -v

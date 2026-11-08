@@ -104,8 +104,37 @@ def load_chart_snapshot(state_dir: str | Path, root_hash: str):
     return (entry[0], entry[2]) if entry else (0, None)
 
 
+def load_chart_snapshot_pair(state_dir: str | Path, root_hash: str,
+                             prior_generation: int) -> tuple[bytes, bytes]:
+    """Read an exact adjacent, SHA-valid N16SNAP1 transition.
+
+    An unacknowledged native head commit can only be reconciled if BOTH
+    pre-commit and post-commit snapshots survive with consecutive generation
+    numbers under the same immutable parent. No torn-slot fallback here:
+    this operation needs evidence of the precise byte transition, rather
+    than just the newest recoverable chart.
+    """
+    if type(prior_generation) is not int or prior_generation < 1:
+        raise ChartStorageError("prior chart generation must be positive")
+    parent = _parent(root_hash)
+    folder = _root(state_dir)
+    current = _candidates(folder, parent)
+    if current is None or current[0] != prior_generation + 1:
+        raise ChartStorageError("exact next-generation snapshot unavailable")
+    prior_path = folder / SLOT_NAMES[current[1] ^ 1]
+    try:
+        prior = _read(prior_path)
+    except (ValueError, OSError, struct.error) as exc:
+        raise ChartStorageError("adjacent prior snapshot is corrupt") from exc
+    if (prior is None or prior[0] != prior_generation
+            or prior[1] != parent):
+        raise ChartStorageError("adjacent parent-bound prior snapshot unavailable")
+    return prior[2], current[2]
+
+
 def save_chart_snapshot(state_dir: str | Path, root_hash: str,
-                        page: bytes | bytearray, expected_generation: int):
+                        page: bytes | bytearray, expected_generation: int,
+                        *, expected_page_sha256: str | None = None):
     """Atomically publish the alternate slot, using a generation lease.
 
     Refuses stale writers instead of silently overwriting another runner's
@@ -113,6 +142,13 @@ def save_chart_snapshot(state_dir: str | Path, root_hash: str,
     """
     if type(expected_generation) is not int or expected_generation < 0:
         raise ChartStorageError("invalid expected generation")
+    if expected_page_sha256 is not None:
+        if (type(expected_page_sha256) is not str
+                or len(expected_page_sha256) != 64
+                or any(c not in "0123456789abcdef" for c in expected_page_sha256)):
+            raise ChartStorageError("invalid expected chart page digest")
+        if expected_generation < 1:
+            raise ChartStorageError("chart page digest requires an existing generation")
     data = bytes(page)
     _validate_chart(data)
     root = _parent(root_hash)
@@ -136,6 +172,15 @@ def save_chart_snapshot(state_dir: str | Path, root_hash: str,
             generation = current[0] if current else 0
             if generation != expected_generation:
                 raise ChartStorageError("stale snapshot generation; reload before writing")
+            # The digest fence must be checked UNDER the same exclusive file
+            # lock as the generation check. A valid same-generation but
+            # different chart page must not be overwritten by a native bank
+            # handoff that was prepared against unrelated chart bytes.
+            if expected_page_sha256 is not None:
+                if current is None or (
+                    hashlib.sha256(current[2]).hexdigest() != expected_page_sha256
+                ):
+                    raise ChartStorageError("stale chart page digest; reload before writing")
             if generation == 0xFFFFFFFFFFFFFFFF:
                 raise ChartStorageError("snapshot generation exhausted")
             target_slot = (current[1] ^ 1) if current else 0
