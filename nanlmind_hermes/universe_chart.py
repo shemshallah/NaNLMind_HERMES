@@ -144,6 +144,7 @@ class Chart8MiB:
         chart.bytes = bytearray(PAGE_BYTES)
         chart._dirty = True
         chart.snapshot_generation = 0
+        chart._checkpoint_page_sha256 = None
         chart._parents = {}
         header = chart.bytes
         header[0:8] = MAGIC_CHART
@@ -204,6 +205,7 @@ class Chart8MiB:
         self._parents: dict[int, int] = {}
         self._dirty = False
         self.snapshot_generation = 0
+        self._checkpoint_page_sha256 = None
 
     # -- assembly -------------------------------------------------------
     def _write_header(self, page: bytes) -> None:
@@ -382,6 +384,12 @@ def restore_local_chart(chart: Chart8MiB, state_dir: str | Path) -> int:
                 raise ChartError("snapshot changed immutable chart addressing")
         chart.bytes[:] = payload
         chart._dirty = False
+    # Record the exact SHA-verified durable page loaded from storage, not a
+    # later dirty in-memory page. Subsequent local checkpoints CAS against it.
+    import hashlib
+    chart._checkpoint_page_sha256 = (
+        hashlib.sha256(payload).hexdigest() if payload is not None else None
+    )
     chart.snapshot_generation = generation
     return generation
 
@@ -854,6 +862,10 @@ class LocalRunner:
         # If temporal/semantic changes were already dirty, they remain so;
         # the next ordinary checkpoint must commit them using the NEW
         # expected generation. Do not falsely mark everything clean.
+        # Native CAS has already published the exact verified page. Preserve
+        # its full-page digest as the baseline for a later ordinary HERMES
+        # checkpoint that will merge unrelated pending temporal/MP edits.
+        self.chart._checkpoint_page_sha256 = hashlib.sha256(page).hexdigest()
         self.chart._dirty = before_dirty
         return {
             "schema": "nanlm.local-runner-native-head-rebase/1",
@@ -868,13 +880,24 @@ class LocalRunner:
         }
 
     def checkpoint(self) -> dict:
-        """Durably store local chart bytes without modifying canonical training."""
+        """Durably store local chart bytes with full-page source CAS."""
+        import hashlib
         if self.chart is None:
             raise ChartError("no chart to checkpoint")
+        generation_before = self.chart.snapshot_generation
+        source_sha = getattr(self.chart, "_checkpoint_page_sha256", None)
+        if generation_before and source_sha is None:
+            raise ChartError("verified durable chart source digest missing")
+        # The cached chart can contain pending temporal/MP edits. Its bytes
+        # are NOT the expected old page; compare the last verified durable
+        # chart digest under the N16SNAP1 exclusive writer lock.
+        data = bytes(self.chart.bytes)
         generation = save_chart_snapshot(
-            self.register.state_dir, self.chart.root_hash, self.chart.bytes,
-            self.chart.snapshot_generation)
+            self.register.state_dir, self.chart.root_hash, data,
+            generation_before, expected_page_sha256=source_sha,
+        )
         self.chart.snapshot_generation = generation
+        self.chart._checkpoint_page_sha256 = hashlib.sha256(data).hexdigest()
         self.chart._dirty = False
         return {"kind": "unmerged-local-chart", "generation": generation,
                 "parent_root": self.chart.root_hash, "bytes": PAGE_BYTES,
