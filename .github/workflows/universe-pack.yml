@@ -1,0 +1,29 @@
+name: N16PACK1 offline-universe
+on:
+  push:
+    paths:
+      - 'nanlmind_hermes/universe_pack.py'
+      - 'tests/test_universe_pack.py'
+      - '.github/workflows/universe-pack.yml'
+  pull_request:
+    paths:
+      - 'nanlmind_hermes/universe_pack.py'
+      - 'tests/test_universe_pack.py'
+      - '.github/workflows/universe-pack.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  pack-integrity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      matrix:
+        python-version: ['3.10','3.12']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Verify offline pack and negative cases
+        run: python -m unittest discover -s tests -p 'test_universe_pack.py' -v
