@@ -48,6 +48,17 @@ class HeadPopulationTests(unittest.TestCase):
         self.assertGreaterEqual(diversity["effective_rank"], 1.0)
         self.assertGreaterEqual(diversity["mean_entropy"], 0.0)
 
+    def test_longer_context_and_balancing_activate_unique_heads(self):
+        population = HeadPopulation(heads=64, active=8, context_length=3,
+                                    balance=True)
+        for word in ("the", "then", "there"):
+            population.observe_partial("the", "r")
+        active = population._active("the")
+        self.assertEqual(len(active), 9)
+        self.assertEqual(len(set(active)), 9)
+        population.decorrelate(0.05)
+        self.assertTrue(any(head for head in population.heads))
+
     def test_bigram_baseline_trains(self):
         baseline = BigramBaseline()
         baseline.train(["the", "then", "there"])

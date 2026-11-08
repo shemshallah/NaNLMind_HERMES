@@ -67,6 +67,51 @@ def reverse_permutation(n: int) -> list[int]:
     return [n - 1 - index for index in range(n)]
 
 
+def native_mirror(n: int = 256) -> list[int]:
+    """Native head mirror: reverse the 8-bit head address."""
+    return [int(format(index & 0xFF, "08b")[::-1], 2) for index in range(n)]
+
+
+def complement_mirror(n: int = 256) -> list[int]:
+    return [n - 1 - index for index in range(n)]
+
+
+def j_closure(heads: set[int], permutation: list[int]) -> set[int]:
+    result = set(heads)
+    for head in list(heads):
+        result.add(permutation[head])
+    return result
+
+
+def fiedler_partition(matrix: list[list[float]]) -> dict:
+    """Spectral cut: second Laplacian eigenvector partitions the heads."""
+    laplacian = graph_laplacian(matrix)
+    values, vectors = smallest_eigen(laplacian, k=2)
+    vector = vectors[1] if len(vectors) > 1 else vectors[0]
+    positive = {head for head, value in enumerate(vector) if value >= 0}
+    negative = set(range(len(vector))) - positive
+    inner = negative if len(negative) <= len(positive) else positive
+    boundary = set()
+    threshold = 1e-12
+    for head in range(len(matrix)):
+        for other in range(head + 1, len(matrix)):
+            if matrix[head][other] > threshold and                     (head in positive) != (other in positive):
+                boundary.add(head)
+                boundary.add(other)
+    return {"positive": sorted(positive), "negative": sorted(negative),
+            "inner": sorted(inner), "boundary": sorted(boundary),
+            "values": [round(value, 6) for value in values],
+            "vector": vector}
+
+
+def cut_potential(matrix: list[list[float]], inner: set[int],
+                  lam: float = 1.0) -> list[list[float]]:
+    result = [row[:] for row in matrix]
+    for head in inner:
+        result[head][head] += lam
+    return result
+
+
 def apply_reversal(matrix: list[list[float]], n: int) -> list[list[float]]:
     """J A J for the reversal permutation J."""
     reversed_rows = [row[::-1] for row in matrix[::-1]]

@@ -22,11 +22,15 @@ def fnv(text: str, salt: int = 0) -> int:
 
 class HeadPopulation:
     def __init__(self, heads: int = 256, active: int = 8,
-                 prior_weight: float = 0.0, train_head0: bool = False):
+                 prior_weight: float = 0.0, train_head0: bool = False,
+                 context_length: int = 2, balance: bool = False):
         self.head_count = heads
         self.active_count = active
         self.prior_weight = prior_weight
         self.train_head0 = train_head0
+        self.context_length = max(1, int(context_length))
+        self.balance = balance
+        self.usage = [0] * heads
         self.heads: list[Counter] = [Counter() for _ in range(heads)]
         self.prior = Counter()
         self.observations = 0
@@ -35,18 +39,26 @@ class HeadPopulation:
         # Head 0 is the shared NaNNet/polarity prior; 1..255 are population heads.
         if self.active_count >= self.head_count - 1:
             return list(range(self.head_count))
-        result = {0}
-        for salt in range(self.active_count):
-            result.add(fnv(context, salt) % (self.head_count - 1) + 1)
-        return sorted(result)
+        candidates = []
+        seen = set()
+        for salt in range(self.active_count * 5):
+            head = fnv(context, salt) % (self.head_count - 1) + 1
+            if head not in seen:
+                seen.add(head)
+                candidates.append(head)
+        if self.balance:
+            candidates.sort(key=lambda head: (self.usage[head], head))
+        selected = candidates[:self.active_count]
+        return sorted([0] + selected)
 
     def observe(self, word: str, weight: float = 1.0) -> None:
         word = str(word).strip().lower()
         if not word or not word.isalpha():
             return
-        padded = "^" + word + "$"
-        for index in range(2, len(padded)):
-            context = padded[index - 2:index]
+        width = self.context_length
+        padded = "^" * (width - 1) + word + "$"
+        for index in range(width, len(padded)):
+            context = padded[index - width:index]
             target = padded[index]
             if target not in ALPHABET:
                 continue
@@ -56,6 +68,7 @@ class HeadPopulation:
                 if head == 0 and not self.train_head0:
                     continue
                 self.heads[head][target] += weight
+                self.usage[head] += 1
 
     def observe_partial(self, prefix: str, next_letter: str,
                         weight: float = 1.0) -> None:
@@ -64,14 +77,16 @@ class HeadPopulation:
         next_letter = str(next_letter).strip().lower()
         if not prefix or len(next_letter) != 1 or next_letter not in ALPHABET:
             return
-        padded = "^" + prefix
-        context = padded[-2:]
+        width = self.context_length
+        padded = "^" * (width - 1) + prefix
+        context = padded[-width:]
         self.observations += 1
         self.prior[next_letter] += weight
         for head in self._active(context):
             if head == 0 and not self.train_head0:
                 continue
             self.heads[head][next_letter] += weight
+            self.usage[head] += 1
 
     def distribution(self, context: str) -> dict[str, float]:
         scores: Counter = Counter()
@@ -108,10 +123,11 @@ class HeadPopulation:
     def evaluate(self, words: list[str]) -> dict:
         correct = total = 0
         top3 = 0
+        width = self.context_length
         for word in words:
-            padded = "^" + word + "$"
-            for index in range(2, len(padded)):
-                context = padded[index - 2:index]
+            padded = "^" * (width - 1) + word + "$"
+            for index in range(width, len(padded)):
+                context = padded[index - width:index]
                 target = padded[index]
                 if target not in ALPHABET:
                     continue
@@ -137,6 +153,19 @@ class HeadPopulation:
                 "mass": round(total, 3),
             })
         return result
+
+    def decorrelate(self, strength: float = 0.1) -> None:
+        """Remove the shared global component from every head distribution."""
+        letters = "abcdefghijklmnopqrstuvwxyz$"
+        totals = {letter: 0.0 for letter in letters}
+        for head in self.heads:
+            for letter in letters:
+                totals[letter] += head.get(letter, 0)
+        count = max(1, len(self.heads))
+        mean = {letter: totals[letter] / count for letter in letters}
+        for head in self.heads:
+            for letter in letters:
+                head[letter] = max(0.0, head.get(letter, 0) - strength * mean[letter])
 
     def vectors(self, letters: str = "abcdefghijklmnopqrstuvwxyz$") -> list[list[float]]:
         vectors = []
@@ -197,8 +226,9 @@ class HeadPopulation:
 
 
 class BigramBaseline:
-    def __init__(self):
+    def __init__(self, context_length: int = 2):
         self.counts: dict[str, Counter] = {}
+        self.context_length = context_length
 
     def train(self, words: list[str]) -> None:
         for word in words:
@@ -218,10 +248,11 @@ class BigramBaseline:
 
     def evaluate(self, words: list[str]) -> dict:
         correct = total = 0
+        width = self.context_length
         for word in words:
-            padded = "^" + word + "$"
-            for index in range(2, len(padded)):
-                context = padded[index - 2:index]
+            padded = "^" * (width - 1) + word + "$"
+            for index in range(width, len(padded)):
+                context = padded[index - width:index]
                 target = padded[index]
                 if target not in ALPHABET:
                     continue

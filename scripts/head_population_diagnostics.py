@@ -26,20 +26,24 @@ def main():
     test = [word for word in words if fnv(word) % 5 == 0][:400]
 
     configs = [
-        {"active": 8, "prior_weight": 0.0, "train_head0": False},
-        {"active": 16, "prior_weight": 1.0, "train_head0": True},
-        {"active": 16, "prior_weight": 0.0, "train_head0": False},
-        {"active": 32, "prior_weight": 0.0, "train_head0": False},
-        {"active": 64, "prior_weight": 0.0, "train_head0": False},
-        {"active": 255, "prior_weight": 0.0, "train_head0": False},
+        {"active": 8, "context_length": 2, "balance": False, "decorrelate": 0.0},
+        {"active": 8, "context_length": 3, "balance": False, "decorrelate": 0.0},
+        {"active": 8, "context_length": 3, "balance": True, "decorrelate": 0.0},
+        {"active": 8, "context_length": 4, "balance": True, "decorrelate": 0.0},
+        {"active": 16, "context_length": 3, "balance": True, "decorrelate": 0.0},
+        {"active": 8, "context_length": 3, "balance": True, "decorrelate": 0.1},
+        {"active": 255, "context_length": 2, "balance": False, "decorrelate": 0.0},
     ]
     rows = []
     for config in configs:
-        population = HeadPopulation(heads=256, active=config["active"],
-                                    prior_weight=config["prior_weight"],
-                                    train_head0=config["train_head0"])
+        population = HeadPopulation(
+            heads=256, active=config["active"], prior_weight=0.0,
+            train_head0=False, context_length=config["context_length"],
+            balance=config["balance"])
         for word in train:
             population.observe(word)
+        if config["decorrelate"]:
+            population.decorrelate(config["decorrelate"])
         result = population.evaluate(test)
         vectors = np.array(population.vectors())
         norms = np.linalg.norm(vectors, axis=1)
@@ -81,13 +85,13 @@ def main():
         "The head Gram rank is the key measure: rank 1 means every head carries",
         "the same distribution, so the spectral operator has only one mode.",
         "",
-        "| active | head0 prior | train head0 | accuracy | top-3 | rank | effective rank | mean cosine |",
-        "|---:|---:|---|---:|---:|---:|---:|---:|",
+        "| active | context | balance | decorrelate | accuracy | top-3 | rank | effective rank | mean cosine |",
+        "|---:|---:|---|---:|---:|---:|---:|---:|---:|",
     ]
     for row in rows:
-        lines.append(f"| {row['active']} | {row['prior_weight']} | {row['train_head0']} | "
-                     f"{row['accuracy']} | {row['top3']} | {row['rank']} | "
-                     f"{row['effective_rank']} | {row['mean_cosine']} |")
+        lines.append(f"| {row['active']} | {row['context_length']} | {row['balance']} | "
+                     f"{row['decorrelate']} | {row['accuracy']} | {row['top3']} | "
+                     f"{row['rank']} | {row['effective_rank']} | {row['mean_cosine']} |")
     lines += [
         "",
         "## Reading",
@@ -99,6 +103,8 @@ def main():
         "- Head 0 should be the void/prior; training it or letting it dominate",
         "  the collapse destroys the distinction between void and content.",
         "- Higher rank/effective rank and lower mean cosine are the targets.",
+        "- Longer contexts and load-balanced routing are expected to raise rank and",
+        "  accuracy; decorrelation removes the shared global component.",
         "",
         "## What to do next",
         "",

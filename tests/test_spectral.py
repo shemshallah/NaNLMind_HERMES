@@ -44,6 +44,31 @@ class SpectralTests(unittest.TestCase):
         self.assertAlmostEqual(sum(masses.values()), 1.0)
         self.assertIn(head_region(0), {"inner", "ring", "outer"})
 
+    def test_native_mirror_and_complement_differ(self):
+        from nanlmind_hermes.spectral import complement_mirror, native_mirror
+        native = native_mirror(256)
+        complement = complement_mirror(256)
+        self.assertEqual(sum(1 for h in range(256) if native[h] == h), 16)
+        self.assertEqual(sum(1 for h in range(256) if complement[h] == h), 0)
+        self.assertNotEqual(native, complement)
+
+    def test_fiedler_partition_finds_two_blocks(self):
+        from nanlmind_hermes.spectral import fiedler_partition
+        matrix = [[0.0] * 8 for _ in range(8)]
+        for i in range(4):
+            for j in range(4):
+                if i != j:
+                    matrix[i][j] = 1.0
+                    matrix[j][i] = 1.0
+        for i in range(4, 8):
+            for j in range(4, 8):
+                if i != j:
+                    matrix[i][j] = 1.0
+                    matrix[j][i] = 1.0
+        cut = fiedler_partition(matrix)
+        self.assertEqual(len(cut["inner"]), 4)
+        self.assertEqual(cut["values"][0], 0.0)
+
     def test_gram_matrix_from_head_population_is_symmetric(self):
         population = HeadPopulation(heads=16, active=15)
         for word in ("the", "then", "there", "other"):

@@ -3,14 +3,15 @@
 The head Gram rank is the key measure: rank 1 means every head carries
 the same distribution, so the spectral operator has only one mode.
 
-| active | head0 prior | train head0 | accuracy | top-3 | rank | effective rank | mean cosine |
-|---:|---:|---|---:|---:|---:|---:|---:|
-| 8 | 0.0 | False | 0.1987 | 0.4303 | 27 | 4.9311 | 0.068551 |
-| 16 | 1.0 | True | 0.1415 | 0.3841 | 27 | 2.6388 | 0.067329 |
-| 16 | 0.0 | False | 0.1778 | 0.4137 | 27 | 2.6444 | 0.067344 |
-| 32 | 0.0 | False | 0.1397 | 0.3748 | 27 | 1.9058 | 0.066307 |
-| 64 | 0.0 | False | 0.1302 | 0.3495 | 27 | 1.4876 | 0.06508 |
-| 255 | 0.0 | False | 0.1162 | 0.2949 | 1 | 1.0 | 0.063944 |
+| active | context | balance | decorrelate | accuracy | top-3 | rank | effective rank | mean cosine |
+|---:|---:|---|---:|---:|---:|---:|---:|---:|
+| 8 | 2 | False | 0.0 | 0.1935 | 0.4335 | 27 | 4.7746 | 0.068631 |
+| 8 | 3 | False | 0.0 | 0.1598 | 0.3635 | 27 | 2.4877 | 0.068641 |
+| 8 | 3 | True | 0.0 | 0.1328 | 0.3353 | 27 | 1.8469 | 0.063906 |
+| 8 | 4 | True | 0.0 | 0.1322 | 0.3399 | 27 | 1.7897 | 0.06391 |
+| 16 | 3 | True | 0.0 | 0.1302 | 0.308 | 27 | 1.4316 | 0.063926 |
+| 8 | 3 | True | 0.1 | 0.1392 | 0.3353 | 27 | 2.0158 | 0.063793 |
+| 255 | 2 | False | 0.0 | 0.1162 | 0.2949 | 1 | 1.0 | 0.063944 |
 
 ## Reading
 
@@ -21,6 +22,8 @@ the same distribution, so the spectral operator has only one mode.
 - Head 0 should be the void/prior; training it or letting it dominate
   the collapse destroys the distinction between void and content.
 - Higher rank/effective rank and lower mean cosine are the targets.
+- Longer contexts and load-balanced routing are expected to raise rank and
+  accuracy; decorrelation removes the shared global component.
 
 ## What to do next
 

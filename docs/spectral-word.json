@@ -1,0 +1,123 @@
+{
+  "base_eigenvalues": [
+    17.712581,
+    1.665308,
+    1.553693,
+    0.962544,
+    0.799075,
+    0.558797
+  ],
+  "base_rank": 53,
+  "delta_norm": 2.086145,
+  "fiedler": {
+    "boundary_size": 0,
+    "inner_size": 1,
+    "ring": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "values": [
+      -0.0,
+      0.0
+    ]
+  },
+  "mirror_residual": 0.0,
+  "mode_energy": [
+    {
+      "energy": -0.095867,
+      "mode": 3
+    },
+    {
+      "energy": -0.087169,
+      "mode": 0
+    },
+    {
+      "energy": 0.084243,
+      "mode": 255
+    },
+    {
+      "energy": -0.05694,
+      "mode": 195
+    },
+    {
+      "energy": 0.056155,
+      "mode": 2
+    },
+    {
+      "energy": 0.052377,
+      "mode": 199
+    },
+    {
+      "energy": -0.049206,
+      "mode": 69
+    },
+    {
+      "energy": 0.048382,
+      "mode": 11
+    }
+  ],
+  "native_mirror": true,
+  "note": "word write uses native reverse8 J and a Fiedler spectral cut",
+  "projected_energy_top": 0.037787,
+  "projected_energy_total": 4.352,
+  "schema": "nanlmind-hermes-spectral-word/1",
+  "training_words": 1500,
+  "updated_eigenvalues": [
+    17.77763,
+    1.683073,
+    1.553685,
+    1.043025,
+    0.820832,
+    0.794217
+  ],
+  "updated_rank": 57,
+  "void_rows": 0.0,
+  "word": {
+    "beta": 0.5,
+    "centrosymmetric": true,
+    "couplings": [
+      {
+        "left_support": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "right_support": [
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      {
+        "left_support": [
+          5,
+          6,
+          7,
+          8
+        ],
+        "right_support": [
+          9,
+          10,
+          11,
+          12
+        ]
+      }
+    ],
+    "gamma": 0.25,
+    "kind": "word",
+    "letters": 3,
+    "void_zero": true
+  }
+}
