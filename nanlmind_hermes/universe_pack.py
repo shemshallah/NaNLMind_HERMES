@@ -13,6 +13,7 @@ is research/transport evidence, NOT a canonical NANNET merge/restore.
 """
 from __future__ import annotations
 
+from contextlib import closing
 import hashlib
 import json
 import os
@@ -21,6 +22,7 @@ import sqlite3
 import struct
 import tempfile
 from types import SimpleNamespace
+from urllib.parse import quote
 
 from .chart_storage import load_chart_snapshot, PAGE_BYTES
 from .universe_root import read_universe_root
@@ -62,11 +64,14 @@ def _safe_file(path, label):
 def _backup(source: Path, destination: Path, identity: str) -> None:
     """SQLite online backup, never a byte copy of an active WAL database."""
     # SQLite URI mode=ro does not mutate source or its WAL.
-    uri = "file:" + source.resolve().as_posix().replace("?", "%3F").replace("#", "%23")
+    if source.stat().st_size > MAX_DB_BYTES:
+        raise UniversePackError(f"{identity} source exceeds maximum")
+    uri = "file:" + quote(source.resolve().as_posix(), safe="/") + "?mode=ro"
     try:
-        with sqlite3.connect(uri + "?mode=ro", uri=True, timeout=15) as original:
-            with sqlite3.connect(str(destination), timeout=15) as backup:
+        with closing(sqlite3.connect(uri, uri=True, timeout=15)) as original:
+            with closing(sqlite3.connect(str(destination), timeout=15)) as backup:
                 original.backup(backup)
+                backup.commit()
                 result = backup.execute("PRAGMA quick_check").fetchone()
                 if result is None or result[0] != "ok":
                     raise UniversePackError(f"{identity} backup failed integrity check")
@@ -209,6 +214,17 @@ def inspect_n16pack(path: str | Path) -> dict:
             raise UniversePackError("noncanonical N16PACK manifest")
         if manifest.get("version") != VERSION:
             raise UniversePackError("wrong N16PACK schema version")
+        if (manifest.get("chart_bytes") != PAGE_BYTES
+                or type(manifest.get("chart_generation")) is not int
+                or manifest["chart_generation"] < 1
+                or manifest.get("head_fixed_points") != 256
+                or manifest.get("mirror_points") != 32640
+                or manifest.get("conceptual_layers") != 10
+                or manifest.get("native_execution_verified") is not False
+                or manifest.get("canonical_training_committed") is not False
+                or manifest.get("import_to_live_allowed") is not False
+                or manifest.get("cross_store_atomicity_attested") is not False):
+            raise UniversePackError("N16PACK invariant or non-attestation field mismatch")
         specs = manifest.get("sections")
         if (type(specs) is not list or len(specs) != 3
                 or [s.get("name") for s in specs if isinstance(s, dict)] != list(SECTIONS)):
