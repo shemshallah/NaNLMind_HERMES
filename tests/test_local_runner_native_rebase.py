@@ -215,6 +215,69 @@ class SingleLiveRunnerRebaseTests(unittest.TestCase):
             self.fence(self.universe)["chart_sha256"],
         )
 
+    def test_concurrent_plugin_opens_share_one_chart_object(self):
+        """Two simultaneous HERMES boots must not split one state directory."""
+        import threading
+        from unittest.mock import patch
+        from nanlmind_hermes.universe_chart import _RUNNERS
+        state = self.state / "parallel-plugin-open"
+        ctx = TestContext(state)
+        cache_key = str(state)
+        _RUNNERS.pop(cache_key, None)
+        genesis_entered = threading.Event()
+        release_genesis = threading.Event()
+        second_attempted = threading.Event()
+        second_done = threading.Event()
+        built = []
+        errors = []
+        genesis_calls = [0]
+        original_genesis = Chart8MiB.genesis
+
+        def slow_genesis():
+            genesis_calls[0] += 1
+            genesis_entered.set()
+            if not release_genesis.wait(10):
+                raise RuntimeError("cache startup test barrier timed out")
+            return original_genesis()
+
+        def open_runner(second=False):
+            if second:
+                second_attempted.set()
+            try:
+                built.append(LocalRunner.open(ctx))
+            except BaseException as exc:
+                errors.append(exc)
+            finally:
+                if second:
+                    second_done.set()
+
+        first = threading.Thread(target=open_runner)
+        second = threading.Thread(target=lambda: open_runner(True))
+        try:
+            with patch.object(Chart8MiB, "genesis", side_effect=slow_genesis):
+                first.start()
+                self.assertTrue(genesis_entered.wait(10))
+                second.start()
+                self.assertTrue(second_attempted.wait(10))
+                self.assertFalse(second_done.wait(0.25))
+                release_genesis.set()
+                first.join(15)
+                second.join(15)
+        finally:
+            release_genesis.set()
+            first.join(15) if first.ident is not None else None
+            second.join(15) if second.ident is not None else None
+            _RUNNERS.pop(cache_key, None)
+        self.assertFalse(first.is_alive())
+        self.assertFalse(second.is_alive())
+        self.assertEqual(errors, [])
+        self.assertEqual(genesis_calls[0], 1)
+        self.assertEqual(len(built), 2)
+        self.assertIs(built[0], built[1])
+        self.assertIs(built[0].chart, built[1].chart)
+        self.assertIs(built[0].register.chart, built[0].chart)
+        self.assertIs(built[0].heads.chart, built[0].chart)
+
     def test_parallel_native_rebase_and_ordinary_checkpoint_serialize(self):
         """The one cached chart must not publish a dirty checkpoint mid-rebase."""
         import threading
