@@ -1,0 +1,637 @@
+{
+  "archive": "/storage/emulated/0/Download/NaNLMind/wn3.1.dict.zip",
+  "definition_inheritance_count": 32,
+  "definition_inheritance_probes": [
+    {
+      "address": "nan://HW4:BS0:MC0:SC0:GM0::synset/03394607",
+      "definition_synset": 3394607,
+      "inherited": [
+        "artifact"
+      ],
+      "word": "4wd"
+    },
+    {
+      "address": "nan://HW4:BS0:MC0:SC0:GM0::synset/02559004",
+      "definition_synset": 2559004,
+      "inherited": [
+        "living"
+      ],
+      "word": "a. testudineus"
+    },
+    {
+      "address": "nan://HW4:BS0:MC0:SC0:GM0::synset/02085443",
+      "definition_synset": 2085443,
+      "inherited": [
+        "living"
+      ],
+      "word": "aardvark"
+    },
+    {
+      "address": "nan://HW4:BS0:MC0:SC0:GM0::synset/02120828",
+      "definition_synset": 2120828,
+      "inherited": [
+        "living"
+      ],
+      "word": "aardwolf"
+    },
+    {
+      "address": "nan://HW4:BS0:MC0:SC0:GM0::synset/01945510",
+      "definition_synset": 1945510,
+      "inherited": [
+        "living"
+      ],
+      "word": "abalone"
+    },
+    {
+      "address": "nan://HW4:BS0:MC0:SC0:GM0::synset/02669131",
+      "definition_synset": 2669131,
+      "inherited": [
+        "artifact"
+      ],
+      "word": "abandoned ship"
+    },
+    {
+      "address": "nan://HW4:BS0:MC0:SC0:GM0::synset/02719537",
+      "definition_synset": 2719537,
+      "inherited": [
+        "artifact"
+      ],
+      "word": "abm"
+    },
+    {
+      "address": "nan://HW4:BS0:MC0:SC0:GM0::synset/01462944",
+      "definition_synset": 1462944,
+      "inherited": [
+        "living"
+      ],
+      "word": "abortus"
+    },
+    {
+      "address": "nan://HW4:BS0:MC0:SC0:GM0::synset/02371051",
+      "definition_synset": 2371051,
+      "inherited": [
+        "living"
+      ],
+      "word": "abrocome"
+    },
+    {
+      "address": "nan://HW4:BS0:MC0:SC0:GM0::synset/02126965",
+      "definition_synset": 2126965,
+      "inherited": [
+        "living"
+      ],
+      "word": "abyssinian"
+    },
+    {
+      "address": "nan://HW4:BS0:MC0:SC0:GM0::synset/02126965",
+      "definition_synset": 2126965,
+      "inherited": [
+        "living"
+      ],
+      "word": "abyssinian cat"
+    },
+    {
+      "address": "nan://HW4:BS0:MC0:SC0:GM0::synset/01591637",
+      "definition_synset": 1591637,
+      "inherited": [
+        "living",
+        "winged"
+      ],
+      "word": "acanthisitta chloris"
+    },
+    {
+      "address": "nan://HW4:BS0:MC0:SC0:GM0::synset/01926045",
+      "definition_synset": 1926045,
+      "inherited": [
+        "living"
+      ],
+      "word": "acanthocephalan"
+    },
+    {
+      "address": "nan://HW4:BS0:MC0:SC0:GM0::synset/01752808",
+      "definition_synset": 1752808,
+      "inherited": [
+        "living"
+      ],
+      "word": "acanthophis antarcticus"
+    },
+    {
+      "address": "nan://HW4:BS0:MC0:SC0:GM0::synset/02554802",
+      "definition_synset": 2554802,
+      "inherited": [
+        "living"
+      ],
+      "word": "acanthopterygian"
+    },
+    {
+      "address": "nan://HW4:BS0:MC0:SC0:GM0::synset/02185294",
+      "definition_synset": 2185294,
+      "inherited": [
+        "living"
+      ],
+      "word": "acanthoscelides obtectus"
+    },
+    {
+      "address": "nan://HW4:BS0:MC0:SC0:GM0::synset/01782783",
+      "definition_synset": 1782783,
+      "inherited": [
+        "living"
+      ],
+      "word": "acarid"
+    },
+    {
+      "address": "nan://HW4:BS0:MC0:SC0:GM0::synset/01778833",
+      "definition_synset": 1778833,
+      "inherited": [
+        "living"
+      ],
+      "word": "acarine"
+    },
+    {
+      "address": "nan://HW4:BS0:MC0:SC0:GM0::synset/01784211",
+      "definition_synset": 1784211,
+      "inherited": [
+        "living"
+      ],
+      "word": "acarus"
+    },
+    {
+      "address": "nan://HW4:BS0:MC0:SC0:GM0::synset/01529835",
+      "definition_synset": 1529835,
+      "inherited": [
+        "living",
+        "winged"
+      ],
+      "word": "accentor"
+    },
+    {
+      "address": "nan://HW4:BS0:MC0:SC0:GM0::synset/01609450",
+      "definition_synset": 1609450,
+      "inherited": [
+        "living",
+        "winged"
+      ],
+      "word": "accipiter cooperii"
+    },
+    {
+      "address": "nan://HW4:BS0:MC0:SC0:GM0::synset/01609163",
+      "definition_synset": 1609163,
+      "inherited": [
+        "living",
+        "winged"
+      ],
+      "word": "accipiter gentilis"
+    },
+    {
+      "address": "nan://HW4:BS0:MC0:SC0:GM0::synset/01609313",
+      "definition_synset": 1609313,
+      "inherited": [
+        "living",
+        "winged"
+      ],
+      "word": "accipiter nisus"
+    },
+    {
+      "address": "nan://HW4:BS0:MC0:SC0:GM0::synset/01607609",
+      "definition_synset": 1607609,
+      "inherited": [
+        "living",
+        "winged"
+      ],
+      "word": "accipitriformes"
+    },
+    {
+      "address": "nan://HW4:BS0:MC0:SC0:GM0::synset/02302498",
+      "definition_synset": 2302498,
+      "inherited": [
+        "living"
+      ],
+      "word": "acherontia atropos"
+    },
+    {
+      "address": "nan://HW4:BS0:MC0:SC0:GM0::synset/02232839",
+      "definition_synset": 2232839,
+      "inherited": [
+        "living"
+      ],
+      "word": "acheta assimilis"
+    },
+    {
+      "address": "nan://HW4:BS0:MC0:SC0:GM0::synset/02232675",
+      "definition_synset": 2232675,
+      "inherited": [
+        "living"
+      ],
+      "word": "acheta domestica"
+    },
+    {
+      "address": "nan://HW4:BS0:MC0:SC0:GM0::synset/02132960",
+      "definition_synset": 2132960,
+      "inherited": [
+        "living"
+      ],
+      "word": "acinonyx jubatus"
+    },
+    {
+      "address": "nan://HW4:BS0:MC0:SC0:GM0::synset/02001395",
+      "definition_synset": 2001395,
+      "inherited": [
+        "living"
+      ],
+      "word": "acorn barnacle"
+    },
+    {
+      "address": "nan://HW4:BS0:MC0:SC0:GM0::synset/02229473",
+      "definition_synset": 2229473,
+      "inherited": [
+        "living"
+      ],
+      "word": "acridid"
+    },
+    {
+      "address": "nan://HW4:BS0:MC0:SC0:GM0::synset/01580582",
+      "definition_synset": 1580582,
+      "inherited": [
+        "living",
+        "winged"
+      ],
+      "word": "acridotheres tristis"
+    },
+    {
+      "address": "nan://HW4:BS0:MC0:SC0:GM0::synset/01654282",
+      "definition_synset": 1654282,
+      "inherited": [
+        "living"
+      ],
+      "word": "acris crepitans"
+    }
+  ],
+  "hypernym_edges": 84505,
+  "interface": {
+    "bidirectional": true,
+    "binary_translation": "NaN16DE",
+    "link": "HW4:0",
+    "note": "Hermes HW2 -> NaNNet -> HW4:0 dictionary universe and back; sparse synset/word addressing, no dense per-word matrix",
+    "route": "nan://HW4:BS0:MC0:SC0:GM0",
+    "upstream": "HW2:0"
+  },
+  "lemmas": 117953,
+  "note": "definitions are supplied graph edges; this is compositional graph retrieval, not learned parsing of prose",
+  "properties": {
+    "1505702": "winged",
+    "15568": "living",
+    "4531608": "artifact"
+  },
+  "sample_paths": {
+    "animal": [
+      {
+        "gloss": "a living organism characterized by voluntary movement",
+        "lemmas": [
+          "animal",
+          "animate being",
+          "beast",
+          "brute"
+        ],
+        "offset": 15568
+      },
+      {
+        "gloss": "a living thing that has (or can develop) the ability to act or function independently",
+        "lemmas": [
+          "organism",
+          "being"
+        ],
+        "offset": 4475
+      },
+      {
+        "gloss": "a living (or once living) entity",
+        "lemmas": [
+          "living thing",
+          "animate thing"
+        ],
+        "offset": 4258
+      },
+      {
+        "gloss": "an assemblage of parts that is regarded as a single entity; \"how big is that part compared to the whole?\"; \"the team is ",
+        "lemmas": [
+          "whole",
+          "unit"
+        ],
+        "offset": 3553
+      },
+      {
+        "gloss": "a tangible and visible entity; an entity that can cast a shadow; \"it was full of rackets, balls and other objects\"",
+        "lemmas": [
+          "object",
+          "physical object"
+        ],
+        "offset": 2684
+      },
+      {
+        "gloss": "an entity that has physical existence",
+        "lemmas": [
+          "physical entity"
+        ],
+        "offset": 1930
+      },
+      {
+        "gloss": "that which is perceived or known or inferred to have its own distinct existence (living or nonliving)",
+        "lemmas": [
+          "entity"
+        ],
+        "offset": 1740
+      }
+    ],
+    "bird": [
+      {
+        "gloss": "warm-blooded egg-laying vertebrates characterized by feathers and forelimbs modified as wings",
+        "lemmas": [
+          "bird"
+        ],
+        "offset": 1505702
+      },
+      {
+        "gloss": "animals having a bony or cartilaginous skeleton with a segmented spinal column and a large brain enclosed in a skull or ",
+        "lemmas": [
+          "vertebrate",
+          "craniate"
+        ],
+        "offset": 1474323
+      },
+      {
+        "gloss": "any animal of the phylum Chordata having a notochord or spinal column",
+        "lemmas": [
+          "chordate"
+        ],
+        "offset": 1468898
+      },
+      {
+        "gloss": "a living organism characterized by voluntary movement",
+        "lemmas": [
+          "animal",
+          "animate being",
+          "beast",
+          "brute"
+        ],
+        "offset": 15568
+      },
+      {
+        "gloss": "a living thing that has (or can develop) the ability to act or function independently",
+        "lemmas": [
+          "organism",
+          "being"
+        ],
+        "offset": 4475
+      },
+      {
+        "gloss": "a living (or once living) entity",
+        "lemmas": [
+          "living thing",
+          "animate thing"
+        ],
+        "offset": 4258
+      },
+      {
+        "gloss": "an assemblage of parts that is regarded as a single entity; \"how big is that part compared to the whole?\"; \"the team is ",
+        "lemmas": [
+          "whole",
+          "unit"
+        ],
+        "offset": 3553
+      },
+      {
+        "gloss": "a tangible and visible entity; an entity that can cast a shadow; \"it was full of rackets, balls and other objects\"",
+        "lemmas": [
+          "object",
+          "physical object"
+        ],
+        "offset": 2684
+      },
+      {
+        "gloss": "an entity that has physical existence",
+        "lemmas": [
+          "physical entity"
+        ],
+        "offset": 1930
+      }
+    ],
+    "car": [
+      {
+        "gloss": "a motor vehicle with four wheels; usually propelled by an internal combustion engine; \"he needs a car to get to work\"",
+        "lemmas": [
+          "car",
+          "auto",
+          "automobile",
+          "machine"
+        ],
+        "offset": 2961779
+      },
+      {
+        "gloss": "a self-propelled wheeled vehicle that does not run on rails",
+        "lemmas": [
+          "motor vehicle",
+          "automotive vehicle"
+        ],
+        "offset": 3796768
+      },
+      {
+        "gloss": "a wheeled vehicle that carries in itself a means of propulsion",
+        "lemmas": [
+          "self-propelled vehicle"
+        ],
+        "offset": 4177098
+      },
+      {
+        "gloss": "a vehicle that moves on wheels and usually has a container for transporting things or people; \"the oldest known wheeled ",
+        "lemmas": [
+          "wheeled vehicle"
+        ],
+        "offset": 4583497
+      },
+      {
+        "gloss": "a conveyance that transports people or objects",
+        "lemmas": [
+          "vehicle"
+        ],
+        "offset": 4531608
+      },
+      {
+        "gloss": "something that serves as a means of transportation",
+        "lemmas": [
+          "conveyance",
+          "transport"
+        ],
+        "offset": 3105141
+      },
+      {
+        "gloss": "an artifact (or system of artifacts) that is instrumental in accomplishing some end",
+        "lemmas": [
+          "instrumentality",
+          "instrumentation"
+        ],
+        "offset": 3580409
+      },
+      {
+        "gloss": "a man-made object taken as a whole",
+        "lemmas": [
+          "artifact",
+          "artefact"
+        ],
+        "offset": 22119
+      },
+      {
+        "gloss": "an assemblage of parts that is regarded as a single entity; \"how big is that part compared to the whole?\"; \"the team is ",
+        "lemmas": [
+          "whole",
+          "unit"
+        ],
+        "offset": 3553
+      }
+    ],
+    "entity": [
+      {
+        "gloss": "that which is perceived or known or inferred to have its own distinct existence (living or nonliving)",
+        "lemmas": [
+          "entity"
+        ],
+        "offset": 1740
+      }
+    ],
+    "penguin": [
+      {
+        "gloss": "short-legged flightless birds of cold southern especially Antarctic regions having webbed feet and wings modified as fli",
+        "lemmas": [
+          "penguin"
+        ],
+        "offset": 2058457
+      },
+      {
+        "gloss": "flightless cold-water seabirds: penguins",
+        "lemmas": [
+          "sphenisciform seabird"
+        ],
+        "offset": 2058312
+      },
+      {
+        "gloss": "a bird that frequents coastal waters and the open ocean: gulls; pelicans; gannets; cormorants; albatrosses; petrels; etc",
+        "lemmas": [
+          "seabird",
+          "sea bird",
+          "seafowl"
+        ],
+        "offset": 2024449
+      },
+      {
+        "gloss": "wading and swimming and diving birds of either fresh or salt water",
+        "lemmas": [
+          "aquatic bird"
+        ],
+        "offset": 1847558
+      },
+      {
+        "gloss": "warm-blooded egg-laying vertebrates characterized by feathers and forelimbs modified as wings",
+        "lemmas": [
+          "bird"
+        ],
+        "offset": 1505702
+      },
+      {
+        "gloss": "animals having a bony or cartilaginous skeleton with a segmented spinal column and a large brain enclosed in a skull or ",
+        "lemmas": [
+          "vertebrate",
+          "craniate"
+        ],
+        "offset": 1474323
+      },
+      {
+        "gloss": "any animal of the phylum Chordata having a notochord or spinal column",
+        "lemmas": [
+          "chordate"
+        ],
+        "offset": 1468898
+      },
+      {
+        "gloss": "a living organism characterized by voluntary movement",
+        "lemmas": [
+          "animal",
+          "animate being",
+          "beast",
+          "brute"
+        ],
+        "offset": 15568
+      },
+      {
+        "gloss": "a living thing that has (or can develop) the ability to act or function independently",
+        "lemmas": [
+          "organism",
+          "being"
+        ],
+        "offset": 4475
+      }
+    ],
+    "vehicle": [
+      {
+        "gloss": "a conveyance that transports people or objects",
+        "lemmas": [
+          "vehicle"
+        ],
+        "offset": 4531608
+      },
+      {
+        "gloss": "something that serves as a means of transportation",
+        "lemmas": [
+          "conveyance",
+          "transport"
+        ],
+        "offset": 3105141
+      },
+      {
+        "gloss": "an artifact (or system of artifacts) that is instrumental in accomplishing some end",
+        "lemmas": [
+          "instrumentality",
+          "instrumentation"
+        ],
+        "offset": 3580409
+      },
+      {
+        "gloss": "a man-made object taken as a whole",
+        "lemmas": [
+          "artifact",
+          "artefact"
+        ],
+        "offset": 22119
+      },
+      {
+        "gloss": "an assemblage of parts that is regarded as a single entity; \"how big is that part compared to the whole?\"; \"the team is ",
+        "lemmas": [
+          "whole",
+          "unit"
+        ],
+        "offset": 3553
+      },
+      {
+        "gloss": "a tangible and visible entity; an entity that can cast a shadow; \"it was full of rackets, balls and other objects\"",
+        "lemmas": [
+          "object",
+          "physical object"
+        ],
+        "offset": 2684
+      },
+      {
+        "gloss": "an entity that has physical existence",
+        "lemmas": [
+          "physical entity"
+        ],
+        "offset": 1930
+      },
+      {
+        "gloss": "that which is perceived or known or inferred to have its own distinct existence (living or nonliving)",
+        "lemmas": [
+          "entity"
+        ],
+        "offset": 1740
+      }
+    ]
+  },
+  "schema": "nanlmind-hermes-wordnet-graph/1",
+  "synsets": 82192
+}

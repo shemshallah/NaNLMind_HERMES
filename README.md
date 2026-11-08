@@ -186,7 +186,7 @@ Report security issues privately as described in [SECURITY.md](SECURITY.md).
 
 ## Verification
 
-- 211 unit/integration tests pass locally; CI runs Python 3.10, 3.11, and 3.12.
+- 213 unit/integration tests pass locally; CI runs Python 3.10, 3.11, and 3.12.
 - Hermes Agent v0.23.0 `plugins validate` and `plugins doctor` pass in CI.
 - Wheel and source distribution builds, metadata checks, installation/import,
   and SHA-256 checksums pass in CI.
@@ -233,6 +233,7 @@ Report security issues privately as described in [SECURITY.md](SECURITY.md).
 | [Concept spectral](docs/CONCEPT_SPECTRAL.md) | concept-graph matrix, multi-head mapping, normalized cut |
 | [Cycle space](docs/CYCLE_SPACE.md) | gradient/cycle split, 32,385 fundamental fluxes, nonuniform mirror resonance |
 | [Gauge memory](docs/GAUGE_MEMORY.md) | gauge-aware cycle retrieval, strong baseline, erasure robustness |
+| [WordNet graph](docs/WORDNET_GRAPH.md) | real synset/lemma/hypernym graph, definition inheritance, HW4:0 interface |
 | [Long chat session](docs/LONG_CHAT_DEMO.md) | exposure, temporal predictions, held-out session, feedback re-deliberation |
 | [Demo results](docs/DEMO_RESULTS.md) | 38/38 exhaustive tool-call results |
 | [Live smoke results](docs/LIVE_SMOKE.md) | 11/11 deployed-service checks |
