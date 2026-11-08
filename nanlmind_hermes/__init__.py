@@ -189,6 +189,29 @@ def register(ctx):
             params.get("details", ""))
 
 
+    def handle_universe_status(params, **kwargs):
+        from . import router_universe_client
+        return router_universe_client.status(ctx)
+
+    def handle_universe_open(params, **kwargs):
+        from . import router_universe_client
+        return router_universe_client.open_universe(
+            ctx, params.get("alias", "primary"), params.get("ttl_seconds", 900))
+
+    def handle_universe_resolve(params, **kwargs):
+        from . import router_universe_client
+        return router_universe_client.resolve(
+            ctx, params.get("alias", "primary"), params.get("head_index", 0))
+
+    def handle_universe_renew(params, **kwargs):
+        from . import router_universe_client
+        return router_universe_client.renew(
+            ctx, params.get("alias", "primary"), params.get("ttl_seconds", 900))
+
+    def handle_universe_release(params, **kwargs):
+        from . import router_universe_client
+        return router_universe_client.release(ctx, params.get("alias", "primary"))
+
     def handle_nan16de_route(params, **kwargs):
         _require_scope("universe:read")
         from .auth import load_installation, decrypt_payload
@@ -351,6 +374,18 @@ def register(ctx):
           "summary": {"type": "string", "minLength": 1, "maxLength": 240},
           "details": {"type": "string", "maxLength": 4000}},
          ["report_type", "summary"], handle_hw_report),
+        ("nanlm_universe_status", "Inspect encrypted local HERMES router leases without returning bearer credentials or receipt MACs.", {}, [], handle_universe_status),
+        ("nanlm_universe_open", "Request a distinct router-issued universe via NANNET's hermes:lease signed installation scope; never local allocation.",
+         {"alias": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,40}$", "default": "primary"},
+          "ttl_seconds": {"type": "integer", "minimum": 60, "maximum": 3600, "default": 900}}, [], handle_universe_open),
+        ("nanlm_universe_resolve", "Live-verify one local 0..254 head against the authenticated router lease; does not execute NaN16 guest code.",
+         {"alias": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,40}$", "default": "primary"},
+          "head_index": {"type": "integer", "minimum": 0, "maximum": 254, "default": 0}}, [], handle_universe_resolve),
+        ("nanlm_universe_renew", "Extend a router-issued lease while rotating its receipt revision; older receipts are rejected.",
+         {"alias": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,40}$", "default": "primary"},
+          "ttl_seconds": {"type": "integer", "minimum": 60, "maximum": 3600, "default": 900}}, [], handle_universe_renew),
+        ("nanlm_universe_release", "Revoke a router-issued universe and erase its local encrypted receipt after router confirmation.",
+         {"alias": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,40}$", "default": "primary"}}, [], handle_universe_release),
         ("nanlm_generate_curriculum", "Generate a balanced 12-stage logic-to-language curriculum corpus, including Boolean inverses, deep relations, exceptions, word choice, sentences, paragraphs and stories.",
          {"topic": {"type": "string", "minLength": 1, "maxLength": 500},
           "records_per_stage": {"type": "integer", "minimum": 3, "maximum": 64, "default": 12}},
