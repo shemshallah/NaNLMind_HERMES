@@ -20,3 +20,13 @@ but does not authenticate the remote sender or independently replay the
 history hash. `sender_authenticated` and `native_mth_executed` stay false.
 Authenticated dispatch, evidence revalidation and MTH execution remain
 separate gates before any model update or candidate promotion.
+
+## Hermes plugin entry point
+
+The protected `nanlm_router_graph_verify` tool requires `universe:read` scope
+and accepts a complete ordered `pages` array (up to 128 pages per call).
+It instantiates the verifier against the already mounted `LocalRunner`
+chart and returns success only after the final whole-state digest matches.
+Incomplete batches are rejected rather than treated as valid prefixes.
+Large snapshots require a future authenticated chunked streaming interface;
+this bounded tool performs validation only, never graph admission.
