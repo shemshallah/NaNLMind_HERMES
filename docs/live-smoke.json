@@ -3,7 +3,7 @@
     {
       "check": "nanlm_auth_init",
       "detail": {
-        "installation_id": "ad4ca1c8-8c28-473e-a717-b3fb0beab6df"
+        "installation_id": "94597262-4e32-4973-93b7-d6aa8f87a540"
       },
       "status": "pass"
     },
@@ -12,7 +12,6 @@
       "detail": {
         "issuer_key_pinned": true,
         "scopes": [
-          "corpus:write",
           "training:execute",
           "universe:read"
         ]
@@ -23,7 +22,6 @@
       "check": "nanlm_auth_status",
       "detail": {
         "scopes": [
-          "corpus:write",
           "training:execute",
           "universe:read"
         ]
@@ -40,7 +38,7 @@
     {
       "check": "nanlm_device_register",
       "detail": {
-        "address": "nan://GM0:SC0:MC0:BS0:HW4",
+        "address": "nan://GM0:SC0:MC0:BS0:HW2",
         "token_length": 514
       },
       "status": "pass"
@@ -147,7 +145,7 @@
   ],
   "clocked_url": "https://nannet.apps.mistral.run",
   "failed": 0,
-  "generated_at": "2026-11-07T20:35:28Z",
+  "generated_at": "2026-11-08T01:11:21Z",
   "nannet_url": "https://nannet.apps.mistral.run",
   "passed": 11,
   "schema": "nanlmind-hermes-live-smoke/1"

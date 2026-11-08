@@ -5,11 +5,11 @@ pairing codes are never written to this report.
 
 | Check | Status | Detail |
 |---|---:|---|
-| `nanlm_auth_init` | PASS | {"installation_id": "ad4ca1c8-8c28-473e-a717-b3fb0beab6df"} |
-| `nanlm_auth_pair` | PASS | {"issuer_key_pinned": true, "scopes": ["corpus:write", "training:execute", "universe:read"]} |
-| `nanlm_auth_status` | PASS | {"scopes": ["corpus:write", "training:execute", "universe:read"]} |
+| `nanlm_auth_init` | PASS | {"installation_id": "94597262-4e32-4973-93b7-d6aa8f87a540"} |
+| `nanlm_auth_pair` | PASS | {"issuer_key_pinned": true, "scopes": ["training:execute", "universe:read"]} |
+| `nanlm_auth_status` | PASS | {"scopes": ["training:execute", "universe:read"]} |
 | `nanlm_require_scope` | PASS | {"scope": "training:execute"} |
-| `nanlm_device_register` | PASS | {"address": "nan://GM0:SC0:MC0:BS0:HW4", "token_length": 514} |
+| `nanlm_device_register` | PASS | {"address": "nan://GM0:SC0:MC0:BS0:HW2", "token_length": 514} |
 | `nanlm_head_process` | PASS | {"generation": 0, "schema": "nanlm.head-cortex-response", "state_digest": "aca7b7d2542ab1879656e1d7bcb0dfa66fa2d2f1a7e647fe2b6955036e2f1019", "truth_state": "UNKNOWN"} |
 | `nanlm_head_candidate` | PASS | {"candidate_digest": "a65aaf9ae9c4450bb243825f8f62091eec818bd626b0f6c5eb4f121fe6dd7be0", "canonical_state_modified": false, "status": "candidate_only"} |
 | `nanlm_head_candidate_evaluate` | PASS | {"baseline": {"accuracy": 0.0, "balanced_accuracy": 0.0, "by_resolution": {"5": {"accuracy": 0.0, "coverage": 0.0, "decisive": 0, "total": 1}}, "confusion": {"fn": 0, "fp": 0, "tn": 0, "tp": 0}, "coverage": 0.0, "decisive": 0, "rows": 1, "utility": 0.0}, "candidate": {"accuracy": 0.0, "balanced_accuracy": 0.0, "by_resolution": {"5": {"accuracy": 0.0, "coverage": 0.0, "decisive": 0, "total": 1}}, "confusion": {"fn": 0, "fp": 0, "tn": 0, "tp": 0}, "coverage": 0.0, "decisive": 0, "rows": 1, "utility": 0.0}, "recommendation": "retain_baseline", "utility_delta": 0.0} |
