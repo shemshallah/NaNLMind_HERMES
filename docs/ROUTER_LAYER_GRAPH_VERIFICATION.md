@@ -30,3 +30,37 @@ chart and returns success only after the final whole-state digest matches.
 Incomplete batches are rejected rather than treated as valid prefixes.
 Large snapshots require a future authenticated chunked streaming interface;
 this bounded tool performs validation only, never graph admission.
+
+## Independent revision replay (new opt-in read-only verifier)
+
+`RouterGraphHistoryVerifier(chart)` extends the existing streaming state
+check with full **version history** verification. Feed the ordinary
+`master_graph_page` state pages through `add_state_page` until state
+verification completes. Then feed pages produced by
+`master_graph_page(..., history_offset=N, history_limit=100)` through
+`add_history_page`, starting at offset zero and following
+`history_next_offset`. Both phases must share the same state/history
+SHA-256 commitment, parent root, chart generation, and topology digest.
+
+The replay independently hashes the complete ordered revision stream using
+`nanrouter.nan-layer-history/1\\0`, validates canonical JSON and contiguous
+per-edge generations, checks immutable endpoints/proposer and nondecreasing
+ticks, enforces lossless tombstones and legal reactivation, and compares each
+edge's last historical record to its previously verified present-state record.
+Corrupt/mixed/missing pages and stale chart epochs fail closed. It keeps only
+an ephemeral verification map for current edge records, releasing each once
+its history is compared; this does **not** create another durable graph or
+modify the resident chart.
+
+The state-only `RouterGraphPageVerifier` and the existing
+`nanlm_router_graph_verify` tool remain backward-compatible. Their result
+still says history is not replayed. Callers requiring revision-history
+verification must use the new two-phase class (or a future tool that exposes
+it), and require `history_verified=true` explicitly.
+
+**Security boundary remains unchanged:** An entirely self-consistent forged
+history is not thereby sender-authenticated. Neither the state verifier nor
+the history replay validates immutable MathLeaf evidence from a trusted
+source, establishes a native N16T/MTH execution receipt, authorizes a learning
+transaction, or promotes a canonical NANNET model. All corresponding status
+flags remain false until separate, verifiable gates exist.
