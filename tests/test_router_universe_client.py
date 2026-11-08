@@ -214,6 +214,44 @@ class RouterUniverseClientTests(unittest.TestCase):
             client.inspect_dispatch(self.ctx, "recover", 255, dispatch_id)
 
 
+    def test_native_mth_requires_signed_lease_head_and_attested_output(self):
+        lease = receipt(0)
+        with patch.object(client, "_post", return_value=(INSTALL, {"receipt": lease})):
+            client.open_universe(self.ctx, "math")
+        output = {
+            "kernel_id": "mth.u32.add_checked", "head_index": 7,
+            "node_point": lease["node_point"],
+            "universe_id": lease["universe_id"],
+            "native_guest_universe_id": lease["universe_id"],
+            "native_guest_node_point": lease["node_point"],
+            "native_guest_route_admitted": True, "native_nan16_execution": True,
+            "value_u32": 16, "exact": True,
+            "model_training_committed": False,
+        }
+        with patch.object(client, "_post", return_value=(INSTALL, output)):
+            result = client.math_u32(self.ctx, "math", 7, "mth.u32.add_checked", 7, 9)
+        self.assertEqual(result["result_u32"], 16)
+        self.assertTrue(result["native_nan16_execution"])
+        self.assertFalse(result["model_training_committed"])
+        for corrupted in (
+            {**output, "native_nan16_execution": False},
+            {**output, "native_guest_node_point": 255},
+            {**output, "native_guest_universe_id": 999},
+            {**output, "model_training_committed": True},
+            {**output, "exact": "true"},
+        ):
+            with patch.object(client, "_post", return_value=(INSTALL, corrupted)):
+                with self.assertRaises(client.UniverseLeaseError):
+                    client.math_u32(self.ctx, "math", 7, "mth.u32.add_checked", 7, 9)
+        for bad_kernel in ("mth.vector.unknown", "", None):
+            with self.assertRaises(client.UniverseLeaseError):
+                client.math_u32(self.ctx, "math", 7, bad_kernel, 7, 9)
+        with self.assertRaises(client.UniverseLeaseError):
+            client.math_u32(self.ctx, "math", 255, "mth.u32.add_checked", 7, 9)
+        with self.assertRaises(client.UniverseLeaseError):
+            client.math_u32(self.ctx, "math", 7, "mth.u32.add_checked", -1, 9)
+
+
 
 if __name__ == "__main__":
     unittest.main()
