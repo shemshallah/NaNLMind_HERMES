@@ -104,6 +104,21 @@ def fiedler_partition(matrix: list[list[float]]) -> dict:
             "vector": vector}
 
 
+def normalized_laplacian(matrix: list[list[float]]) -> list[list[float]]:
+    n = len(matrix)
+    degrees = [sum(max(0.0, matrix[row][column]) for column in range(n))
+               for row in range(n)]
+    laplacian = zeros(n)
+    for row in range(n):
+        for column in range(n):
+            if row == column:
+                laplacian[row][column] = 1.0 if degrees[row] > 0 else 1.0
+            elif degrees[row] > 0 and degrees[column] > 0:
+                laplacian[row][column] = -matrix[row][column] / math.sqrt(
+                    degrees[row] * degrees[column])
+    return laplacian
+
+
 def cut_potential(matrix: list[list[float]], inner: set[int],
                   lam: float = 1.0) -> list[list[float]]:
     result = [row[:] for row in matrix]

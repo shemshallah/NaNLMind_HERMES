@@ -23,14 +23,17 @@ def fnv(text: str, salt: int = 0) -> int:
 class HeadPopulation:
     def __init__(self, heads: int = 256, active: int = 8,
                  prior_weight: float = 0.0, train_head0: bool = False,
-                 context_length: int = 2, balance: bool = False):
+                 context_length: int = 2, balance: bool = False,
+                 router: str = "hash"):
         self.head_count = heads
         self.active_count = active
         self.prior_weight = prior_weight
         self.train_head0 = train_head0
         self.context_length = max(1, int(context_length))
         self.balance = balance
+        self.router = router
         self.usage = [0] * heads
+        self.head_reward = [0.0] * heads
         self.heads: list[Counter] = [Counter() for _ in range(heads)]
         self.prior = Counter()
         self.observations = 0
@@ -46,7 +49,10 @@ class HeadPopulation:
             if head not in seen:
                 seen.add(head)
                 candidates.append(head)
-        if self.balance:
+        if self.router == "reward":
+            candidates.sort(key=lambda head: (-self.head_reward[head],
+                                              self.usage[head], head))
+        elif self.balance:
             candidates.sort(key=lambda head: (self.usage[head], head))
         selected = candidates[:self.active_count]
         return sorted([0] + selected)
@@ -67,6 +73,11 @@ class HeadPopulation:
             for head in self._active(context):
                 if head == 0 and not self.train_head0:
                     continue
+                if self.router == "reward":
+                    total = sum(self.heads[head].values())
+                    probability = (self.heads[head].get(target, 0) / total
+                                   if total else 0.0)
+                    self.head_reward[head] += probability - 1.0 / len(ALPHABET)
                 self.heads[head][target] += weight
                 self.usage[head] += 1
 
@@ -85,6 +96,11 @@ class HeadPopulation:
         for head in self._active(context):
             if head == 0 and not self.train_head0:
                 continue
+            if self.router == "reward":
+                total = sum(self.heads[head].values())
+                probability = (self.heads[head].get(next_letter, 0) / total
+                               if total else 0.0)
+                self.head_reward[head] += probability - 1.0 / len(ALPHABET)
             self.heads[head][next_letter] += weight
             self.usage[head] += 1
 

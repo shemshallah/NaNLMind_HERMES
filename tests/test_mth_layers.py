@@ -115,6 +115,7 @@ class LayerTests(unittest.TestCase):
         leaves = [mapper.map_relation(row) for row in ROWS]
         self.assertTrue(all(0 <= leaf["head"] <= 255 for leaf in leaves))
         self.assertTrue(all(0 <= leaf["mask"] <= 15 for leaf in leaves))
+        self.assertGreater(len({leaf["head"] for leaf in leaves}), 4)
         self.assertEqual(leaves, [mapper.map_relation(row) for row in ROWS])
         self.assertEqual(len({leaf["digest"] for leaf in leaves}), len(leaves))
         roles = {leaf["role"] for leaf in leaves}

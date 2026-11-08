@@ -69,6 +69,13 @@ class SpectralTests(unittest.TestCase):
         self.assertEqual(len(cut["inner"]), 4)
         self.assertEqual(cut["values"][0], 0.0)
 
+    def test_normalized_laplacian_has_unit_diagonal(self):
+        from nanlmind_hermes.spectral import normalized_laplacian
+        matrix = [[0.0, 1.0], [1.0, 0.0]]
+        laplacian = normalized_laplacian(matrix)
+        self.assertEqual(laplacian[0][0], 1.0)
+        self.assertAlmostEqual(laplacian[0][1], -1.0)
+
     def test_gram_matrix_from_head_population_is_symmetric(self):
         population = HeadPopulation(heads=16, active=15)
         for word in ("the", "then", "there", "other"):

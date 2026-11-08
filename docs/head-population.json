@@ -79,6 +79,20 @@
       "top3": 0.3353
     },
     {
+      "accuracy": 0.1412,
+      "active": 8,
+      "balance": false,
+      "context_length": 2,
+      "decorrelate": 0.0,
+      "effective_rank": 11.6794,
+      "heads_with_distribution": 255,
+      "mean_cosine": 0.070584,
+      "mean_entropy": 1.700658,
+      "rank": 27,
+      "router": "reward",
+      "top3": 0.3632
+    },
+    {
       "accuracy": 0.1162,
       "active": 255,
       "balance": false,

@@ -3,15 +3,16 @@
 The head Gram rank is the key measure: rank 1 means every head carries
 the same distribution, so the spectral operator has only one mode.
 
-| active | context | balance | decorrelate | accuracy | top-3 | rank | effective rank | mean cosine |
-|---:|---:|---|---:|---:|---:|---:|---:|---:|
-| 8 | 2 | False | 0.0 | 0.1935 | 0.4335 | 27 | 4.7746 | 0.068631 |
-| 8 | 3 | False | 0.0 | 0.1598 | 0.3635 | 27 | 2.4877 | 0.068641 |
-| 8 | 3 | True | 0.0 | 0.1328 | 0.3353 | 27 | 1.8469 | 0.063906 |
-| 8 | 4 | True | 0.0 | 0.1322 | 0.3399 | 27 | 1.7897 | 0.06391 |
-| 16 | 3 | True | 0.0 | 0.1302 | 0.308 | 27 | 1.4316 | 0.063926 |
-| 8 | 3 | True | 0.1 | 0.1392 | 0.3353 | 27 | 2.0158 | 0.063793 |
-| 255 | 2 | False | 0.0 | 0.1162 | 0.2949 | 1 | 1.0 | 0.063944 |
+| active | context | balance | router | accuracy | top-3 | rank | effective rank | mean cosine |
+|---:|---:|---|---|---:|---:|---:|---:|---:|
+| 8 | 2 | False | hash | 0.1935 | 0.4335 | 27 | 4.7746 | 0.068631 |
+| 8 | 3 | False | hash | 0.1598 | 0.3635 | 27 | 2.4877 | 0.068641 |
+| 8 | 3 | True | hash | 0.1328 | 0.3353 | 27 | 1.8469 | 0.063906 |
+| 8 | 4 | True | hash | 0.1322 | 0.3399 | 27 | 1.7897 | 0.06391 |
+| 16 | 3 | True | hash | 0.1302 | 0.308 | 27 | 1.4316 | 0.063926 |
+| 8 | 3 | True | hash | 0.1392 | 0.3353 | 27 | 2.0158 | 0.063793 |
+| 8 | 2 | False | reward | 0.1412 | 0.3632 | 27 | 11.6794 | 0.070584 |
+| 255 | 2 | False | hash | 0.1162 | 0.2949 | 1 | 1.0 | 0.063944 |
 
 ## Reading
 

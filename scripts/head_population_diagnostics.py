@@ -32,6 +32,8 @@ def main():
         {"active": 8, "context_length": 4, "balance": True, "decorrelate": 0.0},
         {"active": 16, "context_length": 3, "balance": True, "decorrelate": 0.0},
         {"active": 8, "context_length": 3, "balance": True, "decorrelate": 0.1},
+        {"active": 8, "context_length": 2, "balance": False, "decorrelate": 0.0,
+         "router": "reward"},
         {"active": 255, "context_length": 2, "balance": False, "decorrelate": 0.0},
     ]
     rows = []
@@ -39,7 +41,7 @@ def main():
         population = HeadPopulation(
             heads=256, active=config["active"], prior_weight=0.0,
             train_head0=False, context_length=config["context_length"],
-            balance=config["balance"])
+            balance=config["balance"], router=config.get("router", "hash"))
         for word in train:
             population.observe(word)
         if config["decorrelate"]:
@@ -85,12 +87,12 @@ def main():
         "The head Gram rank is the key measure: rank 1 means every head carries",
         "the same distribution, so the spectral operator has only one mode.",
         "",
-        "| active | context | balance | decorrelate | accuracy | top-3 | rank | effective rank | mean cosine |",
-        "|---:|---:|---|---:|---:|---:|---:|---:|---:|",
+        "| active | context | balance | router | accuracy | top-3 | rank | effective rank | mean cosine |",
+        "|---:|---:|---|---|---:|---:|---:|---:|---:|",
     ]
     for row in rows:
         lines.append(f"| {row['active']} | {row['context_length']} | {row['balance']} | "
-                     f"{row['decorrelate']} | {row['accuracy']} | {row['top3']} | "
+                     f"{row.get('router', 'hash')} | {row['accuracy']} | {row['top3']} | "
                      f"{row['rank']} | {row['effective_rank']} | {row['mean_cosine']} |")
     lines += [
         "",

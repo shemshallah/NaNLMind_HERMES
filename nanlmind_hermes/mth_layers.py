@@ -597,11 +597,10 @@ class MTHHeadMapper:
         data = text.casefold().encode("utf-8")
         out = 0
         for index in range(0, len(data), 2):
-            left = data[index] & 0x0F
-            right = ((data[index] >> 4) |
-                     (data[index + 1] if index + 1 < len(data) else 0)) & 0x0F
-            out ^= apply_bits(mask, left, right, 4)
-        return out
+            left = data[index]
+            right = data[index + 1] if index + 1 < len(data) else 0
+            out ^= apply_bits(mask, left, right, 8)
+        return out & 0xFF
 
     def map_relation(self, row: dict) -> dict:
         subject = str(row.get("subject") or "").strip().casefold()
