@@ -8,7 +8,7 @@ The native head bank from NaN0S #19 has 8 header words plus 255 x 266 words (two
 | --- | --- | --- |
 | Temporal register | `OFF_EXTENSION` onward, 4096 bytes | HERMES |
 | Aggregate MTH head register | `HEAD_REGISTER_OFFSET` onward, 4096 bytes | HERMES |
-| Native head bank window | `0x640000..0x6C4770` (exclusive) | native NaN16 guest bytes |
+| Native head bank window | `0x640000..0x6C47F0` (exclusive) | native NaN16 guest bytes |
 | Remaining extension | untouched | reserved |
 
 The native bank's chart-relative guest word address is `0xC8000` (=819,200). That is a **mapping contract**, not proof the VM has mounted this region. Real runtime attachment requires the VM's guest memory to map this chart slice, then call `nhr_attach` against the native `nh_open` ABI. Never interpret HERMES's `NLMLEAF1` summaries as equivalent to a native `NH_SLOT_MAGIC` bank.
