@@ -38,6 +38,9 @@ class VerifiedJournalDouble:
         self.fence = fence
         self.universe = universe
         self.after = after
+        certified = fence(universe)
+        self.source_chart_sha256 = certified["chart_sha256"]
+        self.source_root_block_sha256 = certified["root_block_sha256"]
         self.epoch = 19
         self.ring_epoch_reader = lambda: self.epoch
         self.state = "completed_staging_only"
@@ -49,6 +52,9 @@ class VerifiedJournalDouble:
         return {
             "state": self.state,
             "bank_after_sha256": digest(self.after),
+            "source_snapshot_bound": True,
+            "source_chart_sha256": self.source_chart_sha256,
+            "source_root_block_sha256": self.source_root_block_sha256,
             "raw_bank": self.after if include_bank else None,
             "request_sha256": digest(b"test-journal-request"),
             "checkpoint_generation": (
