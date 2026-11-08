@@ -16,6 +16,11 @@ provides_tools:
   - nanlm_auth_status
   - nanlm_auth_pair
   - nanlm_auth_revoke
+  - nanlm_hw_register
+  - nanlm_hw_status
+  - nanlm_hw_heartbeat
+  - nanlm_hw_release
+  - nanlm_hw_report
   - nanlm_generate_curriculum
   - nanlm_curriculum_experiment
   - nanlm_logic_session
