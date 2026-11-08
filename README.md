@@ -186,7 +186,7 @@ Report security issues privately as described in [SECURITY.md](SECURITY.md).
 
 ## Verification
 
-- 191 unit/integration tests pass locally; CI runs Python 3.10, 3.11, and 3.12.
+- 192 unit/integration tests pass locally; CI runs Python 3.10, 3.11, and 3.12.
 - Hermes Agent v0.23.0 `plugins validate` and `plugins doctor` pass in CI.
 - Wheel and source distribution builds, metadata checks, installation/import,
   and SHA-256 checksums pass in CI.
@@ -226,6 +226,7 @@ Report security issues privately as described in [SECURITY.md](SECURITY.md).
 | [Binary bootstrap](docs/BINARY_BOOTSTRAP.md) | bits → Boolean functions → bytes → letters → words → vectors |
 | [Word completion](docs/WORD_COMPLETION.md) | WordNet lemmas, head-population collapse, dictionary in superposition |
 | [Spectral architecture](docs/SPECTRAL_ARCHITECTURE.md) | wave/void operator, L0–L9 mapping, Hermes demo, copy path |
+| [Head population](docs/HEAD_POPULATION.md) | routing sparsity, void head, rank/specialization diagnostics |
 | [Long chat session](docs/LONG_CHAT_DEMO.md) | exposure, temporal predictions, held-out session, feedback re-deliberation |
 | [Demo results](docs/DEMO_RESULTS.md) | 38/38 exhaustive tool-call results |
 | [Live smoke results](docs/LIVE_SMOKE.md) | 11/11 deployed-service checks |

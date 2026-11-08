@@ -1,65 +1,65 @@
 {
   "base_eigenvalues": [
-    16.358767,
-    0.0,
-    0.0,
-    0.0
+    17.646824,
+    2.219757,
+    1.060308,
+    0.895898
   ],
   "base_regions": {
     "average": {
-      "inner": 0.085938,
-      "outer": 0.097656,
-      "ring": 0.066406
+      "inner": 0.355305,
+      "outer": 0.38738,
+      "ring": 0.257315
     },
     "modes": [
       {
-        "inner": 0.34375,
-        "outer": 0.390625,
-        "ring": 0.265625
+        "inner": 0.335127,
+        "outer": 0.380135,
+        "ring": 0.284738
       },
       {
-        "inner": 0.0,
-        "outer": 0.0,
-        "ring": 0.0
+        "inner": 0.318699,
+        "outer": 0.437577,
+        "ring": 0.243724
       },
       {
-        "inner": 0.0,
-        "outer": 0.0,
-        "ring": 0.0
+        "inner": 0.367549,
+        "outer": 0.356726,
+        "ring": 0.275725
       },
       {
-        "inner": 0.0,
-        "outer": 0.0,
-        "ring": 0.0
+        "inner": 0.399845,
+        "outer": 0.375081,
+        "ring": 0.225075
       }
     ]
   },
   "centrosymmetry_residual": 0.0,
-  "eigen_reference_error": 0.0,
-  "fold_error": 0.0,
+  "eigen_reference_error": 0.00024203,
+  "fold_error": 0.00024203,
   "folded_eigenvalues": [
-    16.358767,
-    0.0,
-    0.0,
-    0.0
+    17.646824,
+    2.219757,
+    1.060308,
+    0.89614
   ],
   "heads": 256,
   "laplacian_low_eigenvalues": [
     0.0,
-    16.358767,
-    16.358767,
-    16.358767
+    9.87011,
+    9.794882,
+    13.494976
   ],
   "laplacian_low_nonconstant": {
-    "inner": 0.001359,
-    "outer": 0.997591,
-    "ring": 0.00105
+    "inner": 0.306067,
+    "outer": 0.690868,
+    "ring": 0.003065
   },
   "laplacian_low_regions": {
     "average": {
-      "inner": 0.086957,
-      "outer": 0.84585,
-      "ring": 0.067194
+      "inner": 0.315488,
+      "outer": 0.615807,
+      "ring": 0.068705
     },
     "modes": [
       {
@@ -68,30 +68,30 @@
         "ring": 0.265625
       },
       {
-        "inner": 0.001348,
-        "outer": 0.99761,
-        "ring": 0.001042
+        "inner": 0.003168,
+        "outer": 0.995124,
+        "ring": 0.001708
       },
       {
-        "inner": 0.001359,
-        "outer": 0.997591,
-        "ring": 0.00105
+        "inner": 0.000178,
+        "outer": 0.999764,
+        "ring": 5.8e-05
       },
       {
-        "inner": 0.001369,
-        "outer": 0.997572,
-        "ring": 0.001058
+        "inner": 0.914856,
+        "outer": 0.077717,
+        "ring": 0.007428
       }
     ]
   },
   "note": "tunneling is spectral leakage: the inner-region mass of an eigenmode; it is not a quantum claim",
   "numpy_reference": [
-    16.358767,
-    0.0,
-    0.0,
-    0.0
+    17.646824,
+    2.219757,
+    1.060308,
+    0.89614
   ],
-  "rank": 1,
+  "rank": 54,
   "schema": "nanlmind-hermes-spectral-wave/1",
   "status": {
     "barrier_radius": 5.5,
@@ -105,115 +105,115 @@
     {
       "heads": [
         {
-          "amplitude": 0.0625,
-          "head": 0,
+          "amplitude": 0.08043,
+          "head": 104,
           "letters": [
             [
-              "$",
-              1500.0
+              "i",
+              135.0
             ],
             [
-              "i",
-              1147.0
+              "$",
+              102.0
             ],
             [
               "e",
-              1068.0
+              66.0
+            ]
+          ],
+          "region": "inner"
+        },
+        {
+          "amplitude": 0.08043,
+          "head": 151,
+          "letters": [
+            [
+              "$",
+              76.0
+            ],
+            [
+              "t",
+              21.0
+            ],
+            [
+              "n",
+              17.0
+            ]
+          ],
+          "region": "inner"
+        },
+        {
+          "amplitude": 0.079714,
+          "head": 38,
+          "letters": [
+            [
+              "$",
+              204.0
+            ],
+            [
+              "a",
+              75.0
+            ],
+            [
+              "n",
+              54.0
+            ]
+          ],
+          "region": "ring"
+        },
+        {
+          "amplitude": 0.079714,
+          "head": 217,
+          "letters": [
+            [
+              "i",
+              9.0
+            ],
+            [
+              "o",
+              1.0
+            ],
+            [
+              "h",
+              1.0
+            ]
+          ],
+          "region": "ring"
+        },
+        {
+          "amplitude": 0.075209,
+          "head": 8,
+          "letters": [
+            [
+              "i",
+              15.0
+            ],
+            [
+              "$",
+              8.0
+            ],
+            [
+              "e",
+              7.0
             ]
           ],
           "region": "outer"
         },
         {
-          "amplitude": 0.0625,
-          "head": 1,
+          "amplitude": 0.075209,
+          "head": 247,
           "letters": [
             [
               "$",
-              1500.0
-            ],
-            [
-              "i",
-              1147.0
+              102.0
             ],
             [
               "e",
-              1068.0
-            ]
-          ],
-          "region": "outer"
-        },
-        {
-          "amplitude": 0.0625,
-          "head": 2,
-          "letters": [
-            [
-              "$",
-              1500.0
+              68.0
             ],
             [
-              "i",
-              1147.0
-            ],
-            [
-              "e",
-              1068.0
-            ]
-          ],
-          "region": "outer"
-        },
-        {
-          "amplitude": 0.0625,
-          "head": 3,
-          "letters": [
-            [
-              "$",
-              1500.0
-            ],
-            [
-              "i",
-              1147.0
-            ],
-            [
-              "e",
-              1068.0
-            ]
-          ],
-          "region": "outer"
-        },
-        {
-          "amplitude": 0.0625,
-          "head": 4,
-          "letters": [
-            [
-              "$",
-              1500.0
-            ],
-            [
-              "i",
-              1147.0
-            ],
-            [
-              "e",
-              1068.0
-            ]
-          ],
-          "region": "outer"
-        },
-        {
-          "amplitude": 0.0625,
-          "head": 5,
-          "letters": [
-            [
-              "$",
-              1500.0
-            ],
-            [
-              "i",
-              1147.0
-            ],
-            [
-              "e",
-              1068.0
+              "t",
+              52.0
             ]
           ],
           "region": "outer"
@@ -224,118 +224,118 @@
     {
       "heads": [
         {
-          "amplitude": 0.0,
-          "head": 0,
+          "amplitude": 0.177033,
+          "head": 38,
           "letters": [
             [
               "$",
-              1500.0
+              204.0
             ],
             [
-              "i",
-              1147.0
+              "a",
+              75.0
             ],
             [
-              "e",
-              1068.0
+              "n",
+              54.0
             ]
           ],
-          "region": "outer"
+          "region": "ring"
         },
         {
-          "amplitude": 0.0,
-          "head": 1,
+          "amplitude": -0.177033,
+          "head": 217,
           "letters": [
             [
-              "$",
-              1500.0
-            ],
-            [
               "i",
-              1147.0
+              9.0
             ],
             [
-              "e",
-              1068.0
+              "o",
+              1.0
+            ],
+            [
+              "h",
+              1.0
             ]
           ],
-          "region": "outer"
+          "region": "ring"
         },
         {
-          "amplitude": 0.0,
-          "head": 2,
+          "amplitude": 0.13875,
+          "head": 124,
           "letters": [
             [
-              "$",
-              1500.0
+              "n",
+              260.0
             ],
             [
-              "i",
-              1147.0
+              "l",
+              220.0
             ],
             [
-              "e",
-              1068.0
+              "r",
+              182.0
             ]
           ],
-          "region": "outer"
+          "region": "inner"
         },
         {
-          "amplitude": 0.0,
-          "head": 3,
+          "amplitude": -0.13875,
+          "head": 131,
           "letters": [
             [
-              "$",
-              1500.0
+              "o",
+              40.0
             ],
             [
               "i",
-              1147.0
+              9.0
             ],
             [
               "e",
-              1068.0
+              7.0
             ]
           ],
-          "region": "outer"
+          "region": "inner"
         },
         {
-          "amplitude": 0.0,
-          "head": 4,
+          "amplitude": -0.131742,
+          "head": 122,
           "letters": [
             [
-              "$",
-              1500.0
-            ],
-            [
               "i",
-              1147.0
+              37.0
             ],
             [
-              "e",
-              1068.0
+              "a",
+              33.0
+            ],
+            [
+              "o",
+              25.0
             ]
           ],
-          "region": "outer"
+          "region": "inner"
         },
         {
-          "amplitude": 0.0,
-          "head": 5,
+          "amplitude": 0.131742,
+          "head": 133,
           "letters": [
             [
+              "t",
+              66.0
+            ],
+            [
               "$",
-              1500.0
+              65.0
             ],
             [
-              "i",
-              1147.0
-            ],
-            [
-              "e",
-              1068.0
+              "s",
+              51.0
             ]
           ],
-          "region": "outer"
+          "region": "inner"
         }
       ],
       "mode": 1
@@ -343,204 +343,204 @@
     {
       "heads": [
         {
-          "amplitude": 0.0,
-          "head": 0,
+          "amplitude": -0.18174,
+          "head": 34,
           "letters": [
             [
               "$",
-              1500.0
+              34.0
             ],
             [
-              "i",
-              1147.0
+              "n",
+              20.0
             ],
             [
-              "e",
-              1068.0
+              "r",
+              17.0
             ]
           ],
           "region": "outer"
         },
         {
-          "amplitude": 0.0,
-          "head": 1,
+          "amplitude": -0.18174,
+          "head": 221,
           "letters": [
             [
               "$",
-              1500.0
+              301.0
+            ],
+            [
+              "a",
+              106.0
             ],
             [
               "i",
-              1147.0
-            ],
-            [
-              "e",
-              1068.0
+              89.0
             ]
           ],
           "region": "outer"
         },
         {
-          "amplitude": 0.0,
-          "head": 2,
+          "amplitude": -0.166601,
+          "head": 218,
           "letters": [
             [
               "$",
-              1500.0
+              148.0
             ],
             [
-              "i",
-              1147.0
+              "n",
+              61.0
             ],
             [
-              "e",
-              1068.0
+              "s",
+              47.0
             ]
           ],
-          "region": "outer"
+          "region": "ring"
         },
         {
-          "amplitude": 0.0,
-          "head": 3,
+          "amplitude": -0.166601,
+          "head": 37,
           "letters": [
             [
               "$",
-              1500.0
+              151.0
             ],
             [
-              "i",
-              1147.0
+              "a",
+              57.0
             ],
             [
-              "e",
-              1068.0
+              "s",
+              31.0
             ]
           ],
-          "region": "outer"
+          "region": "ring"
         },
         {
-          "amplitude": 0.0,
-          "head": 4,
+          "amplitude": -0.161937,
+          "head": 104,
           "letters": [
             [
-              "$",
-              1500.0
+              "i",
+              135.0
             ],
             [
-              "i",
-              1147.0
+              "$",
+              102.0
             ],
             [
               "e",
-              1068.0
+              66.0
             ]
           ],
-          "region": "outer"
+          "region": "inner"
         },
         {
-          "amplitude": 0.0,
-          "head": 5,
+          "amplitude": -0.161937,
+          "head": 151,
           "letters": [
             [
               "$",
-              1500.0
+              76.0
             ],
             [
-              "i",
-              1147.0
+              "t",
+              21.0
             ],
             [
-              "e",
-              1068.0
+              "n",
+              17.0
             ]
           ],
-          "region": "outer"
+          "region": "inner"
         }
       ],
       "mode": 2
     }
   ],
   "training_words": 1500,
-  "tunneling_reduction": 0.4172,
+  "tunneling_reduction": 0.021,
   "void_eigenvalues": [
-    16.454071,
-    1.475718,
-    0.485804,
-    0.295986
+    17.740519,
+    2.372655,
+    1.620096,
+    1.537442
   ],
   "void_laplacian_low_eigenvalues": [
-    0.090351,
-    16.374023,
-    16.376104,
-    16.378335
+    0.090341,
+    9.884302,
+    9.807965,
+    13.575883
   ],
   "void_laplacian_low_nonconstant": {
-    "inner": 0.000792,
-    "outer": 0.997919,
-    "ring": 0.001289
+    "inner": 0.299636,
+    "outer": 0.697269,
+    "ring": 0.003096
   },
   "void_laplacian_low_regions": {
     "average": {
-      "inner": 0.085316,
-      "outer": 0.846901,
-      "ring": 0.067782
+      "inner": 0.309497,
+      "outer": 0.621394,
+      "ring": 0.069108
     },
     "modes": [
       {
-        "inner": 0.338889,
-        "outer": 0.393847,
-        "ring": 0.267264
+        "inner": 0.339083,
+        "outer": 0.393771,
+        "ring": 0.267145
       },
       {
-        "inner": 0.000787,
-        "outer": 0.997939,
-        "ring": 0.001274
+        "inner": 0.003109,
+        "outer": 0.995118,
+        "ring": 0.001774
       },
       {
-        "inner": 0.000792,
-        "outer": 0.997919,
-        "ring": 0.001289
+        "inner": 0.000151,
+        "outer": 0.999796,
+        "ring": 5.3e-05
       },
       {
-        "inner": 0.000797,
-        "outer": 0.9979,
-        "ring": 0.001303
+        "inner": 0.895647,
+        "outer": 0.096892,
+        "ring": 0.00746
       }
     ]
   },
   "void_regions": {
     "average": {
-      "inner": 0.827154,
-      "outer": 0.102628,
-      "ring": 0.070219
+      "inner": 0.660601,
+      "outer": 0.202533,
+      "ring": 0.136866
     },
     "modes": [
       {
-        "inner": 0.349147,
-        "outer": 0.387091,
-        "ring": 0.263761
+        "inner": 0.340021,
+        "outer": 0.377031,
+        "ring": 0.282948
       },
       {
-        "inner": 0.988389,
-        "outer": 0.006846,
-        "ring": 0.004765
+        "inner": 0.420491,
+        "outer": 0.370485,
+        "ring": 0.209024
       },
       {
-        "inner": 0.980409,
-        "outer": 0.011309,
-        "ring": 0.008282
+        "inner": 0.915279,
+        "outer": 0.042756,
+        "ring": 0.041965
       },
       {
-        "inner": 0.99067,
-        "outer": 0.005264,
-        "ring": 0.004066
+        "inner": 0.966613,
+        "outer": 0.019859,
+        "ring": 0.013528
       }
     ]
   },
   "void_shift": [
-    -0.095304,
-    -1.475718,
-    -0.485804,
-    -0.295986
+    -0.093695,
+    -0.152897,
+    -0.559788,
+    -0.641544
   ]
 }

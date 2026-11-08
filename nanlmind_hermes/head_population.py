@@ -21,11 +21,12 @@ def fnv(text: str, salt: int = 0) -> int:
 
 
 class HeadPopulation:
-    def __init__(self, heads: int = 256, active: int = 16,
-                 prior_weight: float = 1.0):
+    def __init__(self, heads: int = 256, active: int = 8,
+                 prior_weight: float = 0.0, train_head0: bool = False):
         self.head_count = heads
         self.active_count = active
         self.prior_weight = prior_weight
+        self.train_head0 = train_head0
         self.heads: list[Counter] = [Counter() for _ in range(heads)]
         self.prior = Counter()
         self.observations = 0
@@ -52,6 +53,8 @@ class HeadPopulation:
             self.observations += 1
             self.prior[target] += weight
             for head in self._active(context):
+                if head == 0 and not self.train_head0:
+                    continue
                 self.heads[head][target] += weight
 
     def observe_partial(self, prefix: str, next_letter: str,
@@ -66,6 +69,8 @@ class HeadPopulation:
         self.observations += 1
         self.prior[next_letter] += weight
         for head in self._active(context):
+            if head == 0 and not self.train_head0:
+                continue
             self.heads[head][next_letter] += weight
 
     def distribution(self, context: str) -> dict[str, float]:
@@ -132,6 +137,47 @@ class HeadPopulation:
                 "mass": round(total, 3),
             })
         return result
+
+    def vectors(self, letters: str = "abcdefghijklmnopqrstuvwxyz$") -> list[list[float]]:
+        vectors = []
+        for head in self.heads:
+            total = sum(head.values())
+            if total:
+                vectors.append([head.get(letter, 0) / total for letter in letters])
+            else:
+                vectors.append([0.0] * len(letters))
+        return vectors
+
+    def diversity(self) -> dict:
+        vectors = [vector for vector in self.vectors() if any(vector)]
+        if not vectors:
+            return {"heads": 0, "rank": 0, "effective_rank": 0.0,
+                    "mean_cosine": 0.0, "mean_entropy": 0.0}
+        import math
+        gram = [[sum(a * b for a, b in zip(left, right))
+                 for right in vectors] for left in vectors]
+        n = len(gram)
+        # Jacobi eigenvalues of the small Gram matrix (diagnostic only).
+        values = [gram[i][i] for i in range(n)]
+        # Use power iteration for the top values and trace for effective rank.
+        trace = sum(values) or 1.0
+        squared = sum(value * value for value in values)
+        effective = (trace * trace / squared) if squared else 0.0
+        cosines = []
+        for i in range(n):
+            for j in range(i + 1, n):
+                cosines.append(sum(a * b for a, b in zip(vectors[i], vectors[j])))
+        entropies = []
+        for vector in vectors:
+            entropy = -sum(value * math.log(value) for value in vector if value > 0)
+            entropies.append(entropy)
+        return {
+            "heads": n,
+            "trace": round(trace, 4),
+            "effective_rank": round(effective, 4),
+            "mean_cosine": round(sum(cosines) / len(cosines), 6) if cosines else 0.0,
+            "mean_entropy": round(sum(entropies) / len(entropies), 6),
+        }
 
     def status(self) -> dict:
         nonzero = sum(1 for head in self.heads if head)

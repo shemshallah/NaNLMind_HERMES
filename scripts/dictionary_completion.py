@@ -65,7 +65,8 @@ def main():
     train = [word for word in words if fnv(word) % 5 != 0]
     test = [word for word in words if fnv(word) % 5 == 0]
 
-    population = HeadPopulation(heads=256, active=16)
+    population = HeadPopulation(heads=256, active=8, prior_weight=0.0,
+                                train_head0=False)
     for word in train:
         population.observe(word)
         # Explicit partial-word curriculum: emphasise early prefixes.

@@ -1,0 +1,79 @@
+{
+  "configs": [
+    {
+      "accuracy": 0.1987,
+      "active": 8,
+      "effective_rank": 4.9311,
+      "heads_with_distribution": 255,
+      "mean_cosine": 0.068551,
+      "mean_entropy": 2.477979,
+      "prior_weight": 0.0,
+      "rank": 27,
+      "top3": 0.4303,
+      "train_head0": false
+    },
+    {
+      "accuracy": 0.1415,
+      "active": 16,
+      "effective_rank": 2.6388,
+      "heads_with_distribution": 256,
+      "mean_cosine": 0.067329,
+      "mean_entropy": 2.69992,
+      "prior_weight": 1.0,
+      "rank": 27,
+      "top3": 0.3841,
+      "train_head0": true
+    },
+    {
+      "accuracy": 0.1778,
+      "active": 16,
+      "effective_rank": 2.6444,
+      "heads_with_distribution": 255,
+      "mean_cosine": 0.067344,
+      "mean_entropy": 2.699144,
+      "prior_weight": 0.0,
+      "rank": 27,
+      "top3": 0.4137,
+      "train_head0": false
+    },
+    {
+      "accuracy": 0.1397,
+      "active": 32,
+      "effective_rank": 1.9058,
+      "heads_with_distribution": 255,
+      "mean_cosine": 0.066307,
+      "mean_entropy": 2.781831,
+      "prior_weight": 0.0,
+      "rank": 27,
+      "top3": 0.3748,
+      "train_head0": false
+    },
+    {
+      "accuracy": 0.1302,
+      "active": 64,
+      "effective_rank": 1.4876,
+      "heads_with_distribution": 255,
+      "mean_cosine": 0.06508,
+      "mean_entropy": 2.837609,
+      "prior_weight": 0.0,
+      "rank": 27,
+      "top3": 0.3495,
+      "train_head0": false
+    },
+    {
+      "accuracy": 0.1162,
+      "active": 255,
+      "effective_rank": 1.0,
+      "heads_with_distribution": 255,
+      "mean_cosine": 0.063944,
+      "mean_entropy": 2.897659,
+      "prior_weight": 0.0,
+      "rank": 1,
+      "top3": 0.2949,
+      "train_head0": false
+    }
+  ],
+  "schema": "nanlmind-hermes-head-diagnostics/1",
+  "test": 400,
+  "train": 1200
+}

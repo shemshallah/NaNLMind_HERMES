@@ -9,36 +9,36 @@ inverse-square void potential. Head 0 is the void/NaNNet anchor.
 - matrix: 256×256
 - symmetric: True
 - centrosymmetric: True
-- eigen reference error: 0.0
-- fold error: 0.0
+- eigen reference error: 0.00024203
+- fold error: 0.00024203
 
 ## Top eigenvalues
 
 ```json
 {
   "base": [
-    16.358767,
-    0.0,
-    0.0,
-    0.0
+    17.646824,
+    2.219757,
+    1.060308,
+    0.895898
   ],
   "folded": [
-    16.358767,
-    0.0,
-    0.0,
-    0.0
+    17.646824,
+    2.219757,
+    1.060308,
+    0.89614
   ],
   "numpy": [
-    16.358767,
-    0.0,
-    0.0,
-    0.0
+    17.646824,
+    2.219757,
+    1.060308,
+    0.89614
   ],
   "void": [
-    16.454071,
-    1.475718,
-    0.485804,
-    0.295986
+    17.740519,
+    2.372655,
+    1.620096,
+    1.537442
   ]
 }
 ```
@@ -48,31 +48,31 @@ inverse-square void potential. Head 0 is the void/NaNNet anchor.
 ```json
 {
   "base_coupling": {
-    "inner": 0.085938,
-    "ring": 0.066406,
-    "outer": 0.097656
+    "inner": 0.355305,
+    "ring": 0.257315,
+    "outer": 0.38738
   },
   "voided_coupling": {
-    "inner": 0.827154,
-    "ring": 0.070219,
-    "outer": 0.102628
+    "inner": 0.660601,
+    "ring": 0.136866,
+    "outer": 0.202533
   },
   "laplacian_low": {
-    "inner": 0.086957,
-    "ring": 0.067194,
-    "outer": 0.84585
+    "inner": 0.315488,
+    "ring": 0.068705,
+    "outer": 0.615807
   },
   "void_laplacian_low": {
-    "inner": 0.085316,
-    "ring": 0.067782,
-    "outer": 0.846901
+    "inner": 0.309497,
+    "ring": 0.069108,
+    "outer": 0.621394
   },
-  "rank": 1,
+  "rank": 54,
   "void_shift": [
-    -0.095304,
-    -1.475718,
-    -0.485804,
-    -0.295986
+    -0.093695,
+    -0.152897,
+    -0.559788,
+    -0.641544
   ]
 }
 ```
@@ -86,116 +86,116 @@ through the void barrier, not a quantum measurement.
 ```json
 [
   {
-    "head": 0,
-    "amplitude": 0.0625,
-    "region": "outer",
+    "head": 104,
+    "amplitude": 0.08043,
+    "region": "inner",
     "letters": [
       [
-        "$",
-        1500.0
+        "i",
+        135.0
       ],
       [
-        "i",
-        1147.0
+        "$",
+        102.0
       ],
       [
         "e",
-        1068.0
+        66.0
       ]
     ]
   },
   {
-    "head": 1,
-    "amplitude": 0.0625,
-    "region": "outer",
+    "head": 151,
+    "amplitude": 0.08043,
+    "region": "inner",
     "letters": [
       [
         "$",
-        1500.0
+        76.0
       ],
       [
-        "i",
-        1147.0
+        "t",
+        21.0
       ],
       [
-        "e",
-        1068.0
+        "n",
+        17.0
       ]
     ]
   },
   {
-    "head": 2,
-    "amplitude": 0.0625,
-    "region": "outer",
+    "head": 38,
+    "amplitude": 0.079714,
+    "region": "ring",
     "letters": [
       [
         "$",
-        1500.0
+        204.0
       ],
       [
-        "i",
-        1147.0
+        "a",
+        75.0
       ],
       [
-        "e",
-        1068.0
+        "n",
+        54.0
       ]
     ]
   },
   {
-    "head": 3,
-    "amplitude": 0.0625,
-    "region": "outer",
+    "head": 217,
+    "amplitude": 0.079714,
+    "region": "ring",
     "letters": [
       [
-        "$",
-        1500.0
-      ],
-      [
         "i",
-        1147.0
+        9.0
       ],
       [
-        "e",
-        1068.0
+        "o",
+        1.0
+      ],
+      [
+        "h",
+        1.0
       ]
     ]
   },
   {
-    "head": 4,
-    "amplitude": 0.0625,
+    "head": 8,
+    "amplitude": 0.075209,
     "region": "outer",
     "letters": [
       [
-        "$",
-        1500.0
+        "i",
+        15.0
       ],
       [
-        "i",
-        1147.0
+        "$",
+        8.0
       ],
       [
         "e",
-        1068.0
+        7.0
       ]
     ]
   },
   {
-    "head": 5,
-    "amplitude": 0.0625,
+    "head": 247,
+    "amplitude": 0.075209,
     "region": "outer",
     "letters": [
       [
         "$",
-        1500.0
-      ],
-      [
-        "i",
-        1147.0
+        102.0
       ],
       [
         "e",
-        1068.0
+        68.0
+      ],
+      [
+        "t",
+        52.0
       ]
     ]
   }
@@ -205,116 +205,116 @@ through the void barrier, not a quantum measurement.
 ```json
 [
   {
-    "head": 0,
-    "amplitude": 0.0,
-    "region": "outer",
+    "head": 38,
+    "amplitude": 0.177033,
+    "region": "ring",
     "letters": [
       [
         "$",
-        1500.0
+        204.0
       ],
       [
-        "i",
-        1147.0
+        "a",
+        75.0
       ],
       [
-        "e",
-        1068.0
+        "n",
+        54.0
       ]
     ]
   },
   {
-    "head": 1,
-    "amplitude": 0.0,
-    "region": "outer",
+    "head": 217,
+    "amplitude": -0.177033,
+    "region": "ring",
     "letters": [
       [
-        "$",
-        1500.0
-      ],
-      [
         "i",
-        1147.0
+        9.0
       ],
       [
-        "e",
-        1068.0
+        "o",
+        1.0
+      ],
+      [
+        "h",
+        1.0
       ]
     ]
   },
   {
-    "head": 2,
-    "amplitude": 0.0,
-    "region": "outer",
+    "head": 124,
+    "amplitude": 0.13875,
+    "region": "inner",
     "letters": [
       [
-        "$",
-        1500.0
+        "n",
+        260.0
       ],
       [
-        "i",
-        1147.0
+        "l",
+        220.0
       ],
       [
-        "e",
-        1068.0
+        "r",
+        182.0
       ]
     ]
   },
   {
-    "head": 3,
-    "amplitude": 0.0,
-    "region": "outer",
+    "head": 131,
+    "amplitude": -0.13875,
+    "region": "inner",
     "letters": [
       [
-        "$",
-        1500.0
+        "o",
+        40.0
       ],
       [
         "i",
-        1147.0
+        9.0
       ],
       [
         "e",
-        1068.0
+        7.0
       ]
     ]
   },
   {
-    "head": 4,
-    "amplitude": 0.0,
-    "region": "outer",
+    "head": 122,
+    "amplitude": -0.131742,
+    "region": "inner",
     "letters": [
       [
-        "$",
-        1500.0
-      ],
-      [
         "i",
-        1147.0
+        37.0
       ],
       [
-        "e",
-        1068.0
+        "a",
+        33.0
+      ],
+      [
+        "o",
+        25.0
       ]
     ]
   },
   {
-    "head": 5,
-    "amplitude": 0.0,
-    "region": "outer",
+    "head": 133,
+    "amplitude": 0.131742,
+    "region": "inner",
     "letters": [
       [
+        "t",
+        66.0
+      ],
+      [
         "$",
-        1500.0
+        65.0
       ],
       [
-        "i",
-        1147.0
-      ],
-      [
-        "e",
-        1068.0
+        "s",
+        51.0
       ]
     ]
   }
@@ -324,116 +324,116 @@ through the void barrier, not a quantum measurement.
 ```json
 [
   {
-    "head": 0,
-    "amplitude": 0.0,
+    "head": 34,
+    "amplitude": -0.18174,
     "region": "outer",
     "letters": [
       [
         "$",
-        1500.0
+        34.0
       ],
       [
-        "i",
-        1147.0
+        "n",
+        20.0
       ],
       [
-        "e",
-        1068.0
+        "r",
+        17.0
       ]
     ]
   },
   {
-    "head": 1,
-    "amplitude": 0.0,
+    "head": 221,
+    "amplitude": -0.18174,
     "region": "outer",
     "letters": [
       [
         "$",
-        1500.0
+        301.0
+      ],
+      [
+        "a",
+        106.0
       ],
       [
         "i",
-        1147.0
-      ],
-      [
-        "e",
-        1068.0
+        89.0
       ]
     ]
   },
   {
-    "head": 2,
-    "amplitude": 0.0,
-    "region": "outer",
+    "head": 218,
+    "amplitude": -0.166601,
+    "region": "ring",
     "letters": [
       [
         "$",
-        1500.0
+        148.0
       ],
       [
-        "i",
-        1147.0
+        "n",
+        61.0
       ],
       [
-        "e",
-        1068.0
+        "s",
+        47.0
       ]
     ]
   },
   {
-    "head": 3,
-    "amplitude": 0.0,
-    "region": "outer",
+    "head": 37,
+    "amplitude": -0.166601,
+    "region": "ring",
     "letters": [
       [
         "$",
-        1500.0
+        151.0
       ],
       [
-        "i",
-        1147.0
+        "a",
+        57.0
       ],
       [
-        "e",
-        1068.0
+        "s",
+        31.0
       ]
     ]
   },
   {
-    "head": 4,
-    "amplitude": 0.0,
-    "region": "outer",
+    "head": 104,
+    "amplitude": -0.161937,
+    "region": "inner",
     "letters": [
       [
-        "$",
-        1500.0
+        "i",
+        135.0
       ],
       [
-        "i",
-        1147.0
+        "$",
+        102.0
       ],
       [
         "e",
-        1068.0
+        66.0
       ]
     ]
   },
   {
-    "head": 5,
-    "amplitude": 0.0,
-    "region": "outer",
+    "head": 151,
+    "amplitude": -0.161937,
+    "region": "inner",
     "letters": [
       [
         "$",
-        1500.0
+        76.0
       ],
       [
-        "i",
-        1147.0
+        "t",
+        21.0
       ],
       [
-        "e",
-        1068.0
+        "n",
+        17.0
       ]
     ]
   }
@@ -452,40 +452,3 @@ through the void barrier, not a quantum measurement.
   is not the barrier. Use L = D - A plus V and low modes.
 - The head population is the current coarse A; the next step is to use
   the eigenmodes P and strengths Λ as the MTH L7 relation basis.
-
-
-## Nonconstant-mode leakage (the meaningful tunneling measure)
-
-The uniform (zero) mode is excluded; it is the trivial constant mode.
-
-```json
-{
-  "base": {
-    "inner": 0.001359,
-    "outer": 0.997591,
-    "ring": 0.00105
-  },
-  "void": {
-    "inner": 0.000792,
-    "outer": 0.997919,
-    "ring": 0.001289
-  },
-  "reduction": 0.4172,
-  "rank": 1
-}
-```
-
-The coupling matrix is rank-1, so the head population is not yet a
-rich spectral object. The void barrier reduces inner leakage of the
-nonconstant modes from 0.001359 to
-0.000792 (a
-41.7% reduction): measurable spectral tunneling.
-
-## Architecture status
-
-- Full/folded spectra agree (fold error 0.0); numpy reference
-  error 0.0.
-- The next bottleneck is rank: all heads currently carry nearly the same
-  letter distribution. Diversify head routing / use the relation matrix as A.
-- Use the low modes of L = D - A + V as the L7 relation basis; the void is the
-  boundary condition, not a positive diagonal on the coupling matrix.

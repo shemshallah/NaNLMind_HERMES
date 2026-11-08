@@ -39,6 +39,15 @@ class HeadPopulationTests(unittest.TestCase):
         self.assertIn(0, active)
         self.assertEqual(active, list(range(256)))
 
+    def test_diversity_reports_specialization(self):
+        population = HeadPopulation(heads=32, active=8, train_head0=False)
+        for word in ("the", "then", "there", "other", "mother"):
+            population.observe(word)
+        diversity = population.diversity()
+        self.assertGreaterEqual(diversity["heads"], 1)
+        self.assertGreaterEqual(diversity["effective_rank"], 1.0)
+        self.assertGreaterEqual(diversity["mean_entropy"], 0.0)
+
     def test_bigram_baseline_trains(self):
         baseline = BigramBaseline()
         baseline.train(["the", "then", "there"])

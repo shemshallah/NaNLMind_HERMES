@@ -37,7 +37,8 @@ def main():
 
     words, _frequency = load_lemmas()
     train = words[:1500]
-    population = HeadPopulation(heads=256, active=255)
+    population = HeadPopulation(heads=256, active=8, prior_weight=0.0,
+                                train_head0=False)
     for word in train:
         population.observe(word)
 
