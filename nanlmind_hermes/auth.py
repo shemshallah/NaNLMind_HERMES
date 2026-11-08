@@ -10,7 +10,7 @@ from .crypto_compat import (
 
 TOKEN_ISSUER = "nannet-api-hermes"
 TOKEN_AUDIENCE = "nanlmind-hermes"
-ALLOWED_SCOPES = frozenset({"corpus:write","training:execute","universe:read","snapshot:read","snapshot:write","universe:register","installation:admin"})
+ALLOWED_SCOPES = frozenset({"corpus:write","training:execute","universe:read","snapshot:read","snapshot:write","universe:register","installation:admin","hermes:lease"})
 
 class AuthError(ValueError):
     """Credential, token, signature, or authorization failure."""
@@ -177,8 +177,8 @@ def identity_scope_ceiling(role: str) -> frozenset[str]:
     if role == "admin":
         return frozenset({"training:execute", "universe:read", "universe:register",
                           "snapshot:read", "snapshot:write", "corpus:write",
-                          "installation:admin"})
+                          "installation:admin", "hermes:lease"})
     if role == "guest":
         return frozenset({"universe:read", "snapshot:read", "corpus:write",
-                          "training:execute"})
+                          "training:execute", "hermes:lease"})
     raise AuthError("identity role must be admin or guest")
