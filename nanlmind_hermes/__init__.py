@@ -212,6 +212,18 @@ def register(ctx):
         from . import router_universe_client
         return router_universe_client.release(ctx, params.get("alias", "primary"))
 
+    def handle_universe_dispatch(params, **kwargs):
+        from . import router_universe_client
+        return router_universe_client.dispatch(
+            ctx, params.get("alias", "primary"),
+            params.get("head_index", 0), params["dispatch_id"], params["frame_hex"])
+
+    def handle_universe_ack(params, **kwargs):
+        from . import router_universe_client
+        return router_universe_client.acknowledge(
+            ctx, params.get("alias", "primary"), params.get("head_index", 0),
+            params["dispatch_id"], params["response_sha256"])
+
     def handle_nan16de_route(params, **kwargs):
         _require_scope("universe:read")
         from .auth import load_installation, decrypt_payload
@@ -386,6 +398,18 @@ def register(ctx):
           "ttl_seconds": {"type": "integer", "minimum": 60, "maximum": 3600, "default": 900}}, [], handle_universe_renew),
         ("nanlm_universe_release", "Revoke a router-issued universe and erase its local encrypted receipt after router confirmation.",
          {"alias": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,40}$", "default": "primary"}}, [], handle_universe_release),
+        ("nanlm_universe_dispatch", "Submit one bounded opaque N16T frame to router-authenticated native HERMES guest with stable dispatch_id for at-most-once processing; not a training commit.",
+         {"alias": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,40}$", "default": "primary"},
+          "head_index": {"type": "integer", "minimum": 0, "maximum": 254, "default": 0},
+          "dispatch_id": {"type": "string", "pattern": "^[A-Za-z0-9_.:-]{12,128}$"},
+          "frame_hex": {"type": "string", "minLength": 72, "maxLength": 131144, "pattern": "^[0-9a-fA-F]+$"}},
+         ["dispatch_id", "frame_hex"], handle_universe_dispatch),
+        ("nanlm_universe_ack", "Confirm SHA-256 of a completed native N16T response in the durable router journal without implying model training.",
+         {"alias": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,40}$", "default": "primary"},
+          "head_index": {"type": "integer", "minimum": 0, "maximum": 254, "default": 0},
+          "dispatch_id": {"type": "string", "pattern": "^[A-Za-z0-9_.:-]{12,128}$"},
+          "response_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}},
+         ["dispatch_id", "response_sha256"], handle_universe_ack),
         ("nanlm_generate_curriculum", "Generate a balanced 12-stage logic-to-language curriculum corpus, including Boolean inverses, deep relations, exceptions, word choice, sentences, paragraphs and stories.",
          {"topic": {"type": "string", "minLength": 1, "maxLength": 500},
           "records_per_stage": {"type": "integer", "minimum": 3, "maximum": 64, "default": 12}},
