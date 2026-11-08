@@ -224,6 +224,12 @@ def register(ctx):
             ctx, params.get("alias", "primary"), params.get("head_index", 0),
             params["dispatch_id"], params["response_sha256"])
 
+    def handle_universe_inspect(params, **kwargs):
+        from . import router_universe_client
+        return router_universe_client.inspect_dispatch(
+            ctx, params.get("alias", "primary"), params.get("head_index", 0),
+            params["dispatch_id"])
+
     def handle_nan16de_route(params, **kwargs):
         _require_scope("universe:read")
         from .auth import load_installation, decrypt_payload
@@ -410,6 +416,11 @@ def register(ctx):
           "dispatch_id": {"type": "string", "pattern": "^[A-Za-z0-9_.:-]{12,128}$"},
           "response_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}},
          ["dispatch_id", "response_sha256"], handle_universe_ack),
+        ("nanlm_universe_inspect", "Recover a journaled native N16T dispatch without re-running ambiguous work; return the verified frame if completed.",
+         {"alias": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,40}$", "default": "primary"},
+          "head_index": {"type": "integer", "minimum": 0, "maximum": 254, "default": 0},
+          "dispatch_id": {"type": "string", "pattern": "^[A-Za-z0-9_.:-]{12,128}$"}},
+         ["dispatch_id"], handle_universe_inspect),
         ("nanlm_generate_curriculum", "Generate a balanced 12-stage logic-to-language curriculum corpus, including Boolean inverses, deep relations, exceptions, word choice, sentences, paragraphs and stories.",
          {"topic": {"type": "string", "minLength": 1, "maxLength": 500},
           "records_per_stage": {"type": "integer", "minimum": 3, "maximum": 64, "default": 12}},
