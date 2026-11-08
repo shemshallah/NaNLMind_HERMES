@@ -170,6 +170,50 @@ class RouterUniverseClientTests(unittest.TestCase):
             client.acknowledge(
                 self.ctx, "test", 254, "stable-router-dispatch-001", "not-a-digest")
 
+    def test_dispatch_inspection_rejects_cross_head_and_tampered_recovery_frame(self):
+        lease = receipt(0)
+        with patch.object(client, "_post", return_value=(INSTALL, {"receipt": lease})):
+            client.open_universe(self.ctx, "recover")
+        dispatch_id = "stable-router-recovery-0001"
+        base = {
+            "dispatch_id": dispatch_id, "head_index": 19,
+            "lease_id": lease["lease_id"], "universe_id": lease["universe_id"],
+            "model_training_committed": False,
+        }
+        with patch.object(client, "_post",
+                          return_value=(INSTALL, {**base, "state": "not_recorded"})):
+            self.assertEqual(client.inspect_dispatch(
+                self.ctx, "recover", 19, dispatch_id)["state"], "not_recorded")
+        with patch.object(client, "_post",
+                          return_value=(INSTALL, {
+                              **base, "state": "pending_or_ambiguous",
+                              "frame_sha256": "a" * 64})):
+            pending = client.inspect_dispatch(self.ctx, "recover", 19, dispatch_id)
+            self.assertEqual(pending["state"], "pending_or_ambiguous")
+            self.assertNotIn("response_frame_hex", pending)
+        frame = b"N16T" + bytes(32)
+        digest = hashlib.sha256(frame).hexdigest()
+        completed = {
+            **base, "state": "completed", "response_frame_hex": frame.hex(),
+            "response_sha256": digest, "n16t_native_guest_exchange": True,
+        }
+        with patch.object(client, "_post", return_value=(INSTALL, completed)):
+            result = client.inspect_dispatch(self.ctx, "recover", 19, dispatch_id)
+            self.assertEqual(result["response_sha256"], digest)
+            self.assertFalse(result["acknowledged"])
+        for modified in (
+            {**completed, "response_sha256": "0" * 64},
+            {**completed, "head_index": 20},
+            {**completed, "model_training_committed": True},
+            {**completed, "n16t_native_guest_exchange": False},
+        ):
+            with patch.object(client, "_post", return_value=(INSTALL, modified)):
+                with self.assertRaises(client.UniverseLeaseError):
+                    client.inspect_dispatch(self.ctx, "recover", 19, dispatch_id)
+        with self.assertRaises(client.UniverseLeaseError):
+            client.inspect_dispatch(self.ctx, "recover", 255, dispatch_id)
+
+
 
 if __name__ == "__main__":
     unittest.main()

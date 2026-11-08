@@ -97,7 +97,7 @@ def _origin(ctx):
 
 
 def _post(ctx, action, payload):
-    if action not in ("open", "resolve", "renew", "release", "dispatch", "ack"):
+    if action not in ("open", "resolve", "renew", "release", "dispatch", "ack", "inspect"):
         raise UniverseLeaseError("unknown router universe operation")
     require_scope(ctx, "hermes:lease")  # includes online revocation and scope check
     root = _universe_dir(ctx)
@@ -118,7 +118,7 @@ def _post(ctx, action, payload):
         with urllib.request.build_opener(_NoRedirect).open(request, timeout=15) as response:
             if response.status != 200 or response.headers.get_content_type() != "application/json":
                 raise UniverseLeaseError("unsupported NANNET router response")
-            limit = 155000 if action == "dispatch" else 32768
+            limit = 155000 if action in ("dispatch", "inspect") else 32768
             data = response.read(limit + 1)
             if len(data) > limit:
                 raise UniverseLeaseError("NANNET router response exceeds size bound")
@@ -353,3 +353,60 @@ def acknowledge(ctx, alias="primary", head_index=0,
     return {"acknowledged": True, "alias": alias,
             "dispatch_id": dispatch_id, "response_sha256": response_sha256,
             "model_training_committed": False}
+
+
+
+def inspect_dispatch(ctx, alias="primary", head_index=0, dispatch_id=""):
+    """Inspect a router-journaled dispatch without re-executing a N16T frame.
+
+    A pending_or_ambiguous result is deliberately NOT retried. For completed
+    frames the response digest is independently checked before exposing it.
+    All state remains bound to the current authenticated lease/head.
+    """
+    alias = _alias(alias)
+    if type(head_index) is not int or not 0 <= head_index <= 254:
+        raise UniverseLeaseError("head 255 is reserved for NANNET")
+    if (not isinstance(dispatch_id, str)
+            or not re.fullmatch(r"[A-Za-z0-9_.:-]{12,128}", dispatch_id)):
+        raise UniverseLeaseError("invalid N16T dispatch_id")
+    receipt = _read(ctx)["leases"].get(alias)
+    if receipt is None:
+        raise UniverseLeaseError("cannot inspect dispatch without a local active lease")
+    installation, result = _post(ctx, "inspect", {
+        "receipt": receipt, "head_index": head_index,
+        "dispatch_id": dispatch_id})
+    _valid_receipt(receipt, installation)
+    if (result.get("dispatch_id") != dispatch_id
+            or result.get("head_index") != head_index
+            or result.get("lease_id") != receipt["lease_id"]
+            or result.get("universe_id") != receipt["universe_id"]
+            or result.get("model_training_committed") is not False):
+        raise UniverseLeaseError("router inspection has an invalid lease/head binding")
+    state = result.get("state")
+    if state not in ("not_recorded", "pending_or_ambiguous", "completed", "acknowledged"):
+        raise UniverseLeaseError("router returned an unsupported dispatch recovery state")
+    response = {
+        "alias": alias, "dispatch_id": dispatch_id,
+        "head_index": head_index, "universe_id": receipt["universe_id"],
+        "state": state, "model_training_committed": False,
+    }
+    if state == "pending_or_ambiguous":
+        digest = result.get("frame_sha256")
+        if not isinstance(digest, str) or not re.fullmatch(r"[a-f0-9]{64}", digest):
+            raise UniverseLeaseError("router pending frame digest is invalid")
+        response["frame_sha256"] = digest
+    if state in ("completed", "acknowledged"):
+        raw = result.get("response_frame_hex")
+        if (not isinstance(raw, str) or not 72 <= len(raw) <= 131144
+                or len(raw) % 2
+                or re.fullmatch(r"[0-9a-fA-F]+", raw) is None):
+            raise UniverseLeaseError("router inspection returned an invalid native frame")
+        response_digest = hashlib.sha256(bytes.fromhex(raw)).hexdigest()
+        if result.get("response_sha256") != response_digest:
+            raise UniverseLeaseError("router inspection response digest mismatch")
+        if result.get("n16t_native_guest_exchange") is not True:
+            raise UniverseLeaseError("router inspection lacks native N16T guest evidence")
+        response["response_frame_hex"] = raw
+        response["response_sha256"] = response_digest
+        response["acknowledged"] = (state == "acknowledged")
+    return response
