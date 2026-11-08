@@ -97,7 +97,7 @@ def _origin(ctx):
 
 
 def _post(ctx, action, payload):
-    if action not in ("open", "resolve", "renew", "release", "dispatch", "ack", "inspect"):
+    if action not in ("open", "resolve", "renew", "release", "dispatch", "ack", "inspect", "math"):
         raise UniverseLeaseError("unknown router universe operation")
     require_scope(ctx, "hermes:lease")  # includes online revocation and scope check
     root = _universe_dir(ctx)
@@ -410,3 +410,50 @@ def inspect_dispatch(ctx, alias="primary", head_index=0, dispatch_id=""):
         response["response_sha256"] = response_digest
         response["acknowledged"] = (state == "acknowledged")
     return response
+
+
+
+def math_u32(ctx, alias="primary", head_index=0,
+             kernel_id="mth.u32.add_checked", a=0, b=0):
+    """Run a pinned native NaN16 MTH checked arithmetic kernel via BS0:0.
+
+    This is an actual native guest calculation, not an N16T handshake nor a
+    Python arithmetic stand-in. It cannot mutate the canonical learner.
+    """
+    alias = _alias(alias)
+    if type(head_index) is not int or not 0 <= head_index <= 254:
+        raise UniverseLeaseError("head 255 is the NANNET port, not MTH computation")
+    if kernel_id not in ("mth.u32.add_checked", "mth.u32.sub_checked"):
+        raise UniverseLeaseError("MTH kernel is not in the pinned guest allowlist")
+    for name, word in (("a", a), ("b", b)):
+        if type(word) is not int or not 0 <= word <= 0xffffffff:
+            raise UniverseLeaseError("native MTH " + name + " must be a uint32 payload")
+    lease = _read(ctx)["leases"].get(alias)
+    if lease is None:
+        raise UniverseLeaseError("a signed router lease is required for MTH execution")
+    installation, response = _post(ctx, "math", {
+        "receipt": lease, "head_index": head_index,
+        "kernel_id": kernel_id, "a": a, "b": b,
+    })
+    _valid_receipt(lease, installation)
+    if (response.get("kernel_id") != kernel_id
+            or response.get("native_nan16_execution") is not True
+            or response.get("native_guest_route_admitted") is not True
+            or response.get("native_guest_universe_id") != lease["universe_id"]
+            or response.get("native_guest_node_point") != lease["node_point"]
+            or response.get("node_point") != lease["node_point"]
+            or response.get("universe_id") != lease["universe_id"]
+            or response.get("head_index") != head_index
+            or response.get("model_training_committed") is not False):
+        raise UniverseLeaseError("native MTH result is not bound to the leased HERMES head")
+    result = response.get("value_u32")
+    if type(result) is not int or not 0 <= result <= 0xffffffff:
+        raise UniverseLeaseError("native MTH result is not a 32-bit word")
+    if type(response.get("exact")) is not bool:
+        raise UniverseLeaseError("native MTH exactness flag is malformed")
+    return {
+        "alias": alias, "kernel_id": kernel_id, "head_index": head_index,
+        "universe_id": lease["universe_id"], "node_point": lease["node_point"],
+        "result_u32": result, "exact": response["exact"],
+        "native_nan16_execution": True, "model_training_committed": False,
+    }
