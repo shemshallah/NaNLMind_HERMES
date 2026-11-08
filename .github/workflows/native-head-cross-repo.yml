@@ -42,7 +42,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: shemshallah/NaNROUTER
-          ref: 738d715ff2f4001ec6702af22277802b83b1ccce
+          ref: 96a760fac100d92365560530634affc2d6a71145
           path: router
       - uses: actions/checkout@v4
         with:
@@ -67,7 +67,7 @@ jobs:
             src/nannet/n16_head_worker.nas > "$GITHUB_WORKSPACE/nan0s/head.nan"
           test -s head.nan
           test -s head.labels
-      - name: Verify current HERMES chart against authenticated multi-head revisions and races
+      - name: Verify current chart, four NaN16 classes, multi-head generations and crash recovery
         working-directory: router
         env:
           PYTHONPATH: ${{ github.workspace }}/router:${{ github.workspace }}/hermes
