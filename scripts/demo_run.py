@@ -424,6 +424,16 @@ def main(argv=None):
         call("nanlm_status")
 
         # Chat and transcripts.
+        call("nanlm_tree_inspect", {})
+        call("nanlm_tree_mutate", {
+            "head": 2, "branch": "vector123", "leaf": "coordinate",
+            "data_hex": "010203", "expected_revision": 0})
+        call("nanlm_tree_inspect", {
+            "head": 2, "branch": "vector123", "leaf": "coordinate"})
+        call("nanlm_tree_audit", {})
+        call("nanlm_chat_train", {
+            "message": "Explore vector123 and propose a math experiment",
+            "session_id": "demo-training"})
         call("nanlm_chat", {"message": "Hello from the demo", "session_id": "demo"})
         call("nanlm_chat_history", {"session_id": "demo"})
         call("nanlm_phone_call", {
