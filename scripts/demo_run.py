@@ -378,6 +378,20 @@ def main(argv=None):
                     "n16t_native_guest_exchange": True,
                     "model_training_committed": False,
                 }
+            if action == "math":
+                assert request["kernel_id"] == "mth.u32.add_checked"
+                assert request["a"] == 7 and request["b"] == 9
+                return installation_id, {
+                    "kernel_id": request["kernel_id"], "head_index": request["head_index"],
+                    "value_u32": 16, "exact": True,
+                    "native_guest_route_admitted": True,
+                    "native_guest_universe_id": fixture["universe_id"],
+                    "native_guest_node_point": fixture["node_point"],
+                    "node_point": fixture["node_point"],
+                    "universe_id": fixture["universe_id"],
+                    "native_nan16_execution": True,
+                    "model_training_committed": False,
+                }
             if action == "renew":
                 fixture["revision"] += 1
                 fixture["expires_at"] += 900
@@ -401,6 +415,9 @@ def main(argv=None):
             call("nanlm_universe_inspect", {
                 "alias": "demo", "head_index": 254,
                 "dispatch_id": "demo-n16t-dispatch-0001"})
+            call("nanlm_native_mth_u32", {
+                "alias": "demo", "head_index": 254,
+                "kernel_id": "mth.u32.add_checked", "a": 7, "b": 9})
             call("nanlm_universe_renew", {"alias": "demo"})
             call("nanlm_universe_release", {"alias": "demo"})
 
