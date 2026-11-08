@@ -293,7 +293,7 @@ def inspect_n16pack(path: str | Path) -> dict:
                     root = _validate_chart(bytes(chart), manifest["parent_root_sha256"])
                     if root["mount_block_sha256"] != manifest.get("root_block_sha256"):
                         raise UniversePackError("N16ROOT1 manifest digest mismatch")
-                elif prefix != b"SQLite format 3\\0":
+                elif prefix != b"SQLite format 3\0":
                     raise UniversePackError("not an SQLite database snapshot")
                 else:
                     _verify_sqlite_section(db_path, name.upper())
