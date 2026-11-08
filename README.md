@@ -186,7 +186,7 @@ Report security issues privately as described in [SECURITY.md](SECURITY.md).
 
 ## Verification
 
-- 172 unit/integration tests pass locally; CI runs Python 3.10, 3.11, and 3.12.
+- 174 unit/integration tests pass locally; CI runs Python 3.10, 3.11, and 3.12.
 - Hermes Agent v0.23.0 `plugins validate` and `plugins doctor` pass in CI.
 - Wheel and source distribution builds, metadata checks, installation/import,
   and SHA-256 checksums pass in CI.
@@ -219,7 +219,10 @@ Report security issues privately as described in [SECURITY.md](SECURITY.md).
 | [Demo transcript](docs/HERMES_DEMO.md) | native chat, three-way call, training, CLOCKED, and live head-cortex output |
 | [Phone-call kernel](docs/PHONE_CALL_NAN16.md) | raw NaN16 routing kernel, memory map, routing matrix, C-core parity |
 | [Local runner](docs/LOCAL_RUNNER.md) | boot-time 8 MiB chart, mapped temporal register, real rails, HW2:0 link |
-| [MTH layers](docs/MTH_LAYERS.md) | root 4x4 Boolean table, L0–L9 curriculum, truth/frame scoring |
+| [MTH layers](docs/MTH_LAYERS.md) | root 4x4 Boolean table, L0–L9 curriculum, truth/frame scoring, concept matrix |
+| [Free chat baseline](docs/FREE_CHAT.md) | cold direct address, self-contemplation, unknown questions |
+| [Gemma bootstrap](docs/GEMMA_BOOTSTRAP.md) | teacher-designed exposure, abstention and known/unknown probes |
+| [Saturation session](docs/GEMMA_CORPUS.md) | concept-matrix saturation and organization by chatting |
 | [Long chat session](docs/LONG_CHAT_DEMO.md) | exposure, temporal predictions, held-out session, feedback re-deliberation |
 | [Demo results](docs/DEMO_RESULTS.md) | 38/38 exhaustive tool-call results |
 | [Live smoke results](docs/LIVE_SMOKE.md) | 11/11 deployed-service checks |

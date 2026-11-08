@@ -89,8 +89,17 @@ class HermesChatTests(unittest.TestCase):
                                  for row in relations))
             miss = chat(ctx, "What is dark matter?", session_id="exposure")
             self.assertTrue(miss["response"])
-            self.assertTrue(miss["native_synthesis"]["temporal_frame"]["forced"])
+            self.assertGreaterEqual(
+                miss["native_synthesis"]["temporal_frame"]["output_drive"], 0.35)
             self.assertTrue(miss["response"].endswith((".", "!", "?")))
+
+    def test_chat_answers_yes_no_from_the_learned_relation_store(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            ctx = NativeChatContext(Path(tmp))
+            chat(ctx, "Copper is a chemical element.", session_id="store")
+            reply = chat(ctx, "Is copper a chemical element?", session_id="store")
+            self.assertTrue(reply["native_synthesis"]["structured"])
+            self.assertIn("chemical element", reply["response"].lower())
 
     def test_correction_rejects_the_answer_and_deliberates_again(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -120,7 +129,8 @@ class HermesChatTests(unittest.TestCase):
             self.assertTrue(all(replies))
             self.assertTrue(all(reply.endswith((".", "!", "?")) for reply in replies))
             self.assertGreater(len(set(replies)), 1)
-            self.assertTrue(first["native_synthesis"]["temporal_frame"]["forced"])
+            self.assertGreaterEqual(
+                first["native_synthesis"]["temporal_frame"]["output_drive"], 0.35)
 
     def test_native_chat_predicts_forward_from_the_learned_frame(self):
         with tempfile.TemporaryDirectory() as tmp:

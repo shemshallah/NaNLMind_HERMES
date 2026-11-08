@@ -336,6 +336,81 @@ class MTHLayerStack:
         }
 
 
+def _norm_phrase(text: str) -> str:
+    words = [word for word in tokens(text)
+             if word not in {"a", "an", "the"}]
+    return " ".join(words)
+
+
+def structured_candidates(query: str, rows: list[dict]) -> list[dict]:
+    """Answer a factual question from learned relation edges, not n-grams.
+
+    Learned frames are applied to the question's subject. This is how the MTH
+    relation store participates in speech: the candidate is a learned relation
+    schema instantiated with the question's unit, not a canned reply.
+    """
+    edges = []
+    for row in rows:
+        if row.get("kind") != "relation":
+            continue
+        subject = str(row.get("subject") or "").strip()
+        predicate = str(row.get("predicate") or "").strip()
+        obj = str(row.get("object") or "").strip()
+        if not subject or not predicate or not obj:
+            continue
+        role, extra = relation_role(predicate, obj)
+        edges.append({"subject": subject, "predicate": predicate,
+                      "object": obj, "role": role,
+                      "degree": float(row.get("confidence") or 0.55),
+                      "polarity": str(row.get("polarity") or "supports")})
+    lowered = query.strip().casefold()
+    candidates = []
+
+    def add(subject, predicate, obj, edge):
+        if predicate in {"is", "are", "was", "were"}:
+            verb = "is"
+        elif predicate in {"has", "have", "had"}:
+            verb = "has"
+        elif predicate in {"can", "may", "will"}:
+            verb = "can"
+        elif predicate in {"causes", "cause"}:
+            verb = "causes"
+        else:
+            verb = predicate
+        text = f"{subject} {verb} {obj}"
+        if not text.endswith((".", "!", "?")):
+            text += "."
+        text = text[0].upper() + text[1:]
+        candidates.append({"text": text, "truth": edge["degree"],
+                           "role": edge["role"],
+                           "source": "learned_relation",
+                           "subject": edge["subject"],
+                           "object": edge["object"]})
+
+    yes_no = re.match(r"^(?:is|are|was|were)\s+(.+?)\s+(?:a|an|the)\s+(.+?)\s*\?$",
+                      lowered)
+    if yes_no:
+        subject = _norm_phrase(yes_no.group(1))
+        obj = _norm_phrase(yes_no.group(2))
+        for edge in edges:
+            if _norm_phrase(edge["subject"]) == subject and                     obj in _norm_phrase(edge["object"]):
+                add(edge["subject"], edge["predicate"], edge["object"], edge)
+    what_is = re.match(r"^what\s+(?:is|are)\s+(.+?)\s*\?$", lowered)
+    if what_is:
+        subject = _norm_phrase(what_is.group(1))
+        for edge in edges:
+            if _norm_phrase(edge["subject"]) == subject:
+                add(edge["subject"], edge["predicate"], edge["object"], edge)
+    what_causes = re.match(r"^what\s+causes?\s+(.+?)\s*\?$", lowered)
+    if what_causes:
+        obj = _norm_phrase(what_causes.group(1))
+        for edge in edges:
+            if edge["predicate"] in {"causes", "cause"} and                     obj in _norm_phrase(edge["object"]):
+                add(edge["subject"], edge["predicate"], edge["object"], edge)
+    candidates.sort(key=lambda item: -item["truth"])
+    return candidates
+
+
 class MTHScorer:
     """Candidates are scored by every L0-L9 layer, then combined."""
 
@@ -383,7 +458,15 @@ class MTHScorer:
         anchor = stem(candidate_words[0]) if candidate_words else ""
         lowered = query.casefold()
         expected = "is"
-        if " can " in " " + lowered + " ":
+        if "component of" in lowered:
+            expected = "component_of"
+        elif "chemical element" in lowered:
+            expected = "member_of:chemical"
+        elif "geometric element" in lowered:
+            expected = "member_of:geometric"
+        elif "opposite" in lowered:
+            expected = "opposition"
+        elif " can " in " " + lowered + " ":
             expected = "can"
         elif lowered.startswith("why") or "cause" in lowered:
             expected = "causes"
@@ -405,7 +488,10 @@ class MTHScorer:
             if value > truth:
                 truth, matched = value, edge
         if matched is not None:
-            frame = 1.0 if matched["predicate"] == expected else 0.35
+            matched_role, _extra = relation_role(matched["predicate"], matched["object"])
+            frame = (1.0 if matched_role == expected
+                     or (expected == "is" and matched_role in {"is", "has"})
+                     else 0.25)
 
         lexical = self._lexical(candidate_words)
         coherence = (len(query_words & candidate_set) / max(1, len(query_words))
@@ -450,6 +536,52 @@ def reverse8(value: int) -> int:
     return int(format(value & 0xFF, "08b")[::-1], 2)
 
 
+def relation_role(predicate: str, obj: str) -> tuple[str, dict]:
+    """Role of a relation, not a generic inverse.
+
+    A pair is an axis; the two rails carry directed roles. Antonymy is one
+    role (opposition), not the default interpretation of a pair.
+    """
+    text = (str(predicate) + " " + str(obj)).casefold()
+    if "component of" in text:
+        return "component_of", {"whole": text.split("component of", 1)[1].strip()}
+    if "opposite of" in text or "antonym" in text:
+        return "opposition", {}
+    if "chemical element" in text:
+        return "member_of:chemical", {"qualifier": "chemical"}
+    if "geometric element" in text:
+        return "member_of:geometric", {"qualifier": "geometric"}
+    if predicate in {"is", "has", "can", "causes", "cause"}:
+        return predicate, {}
+    return predicate or "relates", {}
+
+
+def leaf_tags(subject: str, predicate: str, obj: str, role: str,
+              whole: str, digest: str) -> dict:
+    """The user's tag grammar as a leaf schema (description is a unit)."""
+    return {
+        "DESCRIPTION": subject,
+        "FORMAL:ID:LABEL::DIRECTIVE": digest + "::assert",
+        "OBJECT:REALM": {"object": subject, "realm": "physical"},
+        "DESCRIPTION:DIRECTOR:ABSTRACT": {
+            "description": subject, "director": "assert", "abstract": role,
+        },
+        "UNIT:DIVISION:RELATION": {
+            "unit": subject, "division": "relation", "relation": role,
+            "predicate": predicate, "object": obj,
+        },
+        "UNIT:WHOLE:COMPONENT:QUERY": {
+            "whole": whole, "component": subject,
+            "query": "is_component_of" if role == "component_of" else role,
+        },
+        "SPACE:BODY:COMPONENT:SYSTEM": {
+            "space": whole if role == "component_of" else "general",
+            "body": "planet" if role == "component_of" else "general",
+            "component": subject, "system": role,
+        },
+    }
+
+
 class MTHHeadMapper:
     """Map a relation into a head and a mathematical leaf via root functions.
 
@@ -480,8 +612,15 @@ class MTHHeadMapper:
         s = self.transform(subject, mask)
         p = self.transform(predicate, mask)
         o = self.transform(obj, mask)
-        head = (s ^ (p << 1) ^ (o << 2)) & 0xFF
-        layer = "narrative" if predicate in {"causes", "cause"} else "sentence"
+        role, extra = relation_role(predicate, obj)
+        whole = extra.get("whole") or obj
+        object_head = self.transform(whole, mask)
+        pair = tuple(sorted((s, object_head)))
+        rail = "s+" if s < object_head else "s-"
+        reverse_rail = "s-" if rail == "s+" else "s+"
+        head = s
+        layer = ("narrative" if predicate in {"causes", "cause"}
+                 else "sentence")
         provenance = row.get("provenance")
         if isinstance(provenance, dict):
             resolution = str(provenance.get("resolution") or "")
@@ -494,10 +633,17 @@ class MTHHeadMapper:
             "mirror": reverse8(head),
             "mask": mask,
             "boolean": ROOT_NAMES[mask],
-            "value": (s << 16) | (p << 8) | o,
+            "value": (s << 16) | (object_head << 8) | o,
+            "pair": pair,
+            "rail": rail,
+            "reverse_rail": reverse_rail,
+            "role": role,
+            "whole": whole,
+            "qualifier": extra.get("qualifier", ""),
             "layer": layer,
             "subject": subject,
             "predicate": predicate,
             "object": obj,
+            "tags": leaf_tags(subject, predicate, obj, role, whole, digest),
             "digest": digest,
         }

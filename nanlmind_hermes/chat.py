@@ -351,7 +351,8 @@ def _native_synthesize(ctx, message: str, parsed: list[dict]) -> dict:
     from .tools import _memory_store
     store = _memory_store(ctx)
     rows = store.query(limit=1000)
-    from .mth_layers import MTHHeadMapper, MTHLayerStack, MTHScorer
+    from .mth_layers import (MTHHeadMapper, MTHLayerStack, MTHScorer,
+                             structured_candidates)
     stack = MTHLayerStack()
     exposure_sentences = []
     for row in rows:
@@ -365,6 +366,7 @@ def _native_synthesize(ctx, message: str, parsed: list[dict]) -> dict:
     heads_summary = {}
     model = TemporalMirrorLM.load(ctx)
     model.mth = MTHScorer(stack)
+    structured = structured_candidates(message, rows)
     if model.runner is not None:
         heads_summary = model.runner.organize(rows, MTHHeadMapper(stack))
     prior_words = set(model.vocab)
@@ -377,12 +379,36 @@ def _native_synthesize(ctx, message: str, parsed: list[dict]) -> dict:
         correction = is_correction(message) and bool(model.last_query)
     except Exception:
         correction = False
+    context_terms = []
     if correction:
         prediction = model.correct()
         observed = False
     else:
-        observed = model.observe(message)
-        prediction = model.generate(message, allowed_seed=prior_words)
+        question = str(message).strip().endswith("?")
+        if question:
+            context_terms = model.add_context_terms(message)
+            observed = False
+            allowed = set(prior_words)
+            allowed |= set(model.question_terms(message)) & set(model.vocab)
+            allowed |= set(context_terms)
+        else:
+            observed = model.observe(message)
+            allowed = prior_words
+        prediction = model.generate(message, allowed_seed=allowed)
+    if structured and not correction:
+        chosen = structured[0]
+        prediction["text"] = chosen["text"]
+        prediction["structured"] = True
+        prediction.setdefault("considered", [])
+        prediction["considered"] = [{
+            "text": chosen["text"],
+            "score": chosen["truth"],
+            "anchor": chosen["subject"],
+            "ended": True,
+            "mth": {"truth": chosen["truth"], "frame": 1.0,
+                    "category_error": 0.0, "source": chosen["source"],
+                    "role": chosen["role"]},
+        }] + prediction["considered"]
     model.save(ctx)
     learned = sum(1 for record in parsed
                   if isinstance(record.get("item"), dict)
@@ -394,9 +420,11 @@ def _native_synthesize(ctx, message: str, parsed: list[dict]) -> dict:
         "response_templates": 0,
         "retrieval": 0,
         "correction": bool(prediction.get("correction", correction)),
+        "structured": bool(prediction.get("structured", False)),
         "rejected": prediction.get("rejected"),
         "learned_records": learned,
         "learned_sentences_now": int(bool(observed)),
+        "context_terms": context_terms,
         "bootstrap_sentences": bootstrapped,
         "temporal_frame": {
             "anchor": prediction.get("anchor"),
@@ -405,7 +433,8 @@ def _native_synthesize(ctx, message: str, parsed: list[dict]) -> dict:
             "scored_per_step": prediction.get("scored_per_step", 0),
             "score": prediction.get("score"),
             "ended": prediction.get("ended"),
-            "forced": prediction.get("forced", False),
+            "started_from_bos": prediction.get("started_from_bos", False),
+            "output_drive": prediction.get("output_drive", 1.0),
             "sentences": prediction.get("sentences", []),
             "explanation_rounds": prediction.get("explanation_rounds", 0),
             "coverage": prediction.get("coverage", 0.0),

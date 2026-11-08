@@ -53,8 +53,8 @@ STOP = frozenset({
     "list", "explain", "describe", "summarize", "name",
 })
 
-MAX_VOCAB = 8192
-MAX_SEEN = 4096
+MAX_VOCAB = 65_536
+MAX_SEEN = 65_536
 NEGATIVE_STARTS = (
     "no", "nope", "wrong", "incorrect", "not correct", "not right",
     "that's wrong", "that is wrong", "that's incorrect", "that is incorrect",
@@ -129,6 +129,7 @@ class TemporalMirrorLM:
         self.rejected: list[str] = []
         self.last_query: str = ""
         self.last_reply: str = ""
+        self.output_drive: float = 1.0
         self.register: TemporalRegister | None = None
         self.runner: LocalRunner | None = None
         self.mth = None
@@ -171,6 +172,7 @@ class TemporalMirrorLM:
         model.rejected = [str(s) for s in (data.get("rejected") or [])][-32:]
         model.last_query = str(data.get("last_query") or "")
         model.last_reply = str(data.get("last_reply") or "")
+        model.output_drive = float(data.get("output_drive", 1.0) or 1.0)
         model.runner = LocalRunner.open(ctx)
         model.register = model.runner.register
         return model
@@ -191,6 +193,7 @@ class TemporalMirrorLM:
             "rejected": self.rejected[-32:],
             "last_query": self.last_query,
             "last_reply": self.last_reply,
+            "output_drive": self.output_drive,
         }
         temp = path.with_suffix(".tmp")
         temp.write_text(json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n",
@@ -238,6 +241,13 @@ class TemporalMirrorLM:
             if word not in STOP and word not in END:
                 self.subject[word] = self.subject.get(word, 0) + (2 if position == 0 else 1)
                 break
+        lowered = sentence.casefold()
+        if any(phrase in lowered for phrase in
+               ("do not know", "don't know", "not know", "unknown",
+                "not learned", "haven't learned")):
+            self.output_drive = max(0.05, self.output_drive * 0.985)
+        else:
+            self.output_drive = min(1.0, self.output_drive + 0.002)
         for index in range(1, len(toks)):
             if toks[index] in (BOS, EOS):
                 continue
@@ -247,6 +257,19 @@ class TemporalMirrorLM:
                 weight = 0.5 ** (index - 1 - back)
                 self._pair(toks[back], toks[index], weight)
         return True
+
+    def question_terms(self, text: str) -> list[str]:
+        return [token for token in tokens(text)
+                if token not in STOP and token not in END and token != BOS]
+
+    def add_context_terms(self, text: str) -> list[str]:
+        """Add question entities to the anchor vocabulary without teaching them."""
+        added = []
+        for token in self.question_terms(text):
+            if token not in self.vocab:
+                self.vocab[token] = fnv_head(token)
+                added.append(token)
+        return added
 
     def observe_memory_rows(self, rows: list[dict], exclude: set[str] | None = None) -> int:
         learned = 0
@@ -373,7 +396,7 @@ class TemporalMirrorLM:
         max_subject = max(self.subject.values() or [1])
         considered = []
         best = None
-        for anchor in anchors:
+        for anchor_index, anchor in enumerate(anchors):
             for candidate in self._beam(anchor, state, beam=beam, max_tokens=max_tokens):
                 words = candidate["words"]
                 if len(words) < 2:
@@ -384,8 +407,9 @@ class TemporalMirrorLM:
                 if seed_stems:
                     score += 0.6 * (len(covered) / len(seed_stems))
                 score += 0.6 * (self.subject.get(anchor, 0) / max_subject)
+                score += 0.12 * (1.0 - anchor_index / max(1, len(anchors)))
                 score += 0.6 if candidate["ended"] else -0.6
-                score -= 0.18 * max(0, len(words) - 4)
+                score -= 0.05 * max(0, len(words) - 14)
                 if len(words) - 1 > 12:
                     score -= 0.3
                 text = _detokenize([w for w in words if w not in (BOS, EOS)])
@@ -409,7 +433,7 @@ class TemporalMirrorLM:
         considered.sort(key=lambda row: -row["score"])
         return best, considered[:8]
 
-    def _complete_sentence(self, words, state, max_extra: int = 6):
+    def _complete_sentence(self, words, state, max_extra: int = 12):
         out = list(words)
         context2 = out[-2] if len(out) >= 2 else None
         context1 = out[-1]
@@ -458,13 +482,21 @@ class TemporalMirrorLM:
         seed = [token for token in raw_seed
                 if token in self.vocab
                 and (allowed_seed is None or token in allowed_seed)]
-        forced = False
+        started_from_bos = False
         if not seed:
             seed = [token for token in raw_seed if token in self.vocab]
-            forced = True
         if not seed:
+            if self.output_drive < 0.35:
+                return {"text": "", "seed": [], "anchor": None, "words": [],
+                        "started_from_bos": False, "output_drive": round(self.output_drive, 4),
+                        "sentences": [], "explanation_rounds": 0, "coverage": 0.0,
+                        "steps": 0, "scored_per_step": len(self.vocab),
+                        "mirror_state": True, "vocabulary": len(self.vocab),
+                        "register_frames": 0,
+                        "register": self.register.status() if self.register else None,
+                        "runner": self.runner.status() if self.runner else None}
             seed = [BOS]
-            forced = True
+            started_from_bos = True
         seed_stems = {stem(token) for token in seed if token != BOS}
         state = self._seed_state([token for token in seed if token != BOS])
         sentences = []
@@ -474,7 +506,7 @@ class TemporalMirrorLM:
         coverage = 0.0
         anchor_used = None
         weighed = []
-        for round_index in range(3):
+        for round_index in range(4):
             budget = max_tokens if round_index == 0 else 8
             best, considered = self._select_sentence(
                 pending, state, seed_stems, beam, budget, query=query,
@@ -552,7 +584,8 @@ class TemporalMirrorLM:
             "seed": seed,
             "anchor": anchor_used,
             "words": used_words,
-            "forced": forced,
+            "started_from_bos": started_from_bos,
+            "output_drive": round(self.output_drive, 4),
             "sentences": sentences,
             "explanation_rounds": rounds,
             "coverage": round(coverage, 4),
@@ -575,6 +608,7 @@ class TemporalMirrorLM:
             return {}
         self.rejected.append(self.last_reply)
         self.rejected = self.rejected[-32:]
+        self.output_drive = max(0.1, self.output_drive * 0.85)
         prediction = self.generate(self.last_query, allowed_seed=None)
         prediction["correction"] = True
         prediction["rejected"] = self.last_reply

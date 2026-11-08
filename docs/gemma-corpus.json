@@ -1,0 +1,5013 @@
+{
+  "architecture": "concept matrix C(256,2)",
+  "leaves": [
+    {
+      "concept": "atom",
+      "count": 6,
+      "degree": 14,
+      "leaf_id": "298a1e7e1f064cd1fc823fa9288b9f3c",
+      "links": [
+        "atom\u0000attribute",
+        "atom\u0000bonding",
+        "atom\u0000capacity",
+        "atom\u0000chemical",
+        "atom\u0000component",
+        "atom\u0000determine",
+        "atom\u0000electron",
+        "atom\u0000electrons",
+        "atom\u0000element",
+        "atom\u0000mass",
+        "atom\u0000member",
+        "atom\u0000nucleus",
+        "atom\u0000part",
+        "atom\u0000valence"
+      ]
+    },
+    {
+      "concept": "member",
+      "count": 4,
+      "degree": 7,
+      "leaf_id": "6362c5bd15fffd3d7ceea63808e3072e",
+      "links": [
+        "atom\u0000member",
+        "chemical\u0000member",
+        "collection\u0000member",
+        "element\u0000member",
+        "larger\u0000member",
+        "member\u0000part",
+        "member\u0000set"
+      ]
+    },
+    {
+      "concept": "chemical",
+      "count": 8,
+      "degree": 20,
+      "leaf_id": "84680e0c5b3215d8463ad6bddd20a98d",
+      "links": [
+        "atom\u0000chemical",
+        "atoms\u0000chemical",
+        "between\u0000chemical",
+        "bond\u0000chemical",
+        "chemical\u0000component",
+        "chemical\u0000consists",
+        "chemical\u0000covalent",
+        "chemical\u0000defined",
+        "chemical\u0000element",
+        "chemical\u0000formed",
+        "chemical\u0000ionic",
+        "chemical\u0000isotopes",
+        "chemical\u0000member",
+        "chemical\u0000molecule",
+        "chemical\u0000more",
+        "chemical\u0000nucleus",
+        "chemical\u0000number",
+        "chemical\u0000one",
+        "chemical\u0000protons",
+        "chemical\u0000substance"
+      ]
+    },
+    {
+      "concept": "element",
+      "count": 15,
+      "degree": 36,
+      "leaf_id": "27f45c2e28d5cccbc3fe01f40fa1b9ac",
+      "links": [
+        "atom\u0000element",
+        "chemical\u0000element",
+        "collection\u0000element",
+        "component\u0000element",
+        "consists\u0000element",
+        "constant\u0000element",
+        "cube\u0000element",
+        "curvature\u0000element",
+        "defined\u0000element",
+        "dimension\u0000element",
+        "direction\u0000element",
+        "element\u0000faces",
+        "element\u0000geometric",
+        "element\u0000has",
+        "element\u0000isotopes",
+        "element\u0000larger",
+        "element\u0000line",
+        "element\u0000logic",
+        "element\u0000magnitude",
+        "element\u0000member",
+        "element\u0000molecule",
+        "element\u0000more",
+        "element\u0000no",
+        "element\u0000nucleus",
+        "element\u0000number",
+        "element\u0000one",
+        "element\u0000plane",
+        "element\u0000point",
+        "element\u0000proposition",
+        "element\u0000protons",
+        "element\u0000set",
+        "element\u0000six",
+        "element\u0000sphere",
+        "element\u0000square",
+        "element\u0000such",
+        "element\u0000vector"
+      ]
+    },
+    {
+      "concept": "component",
+      "count": 6,
+      "degree": 10,
+      "leaf_id": "96177e62c46737531a97cad762bbbbce",
+      "links": [
+        "atom\u0000component",
+        "chemical\u0000component",
+        "component\u0000cube",
+        "component\u0000electron",
+        "component\u0000element",
+        "component\u0000line",
+        "component\u0000molecule",
+        "component\u0000plane",
+        "component\u0000point",
+        "component\u0000substance"
+      ]
+    },
+    {
+      "concept": "molecule",
+      "count": 4,
+      "degree": 8,
+      "leaf_id": "85b2603c4711fabd9b658d1dbf2af633",
+      "links": [
+        "atoms\u0000molecule",
+        "between\u0000molecule",
+        "bond\u0000molecule",
+        "chemical\u0000molecule",
+        "component\u0000molecule",
+        "element\u0000molecule",
+        "formed\u0000molecule",
+        "molecule\u0000substance"
+      ]
+    },
+    {
+      "concept": "formed",
+      "count": 2,
+      "degree": 5,
+      "leaf_id": "d91ef08263c4708c18eb55db37b8bf3b",
+      "links": [
+        "atoms\u0000formed",
+        "between\u0000formed",
+        "bond\u0000formed",
+        "chemical\u0000formed",
+        "formed\u0000molecule"
+      ]
+    },
+    {
+      "concept": "bond",
+      "count": 3,
+      "degree": 7,
+      "leaf_id": "0ca3cc195fb9b048ca1a28adc859e4d5",
+      "links": [
+        "atoms\u0000bond",
+        "between\u0000bond",
+        "bond\u0000chemical",
+        "bond\u0000covalent",
+        "bond\u0000formed",
+        "bond\u0000ionic",
+        "bond\u0000molecule"
+      ]
+    },
+    {
+      "concept": "electron",
+      "count": 4,
+      "degree": 6,
+      "leaf_id": "ab461f3edfcdcdc528e2a1d987fbaa51",
+      "links": [
+        "atom\u0000electron",
+        "charge\u0000electron",
+        "component\u0000electron",
+        "electron\u0000opposite",
+        "electron\u0000part",
+        "electron\u0000proton"
+      ]
+    },
+    {
+      "concept": "part",
+      "count": 6,
+      "degree": 7,
+      "leaf_id": "5465d1d15d00bffc1083d87a994d2780",
+      "links": [
+        "atom\u0000part",
+        "electron\u0000part",
+        "member\u0000part",
+        "nucleus\u0000part",
+        "part\u0000proton",
+        "part\u0000set",
+        "part\u0000subset"
+      ]
+    },
+    {
+      "concept": "proton",
+      "count": 3,
+      "degree": 5,
+      "leaf_id": "bcae61689a2a40fc896db9a6a3d416ee",
+      "links": [
+        "charge\u0000proton",
+        "electron\u0000proton",
+        "nucleus\u0000proton",
+        "opposite\u0000proton",
+        "part\u0000proton"
+      ]
+    },
+    {
+      "concept": "nucleus",
+      "count": 5,
+      "degree": 12,
+      "leaf_id": "1e7c4554ad7a9b9d93bd9ef3fb0744c5",
+      "links": [
+        "atom\u0000nucleus",
+        "attribute\u0000nucleus",
+        "chemical\u0000nucleus",
+        "contains\u0000nucleus",
+        "defined\u0000nucleus",
+        "element\u0000nucleus",
+        "mass\u0000nucleus",
+        "neutrons\u0000nucleus",
+        "nucleus\u0000number",
+        "nucleus\u0000part",
+        "nucleus\u0000proton",
+        "nucleus\u0000protons"
+      ]
+    },
+    {
+      "concept": "heat",
+      "count": 2,
+      "degree": 5,
+      "leaf_id": "1bbb71e8443a0afe41ab24040b80a16a",
+      "links": [
+        "causes\u0000heat",
+        "change\u0000heat",
+        "energy\u0000heat",
+        "form\u0000heat",
+        "heat\u0000volume"
+      ]
+    },
+    {
+      "concept": "form",
+      "count": 1,
+      "degree": 2,
+      "leaf_id": "527c847e55682552a75798c1c10d64e3",
+      "links": [
+        "energy\u0000form",
+        "form\u0000heat"
+      ]
+    },
+    {
+      "concept": "energy",
+      "count": 4,
+      "degree": 11,
+      "leaf_id": "eb134cf6ddfa812dc5111b67d8848371",
+      "links": [
+        "atoms\u0000energy",
+        "attribute\u0000energy",
+        "causes\u0000energy",
+        "change\u0000energy",
+        "energy\u0000form",
+        "energy\u0000heat",
+        "energy\u0000kinetic",
+        "energy\u0000physical",
+        "energy\u0000property",
+        "energy\u0000state",
+        "energy\u0000temperature"
+      ]
+    },
+    {
+      "concept": "pressure",
+      "count": 4,
+      "degree": 11,
+      "leaf_id": "f0eb609d5b742142d0aba77c1cf344f1",
+      "links": [
+        "applied\u0000pressure",
+        "area\u0000pressure",
+        "causes\u0000pressure",
+        "change\u0000pressure",
+        "force\u0000pressure",
+        "increase\u0000pressure",
+        "over\u0000pressure",
+        "plane\u0000pressure",
+        "pressure\u0000result",
+        "pressure\u0000state",
+        "pressure\u0000volume"
+      ]
+    },
+    {
+      "concept": "result",
+      "count": 2,
+      "degree": 6,
+      "leaf_id": "426bb7706fbcc7d6287cbb67a2b66dd1",
+      "links": [
+        "applied\u0000result",
+        "force\u0000result",
+        "gravity\u0000result",
+        "mass\u0000result",
+        "plane\u0000result",
+        "pressure\u0000result"
+      ]
+    },
+    {
+      "concept": "force",
+      "count": 8,
+      "degree": 19,
+      "leaf_id": "5bee21a945b6696af5493f826dd9e8fc",
+      "links": [
+        "acceleration\u0000force",
+        "acting\u0000force",
+        "applied\u0000force",
+        "area\u0000force",
+        "between\u0000force",
+        "caused\u0000force",
+        "causes\u0000force",
+        "charged\u0000force",
+        "electromagnetism\u0000force",
+        "force\u0000gravity",
+        "force\u0000mass",
+        "force\u0000net",
+        "force\u0000over",
+        "force\u0000particles",
+        "force\u0000plane",
+        "force\u0000pressure",
+        "force\u0000representation",
+        "force\u0000result",
+        "force\u0000vector"
+      ]
+    },
+    {
+      "concept": "applied",
+      "count": 2,
+      "degree": 6,
+      "leaf_id": "773bdd00a5a98d7f08cd71c071a9e94b",
+      "links": [
+        "applied\u0000area",
+        "applied\u0000force",
+        "applied\u0000over",
+        "applied\u0000plane",
+        "applied\u0000pressure",
+        "applied\u0000result"
+      ]
+    },
+    {
+      "concept": "plane",
+      "count": 6,
+      "degree": 14,
+      "leaf_id": "9052248d84ef704158b05a61aa07ff58",
+      "links": [
+        "applied\u0000plane",
+        "area\u0000plane",
+        "attribute\u0000plane",
+        "component\u0000plane",
+        "cube\u0000plane",
+        "dimensional\u0000plane",
+        "element\u0000plane",
+        "force\u0000plane",
+        "geometric\u0000plane",
+        "line\u0000plane",
+        "plane\u0000pressure",
+        "plane\u0000result",
+        "plane\u0000two",
+        "plane\u0000volume"
+      ]
+    },
+    {
+      "concept": "point",
+      "count": 4,
+      "degree": 8,
+      "leaf_id": "76910714d48337e5ce95bb566e1a5252",
+      "links": [
+        "component\u0000point",
+        "dimension\u0000point",
+        "element\u0000point",
+        "geometric\u0000point",
+        "has\u0000point",
+        "line\u0000point",
+        "no\u0000point",
+        "point\u0000such"
+      ]
+    },
+    {
+      "concept": "geometric",
+      "count": 8,
+      "degree": 19,
+      "leaf_id": "845439b98e23690876a9bc98dc593d09",
+      "links": [
+        "constant\u0000geometric",
+        "cube\u0000geometric",
+        "curvature\u0000geometric",
+        "dimension\u0000geometric",
+        "direction\u0000geometric",
+        "element\u0000geometric",
+        "faces\u0000geometric",
+        "geometric\u0000has",
+        "geometric\u0000line",
+        "geometric\u0000magnitude",
+        "geometric\u0000no",
+        "geometric\u0000one",
+        "geometric\u0000plane",
+        "geometric\u0000point",
+        "geometric\u0000six",
+        "geometric\u0000sphere",
+        "geometric\u0000square",
+        "geometric\u0000such",
+        "geometric\u0000vector"
+      ]
+    },
+    {
+      "concept": "line",
+      "count": 5,
+      "degree": 11,
+      "leaf_id": "f88924f9e51cf4666fc8eeec092821cf",
+      "links": [
+        "component\u0000line",
+        "dimension\u0000line",
+        "dimensional\u0000line",
+        "element\u0000line",
+        "geometric\u0000line",
+        "has\u0000line",
+        "line\u0000one",
+        "line\u0000plane",
+        "line\u0000point",
+        "line\u0000such",
+        "line\u0000volume"
+      ]
+    },
+    {
+      "concept": "volume",
+      "count": 7,
+      "degree": 14,
+      "leaf_id": "1bf930c87e8e176dc5716feb35365d45",
+      "links": [
+        "attribute\u0000volume",
+        "causes\u0000volume",
+        "change\u0000volume",
+        "dimensional\u0000volume",
+        "heat\u0000volume",
+        "increase\u0000volume",
+        "line\u0000volume",
+        "one\u0000volume",
+        "plane\u0000volume",
+        "pressure\u0000volume",
+        "property\u0000volume",
+        "sphere\u0000volume",
+        "three\u0000volume",
+        "two\u0000volume"
+      ]
+    }
+  ],
+  "organization": {
+    "probes": [
+      {
+        "nanlm": "Chemical bond can be ionic or covalent.",
+        "question": "Is copper a chemical element?"
+      },
+      {
+        "nanlm": "Triangle is a geometric element with six square faces.",
+        "question": "Is a triangle a geometric element?"
+      },
+      {
+        "nanlm": "Sky is a geometric element with six square faces.",
+        "question": "Is the sky a component of the earth?"
+      },
+      {
+        "nanlm": "Hot is the opposite of cold.",
+        "question": "Is hot the opposite of cold?"
+      }
+    ],
+    "saturation": {
+      "average_degree": 6.54,
+      "concepts": 145,
+      "density": 0.017157,
+      "max_degree": 39,
+      "occupied_pairs": 560,
+      "pair_cells": 32640,
+      "roles": {
+        "can": 1,
+        "causes": 6,
+        "component_of": 7,
+        "has": 3,
+        "is": 59,
+        "member_of:chemical": 3,
+        "member_of:geometric": 7,
+        "opposition": 3
+      },
+      "schema": "nanlm.concept-matrix/1",
+      "statements": 94,
+      "top_concepts": [
+        {
+          "concept": "element",
+          "degree": 39
+        },
+        {
+          "concept": "between",
+          "degree": 27
+        },
+        {
+          "concept": "change",
+          "degree": 24
+        },
+        {
+          "concept": "chemical",
+          "degree": 22
+        },
+        {
+          "concept": "attribute",
+          "degree": 22
+        },
+        {
+          "concept": "geometric",
+          "degree": 20
+        },
+        {
+          "concept": "force",
+          "degree": 19
+        },
+        {
+          "concept": "state",
+          "degree": 16
+        },
+        {
+          "concept": "atom",
+          "degree": 14
+        },
+        {
+          "concept": "plane",
+          "degree": 14
+        },
+        {
+          "concept": "volume",
+          "degree": 14
+        },
+        {
+          "concept": "component",
+          "degree": 12
+        }
+      ],
+      "top_pairs": [
+        {
+          "pair": [
+            "element",
+            "geometric"
+          ],
+          "roles": {},
+          "weight": 4.5
+        },
+        {
+          "pair": [
+            "chemical",
+            "element"
+          ],
+          "roles": {},
+          "weight": 3.0
+        },
+        {
+          "pair": [
+            "causes",
+            "change"
+          ],
+          "roles": {},
+          "weight": 2.33
+        },
+        {
+          "pair": [
+            "dimensional",
+            "volume"
+          ],
+          "roles": {},
+          "weight": 1.75
+        },
+        {
+          "pair": [
+            "bond",
+            "chemical"
+          ],
+          "roles": {},
+          "weight": 1.5
+        },
+        {
+          "pair": [
+            "attribute",
+            "mass"
+          ],
+          "roles": {},
+          "weight": 1.5
+        },
+        {
+          "pair": [
+            "part",
+            "set"
+          ],
+          "roles": {},
+          "weight": 1.5
+        },
+        {
+          "pair": [
+            "element",
+            "member"
+          ],
+          "roles": {},
+          "weight": 1.33
+        },
+        {
+          "pair": [
+            "dimension",
+            "space"
+          ],
+          "roles": {},
+          "weight": 1.33
+        },
+        {
+          "pair": [
+            "change",
+            "velocity"
+          ],
+          "roles": {},
+          "weight": 1.33
+        },
+        {
+          "pair": [
+            "chemical",
+            "molecule"
+          ],
+          "roles": {},
+          "weight": 1.25
+        },
+        {
+          "pair": [
+            "component",
+            "molecule"
+          ],
+          "roles": {},
+          "weight": 1.0
+        }
+      ]
+    },
+    "statements": [
+      {
+        "heads": {
+          "head_count": 15,
+          "head_scratchpads": 15,
+          "layers": [
+            "lexical"
+          ],
+          "leaf_count": 83,
+          "leaves": [
+            {
+              "boolean": "NOR",
+              "digest": "5914375792cf45af",
+              "head": 1,
+              "layer": "lexical",
+              "mask": 1,
+              "mirror": 128,
+              "object": "a state of balance between opposing forces",
+              "pair": [
+                1,
+                8
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s+",
+              "reverse_rail": "s-",
+              "role": "is",
+              "subject": "equilibrium",
+              "tags": {
+                "DESCRIPTION": "equilibrium",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "equilibrium",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "5914375792cf45af::assert",
+                "OBJECT:REALM": {
+                  "object": "equilibrium",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "equilibrium",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "a state of balance between opposing forces",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "equilibrium"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "equilibrium",
+                  "query": "is",
+                  "whole": "a state of balance between opposing forces"
+                }
+              },
+              "value": 67592,
+              "whole": "a state of balance between opposing forces"
+            },
+            {
+              "boolean": "OR",
+              "digest": "62b312a2b38bcc89",
+              "head": 8,
+              "layer": "lexical",
+              "mask": 14,
+              "mirror": 16,
+              "object": "a three-dimensional volume",
+              "pair": [
+                8,
+                14
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s+",
+              "reverse_rail": "s-",
+              "role": "is",
+              "subject": "a sphere",
+              "tags": {
+                "DESCRIPTION": "a sphere",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "a sphere",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "62b312a2b38bcc89::assert",
+                "OBJECT:REALM": {
+                  "object": "a sphere",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "a sphere",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "a three-dimensional volume",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "a sphere"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "a sphere",
+                  "query": "is",
+                  "whole": "a three-dimensional volume"
+                }
+              },
+              "value": 527886,
+              "whole": "a three-dimensional volume"
+            },
+            {
+              "boolean": "NOT_A_OR_B",
+              "digest": "d7e6a66286d0f4fa",
+              "head": 2,
+              "layer": "lexical",
+              "mask": 13,
+              "mirror": 64,
+              "object": "a relation of contrast",
+              "pair": [
+                2,
+                6
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s+",
+              "reverse_rail": "s-",
+              "role": "is",
+              "subject": "an opposite",
+              "tags": {
+                "DESCRIPTION": "an opposite",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "an opposite",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "d7e6a66286d0f4fa::assert",
+                "OBJECT:REALM": {
+                  "object": "an opposite",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "an opposite",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "a relation of contrast",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "an opposite"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "an opposite",
+                  "query": "is",
+                  "whole": "a relation of contrast"
+                }
+              },
+              "value": 132614,
+              "whole": "a relation of contrast"
+            },
+            {
+              "boolean": "NOT_A_AND_B",
+              "digest": "620d51612fa6a824",
+              "head": 5,
+              "layer": "lexical",
+              "mask": 2,
+              "mirror": 160,
+              "object": "an attribute of the kinetic energy of atoms",
+              "pair": [
+                4,
+                5
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "is",
+              "subject": "temperature",
+              "tags": {
+                "DESCRIPTION": "temperature",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "temperature",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "620d51612fa6a824::assert",
+                "OBJECT:REALM": {
+                  "object": "temperature",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "temperature",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "an attribute of the kinetic energy of atoms",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "temperature"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "temperature",
+                  "query": "is",
+                  "whole": "an attribute of the kinetic energy of atoms"
+                }
+              },
+              "value": 328708,
+              "whole": "an attribute of the kinetic energy of atoms"
+            },
+            {
+              "boolean": "ZERO",
+              "digest": "8ed7748b6e6fc3d3",
+              "head": 0,
+              "layer": "lexical",
+              "mask": 0,
+              "mirror": 0,
+              "object": "a generalization of a vector",
+              "pair": [
+                0,
+                0
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "is",
+              "subject": "a tensor",
+              "tags": {
+                "DESCRIPTION": "a tensor",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "a tensor",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "8ed7748b6e6fc3d3::assert",
+                "OBJECT:REALM": {
+                  "object": "a tensor",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "a tensor",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "a generalization of a vector",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "a tensor"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "a tensor",
+                  "query": "is",
+                  "whole": "a generalization of a vector"
+                }
+              },
+              "value": 0,
+              "whole": "a generalization of a vector"
+            },
+            {
+              "boolean": "NOT_A",
+              "digest": "dd5de1512127a15e",
+              "head": 7,
+              "layer": "lexical",
+              "mask": 3,
+              "mirror": 224,
+              "object": "a measure of disorder in a state",
+              "pair": [
+                7,
+                11
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s+",
+              "reverse_rail": "s-",
+              "role": "is",
+              "subject": "entropy",
+              "tags": {
+                "DESCRIPTION": "entropy",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "entropy",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "dd5de1512127a15e::assert",
+                "OBJECT:REALM": {
+                  "object": "entropy",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "entropy",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "a measure of disorder in a state",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "entropy"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "entropy",
+                  "query": "is",
+                  "whole": "a measure of disorder in a state"
+                }
+              },
+              "value": 461579,
+              "whole": "a measure of disorder in a state"
+            },
+            {
+              "boolean": "AND",
+              "digest": "01706c3c92f79b49",
+              "head": 4,
+              "layer": "lexical",
+              "mask": 8,
+              "mirror": 32,
+              "object": "a result of force applied to a plane",
+              "pair": [
+                0,
+                4
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "is",
+              "subject": "pressure",
+              "tags": {
+                "DESCRIPTION": "pressure",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "pressure",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "01706c3c92f79b49::assert",
+                "OBJECT:REALM": {
+                  "object": "pressure",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "pressure",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "a result of force applied to a plane",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "pressure"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "pressure",
+                  "query": "is",
+                  "whole": "a result of force applied to a plane"
+                }
+              },
+              "value": 262144,
+              "whole": "a result of force applied to a plane"
+            },
+            {
+              "boolean": "NOT_A_AND_B",
+              "digest": "5a62b533c2ba20de",
+              "head": 7,
+              "layer": "lexical",
+              "mask": 2,
+              "mirror": 224,
+              "object": "a set of values",
+              "pair": [
+                7,
+                15
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s+",
+              "reverse_rail": "s-",
+              "role": "is",
+              "subject": "a field",
+              "tags": {
+                "DESCRIPTION": "a field",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "a field",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "5a62b533c2ba20de::assert",
+                "OBJECT:REALM": {
+                  "object": "a field",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "a field",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "a set of values",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "a field"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "a field",
+                  "query": "is",
+                  "whole": "a set of values"
+                }
+              },
+              "value": 462607,
+              "whole": "a set of values"
+            }
+          ],
+          "magic": "NLMHEAD1",
+          "mapped": true,
+          "masks": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "register_offset": 6539792
+        },
+        "nanlm": "Chemical element consists of one or more isotopes.",
+        "roles": [
+          "member_of:chemical"
+        ],
+        "statement": "Copper is a chemical element."
+      },
+      {
+        "heads": {
+          "head_count": 15,
+          "head_scratchpads": 15,
+          "layers": [
+            "lexical"
+          ],
+          "leaf_count": 84,
+          "leaves": [
+            {
+              "boolean": "NOR",
+              "digest": "5914375792cf45af",
+              "head": 1,
+              "layer": "lexical",
+              "mask": 1,
+              "mirror": 128,
+              "object": "a state of balance between opposing forces",
+              "pair": [
+                1,
+                8
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s+",
+              "reverse_rail": "s-",
+              "role": "is",
+              "subject": "equilibrium",
+              "tags": {
+                "DESCRIPTION": "equilibrium",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "equilibrium",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "5914375792cf45af::assert",
+                "OBJECT:REALM": {
+                  "object": "equilibrium",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "equilibrium",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "a state of balance between opposing forces",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "equilibrium"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "equilibrium",
+                  "query": "is",
+                  "whole": "a state of balance between opposing forces"
+                }
+              },
+              "value": 67592,
+              "whole": "a state of balance between opposing forces"
+            },
+            {
+              "boolean": "OR",
+              "digest": "62b312a2b38bcc89",
+              "head": 8,
+              "layer": "lexical",
+              "mask": 14,
+              "mirror": 16,
+              "object": "a three-dimensional volume",
+              "pair": [
+                8,
+                14
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s+",
+              "reverse_rail": "s-",
+              "role": "is",
+              "subject": "a sphere",
+              "tags": {
+                "DESCRIPTION": "a sphere",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "a sphere",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "62b312a2b38bcc89::assert",
+                "OBJECT:REALM": {
+                  "object": "a sphere",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "a sphere",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "a three-dimensional volume",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "a sphere"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "a sphere",
+                  "query": "is",
+                  "whole": "a three-dimensional volume"
+                }
+              },
+              "value": 527886,
+              "whole": "a three-dimensional volume"
+            },
+            {
+              "boolean": "NOT_A_OR_B",
+              "digest": "d7e6a66286d0f4fa",
+              "head": 2,
+              "layer": "lexical",
+              "mask": 13,
+              "mirror": 64,
+              "object": "a relation of contrast",
+              "pair": [
+                2,
+                6
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s+",
+              "reverse_rail": "s-",
+              "role": "is",
+              "subject": "an opposite",
+              "tags": {
+                "DESCRIPTION": "an opposite",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "an opposite",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "d7e6a66286d0f4fa::assert",
+                "OBJECT:REALM": {
+                  "object": "an opposite",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "an opposite",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "a relation of contrast",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "an opposite"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "an opposite",
+                  "query": "is",
+                  "whole": "a relation of contrast"
+                }
+              },
+              "value": 132614,
+              "whole": "a relation of contrast"
+            },
+            {
+              "boolean": "NOT_A_AND_B",
+              "digest": "620d51612fa6a824",
+              "head": 5,
+              "layer": "lexical",
+              "mask": 2,
+              "mirror": 160,
+              "object": "an attribute of the kinetic energy of atoms",
+              "pair": [
+                4,
+                5
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "is",
+              "subject": "temperature",
+              "tags": {
+                "DESCRIPTION": "temperature",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "temperature",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "620d51612fa6a824::assert",
+                "OBJECT:REALM": {
+                  "object": "temperature",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "temperature",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "an attribute of the kinetic energy of atoms",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "temperature"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "temperature",
+                  "query": "is",
+                  "whole": "an attribute of the kinetic energy of atoms"
+                }
+              },
+              "value": 328708,
+              "whole": "an attribute of the kinetic energy of atoms"
+            },
+            {
+              "boolean": "ZERO",
+              "digest": "8ed7748b6e6fc3d3",
+              "head": 0,
+              "layer": "lexical",
+              "mask": 0,
+              "mirror": 0,
+              "object": "a generalization of a vector",
+              "pair": [
+                0,
+                0
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "is",
+              "subject": "a tensor",
+              "tags": {
+                "DESCRIPTION": "a tensor",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "a tensor",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "8ed7748b6e6fc3d3::assert",
+                "OBJECT:REALM": {
+                  "object": "a tensor",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "a tensor",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "a generalization of a vector",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "a tensor"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "a tensor",
+                  "query": "is",
+                  "whole": "a generalization of a vector"
+                }
+              },
+              "value": 0,
+              "whole": "a generalization of a vector"
+            },
+            {
+              "boolean": "NOT_A",
+              "digest": "dd5de1512127a15e",
+              "head": 7,
+              "layer": "lexical",
+              "mask": 3,
+              "mirror": 224,
+              "object": "a measure of disorder in a state",
+              "pair": [
+                7,
+                11
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s+",
+              "reverse_rail": "s-",
+              "role": "is",
+              "subject": "entropy",
+              "tags": {
+                "DESCRIPTION": "entropy",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "entropy",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "dd5de1512127a15e::assert",
+                "OBJECT:REALM": {
+                  "object": "entropy",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "entropy",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "a measure of disorder in a state",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "entropy"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "entropy",
+                  "query": "is",
+                  "whole": "a measure of disorder in a state"
+                }
+              },
+              "value": 461579,
+              "whole": "a measure of disorder in a state"
+            },
+            {
+              "boolean": "AND",
+              "digest": "01706c3c92f79b49",
+              "head": 4,
+              "layer": "lexical",
+              "mask": 8,
+              "mirror": 32,
+              "object": "a result of force applied to a plane",
+              "pair": [
+                0,
+                4
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "is",
+              "subject": "pressure",
+              "tags": {
+                "DESCRIPTION": "pressure",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "pressure",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "01706c3c92f79b49::assert",
+                "OBJECT:REALM": {
+                  "object": "pressure",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "pressure",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "a result of force applied to a plane",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "pressure"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "pressure",
+                  "query": "is",
+                  "whole": "a result of force applied to a plane"
+                }
+              },
+              "value": 262144,
+              "whole": "a result of force applied to a plane"
+            },
+            {
+              "boolean": "NOT_A_AND_B",
+              "digest": "5a62b533c2ba20de",
+              "head": 7,
+              "layer": "lexical",
+              "mask": 2,
+              "mirror": 224,
+              "object": "a set of values",
+              "pair": [
+                7,
+                15
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s+",
+              "reverse_rail": "s-",
+              "role": "is",
+              "subject": "a field",
+              "tags": {
+                "DESCRIPTION": "a field",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "a field",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "5a62b533c2ba20de::assert",
+                "OBJECT:REALM": {
+                  "object": "a field",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "a field",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "a set of values",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "a field"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "a field",
+                  "query": "is",
+                  "whole": "a set of values"
+                }
+              },
+              "value": 462607,
+              "whole": "a set of values"
+            }
+          ],
+          "magic": "NLMHEAD1",
+          "mapped": true,
+          "masks": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "register_offset": 6539792
+        },
+        "nanlm": "Geometric element such as a point has no dimension.",
+        "roles": [
+          "member_of:geometric"
+        ],
+        "statement": "A triangle is a geometric element."
+      },
+      {
+        "heads": {
+          "head_count": 15,
+          "head_scratchpads": 15,
+          "layers": [
+            "lexical"
+          ],
+          "leaf_count": 85,
+          "leaves": [
+            {
+              "boolean": "OR",
+              "digest": "62b312a2b38bcc89",
+              "head": 8,
+              "layer": "lexical",
+              "mask": 14,
+              "mirror": 16,
+              "object": "a three-dimensional volume",
+              "pair": [
+                8,
+                14
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s+",
+              "reverse_rail": "s-",
+              "role": "is",
+              "subject": "a sphere",
+              "tags": {
+                "DESCRIPTION": "a sphere",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "a sphere",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "62b312a2b38bcc89::assert",
+                "OBJECT:REALM": {
+                  "object": "a sphere",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "a sphere",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "a three-dimensional volume",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "a sphere"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "a sphere",
+                  "query": "is",
+                  "whole": "a three-dimensional volume"
+                }
+              },
+              "value": 527886,
+              "whole": "a three-dimensional volume"
+            },
+            {
+              "boolean": "A_OR_NOT_B",
+              "digest": "6d4a7c24120208b6",
+              "head": 9,
+              "layer": "lexical",
+              "mask": 11,
+              "mirror": 144,
+              "object": "a component of the earth",
+              "pair": [
+                6,
+                9
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "component_of",
+              "subject": "the sky",
+              "tags": {
+                "DESCRIPTION": "the sky",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "component_of",
+                  "description": "the sky",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "6d4a7c24120208b6::assert",
+                "OBJECT:REALM": {
+                  "object": "the sky",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "planet",
+                  "component": "the sky",
+                  "space": "the earth",
+                  "system": "component_of"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "a component of the earth",
+                  "predicate": "is",
+                  "relation": "component_of",
+                  "unit": "the sky"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "the sky",
+                  "query": "is_component_of",
+                  "whole": "the earth"
+                }
+              },
+              "value": 591368,
+              "whole": "the earth"
+            },
+            {
+              "boolean": "NOT_A_OR_B",
+              "digest": "d7e6a66286d0f4fa",
+              "head": 2,
+              "layer": "lexical",
+              "mask": 13,
+              "mirror": 64,
+              "object": "a relation of contrast",
+              "pair": [
+                2,
+                6
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s+",
+              "reverse_rail": "s-",
+              "role": "is",
+              "subject": "an opposite",
+              "tags": {
+                "DESCRIPTION": "an opposite",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "an opposite",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "d7e6a66286d0f4fa::assert",
+                "OBJECT:REALM": {
+                  "object": "an opposite",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "an opposite",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "a relation of contrast",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "an opposite"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "an opposite",
+                  "query": "is",
+                  "whole": "a relation of contrast"
+                }
+              },
+              "value": 132614,
+              "whole": "a relation of contrast"
+            },
+            {
+              "boolean": "NOT_A_AND_B",
+              "digest": "620d51612fa6a824",
+              "head": 5,
+              "layer": "lexical",
+              "mask": 2,
+              "mirror": 160,
+              "object": "an attribute of the kinetic energy of atoms",
+              "pair": [
+                4,
+                5
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "is",
+              "subject": "temperature",
+              "tags": {
+                "DESCRIPTION": "temperature",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "temperature",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "620d51612fa6a824::assert",
+                "OBJECT:REALM": {
+                  "object": "temperature",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "temperature",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "an attribute of the kinetic energy of atoms",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "temperature"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "temperature",
+                  "query": "is",
+                  "whole": "an attribute of the kinetic energy of atoms"
+                }
+              },
+              "value": 328708,
+              "whole": "an attribute of the kinetic energy of atoms"
+            },
+            {
+              "boolean": "ZERO",
+              "digest": "8ed7748b6e6fc3d3",
+              "head": 0,
+              "layer": "lexical",
+              "mask": 0,
+              "mirror": 0,
+              "object": "a generalization of a vector",
+              "pair": [
+                0,
+                0
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "is",
+              "subject": "a tensor",
+              "tags": {
+                "DESCRIPTION": "a tensor",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "a tensor",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "8ed7748b6e6fc3d3::assert",
+                "OBJECT:REALM": {
+                  "object": "a tensor",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "a tensor",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "a generalization of a vector",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "a tensor"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "a tensor",
+                  "query": "is",
+                  "whole": "a generalization of a vector"
+                }
+              },
+              "value": 0,
+              "whole": "a generalization of a vector"
+            },
+            {
+              "boolean": "NOT_A",
+              "digest": "dd5de1512127a15e",
+              "head": 7,
+              "layer": "lexical",
+              "mask": 3,
+              "mirror": 224,
+              "object": "a measure of disorder in a state",
+              "pair": [
+                7,
+                11
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s+",
+              "reverse_rail": "s-",
+              "role": "is",
+              "subject": "entropy",
+              "tags": {
+                "DESCRIPTION": "entropy",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "entropy",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "dd5de1512127a15e::assert",
+                "OBJECT:REALM": {
+                  "object": "entropy",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "entropy",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "a measure of disorder in a state",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "entropy"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "entropy",
+                  "query": "is",
+                  "whole": "a measure of disorder in a state"
+                }
+              },
+              "value": 461579,
+              "whole": "a measure of disorder in a state"
+            },
+            {
+              "boolean": "AND",
+              "digest": "01706c3c92f79b49",
+              "head": 4,
+              "layer": "lexical",
+              "mask": 8,
+              "mirror": 32,
+              "object": "a result of force applied to a plane",
+              "pair": [
+                0,
+                4
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "is",
+              "subject": "pressure",
+              "tags": {
+                "DESCRIPTION": "pressure",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "pressure",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "01706c3c92f79b49::assert",
+                "OBJECT:REALM": {
+                  "object": "pressure",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "pressure",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "a result of force applied to a plane",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "pressure"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "pressure",
+                  "query": "is",
+                  "whole": "a result of force applied to a plane"
+                }
+              },
+              "value": 262144,
+              "whole": "a result of force applied to a plane"
+            },
+            {
+              "boolean": "NOT_A_AND_B",
+              "digest": "5a62b533c2ba20de",
+              "head": 7,
+              "layer": "lexical",
+              "mask": 2,
+              "mirror": 224,
+              "object": "a set of values",
+              "pair": [
+                7,
+                15
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s+",
+              "reverse_rail": "s-",
+              "role": "is",
+              "subject": "a field",
+              "tags": {
+                "DESCRIPTION": "a field",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "a field",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "5a62b533c2ba20de::assert",
+                "OBJECT:REALM": {
+                  "object": "a field",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "a field",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "a set of values",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "a field"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "a field",
+                  "query": "is",
+                  "whole": "a set of values"
+                }
+              },
+              "value": 462607,
+              "whole": "a set of values"
+            }
+          ],
+          "magic": "NLMHEAD1",
+          "mapped": true,
+          "masks": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "register_offset": 6539792
+        },
+        "nanlm": "Component of a chemical bond can be ionic or covalent.",
+        "roles": [
+          "component_of"
+        ],
+        "statement": "The sky is a component of the earth."
+      },
+      {
+        "heads": {
+          "head_count": 15,
+          "head_scratchpads": 15,
+          "layers": [
+            "lexical"
+          ],
+          "leaf_count": 86,
+          "leaves": [
+            {
+              "boolean": "OR",
+              "digest": "62b312a2b38bcc89",
+              "head": 8,
+              "layer": "lexical",
+              "mask": 14,
+              "mirror": 16,
+              "object": "a three-dimensional volume",
+              "pair": [
+                8,
+                14
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s+",
+              "reverse_rail": "s-",
+              "role": "is",
+              "subject": "a sphere",
+              "tags": {
+                "DESCRIPTION": "a sphere",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "a sphere",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "62b312a2b38bcc89::assert",
+                "OBJECT:REALM": {
+                  "object": "a sphere",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "a sphere",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "a three-dimensional volume",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "a sphere"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "a sphere",
+                  "query": "is",
+                  "whole": "a three-dimensional volume"
+                }
+              },
+              "value": 527886,
+              "whole": "a three-dimensional volume"
+            },
+            {
+              "boolean": "A_OR_NOT_B",
+              "digest": "6d4a7c24120208b6",
+              "head": 9,
+              "layer": "lexical",
+              "mask": 11,
+              "mirror": 144,
+              "object": "a component of the earth",
+              "pair": [
+                6,
+                9
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "component_of",
+              "subject": "the sky",
+              "tags": {
+                "DESCRIPTION": "the sky",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "component_of",
+                  "description": "the sky",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "6d4a7c24120208b6::assert",
+                "OBJECT:REALM": {
+                  "object": "the sky",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "planet",
+                  "component": "the sky",
+                  "space": "the earth",
+                  "system": "component_of"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "a component of the earth",
+                  "predicate": "is",
+                  "relation": "component_of",
+                  "unit": "the sky"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "the sky",
+                  "query": "is_component_of",
+                  "whole": "the earth"
+                }
+              },
+              "value": 591368,
+              "whole": "the earth"
+            },
+            {
+              "boolean": "NOT_A_OR_B",
+              "digest": "d7e6a66286d0f4fa",
+              "head": 2,
+              "layer": "lexical",
+              "mask": 13,
+              "mirror": 64,
+              "object": "a relation of contrast",
+              "pair": [
+                2,
+                6
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s+",
+              "reverse_rail": "s-",
+              "role": "is",
+              "subject": "an opposite",
+              "tags": {
+                "DESCRIPTION": "an opposite",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "an opposite",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "d7e6a66286d0f4fa::assert",
+                "OBJECT:REALM": {
+                  "object": "an opposite",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "an opposite",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "a relation of contrast",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "an opposite"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "an opposite",
+                  "query": "is",
+                  "whole": "a relation of contrast"
+                }
+              },
+              "value": 132614,
+              "whole": "a relation of contrast"
+            },
+            {
+              "boolean": "NOT_A_AND_B",
+              "digest": "620d51612fa6a824",
+              "head": 5,
+              "layer": "lexical",
+              "mask": 2,
+              "mirror": 160,
+              "object": "an attribute of the kinetic energy of atoms",
+              "pair": [
+                4,
+                5
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "is",
+              "subject": "temperature",
+              "tags": {
+                "DESCRIPTION": "temperature",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "temperature",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "620d51612fa6a824::assert",
+                "OBJECT:REALM": {
+                  "object": "temperature",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "temperature",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "an attribute of the kinetic energy of atoms",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "temperature"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "temperature",
+                  "query": "is",
+                  "whole": "an attribute of the kinetic energy of atoms"
+                }
+              },
+              "value": 328708,
+              "whole": "an attribute of the kinetic energy of atoms"
+            },
+            {
+              "boolean": "ZERO",
+              "digest": "8ed7748b6e6fc3d3",
+              "head": 0,
+              "layer": "lexical",
+              "mask": 0,
+              "mirror": 0,
+              "object": "a generalization of a vector",
+              "pair": [
+                0,
+                0
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "is",
+              "subject": "a tensor",
+              "tags": {
+                "DESCRIPTION": "a tensor",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "a tensor",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "8ed7748b6e6fc3d3::assert",
+                "OBJECT:REALM": {
+                  "object": "a tensor",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "a tensor",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "a generalization of a vector",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "a tensor"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "a tensor",
+                  "query": "is",
+                  "whole": "a generalization of a vector"
+                }
+              },
+              "value": 0,
+              "whole": "a generalization of a vector"
+            },
+            {
+              "boolean": "NOT_A",
+              "digest": "dd5de1512127a15e",
+              "head": 7,
+              "layer": "lexical",
+              "mask": 3,
+              "mirror": 224,
+              "object": "a measure of disorder in a state",
+              "pair": [
+                7,
+                11
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s+",
+              "reverse_rail": "s-",
+              "role": "is",
+              "subject": "entropy",
+              "tags": {
+                "DESCRIPTION": "entropy",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "entropy",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "dd5de1512127a15e::assert",
+                "OBJECT:REALM": {
+                  "object": "entropy",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "entropy",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "a measure of disorder in a state",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "entropy"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "entropy",
+                  "query": "is",
+                  "whole": "a measure of disorder in a state"
+                }
+              },
+              "value": 461579,
+              "whole": "a measure of disorder in a state"
+            },
+            {
+              "boolean": "AND",
+              "digest": "01706c3c92f79b49",
+              "head": 4,
+              "layer": "lexical",
+              "mask": 8,
+              "mirror": 32,
+              "object": "a result of force applied to a plane",
+              "pair": [
+                0,
+                4
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "is",
+              "subject": "pressure",
+              "tags": {
+                "DESCRIPTION": "pressure",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "pressure",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "01706c3c92f79b49::assert",
+                "OBJECT:REALM": {
+                  "object": "pressure",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "pressure",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "a result of force applied to a plane",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "pressure"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "pressure",
+                  "query": "is",
+                  "whole": "a result of force applied to a plane"
+                }
+              },
+              "value": 262144,
+              "whole": "a result of force applied to a plane"
+            },
+            {
+              "boolean": "NOT_A_AND_B",
+              "digest": "5a62b533c2ba20de",
+              "head": 7,
+              "layer": "lexical",
+              "mask": 2,
+              "mirror": 224,
+              "object": "a set of values",
+              "pair": [
+                7,
+                15
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s+",
+              "reverse_rail": "s-",
+              "role": "is",
+              "subject": "a field",
+              "tags": {
+                "DESCRIPTION": "a field",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "a field",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "5a62b533c2ba20de::assert",
+                "OBJECT:REALM": {
+                  "object": "a field",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "a field",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "a set of values",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "a field"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "a field",
+                  "query": "is",
+                  "whole": "a set of values"
+                }
+              },
+              "value": 462607,
+              "whole": "a set of values"
+            }
+          ],
+          "magic": "NLMHEAD1",
+          "mapped": true,
+          "masks": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "register_offset": 6539792
+        },
+        "nanlm": "Opposite charge of an atom is a geometric element with six square faces.",
+        "roles": [
+          "opposition"
+        ],
+        "statement": "Hot is the opposite of cold."
+      },
+      {
+        "heads": {
+          "head_count": 15,
+          "head_scratchpads": 15,
+          "layers": [
+            "lexical"
+          ],
+          "leaf_count": 87,
+          "leaves": [
+            {
+              "boolean": "OR",
+              "digest": "62b312a2b38bcc89",
+              "head": 8,
+              "layer": "lexical",
+              "mask": 14,
+              "mirror": 16,
+              "object": "a three-dimensional volume",
+              "pair": [
+                8,
+                14
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s+",
+              "reverse_rail": "s-",
+              "role": "is",
+              "subject": "a sphere",
+              "tags": {
+                "DESCRIPTION": "a sphere",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "a sphere",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "62b312a2b38bcc89::assert",
+                "OBJECT:REALM": {
+                  "object": "a sphere",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "a sphere",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "a three-dimensional volume",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "a sphere"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "a sphere",
+                  "query": "is",
+                  "whole": "a three-dimensional volume"
+                }
+              },
+              "value": 527886,
+              "whole": "a three-dimensional volume"
+            },
+            {
+              "boolean": "A_OR_NOT_B",
+              "digest": "6d4a7c24120208b6",
+              "head": 9,
+              "layer": "lexical",
+              "mask": 11,
+              "mirror": 144,
+              "object": "a component of the earth",
+              "pair": [
+                6,
+                9
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "component_of",
+              "subject": "the sky",
+              "tags": {
+                "DESCRIPTION": "the sky",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "component_of",
+                  "description": "the sky",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "6d4a7c24120208b6::assert",
+                "OBJECT:REALM": {
+                  "object": "the sky",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "planet",
+                  "component": "the sky",
+                  "space": "the earth",
+                  "system": "component_of"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "a component of the earth",
+                  "predicate": "is",
+                  "relation": "component_of",
+                  "unit": "the sky"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "the sky",
+                  "query": "is_component_of",
+                  "whole": "the earth"
+                }
+              },
+              "value": 591368,
+              "whole": "the earth"
+            },
+            {
+              "boolean": "NOT_A_OR_B",
+              "digest": "d7e6a66286d0f4fa",
+              "head": 2,
+              "layer": "lexical",
+              "mask": 13,
+              "mirror": 64,
+              "object": "a relation of contrast",
+              "pair": [
+                2,
+                6
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s+",
+              "reverse_rail": "s-",
+              "role": "is",
+              "subject": "an opposite",
+              "tags": {
+                "DESCRIPTION": "an opposite",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "an opposite",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "d7e6a66286d0f4fa::assert",
+                "OBJECT:REALM": {
+                  "object": "an opposite",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "an opposite",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "a relation of contrast",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "an opposite"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "an opposite",
+                  "query": "is",
+                  "whole": "a relation of contrast"
+                }
+              },
+              "value": 132614,
+              "whole": "a relation of contrast"
+            },
+            {
+              "boolean": "NOT_A_AND_B",
+              "digest": "620d51612fa6a824",
+              "head": 5,
+              "layer": "lexical",
+              "mask": 2,
+              "mirror": 160,
+              "object": "an attribute of the kinetic energy of atoms",
+              "pair": [
+                4,
+                5
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "is",
+              "subject": "temperature",
+              "tags": {
+                "DESCRIPTION": "temperature",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "temperature",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "620d51612fa6a824::assert",
+                "OBJECT:REALM": {
+                  "object": "temperature",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "temperature",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "an attribute of the kinetic energy of atoms",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "temperature"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "temperature",
+                  "query": "is",
+                  "whole": "an attribute of the kinetic energy of atoms"
+                }
+              },
+              "value": 328708,
+              "whole": "an attribute of the kinetic energy of atoms"
+            },
+            {
+              "boolean": "ZERO",
+              "digest": "8ed7748b6e6fc3d3",
+              "head": 0,
+              "layer": "lexical",
+              "mask": 0,
+              "mirror": 0,
+              "object": "a generalization of a vector",
+              "pair": [
+                0,
+                0
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "is",
+              "subject": "a tensor",
+              "tags": {
+                "DESCRIPTION": "a tensor",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "a tensor",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "8ed7748b6e6fc3d3::assert",
+                "OBJECT:REALM": {
+                  "object": "a tensor",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "a tensor",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "a generalization of a vector",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "a tensor"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "a tensor",
+                  "query": "is",
+                  "whole": "a generalization of a vector"
+                }
+              },
+              "value": 0,
+              "whole": "a generalization of a vector"
+            },
+            {
+              "boolean": "NOT_A",
+              "digest": "dd5de1512127a15e",
+              "head": 7,
+              "layer": "lexical",
+              "mask": 3,
+              "mirror": 224,
+              "object": "a measure of disorder in a state",
+              "pair": [
+                7,
+                11
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s+",
+              "reverse_rail": "s-",
+              "role": "is",
+              "subject": "entropy",
+              "tags": {
+                "DESCRIPTION": "entropy",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "entropy",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "dd5de1512127a15e::assert",
+                "OBJECT:REALM": {
+                  "object": "entropy",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "entropy",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "a measure of disorder in a state",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "entropy"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "entropy",
+                  "query": "is",
+                  "whole": "a measure of disorder in a state"
+                }
+              },
+              "value": 461579,
+              "whole": "a measure of disorder in a state"
+            },
+            {
+              "boolean": "AND",
+              "digest": "01706c3c92f79b49",
+              "head": 4,
+              "layer": "lexical",
+              "mask": 8,
+              "mirror": 32,
+              "object": "a result of force applied to a plane",
+              "pair": [
+                0,
+                4
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "is",
+              "subject": "pressure",
+              "tags": {
+                "DESCRIPTION": "pressure",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "pressure",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "01706c3c92f79b49::assert",
+                "OBJECT:REALM": {
+                  "object": "pressure",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "pressure",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "a result of force applied to a plane",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "pressure"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "pressure",
+                  "query": "is",
+                  "whole": "a result of force applied to a plane"
+                }
+              },
+              "value": 262144,
+              "whole": "a result of force applied to a plane"
+            },
+            {
+              "boolean": "NOT_A_AND_B",
+              "digest": "5a62b533c2ba20de",
+              "head": 7,
+              "layer": "lexical",
+              "mask": 2,
+              "mirror": 224,
+              "object": "a set of values",
+              "pair": [
+                7,
+                15
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s+",
+              "reverse_rail": "s-",
+              "role": "is",
+              "subject": "a field",
+              "tags": {
+                "DESCRIPTION": "a field",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "a field",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "5a62b533c2ba20de::assert",
+                "OBJECT:REALM": {
+                  "object": "a field",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "a field",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "a set of values",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "a field"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "a field",
+                  "query": "is",
+                  "whole": "a set of values"
+                }
+              },
+              "value": 462607,
+              "whole": "a set of values"
+            }
+          ],
+          "magic": "NLMHEAD1",
+          "mapped": true,
+          "masks": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "register_offset": 6539792
+        },
+        "nanlm": "Chemical bond can be ionic or more isotopes.",
+        "roles": [
+          "member_of:chemical"
+        ],
+        "statement": "Gold is a chemical element."
+      }
+    ]
+  },
+  "round_1": {
+    "known": [
+      {
+        "expected": [
+          "electron",
+          "nucleus"
+        ],
+        "hit": false,
+        "nanlm": "Part of an atom is a change in position over time.",
+        "question": "What is a part of an atom?"
+      },
+      {
+        "expected": [
+          "point",
+          "line",
+          "plane"
+        ],
+        "hit": false,
+        "nanlm": "Geometric element is a part of an atom.",
+        "question": "What is a geometric element?"
+      },
+      {
+        "expected": [
+          "force"
+        ],
+        "hit": false,
+        "nanlm": "Causes a change in position over time.",
+        "question": "What causes acceleration?"
+      },
+      {
+        "expected": [
+          "heat"
+        ],
+        "hit": false,
+        "nanlm": "Energy causes a change in position over time.",
+        "question": "What is a form of energy?"
+      },
+      {
+        "expected": [
+          "gravity"
+        ],
+        "hit": false,
+        "nanlm": "Mass is an attribute of space.",
+        "question": "What is a result of mass?"
+      },
+      {
+        "expected": [
+          "time"
+        ],
+        "hit": false,
+        "nanlm": "Dimension is an attribute of space.",
+        "question": "What is a dimension of space?"
+      },
+      {
+        "expected": [
+          "causality"
+        ],
+        "hit": false,
+        "nanlm": "Relation between a cause and an effect.",
+        "question": "What is a relation between a cause and an effect?"
+      },
+      {
+        "expected": [
+          "volume",
+          "symmetry"
+        ],
+        "hit": false,
+        "nanlm": "Sphere is a part of an atom.",
+        "question": "What is a property of a sphere?"
+      },
+      {
+        "expected": [
+          "point"
+        ],
+        "hit": false,
+        "member": "point",
+        "nanlm": "Geometric element is a change in state.",
+        "question": "Which elements are geometric?"
+      },
+      {
+        "expected": [
+          "atom"
+        ],
+        "hit": true,
+        "member": "atom",
+        "nanlm": "Chemical element is a part of an atom.",
+        "question": "Which elements are chemical?"
+      },
+      {
+        "expected": [
+          "velocity"
+        ],
+        "hit": false,
+        "member": "velocity",
+        "nanlm": "Change in state is a part of an atom.",
+        "question": "Which concepts relate to change?"
+      },
+      {
+        "expected": [
+          "subset"
+        ],
+        "hit": false,
+        "member": "subset",
+        "nanlm": "Concepts is a part of an atom is a change in state.",
+        "question": "Which concepts relate to sets?"
+      },
+      {
+        "expected": [
+          "gravity"
+        ],
+        "hit": false,
+        "member": "gravity",
+        "nanlm": "Concepts is a part of an atom is a change in volume.",
+        "question": "Which concepts are forces?"
+      },
+      {
+        "expected": [
+          "mass"
+        ],
+        "hit": false,
+        "member": "mass",
+        "nanlm": "Attributes a part of an atom is a change in state.",
+        "question": "Which concepts are attributes?"
+      }
+    ],
+    "plan": {
+      "category_probes": [
+        {
+          "expected": [
+            "point"
+          ],
+          "member": "point",
+          "question": "Which elements are geometric?"
+        },
+        {
+          "expected": [
+            "atom"
+          ],
+          "member": "atom",
+          "question": "Which elements are chemical?"
+        },
+        {
+          "expected": [
+            "velocity"
+          ],
+          "member": "velocity",
+          "question": "Which concepts relate to change?"
+        },
+        {
+          "expected": [
+            "subset"
+          ],
+          "member": "subset",
+          "question": "Which concepts relate to sets?"
+        },
+        {
+          "expected": [
+            "gravity"
+          ],
+          "member": "gravity",
+          "question": "Which concepts are forces?"
+        },
+        {
+          "expected": [
+            "mass"
+          ],
+          "member": "mass",
+          "question": "Which concepts are attributes?"
+        }
+      ],
+      "concepts": [
+        "atom",
+        "element",
+        "molecule",
+        "bond",
+        "electron",
+        "proton",
+        "nucleus",
+        "energy",
+        "heat",
+        "pressure",
+        "point",
+        "line",
+        "plane",
+        "volume",
+        "sphere",
+        "angle",
+        "dimension",
+        "symmetry",
+        "vector",
+        "field",
+        "force",
+        "gravity",
+        "mass",
+        "acceleration",
+        "velocity",
+        "time",
+        "space",
+        "entropy",
+        "causality",
+        "effect",
+        "cause",
+        "logic",
+        "set",
+        "member",
+        "subset",
+        "relation",
+        "attribute",
+        "identity",
+        "opposite",
+        "state",
+        "change"
+      ],
+      "known_probes": [
+        {
+          "expected": [
+            "electron",
+            "nucleus"
+          ],
+          "question": "What is a part of an atom?"
+        },
+        {
+          "expected": [
+            "point",
+            "line",
+            "plane"
+          ],
+          "question": "What is a geometric element?"
+        },
+        {
+          "expected": [
+            "force"
+          ],
+          "question": "What causes acceleration?"
+        },
+        {
+          "expected": [
+            "heat"
+          ],
+          "question": "What is a form of energy?"
+        },
+        {
+          "expected": [
+            "gravity"
+          ],
+          "question": "What is a result of mass?"
+        },
+        {
+          "expected": [
+            "time"
+          ],
+          "question": "What is a dimension of space?"
+        },
+        {
+          "expected": [
+            "causality"
+          ],
+          "question": "What is a relation between a cause and an effect?"
+        },
+        {
+          "expected": [
+            "volume",
+            "symmetry"
+          ],
+          "question": "What is a property of a sphere?"
+        }
+      ],
+      "reasoning": "To maximize matrix density in a 32,640-cell space, I have selected 42 concepts that overlap across domains. By using polysemous terms like 'element' and 'field', the model is forced to distinguish meaning via the surrounding pair-cluster (superposition). The relations are designed to create a dense web of associations: physical properties link to chemical elements, which link to geometric structures, which link to abstract logic. This ensures that no concept is an island, forcing the identity of a concept to be defined by its relational coordinates rather than a static index.",
+      "statements": [
+        "An atom is a member of a chemical element.",
+        "A chemical element is a component of a molecule.",
+        "A molecule is formed by a chemical bond.",
+        "An electron is a part of an atom.",
+        "A proton is a part of a nucleus.",
+        "A nucleus is a part of an atom.",
+        "Heat is a form of energy.",
+        "Pressure is a result of force applied to a plane.",
+        "A point is a geometric element.",
+        "A line is a geometric element.",
+        "A plane is a geometric element.",
+        "A volume is a property of a sphere.",
+        "A sphere is a three-dimensional volume.",
+        "An angle is a relation between two lines.",
+        "A dimension is an attribute of space.",
+        "Symmetry is an attribute of a sphere.",
+        "A vector is a representation of force.",
+        "A field is a region of space.",
+        "A field is a set of values.",
+        "Gravity is a force.",
+        "Gravity is a result of mass.",
+        "Mass is an attribute of an atom.",
+        "Acceleration is a change in velocity.",
+        "Velocity is a change in position over time.",
+        "Time is a dimension of space.",
+        "Entropy is a measure of disorder in a state.",
+        "Causality is the relation between a cause and an effect.",
+        "A cause produces an effect.",
+        "Logic is a set of relations.",
+        "A member is a part of a set.",
+        "A subset is a part of a set.",
+        "An attribute is a property of an identity.",
+        "An opposite is a relation of contrast.",
+        "A state is a condition of a system.",
+        "Change is a transition between states.",
+        "Energy causes a change in state.",
+        "Heat causes a change in volume.",
+        "Pressure causes a change in state.",
+        "An electron is an opposite of a proton in charge.",
+        "A point has no dimension.",
+        "A line is a one-dimensional volume.",
+        "A plane is a two-dimensional volume.",
+        "Force causes acceleration."
+      ],
+      "unknown_probes": [
+        "Does a molecule have a dimension?",
+        "Is entropy a geometric element?",
+        "Can a vector be a member of a set?",
+        "Does a proton cause gravity?",
+        "Is a line an opposite of a sphere?",
+        "Does logic have a volume?"
+      ]
+    },
+    "saturation": {
+      "average_degree": 4.76,
+      "concepts": 74,
+      "density": 0.006648,
+      "max_degree": 14,
+      "occupied_pairs": 217,
+      "pair_cells": 32640,
+      "roles": {
+        "causes": 4,
+        "component_of": 1,
+        "has": 1,
+        "is": 31,
+        "member_of:chemical": 1,
+        "member_of:geometric": 3,
+        "opposition": 1
+      },
+      "schema": "nanlm.concept-matrix/1",
+      "statements": 43,
+      "top_concepts": [
+        {
+          "concept": "change",
+          "degree": 14
+        },
+        {
+          "concept": "volume",
+          "degree": 11
+        },
+        {
+          "concept": "between",
+          "degree": 10
+        },
+        {
+          "concept": "element",
+          "degree": 9
+        },
+        {
+          "concept": "force",
+          "degree": 9
+        },
+        {
+          "concept": "plane",
+          "degree": 9
+        },
+        {
+          "concept": "relation",
+          "degree": 9
+        },
+        {
+          "concept": "state",
+          "degree": 9
+        },
+        {
+          "concept": "atom",
+          "degree": 8
+        },
+        {
+          "concept": "attribute",
+          "degree": 8
+        },
+        {
+          "concept": "causes",
+          "degree": 8
+        },
+        {
+          "concept": "chemical",
+          "degree": 7
+        }
+      ],
+      "top_pairs": [
+        {
+          "pair": [
+            "element",
+            "geometric"
+          ],
+          "roles": {},
+          "weight": 1.5
+        },
+        {
+          "pair": [
+            "dimensional",
+            "volume"
+          ],
+          "roles": {},
+          "weight": 1.5
+        },
+        {
+          "pair": [
+            "causes",
+            "change"
+          ],
+          "roles": {},
+          "weight": 1.5
+        },
+        {
+          "pair": [
+            "chemical",
+            "element"
+          ],
+          "roles": {},
+          "weight": 1.0
+        },
+        {
+          "pair": [
+            "atom",
+            "part"
+          ],
+          "roles": {},
+          "weight": 1.0
+        },
+        {
+          "pair": [
+            "nucleus",
+            "part"
+          ],
+          "roles": {},
+          "weight": 1.0
+        },
+        {
+          "pair": [
+            "between",
+            "relation"
+          ],
+          "roles": {},
+          "weight": 1.0
+        },
+        {
+          "pair": [
+            "change",
+            "velocity"
+          ],
+          "roles": {},
+          "weight": 1.0
+        },
+        {
+          "pair": [
+            "part",
+            "set"
+          ],
+          "roles": {},
+          "weight": 1.0
+        },
+        {
+          "pair": [
+            "change",
+            "state"
+          ],
+          "roles": {},
+          "weight": 1.0
+        },
+        {
+          "pair": [
+            "dimension",
+            "space"
+          ],
+          "roles": {},
+          "weight": 0.83
+        },
+        {
+          "pair": [
+            "cause",
+            "effect"
+          ],
+          "roles": {},
+          "weight": 0.83
+        }
+      ]
+    },
+    "statements": [
+      {
+        "nanlm": "Atom is a member of a chemical element.",
+        "relations": [
+          {
+            "object": "a member of a chemical element",
+            "predicate": "is",
+            "role": "member_of:chemical",
+            "subject": "An atom"
+          }
+        ],
+        "statement": "An atom is a member of a chemical element."
+      },
+      {
+        "nanlm": "Chemical element is a component of a molecule.",
+        "relations": [
+          {
+            "object": "a component of a molecule",
+            "predicate": "is",
+            "role": "component_of",
+            "subject": "A chemical element"
+          }
+        ],
+        "statement": "A chemical element is a component of a molecule."
+      },
+      {
+        "nanlm": "Molecule is formed by a chemical bond.",
+        "relations": [
+          {
+            "object": "formed by a chemical bond",
+            "predicate": "is",
+            "role": "is",
+            "subject": "A molecule"
+          }
+        ],
+        "statement": "A molecule is formed by a chemical bond."
+      },
+      {
+        "nanlm": "Atom is a part of an atom.",
+        "relations": [
+          {
+            "object": "a part of an atom",
+            "predicate": "is",
+            "role": "is",
+            "subject": "An electron"
+          }
+        ],
+        "statement": "An electron is a part of an atom."
+      },
+      {
+        "nanlm": "Part of a molecule is formed by a chemical bond.",
+        "relations": [
+          {
+            "object": "a part of a nucleus",
+            "predicate": "is",
+            "role": "is",
+            "subject": "A proton"
+          }
+        ],
+        "statement": "A proton is a part of a nucleus."
+      },
+      {
+        "nanlm": "Nucleus is a part of an atom.",
+        "relations": [
+          {
+            "object": "a part of an atom",
+            "predicate": "is",
+            "role": "is",
+            "subject": "A nucleus"
+          }
+        ],
+        "statement": "A nucleus is a part of an atom."
+      },
+      {
+        "nanlm": "Heat is a form of energy.",
+        "relations": [
+          {
+            "object": "a form of energy",
+            "predicate": "is",
+            "role": "is",
+            "subject": "Heat"
+          }
+        ],
+        "statement": "Heat is a form of energy."
+      },
+      {
+        "nanlm": "Pressure is a result of force applied to a plane.",
+        "relations": [
+          {
+            "object": "a result of force applied to a plane",
+            "predicate": "is",
+            "role": "is",
+            "subject": "Pressure"
+          }
+        ],
+        "statement": "Pressure is a result of force applied to a plane."
+      },
+      {
+        "nanlm": "Element is a part of an atom.",
+        "relations": [
+          {
+            "object": "a geometric element",
+            "predicate": "is",
+            "role": "member_of:geometric",
+            "subject": "A point"
+          }
+        ],
+        "statement": "A point is a geometric element."
+      },
+      {
+        "nanlm": "Geometric element is a result of force applied to a plane.",
+        "relations": [
+          {
+            "object": "a geometric element",
+            "predicate": "is",
+            "role": "member_of:geometric",
+            "subject": "A line"
+          }
+        ],
+        "statement": "A line is a geometric element."
+      },
+      {
+        "nanlm": "Plane is a geometric element.",
+        "relations": [
+          {
+            "object": "a geometric element",
+            "predicate": "is",
+            "role": "member_of:geometric",
+            "subject": "A plane"
+          }
+        ],
+        "statement": "A plane is a geometric element."
+      },
+      {
+        "nanlm": "Volume is a part of an atom.",
+        "relations": [
+          {
+            "object": "a property of a sphere",
+            "predicate": "is",
+            "role": "is",
+            "subject": "A volume"
+          }
+        ],
+        "statement": "A volume is a property of a sphere."
+      },
+      {
+        "nanlm": "Sphere is a three dimensional volume.",
+        "relations": [
+          {
+            "object": "a three-dimensional volume",
+            "predicate": "is",
+            "role": "is",
+            "subject": "A sphere"
+          }
+        ],
+        "statement": "A sphere is a three-dimensional volume."
+      },
+      {
+        "nanlm": "Angle is a part of an atom is a relation between two lines.",
+        "relations": [
+          {
+            "object": "a relation between two lines",
+            "predicate": "is",
+            "role": "is",
+            "subject": "An angle"
+          }
+        ],
+        "statement": "An angle is a relation between two lines."
+      },
+      {
+        "nanlm": "Dimension is an attribute of space.",
+        "relations": [
+          {
+            "object": "an attribute of space",
+            "predicate": "is",
+            "role": "is",
+            "subject": "A dimension"
+          }
+        ],
+        "statement": "A dimension is an attribute of space."
+      },
+      {
+        "nanlm": "Sphere is a part of an attribute of space.",
+        "relations": [
+          {
+            "object": "an attribute of a sphere",
+            "predicate": "is",
+            "role": "is",
+            "subject": "Symmetry"
+          }
+        ],
+        "statement": "Symmetry is an attribute of a sphere."
+      },
+      {
+        "nanlm": "Force applied to a plane.",
+        "relations": [
+          {
+            "object": "a representation of force",
+            "predicate": "is",
+            "role": "is",
+            "subject": "A vector"
+          }
+        ],
+        "statement": "A vector is a representation of force."
+      },
+      {
+        "nanlm": "Space a part of an atom is a geometric element.",
+        "relations": [
+          {
+            "object": "a region of space",
+            "predicate": "is",
+            "role": "is",
+            "subject": "A field"
+          }
+        ],
+        "statement": "A field is a region of space."
+      },
+      {
+        "nanlm": "Field is a part of an atom.",
+        "relations": [
+          {
+            "object": "a set of values",
+            "predicate": "is",
+            "role": "is",
+            "subject": "A field"
+          }
+        ],
+        "statement": "A field is a set of values."
+      },
+      {
+        "nanlm": "Force applied to a plane is a geometric element.",
+        "relations": [
+          {
+            "object": "a force",
+            "predicate": "is",
+            "role": "is",
+            "subject": "Gravity"
+          }
+        ],
+        "statement": "Gravity is a force."
+      },
+      {
+        "nanlm": "Gravity is a result of mass.",
+        "relations": [
+          {
+            "object": "a result of mass",
+            "predicate": "is",
+            "role": "is",
+            "subject": "Gravity"
+          }
+        ],
+        "statement": "Gravity is a result of mass."
+      },
+      {
+        "nanlm": "Mass is an attribute of an atom.",
+        "relations": [
+          {
+            "object": "an attribute of an atom",
+            "predicate": "is",
+            "role": "is",
+            "subject": "Mass"
+          }
+        ],
+        "statement": "Mass is an attribute of an atom."
+      },
+      {
+        "nanlm": "Change in velocity.",
+        "relations": [
+          {
+            "object": "a change in velocity",
+            "predicate": "is",
+            "role": "is",
+            "subject": "Acceleration"
+          }
+        ],
+        "statement": "Acceleration is a change in velocity."
+      },
+      {
+        "nanlm": "Velocity is a change in position over time.",
+        "relations": [
+          {
+            "object": "a change in position over time",
+            "predicate": "is",
+            "role": "is",
+            "subject": "Velocity"
+          }
+        ],
+        "statement": "Velocity is a change in position over time."
+      },
+      {
+        "nanlm": "Dimension is an attribute of space.",
+        "relations": [
+          {
+            "object": "a dimension of space",
+            "predicate": "is",
+            "role": "is",
+            "subject": "Time"
+          }
+        ],
+        "statement": "Time is a dimension of space."
+      },
+      {
+        "nanlm": "Measure of disorder in a state.",
+        "relations": [
+          {
+            "object": "a measure of disorder in a state",
+            "predicate": "is",
+            "role": "is",
+            "subject": "Entropy"
+          }
+        ],
+        "statement": "Entropy is a measure of disorder in a state."
+      },
+      {
+        "nanlm": "Relation between a cause and an effect.",
+        "relations": [
+          {
+            "object": "the relation between a cause and an effect",
+            "predicate": "is",
+            "role": "is",
+            "subject": "Causality"
+          }
+        ],
+        "statement": "Causality is the relation between a cause and an effect."
+      },
+      {
+        "nanlm": "Cause and an effect.",
+        "relations": [],
+        "statement": "A cause produces an effect."
+      },
+      {
+        "nanlm": "Set of a molecule is formed by a chemical element.",
+        "relations": [
+          {
+            "object": "a set of relations",
+            "predicate": "is",
+            "role": "is",
+            "subject": "Logic"
+          }
+        ],
+        "statement": "Logic is a set of relations."
+      },
+      {
+        "nanlm": "Member is a part of an atom.",
+        "relations": [
+          {
+            "object": "a part of a set",
+            "predicate": "is",
+            "role": "is",
+            "subject": "A member"
+          }
+        ],
+        "statement": "A member is a part of a set."
+      },
+      {
+        "nanlm": "Part of an atom is a set of relations.",
+        "relations": [
+          {
+            "object": "a part of a set",
+            "predicate": "is",
+            "role": "is",
+            "subject": "A subset"
+          }
+        ],
+        "statement": "A subset is a part of a set."
+      },
+      {
+        "nanlm": "Attribute of an atom is a geometric element.",
+        "relations": [
+          {
+            "object": "a property of an identity",
+            "predicate": "is",
+            "role": "is",
+            "subject": "An attribute"
+          }
+        ],
+        "statement": "An attribute is a property of an identity."
+      },
+      {
+        "nanlm": "Relation between a cause produces an effect.",
+        "relations": [
+          {
+            "object": "a relation of contrast",
+            "predicate": "is",
+            "role": "is",
+            "subject": "An opposite"
+          }
+        ],
+        "statement": "An opposite is a relation of contrast."
+      },
+      {
+        "nanlm": "State is a part of an atom.",
+        "relations": [
+          {
+            "object": "a condition of a system",
+            "predicate": "is",
+            "role": "is",
+            "subject": "A state"
+          }
+        ],
+        "statement": "A state is a condition of a system."
+      },
+      {
+        "nanlm": "Change in position over time.",
+        "relations": [
+          {
+            "object": "a transition between states",
+            "predicate": "is",
+            "role": "is",
+            "subject": "Change"
+          }
+        ],
+        "statement": "Change is a transition between states."
+      },
+      {
+        "nanlm": "Energy causes a change in state.",
+        "relations": [
+          {
+            "object": "a change in state",
+            "predicate": "causes",
+            "role": "causes",
+            "subject": "Energy"
+          }
+        ],
+        "statement": "Energy causes a change in state."
+      },
+      {
+        "nanlm": "Heat causes a change in volume.",
+        "relations": [
+          {
+            "object": "a change in volume",
+            "predicate": "causes",
+            "role": "causes",
+            "subject": "Heat"
+          }
+        ],
+        "statement": "Heat causes a change in volume."
+      },
+      {
+        "nanlm": "Pressure causes a change in state.",
+        "relations": [
+          {
+            "object": "a change in state",
+            "predicate": "causes",
+            "role": "causes",
+            "subject": "Pressure"
+          }
+        ],
+        "statement": "Pressure causes a change in state."
+      },
+      {
+        "nanlm": "Electron is a part of an atom.",
+        "relations": [
+          {
+            "object": "an opposite of a proton in charge",
+            "predicate": "is",
+            "role": "opposition",
+            "subject": "An electron"
+          }
+        ],
+        "statement": "An electron is an opposite of a proton in charge."
+      },
+      {
+        "nanlm": "Point has no dimension.",
+        "relations": [
+          {
+            "object": "no dimension",
+            "predicate": "has",
+            "role": "has",
+            "subject": "A point"
+          }
+        ],
+        "statement": "A point has no dimension."
+      },
+      {
+        "nanlm": "Line is a change in volume.",
+        "relations": [
+          {
+            "object": "a one-dimensional volume",
+            "predicate": "is",
+            "role": "is",
+            "subject": "A line"
+          }
+        ],
+        "statement": "A line is a one-dimensional volume."
+      },
+      {
+        "nanlm": "Two dimensional volume.",
+        "relations": [
+          {
+            "object": "a two-dimensional volume",
+            "predicate": "is",
+            "role": "is",
+            "subject": "A plane"
+          }
+        ],
+        "statement": "A plane is a two-dimensional volume."
+      },
+      {
+        "nanlm": "Force causes a change in state.",
+        "relations": [
+          {
+            "object": "acceleration",
+            "predicate": "causes",
+            "role": "causes",
+            "subject": "Force"
+          }
+        ],
+        "statement": "Force causes acceleration."
+      }
+    ],
+    "unknown": [
+      {
+        "abstained": false,
+        "nanlm": "Molecule is formed by a chemical bond.",
+        "question": "Does a molecule have a dimension?"
+      },
+      {
+        "abstained": false,
+        "nanlm": "Entropy is a geometric element.",
+        "question": "Is entropy a geometric element?"
+      },
+      {
+        "abstained": false,
+        "nanlm": "Vector is a part of an atom.",
+        "question": "Can a vector be a member of a set?"
+      },
+      {
+        "abstained": false,
+        "nanlm": "Gravity is a part of an atom.",
+        "question": "Does a proton cause gravity?"
+      },
+      {
+        "abstained": false,
+        "nanlm": "Line is a part of an atom.",
+        "question": "Is a line an opposite of a sphere?"
+      },
+      {
+        "abstained": false,
+        "nanlm": "Logic is a part of an atom.",
+        "question": "Does logic have a volume?"
+      }
+    ]
+  },
+  "round_2": {
+    "known": [
+      {
+        "expected": [
+          "proton",
+          "nucleus"
+        ],
+        "hit": false,
+        "nanlm": "Chemical element consists of one or more isotopes.",
+        "question": "What defines a chemical element?"
+      },
+      {
+        "expected": [
+          "curvature",
+          "symmetry",
+          "volume"
+        ],
+        "hit": false,
+        "nanlm": "Property of a chemical bond can be ionic or covalent.",
+        "question": "What is a property of a sphere?"
+      },
+      {
+        "expected": [
+          "contradiction"
+        ],
+        "hit": false,
+        "nanlm": "Consistent proposition is an attribute of a nucleus contains protons and neutrons.",
+        "question": "What is the opposite of a consistent proposition?"
+      },
+      {
+        "expected": [
+          "force"
+        ],
+        "hit": false,
+        "nanlm": "Acceleration is caused by a chemical bond can be ionic or covalent.",
+        "question": "What causes acceleration?"
+      },
+      {
+        "expected": [
+          "point"
+        ],
+        "hit": false,
+        "nanlm": "Line is a geometric element with magnitude and direction.",
+        "question": "What is a component of a line?"
+      },
+      {
+        "expected": [
+          "entropy"
+        ],
+        "hit": false,
+        "nanlm": "Measure of disorder in a state.",
+        "question": "What is a measure of disorder?"
+      },
+      {
+        "expected": [
+          "point",
+          "line",
+          "plane",
+          "sphere",
+          "cube"
+        ],
+        "hit": true,
+        "member": "sphere",
+        "nanlm": "Geometric element such as a point has no dimension.",
+        "question": "Which elements are geometric?"
+      },
+      {
+        "expected": [
+          "inertia",
+          "gravity"
+        ],
+        "hit": false,
+        "member": "inertia",
+        "nanlm": "Mass is an attribute of a chemical bond can be ionic or covalent.",
+        "question": "Which concepts are attributes of mass?"
+      },
+      {
+        "expected": [
+          "electron",
+          "nucleus",
+          "proton",
+          "neutron"
+        ],
+        "hit": false,
+        "member": "proton",
+        "nanlm": "Atom is a geometric element with magnitude and direction.",
+        "question": "Which concepts are components of an atom?"
+      },
+      {
+        "expected": [
+          "axiom",
+          "proposition",
+          "inference",
+          "contradiction"
+        ],
+        "hit": false,
+        "member": "axiom",
+        "nanlm": "Logic is based on a set of relations.",
+        "question": "Which concepts relate to logic?"
+      },
+      {
+        "expected": [
+          "time",
+          "space"
+        ],
+        "hit": false,
+        "member": "time",
+        "nanlm": "Concepts is a geometric element such as a point has no dimension.",
+        "question": "Which concepts are dimensions?"
+      },
+      {
+        "expected": [
+          "gravity",
+          "electromagnetism",
+          "pressure"
+        ],
+        "hit": false,
+        "member": "electromagnetism",
+        "nanlm": "Forces is a geometric element such as a point has no dimension.",
+        "question": "Which concepts are forces?"
+      }
+    ],
+    "plan": {
+      "category_probes": [
+        {
+          "expected": [
+            "point",
+            "line",
+            "plane",
+            "sphere",
+            "cube"
+          ],
+          "member": "sphere",
+          "question": "Which elements are geometric?"
+        },
+        {
+          "expected": [
+            "inertia",
+            "gravity"
+          ],
+          "member": "inertia",
+          "question": "Which concepts are attributes of mass?"
+        },
+        {
+          "expected": [
+            "electron",
+            "nucleus",
+            "proton",
+            "neutron"
+          ],
+          "member": "proton",
+          "question": "Which concepts are components of an atom?"
+        },
+        {
+          "expected": [
+            "axiom",
+            "proposition",
+            "inference",
+            "contradiction"
+          ],
+          "member": "axiom",
+          "question": "Which concepts relate to logic?"
+        },
+        {
+          "expected": [
+            "time",
+            "space"
+          ],
+          "member": "time",
+          "question": "Which concepts are dimensions?"
+        },
+        {
+          "expected": [
+            "gravity",
+            "electromagnetism",
+            "pressure"
+          ],
+          "member": "electromagnetism",
+          "question": "Which concepts are forces?"
+        }
+      ],
+      "concepts": [
+        "element",
+        "atom",
+        "molecule",
+        "bond",
+        "electron",
+        "nucleus",
+        "proton",
+        "neutron",
+        "valence",
+        "isotope",
+        "point",
+        "line",
+        "plane",
+        "sphere",
+        "cube",
+        "vector",
+        "tensor",
+        "dimension",
+        "volume",
+        "area",
+        "symmetry",
+        "topology",
+        "manifold",
+        "curvature",
+        "energy",
+        "entropy",
+        "temperature",
+        "pressure",
+        "state",
+        "phase",
+        "equilibrium",
+        "force",
+        "gravity",
+        "electromagnetism",
+        "inertia",
+        "mass",
+        "velocity",
+        "acceleration",
+        "time",
+        "space",
+        "set",
+        "subset",
+        "member",
+        "logic",
+        "proposition",
+        "contradiction",
+        "axiom",
+        "inference",
+        "constant"
+      ],
+      "known_probes": [
+        {
+          "expected": [
+            "proton",
+            "nucleus"
+          ],
+          "question": "What defines a chemical element?"
+        },
+        {
+          "expected": [
+            "curvature",
+            "symmetry",
+            "volume"
+          ],
+          "question": "What is a property of a sphere?"
+        },
+        {
+          "expected": [
+            "contradiction"
+          ],
+          "question": "What is the opposite of a consistent proposition?"
+        },
+        {
+          "expected": [
+            "force"
+          ],
+          "question": "What causes acceleration?"
+        },
+        {
+          "expected": [
+            "point"
+          ],
+          "question": "What is a component of a line?"
+        },
+        {
+          "expected": [
+            "entropy"
+          ],
+          "question": "What is a measure of disorder?"
+        }
+      ],
+      "reasoning": "Round 1 showed a collapse where 'part of an atom' and 'change in state' became attractor basins, causing the model to hallucinate these patterns across unrelated concepts (e.g., 'Sphere is a part of an atom'). To counteract this, Round 2 introduces 'structural anchors' and 'disjoint domain markers'. I am introducing concepts that force the model to differentiate between 'element' as a chemical entity, 'element' as a geometric primitive, and 'element' as a set member. By creating tight, domain-specific clusters (e.g., the 'Thermodynamics' cluster and the 'Topology' cluster) that only share a few high-level bridge concepts (like 'energy' or 'state'), the matrix density will increase without collapsing into a single global attractor. I am specifically targeting the 'opposite' and 'attribute' relations which were under-represented.",
+      "statements": [
+        "A chemical element consists of one or more isotopes.",
+        "A chemical element is defined by the number of protons in its nucleus.",
+        "A geometric element such as a point has no dimension.",
+        "A geometric element such as a line has one dimension.",
+        "A set element is a member of a larger collection.",
+        "A molecule is formed by a chemical bond between atoms.",
+        "A chemical bond can be ionic or covalent.",
+        "An electron is a component of an atom.",
+        "A nucleus contains protons and neutrons.",
+        "Valence electrons determine the bonding capacity of an atom.",
+        "A sphere is a geometric element with constant curvature.",
+        "A cube is a geometric element with six square faces.",
+        "A vector is a geometric element with magnitude and direction.",
+        "A tensor is a generalization of a vector.",
+        "Volume is an attribute of a three-dimensional sphere.",
+        "Area is an attribute of a two-dimensional plane.",
+        "Symmetry is a property of a sphere and a cube.",
+        "Topology studies the properties of a manifold.",
+        "Curvature is an attribute of a manifold.",
+        "Energy is a property of a physical state.",
+        "Entropy is a measure of disorder in a state.",
+        "Temperature is an attribute of the kinetic energy of atoms.",
+        "Pressure is a force applied over an area.",
+        "A phase change is a transition between states of matter.",
+        "Equilibrium is a state of balance between opposing forces.",
+        "Gravity is a force caused by mass.",
+        "Electromagnetism is a force acting between charged particles.",
+        "Inertia is an attribute of mass.",
+        "Acceleration is caused by a net force.",
+        "Velocity is the rate of change of position in space.",
+        "Time is a dimension of the space-time manifold.",
+        "A subset is a part of a set.",
+        "A member is an element of a set.",
+        "Logic is based on a set of axioms.",
+        "A proposition is an element of logic.",
+        "A contradiction is the opposite of a consistent proposition.",
+        "Inference is a process of deriving a proposition from axioms.",
+        "A constant is a value that does not undergo change.",
+        "Temperature increase causes a phase change.",
+        "Pressure increase causes a change in volume.",
+        "A proton is the opposite charge of an electron.",
+        "A point is a component of a line.",
+        "A line is a component of a plane.",
+        "A plane is a component of a cube.",
+        "A molecule is a component of a chemical substance.",
+        "Mass is an attribute of a nucleus."
+      ],
+      "unknown_probes": [
+        "Does a contradiction have a volume?",
+        "Is a proton a member of a geometric plane?",
+        "Does entropy cause a chemical bond?",
+        "Is a tensor the opposite of an isotope?",
+        "Can a logic axiom have a temperature?",
+        "Is a subset a component of a nucleus?"
+      ]
+    },
+    "saturation": {
+      "average_degree": 6.7,
+      "concepts": 138,
+      "density": 0.016636,
+      "max_degree": 36,
+      "occupied_pairs": 543,
+      "pair_cells": 32640,
+      "roles": {
+        "can": 1,
+        "causes": 6,
+        "component_of": 6,
+        "has": 3,
+        "is": 59,
+        "member_of:chemical": 1,
+        "member_of:geometric": 6,
+        "opposition": 2
+      },
+      "schema": "nanlm.concept-matrix/1",
+      "statements": 89,
+      "top_concepts": [
+        {
+          "concept": "element",
+          "degree": 36
+        },
+        {
+          "concept": "between",
+          "degree": 27
+        },
+        {
+          "concept": "change",
+          "degree": 24
+        },
+        {
+          "concept": "attribute",
+          "degree": 22
+        },
+        {
+          "concept": "chemical",
+          "degree": 20
+        },
+        {
+          "concept": "force",
+          "degree": 19
+        },
+        {
+          "concept": "geometric",
+          "degree": 19
+        },
+        {
+          "concept": "state",
+          "degree": 16
+        },
+        {
+          "concept": "atom",
+          "degree": 14
+        },
+        {
+          "concept": "plane",
+          "degree": 14
+        },
+        {
+          "concept": "volume",
+          "degree": 14
+        },
+        {
+          "concept": "nucleus",
+          "degree": 12
+        }
+      ],
+      "top_pairs": [
+        {
+          "pair": [
+            "element",
+            "geometric"
+          ],
+          "roles": {},
+          "weight": 4.0
+        },
+        {
+          "pair": [
+            "causes",
+            "change"
+          ],
+          "roles": {},
+          "weight": 2.33
+        },
+        {
+          "pair": [
+            "chemical",
+            "element"
+          ],
+          "roles": {},
+          "weight": 2.0
+        },
+        {
+          "pair": [
+            "dimensional",
+            "volume"
+          ],
+          "roles": {},
+          "weight": 1.75
+        },
+        {
+          "pair": [
+            "bond",
+            "chemical"
+          ],
+          "roles": {},
+          "weight": 1.5
+        },
+        {
+          "pair": [
+            "attribute",
+            "mass"
+          ],
+          "roles": {},
+          "weight": 1.5
+        },
+        {
+          "pair": [
+            "part",
+            "set"
+          ],
+          "roles": {},
+          "weight": 1.5
+        },
+        {
+          "pair": [
+            "element",
+            "member"
+          ],
+          "roles": {},
+          "weight": 1.33
+        },
+        {
+          "pair": [
+            "dimension",
+            "space"
+          ],
+          "roles": {},
+          "weight": 1.33
+        },
+        {
+          "pair": [
+            "change",
+            "velocity"
+          ],
+          "roles": {},
+          "weight": 1.33
+        },
+        {
+          "pair": [
+            "chemical",
+            "molecule"
+          ],
+          "roles": {},
+          "weight": 1.25
+        },
+        {
+          "pair": [
+            "component",
+            "molecule"
+          ],
+          "roles": {},
+          "weight": 1.0
+        }
+      ]
+    },
+    "statements": [
+      {
+        "nanlm": "Chemical element consists of one or more isotopes.",
+        "relations": [],
+        "statement": "A chemical element consists of one or more isotopes."
+      },
+      {
+        "nanlm": "Chemical element is defined by the number of protons in its nucleus.",
+        "relations": [
+          {
+            "object": "defined by the number of protons in its nucleus",
+            "predicate": "is",
+            "role": "is",
+            "subject": "A chemical element"
+          }
+        ],
+        "statement": "A chemical element is defined by the number of protons in its nucleus."
+      },
+      {
+        "nanlm": "Geometric element such as a point has no dimension.",
+        "relations": [
+          {
+            "object": "no dimension",
+            "predicate": "has",
+            "role": "has",
+            "subject": "A geometric element such as a point"
+          }
+        ],
+        "statement": "A geometric element such as a point has no dimension."
+      },
+      {
+        "nanlm": "Geometric element such as a line has one dimension.",
+        "relations": [
+          {
+            "object": "one dimension",
+            "predicate": "has",
+            "role": "has",
+            "subject": "A geometric element such as a line"
+          }
+        ],
+        "statement": "A geometric element such as a line has one dimension."
+      },
+      {
+        "nanlm": "Set element is defined by the number of protons in its nucleus.",
+        "relations": [
+          {
+            "object": "a member of a larger collection",
+            "predicate": "is",
+            "role": "is",
+            "subject": "A set element"
+          }
+        ],
+        "statement": "A set element is a member of a larger collection."
+      },
+      {
+        "nanlm": "Molecule is formed by a chemical bond between atoms.",
+        "relations": [
+          {
+            "object": "formed by a chemical bond between atoms",
+            "predicate": "is",
+            "role": "is",
+            "subject": "A molecule"
+          }
+        ],
+        "statement": "A molecule is formed by a chemical bond between atoms."
+      },
+      {
+        "nanlm": "Chemical bond can be ionic or covalent.",
+        "relations": [
+          {
+            "object": "be ionic or covalent",
+            "predicate": "can",
+            "role": "can",
+            "subject": "A chemical bond"
+          }
+        ],
+        "statement": "A chemical bond can be ionic or covalent."
+      },
+      {
+        "nanlm": "Electron is a part of an atom.",
+        "relations": [
+          {
+            "object": "a component of an atom",
+            "predicate": "is",
+            "role": "component_of",
+            "subject": "An electron"
+          }
+        ],
+        "statement": "An electron is a component of an atom."
+      },
+      {
+        "nanlm": "Nucleus contains protons and neutrons.",
+        "relations": [],
+        "statement": "A nucleus contains protons and neutrons."
+      },
+      {
+        "nanlm": "Atom is a geometric element such as a point has no dimension.",
+        "relations": [],
+        "statement": "Valence electrons determine the bonding capacity of an atom."
+      },
+      {
+        "nanlm": "Sphere is a geometric element such as a point has no dimension.",
+        "relations": [
+          {
+            "object": "a geometric element with constant curvature",
+            "predicate": "is",
+            "role": "member_of:geometric",
+            "subject": "A sphere"
+          }
+        ],
+        "statement": "A sphere is a geometric element with constant curvature."
+      },
+      {
+        "nanlm": "Geometric element such as a point has no dimension.",
+        "relations": [
+          {
+            "object": "a geometric element with six square faces",
+            "predicate": "is",
+            "role": "member_of:geometric",
+            "subject": "A cube"
+          }
+        ],
+        "statement": "A cube is a geometric element with six square faces."
+      },
+      {
+        "nanlm": "Vector is a geometric element with six square faces.",
+        "relations": [
+          {
+            "object": "a geometric element with magnitude and direction",
+            "predicate": "is",
+            "role": "member_of:geometric",
+            "subject": "A vector"
+          }
+        ],
+        "statement": "A vector is a geometric element with magnitude and direction."
+      },
+      {
+        "nanlm": "Vector is a geometric element such as a point has no dimension.",
+        "relations": [
+          {
+            "object": "a generalization of a vector",
+            "predicate": "is",
+            "role": "is",
+            "subject": "A tensor"
+          }
+        ],
+        "statement": "A tensor is a generalization of a vector."
+      },
+      {
+        "nanlm": "Volume is a geometric element with six square faces.",
+        "relations": [
+          {
+            "object": "an attribute of a three-dimensional sphere",
+            "predicate": "is",
+            "role": "is",
+            "subject": "Volume"
+          }
+        ],
+        "statement": "Volume is an attribute of a three-dimensional sphere."
+      },
+      {
+        "nanlm": "Plane is a geometric element with six square faces.",
+        "relations": [
+          {
+            "object": "an attribute of a two-dimensional plane",
+            "predicate": "is",
+            "role": "is",
+            "subject": "Area"
+          }
+        ],
+        "statement": "Area is an attribute of a two-dimensional plane."
+      },
+      {
+        "nanlm": "Symmetry is an attribute of a sphere and a cube.",
+        "relations": [
+          {
+            "object": "a property of a sphere and a cube",
+            "predicate": "is",
+            "role": "is",
+            "subject": "Symmetry"
+          }
+        ],
+        "statement": "Symmetry is a property of a sphere and a cube."
+      },
+      {
+        "nanlm": "Topology studies the number of protons in its nucleus.",
+        "relations": [],
+        "statement": "Topology studies the properties of a manifold."
+      },
+      {
+        "nanlm": "Curvature is an attribute of a chemical bond can be ionic or covalent.",
+        "relations": [
+          {
+            "object": "an attribute of a manifold",
+            "predicate": "is",
+            "role": "is",
+            "subject": "Curvature"
+          }
+        ],
+        "statement": "Curvature is an attribute of a manifold."
+      },
+      {
+        "nanlm": "Energy causes a change in state.",
+        "relations": [
+          {
+            "object": "a property of a physical state",
+            "predicate": "is",
+            "role": "is",
+            "subject": "Energy"
+          }
+        ],
+        "statement": "Energy is a property of a physical state."
+      },
+      {
+        "nanlm": "Measure of disorder in a state.",
+        "relations": [
+          {
+            "object": "a measure of disorder in a state",
+            "predicate": "is",
+            "role": "is",
+            "subject": "Entropy"
+          }
+        ],
+        "statement": "Entropy is a measure of disorder in a state."
+      },
+      {
+        "nanlm": "Energy causes a change in position over time.",
+        "relations": [
+          {
+            "object": "an attribute of the kinetic energy of atoms",
+            "predicate": "is",
+            "role": "is",
+            "subject": "Temperature"
+          }
+        ],
+        "statement": "Temperature is an attribute of the kinetic energy of atoms."
+      },
+      {
+        "nanlm": "Pressure causes a change in position over an area.",
+        "relations": [
+          {
+            "object": "a force applied over an area",
+            "predicate": "is",
+            "role": "is",
+            "subject": "Pressure"
+          }
+        ],
+        "statement": "Pressure is a force applied over an area."
+      },
+      {
+        "nanlm": "Transition between states of matter.",
+        "relations": [
+          {
+            "object": "a transition between states of matter",
+            "predicate": "is",
+            "role": "is",
+            "subject": "A phase change"
+          }
+        ],
+        "statement": "A phase change is a transition between states of matter."
+      },
+      {
+        "nanlm": "State of balance between opposing forces.",
+        "relations": [
+          {
+            "object": "a state of balance between opposing forces",
+            "predicate": "is",
+            "role": "is",
+            "subject": "Equilibrium"
+          }
+        ],
+        "statement": "Equilibrium is a state of balance between opposing forces."
+      },
+      {
+        "nanlm": "Gravity is a geometric element with six square faces.",
+        "relations": [
+          {
+            "object": "a force caused by mass",
+            "predicate": "is",
+            "role": "is",
+            "subject": "Gravity"
+          }
+        ],
+        "statement": "Gravity is a force caused by mass."
+      },
+      {
+        "nanlm": "Force acting between charged particles.",
+        "relations": [
+          {
+            "object": "a force acting between charged particles",
+            "predicate": "is",
+            "role": "is",
+            "subject": "Electromagnetism"
+          }
+        ],
+        "statement": "Electromagnetism is a force acting between charged particles."
+      },
+      {
+        "nanlm": "Mass is an attribute of the kinetic energy causes a change in state.",
+        "relations": [
+          {
+            "object": "an attribute of mass",
+            "predicate": "is",
+            "role": "is",
+            "subject": "Inertia"
+          }
+        ],
+        "statement": "Inertia is an attribute of mass."
+      },
+      {
+        "nanlm": "Acceleration is caused by a chemical bond can be ionic or covalent.",
+        "relations": [
+          {
+            "object": "caused by a net force",
+            "predicate": "is",
+            "role": "is",
+            "subject": "Acceleration"
+          }
+        ],
+        "statement": "Acceleration is caused by a net force."
+      },
+      {
+        "nanlm": "Velocity is the rate of change in state.",
+        "relations": [
+          {
+            "object": "the rate of change of position in space",
+            "predicate": "is",
+            "role": "is",
+            "subject": "Velocity"
+          }
+        ],
+        "statement": "Velocity is the rate of change of position in space."
+      },
+      {
+        "nanlm": "Time is a geometric element such as a point has no dimension.",
+        "relations": [
+          {
+            "object": "a dimension of the space-time manifold",
+            "predicate": "is",
+            "role": "is",
+            "subject": "Time"
+          }
+        ],
+        "statement": "Time is a dimension of the space-time manifold."
+      },
+      {
+        "nanlm": "Subset is a part of an atom.",
+        "relations": [
+          {
+            "object": "a part of a set",
+            "predicate": "is",
+            "role": "is",
+            "subject": "A subset"
+          }
+        ],
+        "statement": "A subset is a part of a set."
+      },
+      {
+        "nanlm": "Set element is defined by the number of protons in its nucleus.",
+        "relations": [
+          {
+            "object": "an element of a set",
+            "predicate": "is",
+            "role": "is",
+            "subject": "A member"
+          }
+        ],
+        "statement": "A member is an element of a set."
+      },
+      {
+        "nanlm": "Logic is based on a set of axioms.",
+        "relations": [
+          {
+            "object": "based on a set of axioms",
+            "predicate": "is",
+            "role": "is",
+            "subject": "Logic"
+          }
+        ],
+        "statement": "Logic is based on a set of axioms."
+      },
+      {
+        "nanlm": "Logic is based on a set of relations.",
+        "relations": [
+          {
+            "object": "an element of logic",
+            "predicate": "is",
+            "role": "is",
+            "subject": "A proposition"
+          }
+        ],
+        "statement": "A proposition is an element of logic."
+      },
+      {
+        "nanlm": "Opposite is a geometric element with six square faces.",
+        "relations": [
+          {
+            "object": "the opposite of a consistent proposition",
+            "predicate": "is",
+            "role": "opposition",
+            "subject": "A contradiction"
+          }
+        ],
+        "statement": "A contradiction is the opposite of a consistent proposition."
+      },
+      {
+        "nanlm": "Proposition from axioms.",
+        "relations": [
+          {
+            "object": "a process of deriving a proposition from axioms",
+            "predicate": "is",
+            "role": "is",
+            "subject": "Inference"
+          }
+        ],
+        "statement": "Inference is a process of deriving a proposition from axioms."
+      },
+      {
+        "nanlm": "Change is a geometric element with constant curvature.",
+        "relations": [
+          {
+            "object": "a value that does not undergo change",
+            "predicate": "is",
+            "role": "is",
+            "subject": "A constant"
+          }
+        ],
+        "statement": "A constant is a value that does not undergo change."
+      },
+      {
+        "nanlm": "Temperature increase causes a change in state.",
+        "relations": [
+          {
+            "object": "a phase change",
+            "predicate": "causes",
+            "role": "causes",
+            "subject": "Temperature increase"
+          }
+        ],
+        "statement": "Temperature increase causes a phase change."
+      },
+      {
+        "nanlm": "Pressure increase causes a change in volume.",
+        "relations": [
+          {
+            "object": "a change in volume",
+            "predicate": "causes",
+            "role": "causes",
+            "subject": "Pressure increase"
+          }
+        ],
+        "statement": "Pressure increase causes a change in volume."
+      },
+      {
+        "nanlm": "Proton is the relation between a cause and an effect.",
+        "relations": [
+          {
+            "object": "the opposite charge of an electron",
+            "predicate": "is",
+            "role": "is",
+            "subject": "A proton"
+          }
+        ],
+        "statement": "A proton is the opposite charge of an electron."
+      },
+      {
+        "nanlm": "Point has no dimension.",
+        "relations": [
+          {
+            "object": "a component of a line",
+            "predicate": "is",
+            "role": "component_of",
+            "subject": "A point"
+          }
+        ],
+        "statement": "A point is a component of a line."
+      },
+      {
+        "nanlm": "Line is a geometric element with six square faces.",
+        "relations": [
+          {
+            "object": "a component of a plane",
+            "predicate": "is",
+            "role": "component_of",
+            "subject": "A line"
+          }
+        ],
+        "statement": "A line is a component of a plane."
+      },
+      {
+        "nanlm": "Plane is a geometric element with six square faces.",
+        "relations": [
+          {
+            "object": "a component of a cube",
+            "predicate": "is",
+            "role": "component_of",
+            "subject": "A plane"
+          }
+        ],
+        "statement": "A plane is a component of a cube."
+      },
+      {
+        "nanlm": "Molecule is formed by a chemical bond can be ionic or covalent.",
+        "relations": [
+          {
+            "object": "a component of a chemical substance",
+            "predicate": "is",
+            "role": "component_of",
+            "subject": "A molecule"
+          }
+        ],
+        "statement": "A molecule is a component of a chemical substance."
+      },
+      {
+        "nanlm": "Mass is an attribute of a nucleus contains protons and neutrons.",
+        "relations": [
+          {
+            "object": "an attribute of a nucleus",
+            "predicate": "is",
+            "role": "is",
+            "subject": "Mass"
+          }
+        ],
+        "statement": "Mass is an attribute of a nucleus."
+      }
+    ],
+    "unknown": [
+      {
+        "abstained": false,
+        "nanlm": "Volume is an attribute of a chemical bond can be ionic or covalent.",
+        "question": "Does a contradiction have a volume?"
+      },
+      {
+        "abstained": false,
+        "nanlm": "Plane is a geometric element with six square faces.",
+        "question": "Is a proton a member of a geometric plane?"
+      },
+      {
+        "abstained": false,
+        "nanlm": "Chemical bond can be ionic or covalent.",
+        "question": "Does entropy cause a chemical bond?"
+      },
+      {
+        "abstained": false,
+        "nanlm": "Tensor is a geometric element with six square faces.",
+        "question": "Is a tensor the opposite of an isotope?"
+      },
+      {
+        "abstained": false,
+        "nanlm": "Logic is based on a set of axioms.",
+        "question": "Can a logic axiom have a temperature?"
+      },
+      {
+        "abstained": false,
+        "nanlm": "Nucleus contains protons and neutrons.",
+        "question": "Is a subset a component of a nucleus?"
+      }
+    ]
+  },
+  "schema": "nanlmind-hermes-gemma-corpus/1",
+  "teacher": "gemma4:31b-cloud"
+}

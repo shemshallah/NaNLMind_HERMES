@@ -87,3 +87,34 @@ relation digest.
   `head_scratchpads`, masks, layers).
 
 `docs/LONG_CHAT_DEMO.md` records the live head mapping for the session.
+
+## Concept matrix: saturation through superposition
+
+The C(256,2) = 32,640 unordered pair cells are a relation space, not a
+one-word-one-cell map. `ConceptMatrix` ingests every statement in superposition:
+
+- every co-occurring concept pair accumulates weight in its cell;
+- typed relations add a role and direction (`component_of`, `member_of:chemical`,
+  `member_of:geometric`, `opposition`, `causes`, ...);
+- a concept's leaf identity is the hash of its relation links, not its spelling;
+- saturation measures occupied pair cells, density, average concept degree,
+  roles and top pairs.
+
+**First Gemma saturation session** (`docs/GEMMA_CORPUS.md`):
+
+- 89 statements, 138 concepts, 560 occupied pairs = **1.72% density**;
+- 87 MTH head leaves after the organization phase;
+- the matrix is a real substrate but is sparse: prose alone does not saturate it;
+- known-probe accuracy was low (1/12) because the temporal generator was not
+  consulting the relation store. That gap is fixed by **structured relation
+  candidates**: a yes/no question is answered from a learned edge, e.g.
+  `Is copper a chemical element?` → `Copper is a chemical element.`,
+  `Is the sky a component of the earth?` → `The sky is a component of the earth.`
+  (marked `structured: true`);
+- unsupported yes/no questions still confabulate (`Is copper a geometric
+  element?`) when no relation or support gate exists. Abstention only appears
+  from uncertainty exposure and needs a grounded support gate.
+
+Next: a coverage-guided saturation protocol (target uncovered pair regions),
+learned support gating for unsupported questions, and organization snapshots
+that compare head→leaf maps before/after chatting.

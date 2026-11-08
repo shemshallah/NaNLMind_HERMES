@@ -95,6 +95,15 @@ def normalise_plan(plan: dict) -> dict:
                           "expected": [str(word) for word in as_list(expected)]})
         elif isinstance(item, str):
             known.append({"question": item, "expected": []})
+    for item in as_list(plan.get("category_probes")):
+        if isinstance(item, dict) and item.get("question"):
+            expected = item.get("expected")
+            if isinstance(expected, str):
+                expected = [expected]
+            known.append({"question": str(item["question"]),
+                          "expected": [str(word) for word in as_list(expected)],
+                          "member": str(item.get("member") or ""),
+                          "category": True})
     unknown = [str(item).strip() for item in as_list(plan.get("unknown_probes"))
                if str(item).strip()]
     return {"reasoning": str(plan.get("reasoning") or ""),
@@ -146,7 +155,9 @@ def main():
             reply = result.get("response", "")
             hit = any(word.casefold() in reply.casefold()
                       for word in item["expected"]) if item["expected"] else False
-            known_rows.append({**item, "nanlm": reply, "hit": hit})
+            known_rows.append({**item, "nanlm": reply, "hit": hit,
+                               "context_terms": result.get("native_synthesis", {})
+                               .get("context_terms", [])})
         unknown_rows = []
         for question in unknown:
             result = native_chat(ctx, question, session_id="gemma-bootstrap")
@@ -186,6 +197,40 @@ def main():
             "unknown_abstained": f"{sum(1 for row in unknown_2 if row['abstained'])}/{len(unknown_2)}",
             "heads": (follow_rows[-1]["heads"] if follow_rows else 0),
         }
+        round3_prompt = """This is round 3 of a massive from-scratch experiment, not a
+normal language model. NaNLM can now anchor on new entity words supplied in the
+question context, but only composes a category frame if the shared predicate was
+taught from exposure. It cannot invent unseen words. Design ABSTRACT,
+CATEGORY-LEVEL training:
+- teach category frames with several members and shared properties. "Element"
+  is polysemous: teach sense-qualified statements such as "Gold is a chemical
+  element.", "A triangle is a geometric element.", "The sky is a component of
+  the Earth." (an Earth component); teach animals (cat, dog, bird), celestial
+  bodies (sun, moon, stars) and colours (red, blue, yellow) the same way;
+- teach shared predicates so an UNTAUGHT member can be composed by analogy;
+- model uncertainty when no relation is learned;
+- include category_probes on members that were not directly taught, and
+  wrong-sense probes (for example "Is copper a geometric element?" when copper
+  was taught as a chemical element), and unknown_probes outside every taught
+  category.
+Return strict JSON with the same keys plus
+"category_probes": [{"question", "expected", "member"}]."""
+        plan_3 = normalise_plan(extract_json(teacher.complete(
+            [{"role": "system", "content": SYSTEM},
+             {"role": "user", "content": json.dumps({
+                 "round_2_summary": summary_2,
+                 "round_2_known": known_2,
+                 "round_2_unknown": unknown_2,
+                 "task": round3_prompt}, indent=2)}],
+            temperature=0.55, max_tokens=3000, timeout=240).text))
+        round3_rows = feed(ctx, plan_3["teaching"] + plan_3["uncertainty"])
+        known_3, unknown_3 = probe(ctx, plan_3["known_probes"], plan_3["unknown_probes"])
+        summary_3 = {
+            "known": f"{sum(1 for row in known_3 if row['hit'])}/{len(known_3)}",
+            "category_hits": f"{sum(1 for row in known_3 if row.get('category') and row['hit'])}/{sum(1 for row in known_3 if row.get('category'))}",
+            "unknown_abstained": f"{sum(1 for row in unknown_3 if row['abstained'])}/{len(unknown_3)}",
+            "heads": (round3_rows[-1]["heads"] if round3_rows else 0),
+        }
 
     report = {
         "schema": "nanlmind-hermes-gemma-bootstrap/1",
@@ -194,6 +239,8 @@ def main():
                     "known": known_1, "unknown": unknown_1, "summary": summary_1},
         "round_2": {"plan": plan_2, "teaching": follow_rows,
                     "known": known_2, "unknown": unknown_2, "summary": summary_2},
+        "round_3": {"plan": plan_3, "teaching": round3_rows,
+                    "known": known_3, "unknown": unknown_3, "summary": summary_3},
     }
     json_path = output.with_name("gemma-bootstrap.json")
     json_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n",
@@ -248,7 +295,24 @@ def main():
         lines.append(f"| {row['question'].replace('|', chr(92)+'|')} | "
                      f"{(row['nanlm'] or '_(empty)_').replace('|', chr(92)+'|')} | "
                      f"abstained={row['abstained']} |")
+    lines += ["", "## Round 3: abstract categories and untaught members", "",
+              plan_3["reasoning"], "",
+              f"Known: {summary_3['known']}; category transfer: {summary_3['category_hits']}; "
+              f"unknown abstained: {summary_3['unknown_abstained']}", "",
+              "| question | member | NaNLM | context terms | hit |", "|---|---|---|---|---|"]
+    for row in known_3:
+        lines.append(f"| {row['question'].replace('|', chr(92)+'|')} | "
+                     f"{row.get('member', '')} | "
+                     f"{(row['nanlm'] or '_(empty)_').replace('|', chr(92)+'|')} | "
+                     f"{', '.join(row.get('context_terms', []))} | {row['hit']} |")
+    lines += ["", "| unknown question | NaNLM | abstained |", "|---|---|---|"]
+    for row in unknown_3:
+        lines.append(f"| {row['question'].replace('|', chr(92)+'|')} | "
+                     f"{(row['nanlm'] or '_(empty)_').replace('|', chr(92)+'|')} | "
+                     f"{row['abstained']} |")
     lines += ["", "## Summary", "",
+              f"- Round 3 category transfer: {summary_3['category_hits']}",
+              f"- Round 3 unknown abstained: {summary_3['unknown_abstained']}",
               f"- Round 1 known: {summary_1['known']}; unknown abstained: {summary_1['unknown_abstained']}",
               f"- Round 2 known: {summary_2['known']}; unknown abstained: {summary_2['unknown_abstained']}",
               "- Abstention was measured only; no rule or template was added.",
@@ -256,7 +320,7 @@ def main():
     output.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(json.dumps({
         "output": str(output), "json": str(json_path),
-        "round_1": summary_1, "round_2": summary_2,
+        "round_1": summary_1, "round_2": summary_2, "round_3": summary_3,
         "teaching_statements": len(plan["teaching"]) + len(plan["uncertainty"]),
         "followup_statements": len(plan_2["teaching"]) + len(plan_2["uncertainty"]),
     }, indent=2))

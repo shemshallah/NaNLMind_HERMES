@@ -32,12 +32,18 @@ ROWS = [
      "object": "freeze", "confidence": 0.9, "polarity": "supports"},
     {"kind": "relation", "subject": "rain", "predicate": "causes",
      "object": "rivers to rise", "confidence": 0.7, "polarity": "supports"},
+    {"kind": "relation", "subject": "the sky", "predicate": "is",
+     "object": "a component of the earth", "confidence": 0.8, "polarity": "supports"},
+    {"kind": "relation", "subject": "hot", "predicate": "is",
+     "object": "the opposite of cold", "confidence": 0.9, "polarity": "supports"},
 ]
 SENTENCES = [
     "A volcano is a mountain.",
     "A river is a flowing body of water.",
     "Water can freeze.",
     "Rain causes rivers to rise.",
+    "The sky is a component of the earth.",
+    "Hot is the opposite of cold.",
 ]
 
 
@@ -111,6 +117,12 @@ class LayerTests(unittest.TestCase):
         self.assertTrue(all(0 <= leaf["mask"] <= 15 for leaf in leaves))
         self.assertEqual(leaves, [mapper.map_relation(row) for row in ROWS])
         self.assertEqual(len({leaf["digest"] for leaf in leaves}), len(leaves))
+        roles = {leaf["role"] for leaf in leaves}
+        self.assertIn("component_of", roles)
+        self.assertIn("opposition", roles)
+        sky = next(leaf for leaf in leaves if leaf["role"] == "component_of")
+        self.assertEqual(sky["rail"] in {"s+", "s-"}, True)
+        self.assertIn("UNIT:WHOLE:COMPONENT:QUERY", sky["tags"])
         with tempfile.TemporaryDirectory() as tmp:
             chart = Chart8MiB.genesis()
             register = HeadScratchRegister(chart, Path(tmp))
@@ -122,6 +134,24 @@ class LayerTests(unittest.TestCase):
             head = status["leaves"][0]["head"]
             scratch = OFF_HEAD_SCRATCH + head * 1024
             self.assertEqual(chart.bytes[scratch:scratch + 8], LEAF_MAGIC)
+
+    def test_structured_answers_come_from_learned_relations(self):
+        from nanlmind_hermes.mth_layers import structured_candidates
+        rows = ROWS + [
+            {"kind": "relation", "subject": "copper", "predicate": "is",
+             "object": "a chemical element", "confidence": 0.9, "polarity": "supports"},
+        ]
+        answer = structured_candidates("Is copper a chemical element?", rows)
+        self.assertTrue(answer)
+        self.assertIn("chemical element", answer[0]["text"])
+        self.assertEqual(answer[0]["role"], "member_of:chemical")
+        sky = structured_candidates("Is the sky a component of the earth?", rows)
+        self.assertTrue(sky)
+        self.assertEqual(sky[0]["role"], "component_of")
+        hot = structured_candidates("Is hot the opposite of cold?", rows)
+        self.assertTrue(hot)
+        self.assertEqual(hot[0]["role"], "opposition")
+        self.assertFalse(structured_candidates("Is copper a geometric element?", rows))
 
     def test_temporal_deliberation_exposes_mth_scores(self):
         model = TemporalMirrorLM()
