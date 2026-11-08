@@ -37,7 +37,7 @@ from nanlmind_hermes.auth import generate_master_key  # noqa: E402
 from nanlmind_hermes.http_api import make_server as make_authority  # noqa: E402
 from nanlmind_hermes.pairing import PairingAuthority  # noqa: E402
 from nanlmind_hermes import hermes_secrets  # noqa: E402
-from nanlmind_hermes import auth_tools, clocked_tools  # noqa: E402
+from nanlmind_hermes import auth_tools, clocked_tools, gemma_teacher  # noqa: E402
 
 ZERO = "0" * 64
 
@@ -523,6 +523,29 @@ def main(argv=None):
         call("nanlm_learning_sync", {"approved": True})
         call("nanlm_wordnet_ingest", {"word": "copper", "depth": 2})
         call("nanlm_scratch_register", {"layer": 5, "limit": 8})
+
+        # Resident mirror topology, Boolean-gated self-modification and MTH facade.
+        call("nanlm_mirror_topology")
+        call("nanlm_mirror_topology", {
+            "route": "nan://GM0:0::SC0:0::MC0:0::BS0:0::HW0:0::HW0:7::L5"})
+        call("nanlm_self_modify", {
+            "action": "relation",
+            "relation": {"subject": "copper", "predicate": "is", "object": "metal"},
+            "layer": 5, "source_head": 1, "evidence_sha256": "a" * 64,
+            "strength_q16": 32768, "polarity": 1, "expected_generation": 0})
+        call("nanlm_self_modify", {"action": "status"})
+        call("nanlm_mth_tools", {"tool": "mth.catalog"})
+        call("nanlm_mth_tools", {"tool": "mth.inspect", "arguments": {"layer": 5}})
+        call("nanlm_mth_tools", {
+            "tool": "mth.route",
+            "arguments": {"address": "nan://GM0:0::SC0:0::MC0:0::BS0:0::HW0:0::HW0:7::L5"}})
+        teacher_records = [{
+            "subject": "copper", "predicate": "is", "object": "metal",
+            "definition": "a reddish metal", "layer": 5,
+            "confidence": 0.9, "evidence": "demo teacher"}]
+        with patch.object(gemma_teacher.LLMTeacher, "generate",
+                          return_value=teacher_records):
+            call("nanlm_teacher_teach", {"topic": "metals", "count": 2})
 
         # CLOCKED planning, execution, scratch, head process, synthesis.
         _, plan = call("nanlm_clocked_plan", {"question": "Check PII handling in the source", "sources": [

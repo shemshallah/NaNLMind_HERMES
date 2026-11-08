@@ -1,5 +1,5 @@
 name: nanlmind-hermes
-version: 1.4.0
+version: 1.5.0
 manifest_version: 2
 api_version: 1
 requires_hermes: ">=0.23.0"
@@ -14,6 +14,10 @@ provides_tools:
   - nanlm_learning_sync
   - nanlm_wordnet_ingest
   - nanlm_scratch_register
+  - nanlm_mirror_topology
+  - nanlm_self_modify
+  - nanlm_mth_tools
+  - nanlm_teacher_teach
   - nanlm_chart_storage
   - nanlm_chat
   - nanlm_chat_history
@@ -107,6 +111,34 @@ config_schema:
     type: str
     default: ""
     description: Optional path to the WordNet 3.1 zip archive for the sparse HW4 dictionary universe.
+  self_mod_min_boolean:
+    type: float
+    default: 0.5
+    description: Minimum Boolean gate confidence for an allowed self-modification relation.
+  self_mod_require_evidence:
+    type: bool
+    default: true
+    description: Require a SHA-256 evidence digest on every self-modification.
+  self_mod_allow_negative:
+    type: bool
+    default: true
+    description: Record Boolean-rejected relations as negative memory instead of discarding them.
+  self_mod_require_approval:
+    type: bool
+    default: true
+    description: Require explicit approval before self-modified leaves enter the local head register.
+  teacher_provider:
+    type: str
+    default: "hermes"
+    description: "Teacher provider: hermes (configured Hermes LLM), ollama (local Gemma/Ollama), or openai (any OpenAI-compatible endpoint)."
+  teacher_endpoint:
+    type: str
+    default: ""
+    description: Optional provider endpoint; defaults to the Hermes LLM or the local Ollama generate URL.
+  teacher_model:
+    type: str
+    default: ""
+    description: Optional provider model; defaults to the Hermes LLM or gemma4:31b-cloud.
   chat_mode:
     type: str
     default: native
