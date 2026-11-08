@@ -8,6 +8,7 @@ on:
       - 'plugin.yaml'
       - 'tests/test_router_graph_page.py'
       - 'tests/test_router_graph_history.py'
+      - 'tests/test_router_graph_tool_schema.py'
       - 'scripts/verify_router_graph_bridge.py'
       - '.github/workflows/real-router-graph-bridge.yml'
   push:
@@ -18,6 +19,7 @@ on:
       - 'plugin.yaml'
       - 'tests/test_router_graph_page.py'
       - 'tests/test_router_graph_history.py'
+      - 'tests/test_router_graph_tool_schema.py'
       - 'scripts/verify_router_graph_bridge.py'
       - '.github/workflows/real-router-graph-bridge.yml'
   workflow_dispatch:
@@ -48,4 +50,5 @@ jobs:
         run: |
           python -m unittest discover -s tests -p 'test_router_graph_page.py' -v
           python -m unittest discover -s tests -p 'test_router_graph_history.py' -v
+          python -m unittest discover -s tests -p 'test_router_graph_tool_schema.py' -v
           python scripts/verify_router_graph_bridge.py
