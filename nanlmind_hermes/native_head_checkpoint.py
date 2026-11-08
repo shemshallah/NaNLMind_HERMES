@@ -216,8 +216,13 @@ class NativeHeadCheckpointCoordinator:
             )
         except (ValueError, OSError) as exc:
             raise NativeHeadCheckpointError("verified HERMES chart unavailable") from exc
-        if before_generation != generation or page is None:
-            raise NativeHeadCheckpointConflict("chart generation changed during read")
+        if (before_generation != generation or page is None
+                or not hmac.compare_digest(
+                    _sha(page), str(state.get("chart_sha256"))
+                )):
+            raise NativeHeadCheckpointConflict(
+                "chart snapshot generation or full-page digest changed during read"
+            )
         # N16SNAP1 outer SHA is insufficient to authenticate N16ROOT1.
         # Reject rootless or tampered chart pages, even if SHA is valid.
         try:
