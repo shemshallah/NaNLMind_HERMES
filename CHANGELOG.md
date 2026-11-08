@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- Added a 1 GiB logical paged scratch register space (128 x 8 MiB, sparse),
+  L0-L9 layer projections, a deterministic 255-head ensemble, conservative
+  promotion into the local 8 MiB head register, and sparse HW4 WordNet
+  ingestion (`scratch_register.py`, `layered_learning.py`, `wordnet_store.py`).
+- Added five HERMES tools: `nanlm_learning_cycle`, `nanlm_learning_status`,
+  `nanlm_learning_sync`, `nanlm_wordnet_ingest`, `nanlm_scratch_register`.
 - Added deterministic UTF-8 corpus ingestion, exact-passage deduplication,
   hash-based train/validation/test splits, atomic JSON manifests and
   IDF-weighted source retrieval (`nanlmind_hermes/corpus_memory.py`).

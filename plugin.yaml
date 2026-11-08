@@ -1,5 +1,5 @@
 name: nanlmind-hermes
-version: 1.3.2
+version: 1.4.0
 manifest_version: 2
 api_version: 1
 requires_hermes: ">=0.23.0"
@@ -9,6 +9,11 @@ homepage: https://github.com/shemshallah/NaNLMind_HERMES
 tags: [nanlmind, training, corpus, local-runner, nannet]
 provides_tools:
   - nanlm_status
+  - nanlm_learning_cycle
+  - nanlm_learning_status
+  - nanlm_learning_sync
+  - nanlm_wordnet_ingest
+  - nanlm_scratch_register
   - nanlm_chart_storage
   - nanlm_chat
   - nanlm_chat_history
@@ -74,6 +79,34 @@ config_schema:
     type: bool
     default: true
     description: Enable free-form chat parsing to update native heads, mirror pairs and hyperedges when explicit supervised relations are extracted.
+  learning_min_support:
+    type: int
+    default: 3
+    description: Minimum repeated relation support before a scratch candidate may be promoted.
+  learning_min_confidence:
+    type: float
+    default: 0.6
+    description: Minimum conservative confidence for a relation promotion candidate.
+  learning_max_candidates:
+    type: int
+    default: 64
+    description: Maximum relation candidates considered in one synchronization pass.
+  learning_max_promoted_leaves:
+    type: int
+    default: 100
+    description: Maximum leaves retained in the local 8 MiB head register.
+  learning_require_approval:
+    type: bool
+    default: true
+    description: Require explicit approved=true before scratch leaves enter the local head register.
+  learning_auto_sync:
+    type: bool
+    default: false
+    description: Automatically attempt conservative synchronization after each observation. Keep false until the promotion rules are accepted.
+  wordnet_archive:
+    type: str
+    default: ""
+    description: Optional path to the WordNet 3.1 zip archive for the sparse HW4 dictionary universe.
   chat_mode:
     type: str
     default: native
