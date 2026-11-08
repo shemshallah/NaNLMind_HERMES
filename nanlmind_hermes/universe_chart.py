@@ -755,6 +755,8 @@ class LocalRunner:
         if runner is None:
             chart = load_chart(state_dir) or Chart8MiB.genesis()
             restore_local_chart(chart, state_dir)
+            from .universe_root import attach_universe_root
+            attach_universe_root(chart)
             register = TemporalRegister.open(ctx, chart)
             runner = cls(chart, register)
             _RUNNERS[key] = runner
@@ -763,6 +765,8 @@ class LocalRunner:
             if chart is not None and runner.chart is not chart \
                     and (runner.chart is None or runner.chart.root_hash != chart.root_hash):
                 restore_local_chart(chart, state_dir)
+                from .universe_root import attach_universe_root
+                attach_universe_root(chart)
                 runner.chart = chart
                 runner.register.chart = chart
                 runner.register.reason = "trained chart"
@@ -815,6 +819,9 @@ class LocalRunner:
             "chart": self.chart.stats() if self.chart else None,
             "checkpoint_generation": self.chart.snapshot_generation if self.chart else 0,
             "checkpoint_kind": "unmerged-local-chart",
+            "universe_root": __import__(
+                "nanlmind_hermes.universe_root", fromlist=["read_universe_root"]
+            ).read_universe_root(self.chart),
             "register": self.register.status(),
             "head_register": self.heads.status(),
         }
