@@ -164,6 +164,57 @@ class SingleLiveRunnerRebaseTests(unittest.TestCase):
             make_word(0x1234).to_bytes(8, "little"),
         )
 
+    def test_followup_checkpoint_rejects_same_generation_page_replacement(self):
+        """Dirty rails must not overwrite another valid same-generation page."""
+        from nanlmind_hermes.chart_storage import (
+            ChartStorageError, HEADER, MAGIC, SLOT_NAMES,
+        )
+        self.runner.chart.write_rail(17, 136, 0, make_word(0x2222))
+        committed = self.rebase()
+        self.assertEqual(committed["chart_generation"], 2)
+        self.assertTrue(self.runner.chart._dirty)
+        stored_generation, stored = load_chart_snapshot(self.state, self.parent)
+        self.assertEqual(stored_generation, 2)
+        # Model a valid but different N16SNAP1 page at the same generation.
+        # Generation-only CAS would accept and overwrite this page.
+        changed = bytearray(stored)
+        changed[0x7000] ^= 0x01
+        folder = self.state / "language" / "chart-checkpoints"
+        newest = folder / SLOT_NAMES[1]
+        newest.write_bytes(
+            HEADER.pack(
+                MAGIC, 2, bytes.fromhex(self.parent),
+                hashlib.sha256(changed).digest(),
+            ) + changed
+        )
+        self.assertEqual(load_chart_snapshot(self.state, self.parent), (2, bytes(changed)))
+        with self.assertRaisesRegex(ChartStorageError, "page digest"):
+            self.runner.checkpoint()
+        self.assertEqual(self.runner.chart.snapshot_generation, 2)
+        self.assertTrue(self.runner.chart._dirty)
+        self.assertEqual(load_chart_snapshot(self.state, self.parent), (2, bytes(changed)))
+
+    def test_restored_checkpoint_uses_verified_source_page_digest(self):
+        first = self.rebase()
+        self.assertTrue(first["head_bank_rebased"])
+        fresh_chart = Chart8MiB.genesis()
+        from nanlmind_hermes.universe_chart import restore_local_chart
+        self.assertEqual(restore_local_chart(fresh_chart, self.state), 2)
+        self.assertEqual(
+            fresh_chart._checkpoint_page_sha256,
+            self.fence(self.universe)["chart_sha256"],
+        )
+        fresh_runner = LocalRunner(
+            fresh_chart, TemporalRegister.open(self.ctx, fresh_chart),
+        )
+        fresh_runner.chart.write_rail(17, 136, 0, make_word(0x4321))
+        committed = fresh_runner.checkpoint()
+        self.assertEqual(committed["generation"], 3)
+        self.assertEqual(
+            fresh_runner.chart._checkpoint_page_sha256,
+            self.fence(self.universe)["chart_sha256"],
+        )
+
     def test_replay_does_not_replace_cached_state_or_increment_generation(self):
         first = self.rebase()
         self.assertTrue(first["head_bank_rebased"])
