@@ -126,6 +126,24 @@ def register(ctx):
                           params.get("system_prompt"), params.get("temperature", 0.7),
                           params.get("max_tokens", 2048), params.get("sources"))
 
+    def handle_chat_train(params, **kwargs):
+        """Mandatory Boolean foundation, then unrestricted dialogue and proposals."""
+        _require_scope("training:execute")
+        foundation = tools.ensure_boolean_foundation(ctx)
+        if foundation.get("status") != "passed":
+            raise RuntimeError("free-chat learning blocked until native logic foundation passes")
+        answer = tools.chat(
+            ctx, params["message"], params.get("session_id", "training"),
+            params.get("system_prompt"), params.get("temperature", 0.7),
+            params.get("max_tokens", 2048), params.get("sources"))
+        answer["mandatory_logic"] = {
+            "status": "passed", "state_sha256": foundation.get("state_sha256"),
+            "reused_checkpoint": foundation.get("reused_checkpoint", False)}
+        answer["training_boundary"] = (
+            "Conversation reflection is provisional; canonical head updates "
+            "require the separate candidate evaluation and merge gates.")
+        return answer
+
     def handle_chat_history(params, **kwargs):
         return tools.chat_history(ctx, params.get("session_id", "default"),
                                   params.get("limit", 40))
@@ -326,6 +344,14 @@ def register(ctx):
         return experimental_register.audit(ctx, params.get("limit", 64))
 
     specs = [
+        ("nanlm_chat_train", "Run free-form conversational learning after the mandatory 256-head native Boolean logic foundation; route user->Hermes->NaNLMind proposals and return evidence without bypassing canonical merge.",
+         {"message": {"type": "string", "minLength": 1, "maxLength": 1048576},
+          "session_id": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,80}$"},
+          "system_prompt": {"type": "string", "maxLength": 16384},
+          "temperature": {"type": "number", "minimum": 0, "maximum": 2},
+          "max_tokens": {"type": "integer", "minimum": 1, "maximum": 8192},
+          "sources": {"type": "array", "maxItems": 7}},
+         ["message"], handle_chat_train),
         ("nanlm_tree_inspect", "Inspect the experimental HW0:1-255 head -> numbered math branch -> data leaf hierarchy, without claiming a canonical merge.",
          {"head": {"type": "integer", "minimum": 1, "maximum": 255},
           "branch": {"type": "string", "maxLength": 48},
