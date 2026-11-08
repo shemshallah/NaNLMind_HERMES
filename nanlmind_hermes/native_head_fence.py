@@ -40,7 +40,10 @@ class SnapshotHeadBankFence:
                 raise ValueError("noncanonical digest")
         except ValueError as exc:
             raise NativeHeadFenceError("trusted lowercase parent root required") from exc
-        self._state_dir = Path(state_dir).expanduser()
+        # Capture the physical checkpoint home once. A trusted configured
+        # symlink can be redirected after this fence is constructed; following
+        # it again would certify or write a different 8 MiB universe.
+        self._state_dir = Path(state_dir).expanduser().resolve()
         self._parent = parent_root_sha256
         self._universe = universe_id
 
