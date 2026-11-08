@@ -5,14 +5,13 @@ from . import tools
 def register(ctx):
     from . import clocked_tools
 
-    # Boot the local-CPU runner immediately. The 8 MiB chart (genesis before
-    # training) and the temporal register file are held in local memory so
-    # heads can map from plugin boot, before any Boolean/local training.
-    try:
-        from .universe_chart import LocalRunner
-        LocalRunner.open(ctx)
-    except Exception:
-        pass
+    # Boot the ONE local NaN16 universe before advertising ANY plugin tool.
+    # A corrupt N16SNAP1 checkpoint, a wrong-parent N16ROOT1 descriptor or
+    # an unmountable chart must abort plugin startup. Silently suppressing
+    # these failures would expose apparently working learning tools whose
+    # underlying authoritative binary root was never mounted.
+    from .universe_chart import LocalRunner
+    LocalRunner.open(ctx)
 
     _learning_cache: dict[str, object] = {}
 
