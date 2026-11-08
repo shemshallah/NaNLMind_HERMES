@@ -6,6 +6,11 @@ the router's existing MC0DB/BS0DB files only act as the canonical graph source.
 from __future__ import annotations
 
 import tempfile
+import time
+
+from nanlmind_hermes.crypto_compat import Ed25519PrivateKey, serialization
+from nanlmind_hermes.router_graph_attestation import verify_graph_sender_attestation
+from runner_riddle.graph_sender_attestation import sign_graph_attestation
 
 from nanlmind_hermes.mirror_topology import TOPOLOGY_DIGEST as HERMES_TOPOLOGY
 from nanlmind_hermes.router_graph_page import (
@@ -92,6 +97,31 @@ def main():
         assert not status["native_mth_executed"]
         assert not status["learning_admitted"]
 
+        # Real router signer -> actual HERMES recipient. The expected public
+        # key and identity are injected independently, never from the packet.
+        signing_key = Ed25519PrivateKey.generate()
+        trusted_pub_hex = signing_key.public_key().public_bytes(
+            encoding=serialization.Encoding.Raw,
+            format=serialization.PublicFormat.Raw).hex()
+        now = int(time.time())
+        signed = sign_graph_attestation(
+            first, router_id="router-ci-0", key_id="ci-key-1",
+            private_key=signing_key, issued_at=now, nonce="a" * 32)
+        signed_status = verify_graph_sender_attestation(
+            replay_history, signed, expected_router_id="router-ci-0",
+            expected_key_id="ci-key-1", public_key_hex=trusted_pub_hex, now=now)
+        assert signed_status["sender_authenticated"]
+        assert not signed_status["nonce_replay_protected"]
+        assert not signed_status["native_mth_executed"]
+        assert not signed_status["learning_admitted"]
+        forged = dict(signed, history_sha256="0" * 64)
+        assert_denied(lambda: verify_graph_sender_attestation(
+            replay_history, forged, expected_router_id="router-ci-0",
+            expected_key_id="ci-key-1", public_key_hex=trusted_pub_hex, now=now))
+        assert_denied(lambda: verify_graph_sender_attestation(
+            replay_history, signed, expected_router_id="router-ci-1",
+            expected_key_id="ci-key-1", public_key_hex=trusted_pub_hex, now=now))
+
         replay = RouterGraphPageVerifier(chart)
         replay.add_page(first)
         assert_denied(lambda: replay.add_page(first))
@@ -106,7 +136,7 @@ def main():
         assert_denied(lambda: mixed.add_page(second))
     print("PASS: real NaNROUTER graph -> HERMES chart-root-bound "
           "2-page state, 3-revision history replay, tombstone, "
-          "tamper, replay, stale epoch; no sender/MTH promotion")
+          "tamper, Ed25519 sender authentication, stale epoch; no MTH promotion")
 
 
 if __name__ == "__main__":
