@@ -233,6 +233,30 @@ class NativeHeadCheckpointCoordinator:
                 _sha(page[BANK_OFFSET:BANK_END]), request.bank_before_sha256):
             raise NativeHeadCheckpointConflict("bank changed during snapshot read")
 
+        # Revalidate the router-owned ring epoch and authenticated staging
+        # record immediately before the durable N16SNAP1 CAS. An old
+        # observation cannot initiate a NEW chart write after ring handoff.
+        # Historic already-checkpointed dispatches remain replayable.
+        epoch_reader = getattr(self.journal, "ring_epoch_reader", None)
+        if not callable(epoch_reader):
+            raise NativeHeadCheckpointError("live router ring epoch authority required")
+        active_epoch = epoch_reader()
+        if type(active_epoch) is not int or active_epoch < 1:
+            raise NativeHeadCheckpointConflict("router ring epoch unavailable")
+        if (type(request.ring_epoch) is not int
+                or request.ring_epoch != active_epoch):
+            raise NativeHeadCheckpointConflict("router ring epoch changed before checkpoint")
+        fresh = self.journal.inspect(
+            request=request, lease_receipt=lease_receipt,
+            network_head=network_head, include_bank=False,
+        )
+        if (not isinstance(fresh, dict)
+                or fresh.get("state") != "completed_staging_only"
+                or fresh.get("bank_after_sha256") != after_sha256):
+            raise NativeHeadCheckpointConflict(
+                "authenticated journal stage changed before checkpoint"
+            )
+
         # Isolate native NaN16 bank to its reserved bytes: no other chart
         # cells, mirror routes or temporal rails can be overwritten.
         updated = bytearray(page)
