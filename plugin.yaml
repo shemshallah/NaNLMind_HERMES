@@ -21,6 +21,11 @@ provides_tools:
   - nanlm_hw_heartbeat
   - nanlm_hw_release
   - nanlm_hw_report
+  - nanlm_universe_status
+  - nanlm_universe_open
+  - nanlm_universe_resolve
+  - nanlm_universe_renew
+  - nanlm_universe_release
   - nanlm_generate_curriculum
   - nanlm_curriculum_experiment
   - nanlm_logic_session
