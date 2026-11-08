@@ -66,7 +66,7 @@ config_schema:
   state_dir:
     type: str
     default: ~/.local/share/nanlmind-hermes
-    description: Local working directory and native checkpoint path for the one HW0::BS0 state. All BS0 workers and attached clients must share this canonical state path; do not create per-runner or per-endpoint universes.
+    description: Local working directory for HERMES state. BS0:0 is the shared runner-ring NANNET port; HW0:0 is a distinct hardware node. HERMES guest universes require independent authorized leases and must never alias canonical BS0 training state.
   clocked_gateway_url:
     type: str
     default: ""
