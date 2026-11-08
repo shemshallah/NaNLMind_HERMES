@@ -102,6 +102,6 @@ the remote merge/integration.
 - `docs/LONG_CHAT_DEMO.md`: logic training, local runner over a trained chart,
   20 exposure sentences, 15-turn conversation, held-out volcano session,
   three-way call with CLOCKED off.
-- `python -m unittest discover -s tests`: 208 tests, including chart mapping,
+- `python -m unittest discover -s tests`: 211 tests, including chart mapping,
   real-rail commits, boot-time genesis, trained-chart rebinding and the
   temporal predictor.
