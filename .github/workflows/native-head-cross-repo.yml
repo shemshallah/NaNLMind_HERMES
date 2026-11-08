@@ -43,12 +43,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: shemshallah/NaNROUTER
-          ref: e46f4294493cdc1bd5b0bfdc0284ff6365d97dde
+          ref: 3fa484b5693debdb0a90bf2f08ecb03d2028945e
           path: router
       - uses: actions/checkout@v4
         with:
           repository: shemshallah/NaN0S
-          ref: 3b045ff48c8b862db290c3702789c43bde459048
+          ref: 7c44be19797da6f15b60640604636c8973a92805
           path: nan0s
       - uses: actions/setup-python@v5
         with:
