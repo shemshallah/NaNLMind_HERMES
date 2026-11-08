@@ -21,7 +21,7 @@
 ;
 ; nhl_open:
 ;   in  r1 slot 0..15, r2 generation>=1, r3 lease_id>=1,
-;       r4 universe_id>=1, r5 owner_tag>=1, r6 node_point 1..255,
+;       r4 universe_id>=1, r5 owner_tag>=1, r6 node_point 1..256,
 ;       r7 deadline_tick, r8 now_tick
 ;   out r3 status
 ; nhl_resolve:
@@ -56,7 +56,7 @@ CMP r5,r0
 JMP[EQ] @nhl_open_bad
 CMP r6,r0
 JMP[EQ] @nhl_open_bad
-MOVI r9,255
+MOVI r9,256
 CMP r6,r9
 JMP[GT] @nhl_open_bad
 CMP r7,r8
