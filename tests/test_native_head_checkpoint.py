@@ -43,10 +43,12 @@ class FakeCompletedJournal:
         self.confirmations = 0
         self.fail_confirm_once = False
         self.pending = False
+        self.epoch = 31
+        self.ring_epoch_reader = lambda: self.epoch
 
     def inspect(self, *, request, lease_receipt, network_head, include_bank):
-        if not include_bank or network_head != 0:
-            raise AssertionError("must inspect native bank under head 0")
+        if type(include_bank) is not bool or network_head != 0:
+            raise AssertionError("must inspect the journal under head 0")
         if lease_receipt["universe_id"] != self.universe:
             raise NativeHeadCheckpointConflict("foreign journal universe")
         if self.pending:
@@ -54,7 +56,8 @@ class FakeCompletedJournal:
                     "canonical_training_committed": False}
         return {
             "state": self.state,
-            "raw_bank": self.raw if self.state == "completed_staging_only" else None,
+            "raw_bank": (self.raw if include_bank and
+                         self.state == "completed_staging_only" else None),
             "bank_after_sha256": self.after,
             "canonical_training_committed": False,
             "local_checkpoint_verified": self.state == "checkpointed_locally",
@@ -112,6 +115,7 @@ class NativeHeadCheckpointTests(unittest.TestCase):
         self.request = SimpleNamespace(
             parent_root_sha256=self.parent,
             chart_generation=1,
+            ring_epoch=31,
             bank_before_sha256=sha(bytes(BANK_BYTES)),
         )
         self.receipt = {"universe_id": self.universe}
@@ -201,6 +205,29 @@ class NativeHeadCheckpointTests(unittest.TestCase):
                 NativeHeadCheckpointConflict, "unrelated chart cells"):
             self.commit()
         self.assertEqual(self.journal.confirmations, 0)
+
+    def test_stale_ring_epoch_denied_before_new_chart_write(self):
+        self.journal.epoch = 32
+        with self.assertRaisesRegex(
+                NativeHeadCheckpointConflict, "ring epoch changed"):
+            self.commit()
+        self.assertEqual(self.fence(self.universe)["chart_generation"], 1)
+
+    def test_authenticated_journal_changed_between_inspections_denied(self):
+        original = self.journal.inspect
+        calls = [0]
+
+        def revoked_between(*args, **kwargs):
+            calls[0] += 1
+            if calls[0] == 2:
+                raise ValueError("router lease revoked between inspections")
+            return original(*args, **kwargs)
+
+        self.journal.inspect = revoked_between
+        with self.assertRaisesRegex(ValueError, "revoked"):
+            self.commit()
+        self.assertEqual(self.fence(self.universe)["chart_generation"], 1)
+        self.assertEqual(calls[0], 2)
 
     def test_pending_or_ambiguous_does_not_touch_chart(self):
         self.journal.pending = True
