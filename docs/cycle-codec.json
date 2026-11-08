@@ -1,0 +1,96 @@
+{
+  "schema": "nanlmind-hermes-cycle-codec/1",
+  "note": "random classical cycle code over K64; semantic vectors are synthetic, gauge fitting is least squares and not robust to large spikes",
+  "results": [
+    {
+      "nodes": 32,
+      "embedding_dim": 4,
+      "erasure": 0.0,
+      "spike_rate": 0.0,
+      "queries": 6,
+      "gauge_fit_cosine": 0.9999999999994761,
+      "joint_robust_cosine": 0.9999999999994761,
+      "uncorrected_cosine": 0.9999999999994761
+    },
+    {
+      "nodes": 32,
+      "embedding_dim": 4,
+      "erasure": 0.0,
+      "spike_rate": 0.1,
+      "queries": 6,
+      "gauge_fit_cosine": 0.32872860392641656,
+      "joint_robust_cosine": 0.859370106506241,
+      "uncorrected_cosine": 0.32872860392641656
+    },
+    {
+      "nodes": 32,
+      "embedding_dim": 4,
+      "erasure": 0.0,
+      "spike_rate": 0.4,
+      "queries": 6,
+      "gauge_fit_cosine": 0.18880907537881875,
+      "joint_robust_cosine": 0.3771076491705927,
+      "uncorrected_cosine": 0.18880907537881877
+    },
+    {
+      "nodes": 32,
+      "embedding_dim": 4,
+      "erasure": 0.5,
+      "spike_rate": 0.0,
+      "queries": 6,
+      "gauge_fit_cosine": 0.9971272790628684,
+      "joint_robust_cosine": 0.9999999999989276,
+      "uncorrected_cosine": 0.507241420978887
+    },
+    {
+      "nodes": 32,
+      "embedding_dim": 4,
+      "erasure": 0.5,
+      "spike_rate": 0.1,
+      "queries": 6,
+      "gauge_fit_cosine": 0.4099075397517045,
+      "joint_robust_cosine": 0.7762356734064796,
+      "uncorrected_cosine": 0.365756446263867
+    },
+    {
+      "nodes": 32,
+      "embedding_dim": 4,
+      "erasure": 0.5,
+      "spike_rate": 0.4,
+      "queries": 6,
+      "gauge_fit_cosine": -0.0499855696032103,
+      "joint_robust_cosine": 0.2921417534786264,
+      "uncorrected_cosine": 0.027141896605014273
+    },
+    {
+      "nodes": 32,
+      "embedding_dim": 4,
+      "erasure": 0.9,
+      "spike_rate": 0.0,
+      "queries": 6,
+      "gauge_fit_cosine": 0.9646323106791744,
+      "joint_robust_cosine": 0.9999999999991239,
+      "uncorrected_cosine": 0.05477202073743873
+    },
+    {
+      "nodes": 32,
+      "embedding_dim": 4,
+      "erasure": 0.9,
+      "spike_rate": 0.1,
+      "queries": 6,
+      "gauge_fit_cosine": 0.0012223310978730834,
+      "joint_robust_cosine": 0.07495435900263175,
+      "uncorrected_cosine": -2.9057143876673464e-05
+    },
+    {
+      "nodes": 32,
+      "embedding_dim": 4,
+      "erasure": 0.9,
+      "spike_rate": 0.4,
+      "queries": 6,
+      "gauge_fit_cosine": 0.13228328853593038,
+      "joint_robust_cosine": 0.25403787823753277,
+      "uncorrected_cosine": 0.04781391284259053
+    }
+  ]
+}

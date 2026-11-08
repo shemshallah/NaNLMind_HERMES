@@ -186,7 +186,7 @@ Report security issues privately as described in [SECURITY.md](SECURITY.md).
 
 ## Verification
 
-- 230 unit/integration tests pass locally; CI runs Python 3.10, 3.11, and 3.12.
+- 243 unit/integration tests pass locally; CI runs Python 3.10, 3.11, and 3.12.
 - Hermes Agent v0.23.0 `plugins validate` and `plugins doctor` pass in CI.
 - Wheel and source distribution builds, metadata checks, installation/import,
   and SHA-256 checksums pass in CI.
@@ -240,6 +240,10 @@ Report security issues privately as described in [SECURITY.md](SECURITY.md).
 | [Definition acquisition](docs/DEFINITION_ACQUISITION.md) | new word leaf, inherited properties, honest boundaries |
 | [Phase memory](docs/PHASE_MEMORY.md) | gauge-invariant phase retrieval, real-channel equivalence, noise limits |
 | [Rounds 010–011](docs/ROUND010_011.md) | quantum controls, directional replication, phase-memory and NaN-palindrome limits |
+| [Robust recovery](docs/ROBUST_RECOVERY.md) | two-hop median, gauge-flat 40% recovery, non-flat failure |
+| [WordNet ancestry](docs/WORDNET_ANCESTRY.md) | 2,000/2,000 exact multi-hop vs 50% direct baseline |
+| [Cycle codec](docs/CYCLE_CODEC.md) | gauge-corrected cycle code, joint robust decoder, random-code control |
+| [Rounds 012–015 → MTH](docs/ROUND012_015_MTH.md) | robust recovery, blind semantic code, relation limits, MTH mapping |
 | [Long chat session](docs/LONG_CHAT_DEMO.md) | exposure, temporal predictions, held-out session, feedback re-deliberation |
 | [Demo results](docs/DEMO_RESULTS.md) | 38/38 exhaustive tool-call results |
 | [Live smoke results](docs/LIVE_SMOKE.md) | 11/11 deployed-service checks |

@@ -1,0 +1,100 @@
+{
+  "caveat": "The correct source synset is given; this is exact symbolic composition, not definition understanding or a trained model.",
+  "direct_edge_only_balanced_accuracy": 0.5,
+  "examples": [
+    {
+      "hops": 2,
+      "source": "bone of contention",
+      "source_lexname": "noun.communication",
+      "target": "message",
+      "target_lexname": "noun.communication"
+    },
+    {
+      "hops": 4,
+      "source": "organic light-emitting diode",
+      "source_lexname": "noun.artifact",
+      "target": "conductor",
+      "target_lexname": "noun.artifact"
+    },
+    {
+      "hops": 4,
+      "source": "clothes tree",
+      "source_lexname": "noun.artifact",
+      "target": "instrumentality",
+      "target_lexname": "noun.artifact"
+    },
+    {
+      "hops": 3,
+      "source": "part-timer",
+      "source_lexname": "noun.person",
+      "target": "organism",
+      "target_lexname": "noun.Tops"
+    },
+    {
+      "hops": 2,
+      "source": "flintlock",
+      "source_lexname": "noun.artifact",
+      "target": "firearm",
+      "target_lexname": "noun.artifact"
+    },
+    {
+      "hops": 3,
+      "source": "gaggle",
+      "source_lexname": "noun.group",
+      "target": "biological group",
+      "target_lexname": "noun.group"
+    },
+    {
+      "hops": 4,
+      "source": "muralist",
+      "source_lexname": "noun.person",
+      "target": "person",
+      "target_lexname": "noun.Tops"
+    },
+    {
+      "hops": 3,
+      "source": "romance",
+      "source_lexname": "noun.communication",
+      "target": "indo-european",
+      "target_lexname": "noun.communication"
+    },
+    {
+      "hops": 2,
+      "source": "el cid",
+      "source_lexname": "noun.person",
+      "target": "imaginary being",
+      "target_lexname": "noun.person"
+    },
+    {
+      "hops": 2,
+      "source": "luxembourg",
+      "source_lexname": "noun.location",
+      "target": "country",
+      "target_lexname": "noun.location"
+    },
+    {
+      "hops": 4,
+      "source": "adam's peak",
+      "source_lexname": "noun.object",
+      "target": "point",
+      "target_lexname": "noun.location"
+    },
+    {
+      "hops": 3,
+      "source": "retardation",
+      "source_lexname": "noun.cognition",
+      "target": "cognition",
+      "target_lexname": "noun.Tops"
+    }
+  ],
+  "hop_distribution": {
+    "2": 303,
+    "3": 367,
+    "4": 330
+  },
+  "multi_hop_balanced_accuracy": 1.0,
+  "negative_queries": 1000,
+  "positive_queries": 1000,
+  "schema": "nanlmind-hermes-wordnet-ancestry/1",
+  "synsets": 82192
+}

@@ -1,0 +1,52 @@
+{
+  "schema": "nanlmind-hermes-robust-recovery/1",
+  "method": "gauge-flat 256-node field; two-hop median vs mean and raw; classical robust estimation, not quantum error correction",
+  "aggregate": [
+    {
+      "fraction": 0.1,
+      "raw_mae": 0.25045882094060024,
+      "mean_mae": 0.05737428959482984,
+      "median_mae": 0.0
+    },
+    {
+      "fraction": 0.2,
+      "raw_mae": 0.5003872312622516,
+      "mean_mae": 0.08536205543523166,
+      "median_mae": 0.0
+    },
+    {
+      "fraction": 0.4,
+      "raw_mae": 1.0007384637514771,
+      "mean_mae": 0.11848434293393995,
+      "median_mae": 0.0
+    },
+    {
+      "fraction": 0.6,
+      "raw_mae": 1.500020448582257,
+      "mean_mae": 0.1528682960824758,
+      "median_mae": 0.00213523781476636
+    },
+    {
+      "fraction": 0.8,
+      "raw_mae": 1.9997139524308019,
+      "mean_mae": 0.16923694616810614,
+      "median_mae": 0.09778374974490724
+    }
+  ],
+  "noise_sigma_0_05_fraction_0_1": {
+    "raw_mae": 0.28591913575319716,
+    "mean_mae": 0.06095846515545774,
+    "median_mae": 0.005560263873064051
+  },
+  "nonflat_control": {
+    "n": 256,
+    "original_std": 1.0035086061544412,
+    "median_mae": 0.7929634482797483
+  },
+  "limitations": [
+    "A gauge-flat field has only 255 independent dimensions.",
+    "The median decoder destroys genuinely non-flat cycle fields.",
+    "No quantum hardware or physical quantum effect is involved.",
+    "Detection/precision at a known corruption budget would be an oracle-budget experiment, not blind localization."
+  ]
+}

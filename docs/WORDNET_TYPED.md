@@ -56,7 +56,7 @@ addressed sparsely at HW4; it is not a dense matrix per word.
 ### entity
 
 - synset: `n:00001740`
-- lexname: `noun.artifact`
+- lexname: `noun.Tops`
 - definition: that which is perceived or known or inferred to have its own distinct existence (living or nonliving)
 - examples: []
 - hypernym chain:
@@ -66,7 +66,7 @@ addressed sparsely at HW4; it is not a dense matrix per word.
 ### animal
 
 - synset: `n:00015568`
-- lexname: `noun.artifact`
+- lexname: `noun.Tops`
 - definition: a living organism characterized by voluntary movement
 - examples: []
 - hypernym chain:
@@ -82,7 +82,7 @@ addressed sparsely at HW4; it is not a dense matrix per word.
 ### bird
 
 - synset: `n:01505702`
-- lexname: `noun.body`
+- lexname: `noun.animal`
 - definition: warm-blooded egg-laying vertebrates characterized by feathers and forelimbs modified as wings
 - examples: []
 - hypernym chain:
@@ -100,7 +100,7 @@ addressed sparsely at HW4; it is not a dense matrix per word.
 ### penguin
 
 - synset: `n:02058457`
-- lexname: `noun.body`
+- lexname: `noun.animal`
 - definition: short-legged flightless birds of cold southern especially Antarctic regions having webbed feet and wings modified as flippers
 - examples: []
 - hypernym chain:
@@ -118,7 +118,7 @@ addressed sparsely at HW4; it is not a dense matrix per word.
 ### vehicle
 
 - synset: `n:04531608`
-- lexname: `noun.cognition`
+- lexname: `noun.artifact`
 - definition: a conveyance that transports people or objects
 - examples: []
 - hypernym chain:
@@ -135,7 +135,7 @@ addressed sparsely at HW4; it is not a dense matrix per word.
 ### car
 
 - synset: `n:02937835`
-- lexname: `noun.cognition`
+- lexname: `noun.artifact`
 - definition: a conveyance for passengers or freight on a cable railway
 - examples: ["they took a cable car to the top of the mountain"]
 - hypernym chain:

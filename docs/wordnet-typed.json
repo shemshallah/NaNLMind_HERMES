@@ -131,7 +131,7 @@
           "synset": "n:00001740"
         }
       ],
-      "lexname": "noun.artifact",
+      "lexname": "noun.Tops",
       "synset": "n:00015568",
       "typed_relations": [
         {
@@ -284,7 +284,7 @@
           "synset": "n:00001930"
         }
       ],
-      "lexname": "noun.body",
+      "lexname": "noun.animal",
       "synset": "n:01505702",
       "typed_relations": [
         {
@@ -436,7 +436,7 @@
           "synset": "n:00001930"
         }
       ],
-      "lexname": "noun.cognition",
+      "lexname": "noun.artifact",
       "synset": "n:02937835",
       "typed_relations": [
         {
@@ -465,7 +465,7 @@
           "synset": "n:00001740"
         }
       ],
-      "lexname": "noun.artifact",
+      "lexname": "noun.Tops",
       "synset": "n:00001740",
       "typed_relations": [
         {
@@ -563,7 +563,7 @@
           "synset": "n:00004475"
         }
       ],
-      "lexname": "noun.body",
+      "lexname": "noun.animal",
       "synset": "n:02058457",
       "typed_relations": [
         {
@@ -676,7 +676,7 @@
           "synset": "n:00001740"
         }
       ],
-      "lexname": "noun.cognition",
+      "lexname": "noun.artifact",
       "synset": "n:04531608",
       "typed_relations": [
         {
