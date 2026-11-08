@@ -14,6 +14,7 @@ provides_tools:
   - nanlm_learning_sync
   - nanlm_wordnet_ingest
   - nanlm_scratch_register
+  - nanlm_chart_storage
   - nanlm_chat
   - nanlm_chat_history
   - nanlm_phone_call
