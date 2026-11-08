@@ -72,6 +72,9 @@ def main():
         "matrix": {"rank": matrix.rank, "shape": matrix.shape,
                    "dtype": matrix.dtype},
         "heads": {"used": len(algebra.heads),
+                  "usable": len([head for head in algebra.heads if head != 0]),
+                  "nannet_head": 0,
+                  "nannet_head_role": "NaNNet + polarity",
                   "leaves": len(algebra.leaves),
                   "admissions": sum(1 for event in algebra.ledger
                                     if event["event"] == "admit"),
@@ -101,7 +104,7 @@ def main():
         "|---|---|---:|",
         f"| L0 | bit value leaves | {report['tree']['L0_bits']} |",
         f"| L1 | functions | {report['tree']['L1_functions']} |",
-        f"| L2 | byte leaves | {report['tree']['L2_bytes']} |",
+        f"| L2 | byte leaves (0x00 anchors head 0; 0x01–0xFF use heads 1–255) | {report['tree']['L2_bytes']} |",
         f"| L3 | printable letter leaves | {report['tree']['L3_letters']} |",
         f"| L4 | word hyperedges | {report['tree']['L4_words']} |",
         f"| L5 | constructed vector leaves | {report['tree']['L5_vectors']} |",
@@ -166,6 +169,7 @@ def main():
         "completion_accuracy": completion["accuracy"],
         "completion_interleaved": completion_interleaved["accuracy"],
         "heads_used": report["heads"]["used"],
+        "usable_heads": report["heads"]["usable"],
         "leaves": report["heads"]["leaves"],
     }, indent=2))
 

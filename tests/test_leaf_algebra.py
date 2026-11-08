@@ -53,11 +53,15 @@ class LeafAlgebraTests(unittest.TestCase):
         self.assertGreaterEqual(len(tree["L4_words"]), 10)
         self.assertEqual(len(tree["L5_vectors"]), 1)
 
-    def test_byte_layer_uses_all_256_head_coordinates(self):
+    def test_byte_layer_uses_all_255_usable_heads_plus_head_zero_anchor(self):
         for value in range(256):
             self.algebra.byte(value)
-        self.assertEqual(len(self.algebra.heads), 256)
-        self.assertEqual(sorted(self.algebra.heads), list(range(256)))
+        usable = sorted(head for head in self.algebra.heads if head != 0)
+        self.assertEqual(usable, list(range(1, 256)))
+        self.assertIn(0, self.algebra.heads)
+        anchor = next(leaf for leaf in self.algebra.leaves.values()
+                      if leaf.tags.get("head") == 0)
+        self.assertEqual(anchor.tags.get("anchor"), "NaNNet+polarity")
 
     def test_heads_admit_leaves_and_ledger_transforms(self):
         self.algebra.word("YES")

@@ -16,7 +16,7 @@ dimension-aware leaves. No free-floating linguistic labels.
 |---|---|---:|
 | L0 | bit value leaves | 2 |
 | L1 | functions | 19 |
-| L2 | byte leaves | 256 |
+| L2 | byte leaves (0x00 anchors head 0; 0x01–0xFF use heads 1–255) | 256 |
 | L3 | printable letter leaves | 95 |
 | L4 | word hyperedges | 12 |
 | L5 | constructed vector leaves | 1 |
@@ -107,7 +107,10 @@ Interleaved split (train values not divisible by 4):
 {
   "admissions": 804,
   "leaves": 370,
+  "nannet_head": 0,
+  "nannet_head_role": "NaNNet + polarity",
   "transforms": 64,
+  "usable": 255,
   "used": 256
 }
 ```

@@ -77,6 +77,8 @@ class LeafAlgebra:
         leaf.tags.setdefault("head", head)
         leaf.tags.setdefault("root_mask", mask)
         leaf.tags.setdefault("root_function", ROOT_NAMES[mask])
+        if head == 0:
+            leaf.tags["anchor"] = "NaNNet+polarity"
         self.heads.setdefault(head, []).append(leaf.leaf_id)
         self.ledger.append({"event": "admit", "leaf": leaf.leaf_id,
                             "kind": leaf.kind, "head": head, "mask": mask})
@@ -196,6 +198,7 @@ class LeafAlgebra:
         if leaf.kind == "BYTE":
             bits = "".join(str(int(bit) & 1) for bit in leaf.value)
             value = int(bits, 2) if bits else 0
+            # 0x00 is the NaNNet/polarity anchor; 0x01..0xFF use heads 1..255.
             return value & 0xFF, value & 0x0F
         if leaf.kind == "LETTER":
             code = ord(str(leaf.value)[0]) & 0xFF
@@ -206,7 +209,7 @@ class LeafAlgebra:
             head = 0
             for char in str(leaf.value):
                 head = (head * 31 + ord(char)) & 0xFF
-            return head, (head & 0x0F)
+            return (head or 255), (head & 0x0F)
         # Other constructed leaves (vectors, matrices) fold by relation value.
         payload = repr(leaf.value) + leaf.kind
         data = payload.encode("utf-8")
