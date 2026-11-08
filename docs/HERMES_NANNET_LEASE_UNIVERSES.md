@@ -150,3 +150,17 @@ portal HTTP bridge. The local plugin demo remains a deterministic fixture;
 it is not evidence of hosted Koyeb deployment. Required runtime secret names
 and staging process are documented in the companion
 NaNROUTER `docs/HERMES_NANNET_KOYEB_MIGRATION.md`.
+
+### Durable dispatch inspection tool
+
+`nanlm_universe_inspect` queries the authoritative router journal by
+a stable `dispatch_id`, within an active authenticated local lease and
+head. It distinguishes `not_recorded`, `pending_or_ambiguous`,
+`completed`, and `acknowledged`. A completed frame is returned only
+after verification of its SHA-256 and the native N16T guest execution flag.
+A pending or ambiguous dispatch is **not retried** by this command, and
+the operation cannot move knowledge into the canonical NaNLMind learner.
+The router's HERMES and generic `/n16t` guests are separate durable VM
+pools, with session IDs permanently scoped to one installation, lease,
+generation, universe and head (until an explicit future safe-retirement
+protocol exists).
