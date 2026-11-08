@@ -129,11 +129,11 @@ class GraphPageVerifierTests(unittest.TestCase):
                 dict(status="verified"),
                 dict(relation="hallucination")):
             with self.subTest(changes=changes):
-                bad=edge("e1")
-                bad.update(changes)
+                payload=page(self.chart,[edge("e1")])
+                payload["entries"][0].update(changes)
                 verifier=RouterGraphPageVerifier(self.chart)
                 with self.assertRaises(RouterGraphPageError):
-                    verifier.add_page(page(self.chart,[bad]))
+                    verifier.add_page(payload)
 
     def test_altered_entry_fails_full_state_digest(self):
         valid=edge("e1")
