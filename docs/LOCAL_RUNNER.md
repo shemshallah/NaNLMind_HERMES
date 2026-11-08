@@ -105,3 +105,37 @@ the remote merge/integration.
 - `python -m unittest discover -s tests`: 272 tests, including chart mapping,
   real-rail commits, boot-time genesis, trained-chart rebinding and the
   temporal predictor.
+
+
+## Crash-recoverable LOCAL chart snapshots (N16SNAP1)
+
+At the native temporal model's save boundary, HERMES now checkpoints the
+**entire 8 MiB chart** as an unmerged local overlay, using two alternate
+generation slots in \`state_dir/language/chart-checkpoints/\`:
+
+- \`chart.0.n16s\` and \`chart.1.n16s\`: full 8,388,608-byte chart bytes
+  preceded by an 80-byte header (\`N16SNAP1\`, uint64 generation, 32-byte
+  canonical parent root, 32-byte SHA-256 of the chart bytes).
+- A named local advisory lock serializes writers. Generation comparison
+  prevents an old HERMES process from overwriting a newer snapshot.
+- A new slot is written to a distinct 0600 temporary file, fsynced, atomically
+  renamed, and followed by a directory fsync. Both generations must not be
+  overwritten at once. A corrupt/torn newest slot falls back to an older
+  valid generation; a fully corrupt store fails closed instead of resetting.
+- A snapshot is eligible for reopening only against the **exact**
+  \`global_universe.nmg\` parent-root digest (or its genesis digest), and its
+  immutable index, canonical-address list, pair table and chart header must
+  match the freshly built chart. The original native .nmg remains unchanged.
+- On reopening, the SHA-verified chart's temporal extension restores the
+  frame, forward/back register payloads and 256 NaN16 16-bit state values,
+  overriding an outdated JSON sidecar.
+
+This module is **host byte I/O and crash-recovery only**, not an independent
+Python implementation of NaN16 computation. Guest math and canonical head
+training still require real native NaN16 execution and the usual merge
+authorization; no local snapshot implies a training or NANNET commit.
+The 16-bit chart temporal state is the durable guest representation; an
+auxiliary JSON sidecar may retain higher precision for a live process but
+is not authoritative after checkpoint recovery. Snapshots are currently
+full-page (8 MiB), not incremental, and are created at save boundaries,
+not after every individual word.

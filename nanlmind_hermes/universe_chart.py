@@ -29,6 +29,8 @@ from __future__ import annotations
 import struct
 from pathlib import Path
 
+from .chart_storage import load_chart_snapshot, save_chart_snapshot, ChartStorageError
+
 MAGIC_GLOBAL = b"NLMGLOB3"
 MAGIC_UNIVERSE = b"NLMU0001"
 MAGIC_CHART = b"NLMCHRT1"
@@ -141,6 +143,7 @@ class Chart8MiB:
             b"genesis:" + struct.pack("<Q", genome)).hexdigest()
         chart.bytes = bytearray(PAGE_BYTES)
         chart._dirty = True
+        chart.snapshot_generation = 0
         chart._parents = {}
         header = chart.bytes
         header[0:8] = MAGIC_CHART
@@ -200,6 +203,7 @@ class Chart8MiB:
         self._build_index()
         self._parents: dict[int, int] = {}
         self._dirty = False
+        self.snapshot_generation = 0
 
     # -- assembly -------------------------------------------------------
     def _write_header(self, page: bytes) -> None:
@@ -362,6 +366,26 @@ def load_chart(state_dir: str | Path) -> Chart8MiB | None:
     return chart
 
 
+def restore_local_chart(chart: Chart8MiB, state_dir: str | Path) -> int:
+    """Restore an unmerged local byte overlay only on its exact canonical root.
+
+    Immutable address/canon/pair mapping must be identical to a freshly
+    instantiated native layout. Never promote an overlay into the .nmg.
+    """
+    generation, payload = load_chart_snapshot(state_dir, chart.root_hash)
+    if payload is not None:
+        for start, size in ((0, 40),
+                            (OFF_INDEX, ADDRESS_COUNT * 2),
+                            (OFF_CANON, CANONICAL_COUNT * 2),
+                            (OFF_PAIR_TABLE, MIRROR_PAIR_COUNT * 2)):
+            if payload[start:start + size] != chart.bytes[start:start + size]:
+                raise ChartError("snapshot changed immutable chart addressing")
+        chart.bytes[:] = payload
+        chart._dirty = False
+    chart.snapshot_generation = generation
+    return generation
+
+
 class TemporalRegister:
     """Temporal register bound to one pair cell's s+/s- rails."""
 
@@ -378,6 +402,8 @@ class TemporalRegister:
         self.back_payload = 0
         self.state = [0] * 256
         self._load_sidecar()
+        if self.mapped and self.chart.snapshot_generation:
+            self._restore_extension()
         self._sync_extension()
 
     @classmethod
@@ -422,6 +448,17 @@ class TemporalRegister:
         state = data.get("state")
         if isinstance(state, list) and len(state) == 256:
             self.state = [int(value) & 0xFFFF for value in state]
+
+    def _restore_extension(self) -> None:
+        """Recovery uses the SHA-verified chart, not a potentially stale JSON."""
+        data = self.chart.bytes
+        region = self.offset
+        if data[region:region + 8] != REGISTER_MAGIC:
+            raise ChartError("committed snapshot lacks native temporal register")
+        self.frame = struct.unpack_from("<Q", data, region + 8)[0]
+        self.forward_payload = struct.unpack_from("<Q", data, region + 16)[0]
+        self.back_payload = struct.unpack_from("<Q", data, region + 24)[0]
+        self.state = list(struct.unpack_from("<256H", data, region + 32))
 
     def save(self) -> None:
         import json
@@ -717,6 +754,7 @@ class LocalRunner:
             latest = None
         if runner is None:
             chart = load_chart(state_dir) or Chart8MiB.genesis()
+            restore_local_chart(chart, state_dir)
             register = TemporalRegister.open(ctx, chart)
             runner = cls(chart, register)
             _RUNNERS[key] = runner
@@ -724,6 +762,7 @@ class LocalRunner:
             chart = load_chart(state_dir)
             if chart is not None and runner.chart is not chart \
                     and (runner.chart is None or runner.chart.root_hash != chart.root_hash):
+                restore_local_chart(chart, state_dir)
                 runner.chart = chart
                 runner.register.chart = chart
                 runner.register.reason = "trained chart"
@@ -733,6 +772,19 @@ class LocalRunner:
                 runner.heads._write_chart()
                 runner.local_memory_bytes = PAGE_BYTES + 2 * REGISTER_BYTES
         return runner
+
+    def checkpoint(self) -> dict:
+        """Durably store local chart bytes without modifying canonical training."""
+        if self.chart is None:
+            raise ChartError("no chart to checkpoint")
+        generation = save_chart_snapshot(
+            self.register.state_dir, self.chart.root_hash, self.chart.bytes,
+            self.chart.snapshot_generation)
+        self.chart.snapshot_generation = generation
+        self.chart._dirty = False
+        return {"kind": "unmerged-local-chart", "generation": generation,
+                "parent_root": self.chart.root_hash, "bytes": PAGE_BYTES,
+                "canonical_training_committed": False}
 
     def commit(self, head: int) -> int:
         return self.register.commit(head)
@@ -761,6 +813,8 @@ class LocalRunner:
             "chart_bytes": PAGE_BYTES if self.chart else 0,
             "register_bytes": REGISTER_BYTES if self.chart else 0,
             "chart": self.chart.stats() if self.chart else None,
+            "checkpoint_generation": self.chart.snapshot_generation if self.chart else 0,
+            "checkpoint_kind": "unmerged-local-chart",
             "register": self.register.status(),
             "head_register": self.heads.status(),
         }

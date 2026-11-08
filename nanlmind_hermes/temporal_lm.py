@@ -203,6 +203,10 @@ class TemporalMirrorLM:
         except OSError:
             pass
         temp.replace(path)
+        # Publish the verified local 8 MiB byte snapshot before optional JSON
+        # mirrors. This is NOT a canonical NaNLMind training commit.
+        if self.runner is not None:
+            self.runner.checkpoint()
         if self.register is not None:
             self.register.save()
 
