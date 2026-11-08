@@ -99,6 +99,8 @@ def read_universe_root(chart: Chart8MiB) -> dict:
     if not any(raw):
         return {"schema": "nanlm.universe-root/1", "mounted": False}
     _validate(chart, raw)
+    from .mirror_topology import MirrorTopology
+    topology = MirrorTopology.status()
     return {
         "schema": "nanlm.universe-root/1",
         "mounted": True,
@@ -117,6 +119,14 @@ def read_universe_root(chart: Chart8MiB) -> dict:
         "native_head_bank_words": BANK_WORDS,
         "parent_root_sha256": chart.root_hash,
         "mount_block_sha256": hashlib.sha256(raw).hexdigest(),
+        "local_topology_attached": True,
+        "topology_sha256": topology["topology_sha256"],
+        "topology_status": topology,
+        "recursive_route_examples": [
+            ROOT_NAMESPACE + "::HW0:7::L5",
+            ROOT_NAMESPACE + "::HW0:MP123::L3",
+            ROOT_NAMESPACE + "::HW0:7::HW0:MP123::L3",
+        ],
         "router_topology_attached": False,
         "router_index": MAP_STORAGE,
         "leaf_store": LEAF_STORAGE,

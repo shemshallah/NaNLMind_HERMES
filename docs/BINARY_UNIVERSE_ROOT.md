@@ -31,9 +31,12 @@ N16ROOT1 (inside the single 8 MiB chart)
   -> native NaN16 chart + dual rails + class-bearing head bank
 ```
 
-The topology is generated in NaNROUTER and **only becomes attached after a
-separate authenticated router handshake**. In this PR the binary descriptor
-truthfully returns `router_topology_attached=false`. This prevents the
+The local logical topology is attached at boot: the root reports
+`local_topology_attached=true`, the pinned NaNROUTER topology digest
+`13b02d7d…f90016`, 256 heads, 32,640 MPs, 32,896 cells and 65,536 directional
+addresses. The **live remote router handshake** remains separate, so the
+descriptor truthfully returns `router_topology_attached=false` until an
+authenticated NANNET/runner lease is delivered. This prevents the
 falsely reassuring condition where a format declaration is treated as an
 authenticated live mapping. HERMES status and chart inspection now expose
 root geometry but not raw native words.

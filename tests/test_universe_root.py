@@ -33,6 +33,13 @@ class BinaryUniverseRootTests(unittest.TestCase):
         self.assertEqual(first["mirror_points"], 32640)
         self.assertEqual(first["head_addresses"], 256)
         self.assertEqual(first["l0_l9_layers"], list(range(10)))
+        self.assertTrue(first["local_topology_attached"])
+        self.assertEqual(first["topology_sha256"],
+                         "13b02d7d45fa00c1a5df9586e630f44033ea49de21b12a14f5350c1f01f90016")
+        self.assertEqual(first["topology_status"]["heads"], 256)
+        self.assertEqual(first["topology_status"]["mirror_points"], 32640)
+        self.assertEqual(first["topology_status"]["raw_addresses"], 65536)
+        self.assertTrue(first["recursive_route_examples"][0].endswith("::L5"))
         self.assertFalse(first["router_topology_attached"])
         self.assertFalse(first["native_guest_attached"])
         self.assertEqual(first, attach_universe_root(chart))
