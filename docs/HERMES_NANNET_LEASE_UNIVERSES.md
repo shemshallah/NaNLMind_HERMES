@@ -131,3 +131,22 @@ Integration: [NaNROUTER PR #61](https://github.com/shemshallah/NaNROUTER/pull/61
 and [NaNLMind NANNET portal PR #32](https://github.com/shemshallah/NaNLMind/pull/32).
 The three-repo smoke test checks the real signed HTTP **control plane** with
 disposable test servers, not hosted Koyeb execution.
+
+## Native N16T work and ACK path (new)
+
+With the router container's source-pinned real NaN0S runtime activated,
+`nanlm_universe_resolve` records `native_guest_activated=true` only after
+a live `nhl_nannet_route` invocation verifies the exact universe, head,
+node point and generation from router-authoritative state. The plugin now
+also offers `nanlm_universe_dispatch` (one opaque N16T frame with stable
+`dispatch_id`) and `nanlm_universe_ack` (matching response SHA-256).
+The HERMES plugin never parses N16T into Python work instructions and
+never commits canonical NaNLMind learning from protocol ACK alone.
+The router's durable journal returns prior guest responses for identical
+retry IDs, but refuses ambiguous pending work after a crash.
+
+Cross-repository CI now exercises the real NaN16 guest and signed NANNET
+portal HTTP bridge. The local plugin demo remains a deterministic fixture;
+it is not evidence of hosted Koyeb deployment. Required runtime secret names
+and staging process are documented in the companion
+NaNROUTER `docs/HERMES_NANNET_KOYEB_MIGRATION.md`.
