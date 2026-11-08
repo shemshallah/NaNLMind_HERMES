@@ -48,7 +48,7 @@ class FakeCompletedJournal:
         if not include_bank or network_head != 0:
             raise AssertionError("must inspect native bank under head 0")
         if lease_receipt["universe_id"] != self.universe:
-            raise AssertionError("unexpected universe")
+            raise NativeHeadCheckpointConflict("foreign journal universe")
         if self.pending:
             return {"state": "pending_or_ambiguous",
                     "canonical_training_committed": False}
@@ -192,7 +192,7 @@ class NativeHeadCheckpointTests(unittest.TestCase):
         self.assertEqual(self.fence(self.universe)["chart_generation"], 1)
 
     def test_foreign_universe_and_root_denied_before_mutation(self):
-        with self.assertRaises(NativeHeadFenceError):
+        with self.assertRaisesRegex(NativeHeadCheckpointConflict, "foreign journal"):
             self.commit(lease_receipt={"universe_id": self.universe + 1})
         wrong = SimpleNamespace(
             parent_root_sha256=sha(b"foreign-root"),
@@ -207,7 +207,7 @@ class NativeHeadCheckpointTests(unittest.TestCase):
         updated = bytearray(self.original_page)
         updated[BANK_OFFSET:BANK_END] = bytes([0x81]) * BANK_BYTES
         save_chart_snapshot(self.path, self.parent, updated, 1)
-        with self.assertRaisesRegex(NativeHeadCheckpointConflict, "generation"):
+        with self.assertRaisesRegex(NativeHeadCheckpointConflict, "exact next durable chart"):
             self.commit()
 
     def test_new_same_generation_chart_replacement_denied(self):
