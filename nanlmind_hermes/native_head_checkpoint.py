@@ -15,7 +15,10 @@ import hashlib
 import hmac
 from types import SimpleNamespace
 
-from .chart_storage import ChartStorageError, load_chart_snapshot, save_chart_snapshot
+from .chart_storage import (
+    ChartStorageError, load_chart_snapshot, load_chart_snapshot_pair,
+    save_chart_snapshot,
+)
 from .head_bank_transport import BANK_BYTES, BANK_OFFSET, BANK_END
 from .native_head_fence import SnapshotHeadBankFence, NativeHeadFenceError
 from .universe_root import read_universe_root, UniverseRootError
@@ -63,6 +66,33 @@ class NativeHeadCheckpointCoordinator:
                     str(state.get("bank_sha256")), bank_after_sha256
                 )):
             raise NativeHeadCheckpointConflict("native result not in exact next durable chart")
+        # A bank SHA alone could accidentally match a different head update
+        # in the same chart generation. Validate BOTH adjacent checkpoint
+        # pages and require every byte *outside* the reserved native bank to
+        # match exactly, including N16ROOT1, mirrored topology, and rails.
+        try:
+            prior, current = load_chart_snapshot_pair(
+                self.fence._state_dir, self.fence._parent,
+                request.chart_generation,
+            )
+        except (ChartStorageError, OSError, ValueError) as exc:
+            raise NativeHeadCheckpointConflict(
+                "cannot prove adjacent native chart checkpoint transition"
+            ) from exc
+        if (state.get("chart_sha256") != _sha(current)
+                or not hmac.compare_digest(
+                    _sha(prior[BANK_OFFSET:BANK_END]),
+                    request.bank_before_sha256,
+                )
+                or not hmac.compare_digest(
+                    _sha(current[BANK_OFFSET:BANK_END]),
+                    bank_after_sha256,
+                )
+                or prior[:BANK_OFFSET] != current[:BANK_OFFSET]
+                or prior[BANK_END:] != current[BANK_END:]):
+            raise NativeHeadCheckpointConflict(
+                "native update modified unrelated chart cells or lost source page"
+            )
         return state
 
     def _result(self, *, request, lease_receipt, network_head,
@@ -134,11 +164,32 @@ class NativeHeadCheckpointCoordinator:
         if state.get("parent_root_sha256") != request.parent_root_sha256:
             raise NativeHeadCheckpointConflict("canonical parent root changed")
         if staged["state"] == "checkpointed_locally":
-            return self._result(
-                request=request, lease_receipt=lease_receipt,
-                network_head=network_head, universe_id=universe_id,
-                after_sha256=after_sha256, recovered=True,
-            )
+            # A permanent router tombstone outlives the original two
+            # checkpoint slots. Legitimate later training generations must
+            # not invalidate historical at-most-once acknowledgements.
+            if (staged.get("local_checkpoint_verified") is not True
+                    or type(staged.get("checkpoint_generation")) is not int
+                    or staged["checkpoint_generation"] != request.chart_generation + 1):
+                raise NativeHeadCheckpointError("invalid historical checkpoint tombstone")
+            return {
+                "schema": "nanlm.native-head-local-checkpoint/1",
+                "request_sha256": staged["request_sha256"],
+                "bank_after_sha256": after_sha256,
+                "parent_root_sha256": state["parent_root_sha256"],
+                "chart_generation": staged["checkpoint_generation"],
+                "current_chart_generation": state["chart_generation"],
+                "current_chart_contains_result": (
+                    state["chart_generation"] == staged["checkpoint_generation"]
+                    and hmac.compare_digest(state["bank_sha256"], after_sha256)
+                ),
+                "historical_local_checkpoint_verified": True,
+                "local_checkpoint_verified": True,
+                "recovered_prior_local_checkpoint": True,
+                "authenticated_router_journal_checked": True,
+                "native_execution_newly_invoked": False,
+                "canonical_training_committed": False,
+                "nannet_merge_issued": False,
+            }
         raw_bank = staged.get("raw_bank")
         if type(raw_bank) is not bytes or len(raw_bank) != BANK_BYTES or (
                 not hmac.compare_digest(_sha(raw_bank), after_sha256)):
