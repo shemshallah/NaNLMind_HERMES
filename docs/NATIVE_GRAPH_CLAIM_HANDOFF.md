@@ -56,3 +56,17 @@ host-side inference as a native proof.
 Dedicated HERMES CI checks synthetic adversarial histories and a **real**
 NaNROUTER MC0DB state/history projection. Neither CI job writes chart data
 or performs model training.
+
+
+### Real end-to-end regression
+
+The GitHub Actions cross-repository job creates real MC0DB graph revisions,
+including opposing support/refutation claims and a retraction. HERMES first
+verifies complete chart-bound state/history, independently validates a
+router-signed Ed25519 attestation against a pinned public key, and audits
+every historical MathLeaf reference against the actual existing MathStore.
+The test then stages the U32BE words, writes a temporary NaN16 fixture into
+the checked-out NaNROUTER tree, assembles it using pinned NaN0S and runs the
+actual guest kernel. It requires mask 3 for the contested L4 pair and mask 0
+for an absent pair. The generated test image is not a production admission
+receipt: no trusted worker dispatch, nonce consumption or model write occurs.
