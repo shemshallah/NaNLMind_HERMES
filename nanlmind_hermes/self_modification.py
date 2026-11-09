@@ -341,7 +341,8 @@ class SelfModificationEngine:
             source="self-modification",
             relations=[{
                 **parsed,
-                "polarity": effective_polarity,
+                "polarity": ("supports" if effective_polarity > 0 else
+                             "refutes" if effective_polarity < 0 else "neutral"),
                 "strength_q16": effective_strength,
                 "evidence_sha256": evidence,
             }],

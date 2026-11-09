@@ -18,6 +18,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import shutil
 import sqlite3
 import struct
 import tempfile
@@ -115,6 +116,40 @@ def _write_stream(out, source):
             out.write(chunk)
 
 
+def _install_exclusive(source: Path, destination: Path) -> None:
+    """Install a finished archive without overwriting an existing destination.
+
+    Hard-linking is atomic where available.  Android/Termux Python builds may
+    omit ``os.link`` entirely, so fall back to an O_EXCL copy; a failed copy is
+    unlinked instead of leaving a partial destination.
+    """
+    linker = getattr(os, "link", None)
+    if linker is not None:
+        try:
+            linker(source, destination, follow_symlinks=False)
+            return
+        except FileExistsError as exc:
+            raise UniversePackError("destination already exists") from exc
+        except (NotImplementedError, OSError):
+            pass
+    try:
+        fd = os.open(destination, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    except FileExistsError as exc:
+        raise UniversePackError("destination already exists") from exc
+    try:
+        with open(source, "rb") as reader, os.fdopen(fd, "wb") as writer:
+            shutil.copyfileobj(reader, writer, CHUNK)
+            writer.flush()
+            os.fsync(writer.fileno())
+        os.chmod(destination, 0o600)
+    except BaseException:
+        try:
+            os.unlink(destination)
+        except OSError:
+            pass
+        raise
+
+
 def export_n16pack(*, state_dir: str | Path, parent_root_sha256: str,
                    expected_chart_generation: int, mc0db: str | Path,
                    bs0db: str | Path, destination: str | Path) -> dict:
@@ -184,12 +219,8 @@ def export_n16pack(*, state_dir: str | Path, parent_root_sha256: str,
                 _write_stream(stream, blobs[name])
             stream.flush()
             os.fsync(stream.fileno())
-        # Install by hard-linking in the same filesystem: fails closed if the
-        # destination appeared during export, rather than overwriting it.
-        try:
-            os.link(archive, outpath, follow_symlinks=False)
-        except FileExistsError as exc:
-            raise UniversePackError("destination already exists") from exc
+        # Install without overwriting a destination that appeared during export.
+        _install_exclusive(archive, outpath)
     return inspect_n16pack(outpath)
 
 
