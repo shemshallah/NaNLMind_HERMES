@@ -8,6 +8,10 @@ from nanlmind_hermes import register
 class FakeContext:
     def __init__(self):
         self.tools = {}
+        self.hooks = {}
+
+    def register_hook(self, name, handler):
+        self.hooks[name] = handler
 
     def register_tool(self, **kwargs):
         self.tools[kwargs["name"]] = kwargs
@@ -25,6 +29,14 @@ class ManifestTests(unittest.TestCase):
         register(ctx)
         self.assertEqual(declared, set(ctx.tools))
         self.assertEqual(len(declared), len(ctx.tools))
+
+    def test_human_approval_hook_is_registered_from_manifest(self):
+        text = Path("plugin.yaml").read_text(encoding="utf-8")
+        self.assertIn("provides_hooks:\n  - pre_tool_call", text)
+        ctx = FakeContext()
+        register(ctx)
+        self.assertEqual(set(ctx.hooks), {"pre_tool_call"})
+        self.assertTrue(callable(ctx.hooks["pre_tool_call"]))
 
     def test_every_tool_has_schema_and_handler(self):
         ctx = FakeContext()
