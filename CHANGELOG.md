@@ -12,9 +12,9 @@
 - Add poisoned-environment, forged-plan and approval-registration regression
   checks; refresh the 64-tool/1-hook catalog capability declaration and
   installer/security documentation.
-- Mark corpus path and per-profile state directory restrictions as
-  recommended future tightening rather than falsely asserting deployment
-  isolation. Recommend the audited optional `[auth]` backend.
+- Constrain model-tool corpus paths under the configured corpus directory
+  and reject traversals/symlinks out of it; per-profile state-directory
+  isolation still requires separate explicit configuration. Recommend the audited optional `[auth]` backend.
 
 ## Unreleased
 
