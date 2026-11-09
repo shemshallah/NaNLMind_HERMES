@@ -207,7 +207,7 @@ Secrets are declared in `plugin.yaml` and read only through Hermes:
 | `/nanlm help` | usage |
 
 
-The manifest and registered schemas are authoritative for all 87 tools.
+The manifest and registered schemas are authoritative for all 86 tools.
 [docs/TOOLS_REFERENCE.md](docs/TOOLS_REFERENCE.md) documents the main surfaces
 and lists the remaining registered tools with one-line purposes. The permanent
 session manifest is inspectable with `nanlm_session_context` and
@@ -332,7 +332,7 @@ Report security issues privately as described in [SECURITY.md](SECURITY.md).
 - The historical exhaustive demo passed 38/38 calls across its then-registered
   34 tools. New session-context, free-chat learning, MTH, WordNet and evidence
   tool tests run separately; no claim is made that the historical demo covered
-  all 87 current tools.
+  all 86 current tools.
 
 - A genuine held-out session asked unseen questions before and after new
   exposure, and a "No, that's incorrect" feedback turn triggered a fresh
@@ -377,6 +377,7 @@ Report security issues privately as described in [SECURITY.md](SECURITY.md).
 | [NaNLM plateau diagnostic](docs/NANLM_PLATEAU_DIAGNOSTIC.md) | per-probe cause categories and curriculum/code ablation plan |
 | [Probe immutability](docs/PROBE_IMMUTABILITY.md) | read-only probe fingerprint contract and state-mutation tests |
 | [Resident universe](docs/RESIDENT_UNIVERSE.md) | what is actually in RAM today, proposed resident typed universe and primitive/adaptor boundaries |
+| [PR integration audit](docs/PR_INTEGRATION_AUDIT.md) | all 58 PRs checked against the unified `main` for ancestry, file retention, feature retention, tests and closed-PR supersession |
 | [Architecture gaps](docs/ARCHITECTURE_GAPS.md) | what the Alpine/Gemma test round found and what remains |
 | [Gemma bootstrap](docs/GEMMA_BOOTSTRAP.md) | teacher-designed exposure, abstention and known/unknown probes |
 | [Saturation session](docs/GEMMA_CORPUS.md) | concept-matrix saturation and organization by chatting |
