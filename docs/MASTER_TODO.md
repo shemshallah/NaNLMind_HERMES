@@ -32,8 +32,8 @@ for the round-specific items are in `ROUNDS_023_036_TODO.md` and
 
 | ID | Task | Acceptance | State |
 |---|---|---|---|
-| A-01 | Finish the full test-suite run and record exact counts/failures | one green suite on Termux; no unexplained SIGBUS/error | active |
-| A-02 | Re-run the targeted resident/field/cycle/retrieval groups after the latest agent merges | exact pass counts; no skipped required test | queued |
+| A-01 | Finish the full test-suite run and record exact counts/failures | 1,447 tests, 1 skipped, OK on Termux | done |
+| A-02 | Re-run the targeted resident/field/cycle/retrieval groups after the latest agent merges | 178+ targeted tests pass; native full-cycle 7/7 | done |
 | A-03 | Verify full-cycle modules use all 32,385 coefficients and reject 256-only writes | 32,385/32,385; truncation denied | done |
 | A-04 | Verify full-cycle tools persist/reopen all 32,385 words | count/digest equal after reopen | done |
 | A-05 | Verify native full-cycle C++ root count and gauge behavior | 32,385 count; 256 refused; gauge invariant | done |
@@ -52,7 +52,7 @@ for the round-specific items are in `ROUNDS_023_036_TODO.md` and
 | A-18 | Confirm canonical merge stays disabled everywhere | all receipts/flags false | done |
 | A-19 | Merge all local feature branches into `main` without losing current integration | no unmerged local branch; conflicts documented | done locally |
 | A-20 | Decide whether remote PR branches are in scope; do not merge 104 stale remote refs blindly | explicit scope decision recorded | held |
-| A-21 | Commit final docs/tests and merge the remaining worktree delta into main | main contains latest commit; clean status | queued |
+| A-21 | Commit final docs/tests and merge the remaining worktree delta into main | main contains latest commits; primary worktree clean | done |
 | A-22 | Publish branch/remote only after tests and scope decision | explicit operator approval | held |
 
 ### A-note on the branch merge
