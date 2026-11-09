@@ -47,7 +47,7 @@ for the round-specific items are in `ROUNDS_023_036_TODO.md` and
 | A-12 | Verify Round 035 two/three-source composition | linked answer; broken abstention; cycle exact | done |
 | A-13 | Verify Round 036 contradiction rule and symbolic depth | `opposes` abstains; 4-hop symbolic only | done |
 | A-14 | Add `Round033/034/035/036` docs to the index and MANIFEST | paths present; package build includes archives | done |
-| A-15 | Re-run packaging tests after new binary/checkpoint archives | wheel 328 files / sdist 817 files; verifier pass; checkpoint/root binaries, corpus JSONL and BPE model excluded | done |
+| A-15 | Re-run packaging tests after new binary/checkpoint archives | wheel 330 files / sdist 829 files; verifier pass; checkpoint/root binaries, corpus JSONL and BPE model excluded | done |
 | A-16 | Re-run Alpine/proot suite | 1,459 tests, 1 skipped, OK (654 s) | done |
 | A-17 | Confirm no legacy branded filenames/strings remain | repository search for the retired label is empty | done |
 | A-18 | Confirm canonical merge stays disabled everywhere | all receipts/flags false | done |
@@ -143,7 +143,7 @@ PyTorch. No live NANNET route or canonical merge is authorized.
 | T-07 | Implement bounded NANNET-P architecture evolution | genome bounds; validation + generation-CAS; one accepted change | done (pilot) |
 | T-08 | Train a genuine byte-level generative LM | 3.60 bpb, ppl 12.13, 26.97% top-1 on internal test | done (seed 17) |
 | T-09 | Matched conventional byte-LM control at equal parameters/compute | same data, tokens, optimizer budget; report cleanly | partial: data/parameter control done, compute match open |
-| T-10 | Multi-seed TRIGON-9 replication | three seeds; variance and failure modes | open |
+| T-10 | Multi-seed TRIGON-9 replication | three seeds; variance and failure modes | partial: seeds 17 and 29 complete; seed 43 interrupted |
 | T-11 | Put an order-sensitive composition task inside the LM | holonomy improves a language/evidence objective, not only the probe | open |
 | T-12 | Improve free-generation fluency | human-readable samples; no template/copy claim | open |
 | T-13 | Port copy/abstain/compose end-to-end | supported path renders; unsupported path abstains | open |

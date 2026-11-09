@@ -9,6 +9,7 @@ from pathlib import Path
 from nanlmind_hermes.resident.cells import REGION_BYTES, ResidentCells
 from nanlmind_hermes.resident.evidence_lanes import (
     CONVENTIONAL_SCHEMA,
+    EVIDENCE_SLOT_BASE,
     RECORD_CYCLES,
     SCHEMA,
     ConventionalEvidence,
@@ -157,6 +158,18 @@ class EvidenceLaneTests(unittest.TestCase):
         self.assertEqual(self.lanes.snapshot()["schema"], SCHEMA)
         self.assertEqual(conventional.snapshot()["schema"],
                          CONVENTIONAL_SCHEMA)
+
+    def test_reserved_tail_does_not_touch_prefix(self):
+        self.assertEqual(EVIDENCE_SLOT_BASE % RECORD_CYCLES, 0)
+        self.assertGreater(EVIDENCE_SLOT_BASE, 0)
+        self._add("supports")
+        self.assertEqual(self.lanes.slot_base, EVIDENCE_SLOT_BASE)
+        self.assertEqual(self.memory[0], 0)
+        self.assertEqual(self.memory[EVIDENCE_SLOT_BASE], 0xA5)
+        with self.assertRaises(EvidenceError):
+            EvidenceLanes(self.memory, slot_base=RECORD_CYCLES + 1)
+        with self.assertRaises(EvidenceError):
+            EvidenceLanes(self.memory, slot_base=len(self.memory))
 
     def test_snapshot_validation(self):
         with self.assertRaises(EvidenceError):

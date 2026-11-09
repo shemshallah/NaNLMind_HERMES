@@ -7,8 +7,9 @@
   gauge-invariant mirror field, 256 sparse heads, L0–L9 complex rotor layers,
   ordered SO(3) transport/holonomy, typed HW4 WordNet relation probe and a
   bounded NANNET-P architecture-evolution gate. Internal held-out test:
-  3.60 bits/byte, perplexity 12.13, 26.97% next-byte top-1; free text remains
-  malformed and the trig/holonomy ablation is neutral-to-negative on byte LM.
+  3.6009 / 3.5858 bits/byte, perplexity 12.13 / 12.01, 26.97% / 27.68%
+  next-byte top-1 on seeds 17 and 29; free text remains malformed and the
+  trig/holonomy ablation is neutral-to-negative on byte LM.
   See `docs/NANLM_42_TRIGON.md`; no live NANNET route or canonical merge.
 - Replaced the raw NaN16 trig-cycle image with a 513-word pure 0xNaN image
   (512-entry Q15 quarter-wave table) while preserving the `resident/trig_cycle`
@@ -29,8 +30,9 @@
   basis (`resident/evidence_lanes.py`), a bounded add/ask/save session
   (`resident/evidence_session.py`), the `nanlm_resident_evidence` tool and an
   indexed `ConventionalEvidence` control. Four-state answers preserve
-  `unknown/supports/refutes/both`; delete/restore uses an in-process generation
-  check, not a cross-process canonical CAS.
+  `unknown/supports/refutes/both`; the evidence namespace reserves the final
+  64 record slots and delete/restore uses an in-process generation check, not
+  a cross-process canonical CAS.
 
 
 ## 1.5.0 — 2026-11-08

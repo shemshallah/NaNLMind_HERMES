@@ -6,9 +6,13 @@ separate records; a query then distinguishes ``unknown``, ``supports``,
 ``refutes`` and ``both`` without cancelling one lane against the other.
 
 Each record occupies a short run of the 32,385 raw cycle coefficients.  The
-bytes are written directly through :class:`FullCycleMemory`; the 255 root
-edges remain zero.  Mutations accept an optional generation check so a stale
-caller cannot silently write after another writer committed.
+default namespace reserves the final 64 records (3,072 coefficients) so the
+usual composition-payload prefix is not touched; callers that share a universe
+with another cycle allocator must pass a disjoint ``slot_base``.  There is no
+global allocator yet.  The bytes are written directly through
+:class:`FullCycleMemory`; the 255 root edges remain zero.  Mutations accept an
+optional generation check so a stale caller cannot silently write after another
+writer committed.
 
 This is a symbolic evidence ledger, not learned propagation and not a neural
 speaker.  :class:`ConventionalEvidence` is an indexed control with the same
@@ -36,6 +40,11 @@ POLARITY_NAMES = {value: key for key, value in POLARITIES.items()}
 RECORD_CYCLES = 48
 MAX_BODY_BYTES = RECORD_CYCLES - 2
 EMPTY_RECORD = bytes(RECORD_CYCLES)
+# Reserve the final 64 records for evidence.  CompositionMemory and other
+# cycle payload users conventionally allocate from index 0, so this keeps the
+# bounded evidence path out of their usual prefix without claiming a global
+# allocator.
+EVIDENCE_SLOT_BASE = (32385 // RECORD_CYCLES - 64) * RECORD_CYCLES
 STATUSES = ("unknown", "supports", "refutes", "both")
 
 
@@ -322,15 +331,24 @@ class EvidenceLanes(_LaneBase):
     """Support/refute records stored in raw full-cycle coefficients."""
 
     def __init__(self, memory: FullCycleMemory, *,
-                 record_cycles: int = RECORD_CYCLES):
+                 record_cycles: int = RECORD_CYCLES,
+                 slot_base: int = EVIDENCE_SLOT_BASE):
         if not isinstance(memory, FullCycleMemory):
             raise EvidenceError("memory must be a FullCycleMemory")
         if record_cycles != RECORD_CYCLES:
             raise EvidenceError(
                 "record_cycles is fixed at %d for this schema" % RECORD_CYCLES)
+        if (isinstance(slot_base, bool) or not isinstance(slot_base, int)
+                or slot_base < 0 or slot_base % RECORD_CYCLES):
+            raise EvidenceError(
+                "slot_base must be a non-negative multiple of %d"
+                % RECORD_CYCLES)
+        if slot_base >= len(memory):
+            raise EvidenceError("slot_base must be inside the cycle basis")
         self.memory = memory
         self.record_cycles = RECORD_CYCLES
-        self.max_records = len(memory) // RECORD_CYCLES
+        self.slot_base = slot_base
+        self.max_records = (len(memory) - slot_base) // RECORD_CYCLES
         self._cache: dict[int, EvidenceRecord] | None = None
         self._cache_generation: int | None = None
 
@@ -344,7 +362,7 @@ class EvidenceLanes(_LaneBase):
         if not 0 <= slot < self.max_records:
             raise EvidenceError("slot must be in [0, %d): %r"
                                 % (self.max_records, slot))
-        start = slot * RECORD_CYCLES
+        start = self.slot_base + slot * RECORD_CYCLES
         return range(start, start + RECORD_CYCLES)
 
     def _read_raw(self, slot: int) -> bytes:
@@ -431,6 +449,7 @@ class EvidenceLanes(_LaneBase):
             "schema": SCHEMA,
             "dimension": len(self.memory),
             "record_cycles": RECORD_CYCLES,
+            "slot_base": self.slot_base,
             "max_records": self.max_records,
             "records": [record.as_dict() for record in records],
             "generation": self.generation,
@@ -464,6 +483,7 @@ class EvidenceLanes(_LaneBase):
             "problems": problems,
             "dimension": len(self.memory),
             "record_cycles": RECORD_CYCLES,
+            "slot_base": self.slot_base,
             "max_records": self.max_records,
             "records": len(records),
             "counts": counts,
@@ -528,7 +548,8 @@ class ConventionalEvidence(_LaneBase):
 
 __all__ = (
     "SCHEMA", "CONVENTIONAL_SCHEMA", "RECORD_CYCLES", "MAX_BODY_BYTES",
-    "POLARITIES", "STATUSES", "EvidenceError", "EvidenceGenerationError",
-    "EvidenceRecord", "EvidenceState", "EvidenceReceipt", "EvidenceLanes",
-    "ConventionalEvidence", "encode_record", "decode_record",
+    "EVIDENCE_SLOT_BASE", "POLARITIES", "STATUSES", "EvidenceError",
+    "EvidenceGenerationError", "EvidenceRecord", "EvidenceState",
+    "EvidenceReceipt", "EvidenceLanes", "ConventionalEvidence",
+    "encode_record", "decode_record",
 )

@@ -141,7 +141,9 @@ only described in the archive:
 
 - `resident/evidence_lanes.py` stores each support/refute record in 48 raw
   cycle coefficients, keeps the lanes independent, and returns
-  `unknown/supports/refutes/both` without cancellation.
+  `unknown/supports/refutes/both` without cancellation. Its default namespace
+  reserves the final 64 records so the usual composition prefix is untouched;
+  `slot_base` can partition another range explicitly.
 - `resident/evidence_session.py` adds the bounded
   `X is [not] a [kind of] Y` / `is X a [kind of] Y?` add-ask grammar and
   JSON-safe save/load.
