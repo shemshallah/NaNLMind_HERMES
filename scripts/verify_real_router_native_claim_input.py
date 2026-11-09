@@ -92,6 +92,7 @@ def main():
     print("PASS: real MC0DB candidate graph + retraction -> HERMES history "
           "replay -> bounded NaN16 U32 input, opposing claims intact, "
           "untampered chart, NO native execution or learning admission")
+    return packet
 
 
 if __name__ == "__main__":
