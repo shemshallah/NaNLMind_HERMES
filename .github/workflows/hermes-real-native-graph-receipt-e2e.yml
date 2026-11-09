@@ -1,0 +1,45 @@
+name: hermes-real-native-graph-receipt-e2e
+on:
+  pull_request:
+    paths:
+      - 'scripts/verify_real_native_graph_receipt_e2e.py'
+      - 'scripts/verify_real_router_native_claim_input.py'
+      - 'nanlmind_hermes/router_graph_native_receipt.py'
+      - '.github/workflows/hermes-real-native-graph-receipt-e2e.yml'
+      - 'docs/REAL_NATIVE_GRAPH_RECEIPT_E2E.md'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/verify_real_native_graph_receipt_e2e.py'
+      - 'scripts/verify_real_router_native_claim_input.py'
+      - 'nanlmind_hermes/router_graph_native_receipt.py'
+      - '.github/workflows/hermes-real-native-graph-receipt-e2e.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  real-graph-to-native-signed-receipt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Checkout real NaNROUTER MC0DB graph producer and native kernel
+        uses: actions/checkout@v4
+        with:
+          repository: shemshallah/NaNROUTER
+          ref: 43b7f9988c3029a2a3aafafa5b0881238caf9d8d
+          path: router
+      - name: Checkout pinned canonical NaN0S source assembler and VM
+        uses: actions/checkout@v4
+        with:
+          repository: shemshallah/NaN0S
+          ref: 7f250a11bdb7845eae06ffb50df202187543ea5e
+          path: nan0s
+      - name: Build the native NaN16 guest interpreter
+        run: make -s -C nan0s/aarch64/android nan_cli
+      - name: Reconstruct real MC0DB graph and verify actual NaN16 serial output
+        env:
+          PYTHONPATH: .:router
+        run: python scripts/verify_real_native_graph_receipt_e2e.py
