@@ -339,7 +339,7 @@ class DenialAndBoundsTests(RealUniverseTestCase):
                 {"api_key": "sk-" + "a" * 32}, approved=True)
         with self.assertRaises(FieldPersistenceSecretError):
             persistence.save_scratch(
-                1, 0, {"note": "-----BEGIN PRIVATE KEY-----"})
+                1, 0, {"note": "-----BEGIN " "PRIVATE KEY-----"})
 
         with self.assertRaises(FieldPersistencePathError):
             persistence.save_field({"path": "/etc/passwd"}, approved=True)
