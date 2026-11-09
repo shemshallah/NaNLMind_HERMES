@@ -61,15 +61,15 @@ def _clamp(value: float, low: float, high: float) -> float:
 def apply_mutation(base: Genome, z: torch.Tensor,
                    generator: torch.Generator) -> Genome:
     z = z.detach().cpu()
-    gates = [_clamp(base.layer_gates[i] + float(z[i]) * 0.12, 0.15, 1.5)
+    gates = [_clamp(base.layer_gates[i] + float(z[i]) * 0.25, 0.15, 1.5)
              for i in range(10)]
-    gains = [_clamp(base.phase_gain[i] + float(z[10 + i]) * 0.12, 0.02, 1.0)
+    gains = [_clamp(base.phase_gain[i] + float(z[10 + i]) * 0.25, 0.02, 1.0)
              for i in range(10)]
-    write = _clamp(base.write_rate + float(z[20]) * 0.04, 0.01, 0.5)
-    decay = _clamp(base.memory_decay + float(z[21]) * 0.01, 0.90, 0.999)
-    head_k = int(_clamp(base.head_k + (1 if float(z[22]) > 0.0 else -1), 3, 12))
+    write = _clamp(base.write_rate + float(z[20]) * 0.12, 0.01, 0.5)
+    decay = _clamp(base.memory_decay + float(z[21]) * 0.03, 0.90, 0.999)
+    head_k = int(_clamp(base.head_k + (2 if float(z[22]) > 0.0 else -2), 3, 12))
     order = list(base.order)
-    if float(z[23]) > 0.55:
+    if float(z[23]) > 0.25:
         a = int(torch.randint(0, 9, (1,), generator=generator).item())
         b = a + 1
         order[a], order[b] = order[b], order[a]

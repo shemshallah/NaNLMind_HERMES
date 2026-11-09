@@ -19,6 +19,7 @@ provides_tools:
   - nanlm_resident_status
   - nanlm_resident_ingest
   - nanlm_resident_query
+  - nanlm_resident_evidence
   - nanlm_head_field
   - nanlm_chat
   - nanlm_chat_history

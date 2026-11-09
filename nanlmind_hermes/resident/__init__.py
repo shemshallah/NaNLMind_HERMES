@@ -125,4 +125,13 @@ def __getattr__(name):
     if name == "CompositionMemory":
         from .composition_gate import CompositionMemory
         return CompositionMemory
+    if name == "EvidenceLanes":
+        from .evidence_lanes import EvidenceLanes
+        return EvidenceLanes
+    if name == "ConventionalEvidence":
+        from .evidence_lanes import ConventionalEvidence
+        return ConventionalEvidence
+    if name == "EvidenceSession":
+        from .evidence_session import EvidenceSession
+        return EvidenceSession
     raise AttributeError(name)

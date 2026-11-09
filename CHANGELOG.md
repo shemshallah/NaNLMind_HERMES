@@ -1,5 +1,38 @@
 # Changelog
 
+## Unreleased — 2026-11-09
+
+- Added the Round 042 TRIGON-9 experimental synthesis: a 1.08M-parameter
+  byte-level generative language model coupling the full 32,385-cycle
+  gauge-invariant mirror field, 256 sparse heads, L0–L9 complex rotor layers,
+  ordered SO(3) transport/holonomy, typed HW4 WordNet relation probe and a
+  bounded NANNET-P architecture-evolution gate. Internal held-out test:
+  3.60 bits/byte, perplexity 12.13, 26.97% next-byte top-1; free text remains
+  malformed and the trig/holonomy ablation is neutral-to-negative on byte LM.
+  See `docs/NANLM_42_TRIGON.md`; no live NANNET route or canonical merge.
+- Replaced the raw NaN16 trig-cycle image with a 513-word pure 0xNaN image
+  (512-entry Q15 quarter-wave table) while preserving the `resident/trig_cycle`
+  bridge contract. Added `tests/test_trig_cycle_nan.py` for pure-image format,
+  triangle/holonomy gauge invariance and Q15 sin/cos parity, and
+  `tests/test_trigon9.py` for the reference model and NANNET-P merge guard.
+- Added a matched byte Transformer control on the same data/token budget:
+  1,217,731 parameters, 3.7377 test bpb / 13.34 ppl / 24.05% top-1 in 55 s,
+  versus TRIGON-9's 3.6009 bpb / 12.13 ppl / 26.97% in 651 s. The control has
+  more parameters but is ~12x faster on CPU; no compute-matched claim.
+- Added the HW4 WordNet matrix mirror builder (`82,192` noun synsets,
+  deterministic LM and relation splits) and the three-seed order probe
+  (`100%` ordered SO(3) vs `33.3%` phase-only).
+- Added the Round 042 task track T-01..T-18 to the master TODO. The matched
+  conventional LM control, multi-seed LM replication, in-LM order task,
+  retention, native N16I model ABI and Android ARM measurements remain open.
+- Added independent support/refute evidence lanes over the full 32,385-cycle
+  basis (`resident/evidence_lanes.py`), a bounded add/ask/save session
+  (`resident/evidence_session.py`), the `nanlm_resident_evidence` tool and an
+  indexed `ConventionalEvidence` control. Four-state answers preserve
+  `unknown/supports/refutes/both`; delete/restore uses an in-process generation
+  check, not a cross-process canonical CAS.
+
+
 ## 1.5.0 — 2026-11-08
 
 - Added seven permanent plugin-duration session documents (NANNET architecture,

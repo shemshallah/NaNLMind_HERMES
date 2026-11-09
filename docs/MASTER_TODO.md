@@ -1,7 +1,7 @@
 # Master TODO — current system + dynamic conceptual track
 
 Status: **planning record, not an implementation claim**. Last updated
-2026-11-08. This is the single ordered task list. It holds the dynamic-
+2026-11-09. This is the single ordered task list. It holds the dynamic-
 conceptual direction in parallel without starting implementation or freezing
 an architecture.
 
@@ -17,6 +17,7 @@ passed; no new scripts or training runs are created merely to explore an idea.
 | B. Rounds 023–036 integration | active verification; implementation items tracked in [ROUNDS_023_036_TODO.md](ROUNDS_023_036_TODO.md) |
 | C. Dynamic conceptual universe | held; design/questions only |
 | D. Canonical/network promotion | blocked by design |
+| E. TRIGON-9 Round 042 synthesis | active experimental track; gates in §B2 |
 
 Every write path remains scratch-first, Boolean-gated, generation-CAS checked
 and canonical-merge-disabled. The hard file ceiling remains 1 GiB; the 2 GiB
@@ -32,7 +33,7 @@ for the round-specific items are in `ROUNDS_023_036_TODO.md` and
 
 | ID | Task | Acceptance | State |
 |---|---|---|---|
-| A-01 | Finish the full test-suite run and record exact counts/failures | 1,451 tests, 1 skipped, OK on Termux (611 s) | done |
+| A-01 | Finish the full test-suite run and record exact counts/failures | 1,459 tests, 1 skipped, OK on Termux (611 s) | done |
 | A-02 | Re-run the targeted resident/field/cycle/retrieval groups after the latest agent merges | 178+ targeted tests pass; native full-cycle 7/7 | done |
 | A-03 | Verify full-cycle modules use all 32,385 coefficients and reject 256-only writes | 32,385/32,385; truncation denied | done |
 | A-04 | Verify full-cycle tools persist/reopen all 32,385 words | count/digest equal after reopen | done |
@@ -47,7 +48,7 @@ for the round-specific items are in `ROUNDS_023_036_TODO.md` and
 | A-13 | Verify Round 036 contradiction rule and symbolic depth | `opposes` abstains; 4-hop symbolic only | done |
 | A-14 | Add `Round033/034/035/036` docs to the index and MANIFEST | paths present; package build includes archives | done |
 | A-15 | Re-run packaging tests after new binary/checkpoint archives | wheel 328 files / sdist 817 files; verifier pass; checkpoint/root binaries, corpus JSONL and BPE model excluded | done |
-| A-16 | Re-run Alpine/proot suite | 1,451 tests, 1 skipped, OK (654 s) | done |
+| A-16 | Re-run Alpine/proot suite | 1,459 tests, 1 skipped, OK (654 s) | done |
 | A-17 | Confirm no legacy branded filenames/strings remain | repository search for the retired label is empty | done |
 | A-18 | Confirm canonical merge stays disabled everywhere | all receipts/flags false | done |
 | A-19 | Merge all local feature branches into `main` without losing current integration | no unmerged local branch; conflicts documented | done locally |
@@ -70,7 +71,8 @@ them.
 The detailed table is in [ROUNDS_023_036_TODO.md](ROUNDS_023_036_TODO.md).
 The new validated architecture inputs are [ROUND038_ROTATION_HOLONOMY.md](ROUND038_ROTATION_HOLONOMY.md),
 [ROUND040_DYNAMIC_MEMORY.md](ROUND040_DYNAMIC_MEMORY.md) and
-[ROUND042_TRIGON.md](ROUND042_TRIGON.md); their tasks are B-11..B-28 below.
+[NANLM_42_TRIGON.md](NANLM_42_TRIGON.md); their tasks are B-11..B-20 and
+T-01..T-18 below.
 Summary of what is still genuinely open:
 
 | ID | Open item | Gate |
@@ -106,6 +108,55 @@ Summary of what is still genuinely open:
 
 These remain open until their gates pass. No item is promoted because a
 related artifact reports a number.
+
+**Implemented bounded path (2026-11-09):** B-21, B-22, B-23 and B-25 now have a
+symbolic resident implementation in `resident/evidence_lanes.py`,
+`resident/evidence_session.py`, the `evidence_lanes()`/`evidence_session()`
+facade accessors and the `nanlm_resident_evidence` tool. The lanes preserve
+`unknown/supports/refutes/both` independently and support delete/restore with
+an in-process generation check. `ConventionalEvidence` is the indexed control
+and ties on clean records. B-24 remains covered only by the existing R035
+symbolic composition gate; learned propagation, neural four-state speaking,
+checkpoint replay, matched-memory compute parity and few-shot adaptation remain
+open. The generation check is not a cross-process canonical CAS.
+
+
+---
+
+## B2. Round 042 TRIGON-9 synthesis (active experimental)
+
+The synthesis design and measured results are in
+[NANLM_42_TRIGON.md](NANLM_42_TRIGON.md). It is an experimental reference
+architecture, not a frozen replacement for the resident system. The native
+trigonometric kernel is raw NaN16; the trainable reference model is host
+PyTorch. No live NANNET route or canonical merge is authorized.
+
+| ID | Task | Acceptance | State |
+|---|---|---|---|
+| T-01 | Write the Round 030–041 synthesis and claim boundary | architecture document with per-round role table | done |
+| T-02 | Implement the raw NaN16 triangle/holonomy/sin-cos kernel | 513 pure 0x words; gauge-invariant tests pass | done |
+| T-03 | Implement the full 32,385-cycle differentiable field | 256 heads; triangle read; exact gauge audit | done |
+| T-04 | Implement L0–L9 complex rotor stack and SO(3) transport | 10 layers; trig attention/state; holonomy trace | done |
+| T-05 | Implement 256 sparse heads with direct token-loss path | head readout; ablation measurable | done |
+| T-06 | Build the HW4 WordNet matrix mirror and relation probe | 82,192 synsets; typed splits; 45.4% test | done |
+| T-07 | Implement bounded NANNET-P architecture evolution | genome bounds; validation + generation-CAS; one accepted change | done (pilot) |
+| T-08 | Train a genuine byte-level generative LM | 3.60 bpb, ppl 12.13, 26.97% top-1 on internal test | done (seed 17) |
+| T-09 | Matched conventional byte-LM control at equal parameters/compute | same data, tokens, optimizer budget; report cleanly | partial: data/parameter control done, compute match open |
+| T-10 | Multi-seed TRIGON-9 replication | three seeds; variance and failure modes | open |
+| T-11 | Put an order-sensitive composition task inside the LM | holonomy improves a language/evidence objective, not only the probe | open |
+| T-12 | Improve free-generation fluency | human-readable samples; no template/copy claim | open |
+| T-13 | Port copy/abstain/compose end-to-end | supported path renders; unsupported path abstains | open |
+| T-14 | Continued gradient retention and forgetting test | old + new held-out queries after weight updates | open |
+| T-15 | Native N16I tensor/operator ABI for the model hot path | no host substitute; parity receipt | open |
+| T-16 | Android ARM RSS/cache/energy measurement | measured on target device | open |
+| T-17 | Snapshot pair with shared generation/digest | reopen equality; mismatch denied | open |
+| T-18 | Keep canonical merge disabled | every receipt false | done |
+
+**Current honest reading:** the LM is real but undertrained; memory/head/copy
+channels are measurably used but small; trig/holonomy are neutral-to-negative
+on byte LM at this budget; the order probe shows the trig algebra is
+order-sensitive (100% vs 33.3% phase-only, three seeds). The next falsifiable
+task is T-11, not another headline number.
 
 ---
 
