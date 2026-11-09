@@ -115,10 +115,11 @@ symbolic resident implementation in `resident/evidence_lanes.py`,
 facade accessors and the `nanlm_resident_evidence` tool. The lanes preserve
 `unknown/supports/refutes/both` independently and support delete/restore with
 an in-process generation check. `ConventionalEvidence` is the indexed control
-and ties on clean records. B-24 remains covered only by the existing R035
-symbolic composition gate; learned propagation, neural four-state speaking,
-checkpoint replay, matched-memory compute parity and few-shot adaptation remain
-open. The generation check is not a cross-process canonical CAS.
+and ties on clean records. B-24 is covered on the symbolic path by the R035
+`compose_path` gate, including a new 2–5-hop positive/broken/contradictory
+split test; learned propagation, neural four-state speaking, checkpoint replay,
+matched-memory compute parity and few-shot adaptation remain open. The
+generation check is not a cross-process canonical CAS.
 
 
 ---

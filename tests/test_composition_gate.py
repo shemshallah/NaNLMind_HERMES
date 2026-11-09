@@ -50,6 +50,22 @@ class CompositionGateTests(unittest.TestCase):
         self.assertGreater(composition["accuracy"], 0.9)
         self.assertFalse(composition["canonical_merge"])
 
+    def test_two_to_five_hop_positive_negative_split(self):
+        for hops in range(2, 6):
+            path = tuple(Fact("n%d" % index, "n%d" % (index + 1))
+                         for index in range(hops))
+            positive = compose_path(path)
+            self.assertTrue(positive.accepted, (hops, positive))
+            expected = ("n0 is a n2." if hops == 2
+                        else "n0 is a kind of n%d." % hops)
+            self.assertEqual(positive.answer, expected)
+            broken = path[:-1] + (
+                Fact("wrong", path[-1].destination),)
+            self.assertFalse(compose_path(broken).accepted)
+            conflicting = path[:-1] + (
+                Fact(path[-1].source, path[-1].destination, "opposes"),)
+            self.assertFalse(compose_path(conflicting).accepted)
+
     def test_contradictory_relation_abstains_and_long_chain_composes(self):
         left = Fact("mopper", "worker", "is a")
         right = Fact("worker", "person", "is a")
