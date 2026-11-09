@@ -475,9 +475,10 @@ slice; only the named component is disabled.
 | no head readout | 3.5983 | +0.0016 | heads carry a small amount of next-token information |
 | no copy | 3.5978 | +0.0011 | copy channel has a small positive effect |
 
-Seed 29 shows the same direction for memory and trig: no memory 3.6185,
-no trig 3.5951, full 3.5903. Holonomy again helps the ablation slightly
-(no holonomy 3.5676). The effect sizes are small and seed-dependent.
+Seed 29 keeps the memory advantage (no memory 3.6185 vs full 3.5903) and the
+trig ablation goes the other way (no trig 3.5951), while holonomy again helps
+the ablation slightly (no holonomy 3.5676). The component effects are small and
+seed-dependent; do not turn any one of them into a headline.
 
 **Honest reading:** the memory/head/copy channels are measurably used but small.
 The trig/holonomy paths are not yet earning their compute on the byte-language
