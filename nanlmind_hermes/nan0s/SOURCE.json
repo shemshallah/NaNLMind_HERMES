@@ -1,0 +1,69 @@
+{
+  "canonical_commit": "dcb828433f524c0ea6b3035d85f046b75ebf8ac6",
+  "canonical_repository": "https://github.com/shemshallah/NaN0S.git",
+  "files": {
+    "core/OPS.md": {
+      "bytes": 11106,
+      "sha256": "ec7831ffb9a66a0c5b01011cf2410150295d894786bb526ddf28ee672f5d2e02"
+    },
+    "core/nan16.c": {
+      "bytes": 16740,
+      "sha256": "0ef60105699952055bc44a47f5fdfef78b89d5804835a8ace5d9669fef2779fd"
+    },
+    "core/nan16.h": {
+      "bytes": 6337,
+      "sha256": "489fad5dc82ff6dd1768212cc7e37457229b939fa8cb661ca502e1dd2cdec994"
+    },
+    "core/nan16_int.h": {
+      "bytes": 2592,
+      "sha256": "30351a411df19858784893e5e818d49c895c3a4696c38cfc8c1a2f7060d96391"
+    },
+    "core/nan_dev.c": {
+      "bytes": 12413,
+      "sha256": "0c8a1ca3b44a4c50683603d5e0e75b2a57461c1ee84303cf45eda2a140074f75"
+    },
+    "core/nan_load.c": {
+      "bytes": 2631,
+      "sha256": "8f0109035b8888ebdf30cfe33fa75bd03d7f009daac79b6af3d08cf84cf036c8"
+    },
+    "core/nan_net_driver.c": {
+      "bytes": 2428,
+      "sha256": "0102547b7d5afe162061c41b9522f89d981853071626fc0acd55c4ce113731f5"
+    },
+    "core/nan_net_driver.h": {
+      "bytes": 840,
+      "sha256": "35a6dd0d6b197430e8b4223c68605ace340437efaf405faafc45ea2386d54497"
+    },
+    "core/nan_render.c": {
+      "bytes": 723,
+      "sha256": "662f0e01a680add63cd1ee90ad1f4cd4be63ccf1d7088c4b87c36b95a60126ce"
+    },
+    "core/nan_state.c": {
+      "bytes": 9191,
+      "sha256": "47737b6efda6669844729ba5c484f381304b715fbdeb5352a1d213870ee01c45"
+    },
+    "src/tests/micro_block.nas": {
+      "bytes": 795,
+      "sha256": "f74b7ee0b05f07078f7e3586b05a19903fd8c2d750bc98e250a6e6fc5ad49ecd"
+    },
+    "src/tests/n16i_test.nas": {
+      "bytes": 6501,
+      "sha256": "767da3a657c2898babe5a6bfb42fbe3d36c4aa40d06f189994e852c450a2103e"
+    },
+    "src/tools/n16i.nas": {
+      "bytes": 10556,
+      "sha256": "b671f0fed11fd04e0bc2f95d451b986fafad8195599904454f4b278a80a75ba9"
+    },
+    "tools/nan_cli.c": {
+      "bytes": 9763,
+      "sha256": "06ba95358183e844ee6163f30427b040a77bda33d261ec3db291027d7dcb39bc"
+    },
+    "tools/nmk.awk": {
+      "bytes": 13772,
+      "sha256": "587116bdffc7715d0dffd6846767dbda76a9d14b55085e9ed8ed08cbdfe1009b"
+    }
+  },
+  "note": "Exact pinned snapshot. Do not edit locally; run scripts/sync_nan0s.py from canonical NaN0S.",
+  "schema": "nanlm.nan0s-dependency/1",
+  "vendored_path": "nanlmind_hermes/nan0s"
+}

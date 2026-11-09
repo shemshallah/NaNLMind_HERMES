@@ -329,6 +329,30 @@ jr1:
   MOVI r1,3
   MOVHI r1,18
   CALL @sweep
+  ; FEXP/FTANH/FLOG primitives used by the micro-transformer/softmax path
+  MOVI r1,0
+  MOVHI r1,16256
+  FEXP r2,r1
+  CVTFI r3,r2
+  MOVI r4,2
+  CMP r3,r4
+  MOVI r5,48
+  MOVI[EQ] r5,49
+  PUTC r5
+  FTANH r2,r1
+  CVTFI r3,r2
+  CMP r3,r0
+  MOVI r5,48
+  MOVI[EQ] r5,49
+  PUTC r5
+  FLOG r2,r1
+  CVTFI r3,r2
+  CMP r3,r0
+  MOVI r5,48
+  MOVI[EQ] r5,49
+  PUTC r5
+  MOVI r5,10
+  PUTC r5
   MOVI r1,@s_done
   CALL @dis_puts
   HALT

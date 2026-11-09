@@ -102,6 +102,17 @@ uint32_t nan_speaker_hz(const nan_vm *v);
 uint32_t nan_reg(const nan_vm *v, int i);
 uint32_t nan_pc(const nan_vm *v);
 uint64_t nan_word(const nan_vm *v, uint32_t index);
+/* Boundary-driver byte injection into guest memory; no guest policy is executed here. */
+int      nan_write_bytes(nan_vm *v, uint32_t byte_address, const uint8_t *data, size_t len);
+int      nan_read_bytes(const nan_vm *v, uint32_t byte_address, uint8_t *out, size_t len);
+/* Byte-exact bulk NaN16 transport: first_word is a GUEST WORD index,
+ * word_count is a count of EIGHT-byte words (not byte count).
+ * NaN faces and full payload are untouched; no mathematical execution.
+ * Returns -1 atomically on invalid spans and unsupported big-endian hosts.
+ * Do not confuse with nan_write_bytes (4-byte *payload* / class reset).
+ */
+int      nan_write_words_raw(nan_vm *v, uint32_t first_word, const uint8_t *raw_words, size_t word_count);
+int      nan_read_words_raw(const nan_vm *v, uint32_t first_word, uint8_t *out, size_t word_count);
 void     nan_set_word(nan_vm *v, uint32_t index, uint64_t raw);
 void     nan_set_reg(nan_vm *v, int i, uint32_t val);
 void     nan_set_pc(nan_vm *v, uint32_t pc);

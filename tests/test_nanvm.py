@@ -1,4 +1,6 @@
 """NaNVM0 boundary tests: the raw NaN16 machine behind the phone-call kernel."""
+import math
+import struct
 import unittest
 
 from nanlmind_hermes.nanvm import (MEM_WORDS, NanVM, NanVMError, make_word,
@@ -119,6 +121,18 @@ class MachineTests(unittest.TestCase):
         vm = NanVM(parse_nan_image("FFF8_0A000000_F8FF\n"))  # JMP 0
         with self.assertRaises(NanVMError):
             vm.run(max_steps=1000)
+
+    def test_fexp_ftanh_flog_primitives(self):
+        def run(op):
+            vm = NanVM(parse_nan_image(
+                "FFF8_%08X_F8FF\n" % ((op << 24) | (1 << 20)) +
+                "FFF8_FF000000_F8FF\n"))
+            vm.reg[0] = 0x3F800000  # 1.0f
+            vm.run()
+            return struct.unpack("<f", struct.pack("<I", vm.reg[1]))[0]
+        self.assertAlmostEqual(run(0x46), math.e, places=5)
+        self.assertAlmostEqual(run(0x47), math.tanh(1.0), places=5)
+        self.assertAlmostEqual(run(0x48), 0.0, places=5)
 
     def test_memory_size(self):
         vm = NanVM([])

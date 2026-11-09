@@ -38,6 +38,19 @@ static uint32_t fp_cvtfi(uint32_t A) {
   if (f <= -2147483648.0f) return 0x80000000u;
   return (uint32_t)(int32_t)f;
 }
+static uint32_t fp_unary(uint32_t A, int op) {
+  if (is_nan32(A)) return A | 0x00400000u;
+  volatile float a = f32(A), r;
+  if (op == 0x46) r = expf(a);
+  else if (op == 0x47) r = tanhf(a);
+  else {
+    if ((A & 0x7FFFFFFFu) == 0) return 0xFF800000u;  /* log(+-0) = -inf */
+    if (A & 0x80000000u) return 0x7FC00000u;         /* log(negative) */
+    r = logf(a);
+  }
+  uint32_t x = u32(r);
+  return is_nan32(x) ? 0x7FC00000u : x;
+}
 
 nan_vm *nan_create(void) {
   nan_vm *v = (nan_vm *)calloc(1, sizeof *v);
@@ -74,6 +87,62 @@ uint32_t nan_reg(const nan_vm *v, int i) { return v->r[i & 15]; }
 uint32_t nan_pc(const nan_vm *v) { return v->pc; }
 uint64_t nan_word(const nan_vm *v, uint32_t i) { return v->mem[i & M]; }
 void nan_set_word(nan_vm *v, uint32_t i, uint64_t raw) { v->mem[i & M] = raw; }
+/* Host boundary: pack external bytes into NaN16 data words for guest LDB.
+   Corpus interpretation and all training decisions remain in the guest. */
+int nan_write_bytes(nan_vm *v, uint32_t byte_address, const uint8_t *data, size_t len) {
+  if (!v || (!data && len)) return -1;
+  const uint64_t cap = (uint64_t)NAN_WORDS * 4u;
+  if ((uint64_t)byte_address > cap || (uint64_t)len > cap - byte_address) return -1;
+  for (size_t i = 0; i < len; ++i) {
+    uint64_t at = (uint64_t)byte_address + i;
+    uint32_t wi = (uint32_t)(at >> 2);
+    uint32_t shift = (uint32_t)(at & 3u) * 8u;
+    uint32_t payload = (uint32_t)(v->mem[wi] >> 16);
+    payload = (payload & ~(0xFFu << shift)) | ((uint32_t)data[i] << shift);
+    v->mem[wi] = nan_mkword(payload, 10);
+  }
+  return 0;
+}
+int nan_read_bytes(const nan_vm *v, uint32_t byte_address, uint8_t *out, size_t len) {
+  if (!v || (!out && len)) return -1;
+  const uint64_t cap = (uint64_t)NAN_WORDS * 4u;
+  if ((uint64_t)byte_address > cap || (uint64_t)len > cap - byte_address) return -1;
+  for (size_t i = 0; i < len; ++i) {
+    uint64_t at = (uint64_t)byte_address + i;
+    uint32_t wi = (uint32_t)(at >> 2);
+    uint32_t shift = (uint32_t)(at & 3u) * 8u;
+    out[i] = (uint8_t)(((uint32_t)(v->mem[wi] >> 16) >> shift) & 0xFFu);
+  }
+  return 0;
+}
+
+/* Raw class-bearing NaN16 guest-memory transport, NOT corpus-byte injection.
+   Each 8-byte word is copied unchanged (both NaN faces, payload, endianness).
+   This API does not interpret words or decide a head's validity/generation:
+   the native nh_open/nh_get/nh_put guest code remains the sole authority.
+   Reject entire out-of-range spans before writing any byte; no wraparound. */
+static int nan_raw_words_bounds(const nan_vm *v, uint32_t first_word,
+                                size_t word_count, const void *buffer) {
+  if (!v || (!buffer && word_count)) return -1;
+  if (first_word > NAN_WORDS || word_count > NAN_WORDS - (size_t)first_word) return -1;
+  /* Canonical NaN16 raw words are little-endian, supported by ARM/x86. */
+  const uint16_t one = 1;
+  if (*(const uint8_t *)&one != 1) return -1;
+  return 0;
+}
+int nan_write_words_raw(nan_vm *v, uint32_t first_word,
+                        const uint8_t *raw_words, size_t word_count) {
+  if (nan_raw_words_bounds(v, first_word, word_count, raw_words)) return -1;
+  if (word_count) memcpy(v->mem + first_word, raw_words, word_count * 8u);
+  return 0;
+}
+int nan_read_words_raw(const nan_vm *v, uint32_t first_word,
+                       uint8_t *out, size_t word_count) {
+  if (nan_raw_words_bounds(v, first_word, word_count, out)) return -1;
+  if (word_count) memcpy(out, v->mem + first_word, word_count * 8u);
+  return 0;
+}
+
 void nan_set_reg(nan_vm *v, int i, uint32_t x) { v->r[i & 15] = x; }
 void nan_set_pc(nan_vm *v, uint32_t pc) { v->pc = pc; v->halted = 0; }
 int nan_flags(const nan_vm *v) { return v->k; }
@@ -151,7 +220,7 @@ int nan_run(nan_vm *v, uint32_t max_steps) {
     uint32_t p = (uint32_t)(w >> 16), op = p >> 24;
     int n = (int)((nan_hcls(nh) << 2) | nan_hcls(fh));
     if (op == 0xFF) { v->halted = 1; LEAVE(NAN_HALTED); }
-    if (op > 0x45) { trap(v, 'O', pc); pc = v->pc; LEAVE(NAN_HALTED); }
+    if (op > 0x48) { trap(v, 'O', pc); pc = v->pc; LEAVE(NAN_HALTED); }
     if (op != 0 && !((n >> v->k) & 1)) continue;
     if (v->trace) v->trace(v->trace_ctx, at, p, n, v->k);
     uint32_t d = (p >> 20) & 15, a = (p >> 16) & 15, imm = p & 0xFFFF;
@@ -229,6 +298,9 @@ int nan_run(nan_vm *v, uint32_t max_steps) {
     case 0x35: if (is_nan32(A) || is_nan32(B)) v->k = 3; else SETK(f32(A) == f32(B), f32(A) < f32(B)); break;
     case 0x36: { volatile float f = (float)(int32_t)A; r[d] = u32(f); v->k = 0; break; }
     case 0x37: { uint32_t res = fp_cvtfi(A); r[d] = res; SETK(res == 0, 0); break; }
+    case 0x46: r[d] = fp_unary(A, 0x46); v->k = 0; break;  /* FEXP */
+    case 0x47: r[d] = fp_unary(A, 0x47); v->k = 0; break;  /* FTANH */
+    case 0x48: r[d] = fp_unary(A, 0x48); v->k = 0; break;  /* FLOG */
     case 0x38: pc = p & 0xFFFFFF; break;
     case 0x39: r[15] = pc; pc = p & 0xFFFFFF; break;
     case 0x3A: r[d] = (v->fbw << 16) | v->fbh; break;

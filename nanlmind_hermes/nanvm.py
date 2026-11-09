@@ -11,6 +11,9 @@ device ops are headless stubs (no screen, no keyboard, serial captured).
 """
 from __future__ import annotations
 
+import math
+import struct
+
 MASK32 = 0xFFFFFFFF
 MEM_WORDS = 8192
 MEM_MASK = MEM_WORDS - 1
@@ -22,7 +25,7 @@ NAN_HEADS = (0x7FF1, 0xFFF1, 0x7FF8, 0xFFF8)
 _IMPLEMENTED = frozenset(
     [*range(0x00, 0x0E), 0x0F,
      0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
-     0x1A, 0x1B]
+     0x1A, 0x1B, 0x46, 0x47, 0x48]
 )
 HALT = 0xFF
 
@@ -214,3 +217,25 @@ class NanVM:
             reg[d] = 0
         elif op == 0x1B:  # NOP (reserved)
             pass
+        elif op in (0x46, 0x47, 0x48):  # FEXP / FTANH / FLOG
+            bits = av & MASK32
+            if (bits & 0x7F800000) == 0x7F800000 and (bits & 0x007FFFFF):
+                reg[d] = (bits | 0x00400000) & MASK32
+            else:
+                value = struct.unpack("<f", struct.pack("<I", bits))[0]
+                if op == 0x46:
+                    out = math.exp(value)
+                elif op == 0x47:
+                    out = math.tanh(value)
+                else:
+                    if bits & 0x80000000 and (bits & 0x7FFFFFFF) != 0:
+                        out = float("nan")
+                    elif bits & 0x7FFFFFFF == 0:
+                        out = float("-inf")
+                    else:
+                        out = math.log(value)
+                if math.isnan(out):
+                    reg[d] = 0x7FC00000
+                else:
+                    reg[d] = struct.unpack("<I", struct.pack("<f", out))[0]
+            self._set_flags(0, 0)

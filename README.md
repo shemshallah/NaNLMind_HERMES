@@ -390,6 +390,7 @@ Report security issues privately as described in [SECURITY.md](SECURITY.md).
 | [Probe immutability](docs/PROBE_IMMUTABILITY.md) | read-only probe fingerprint contract and state-mutation tests |
 | [Resident universe](docs/RESIDENT_UNIVERSE.md) | what is actually in RAM today, proposed resident typed universe and primitive/adaptor boundaries |
 | [PR integration audit](docs/PR_INTEGRATION_AUDIT.md) | all 58 PRs checked against the unified `main` for ancestry, file retention, feature retention, tests and closed-PR supersession |
+| [NaN0S dependency](docs/NAN0S_DEPENDENCY.md) | canonical NaN0S is the only NaN16 VM; exact pinned vendored snapshot, ISA sync contract and drift checks |
 | [Architecture gaps](docs/ARCHITECTURE_GAPS.md) | what the Alpine/Gemma test round found and what remains |
 | [Gemma bootstrap](docs/GEMMA_BOOTSTRAP.md) | teacher-designed exposure, abstention and known/unknown probes |
 | [Saturation session](docs/GEMMA_CORPUS.md) | concept-matrix saturation and organization by chatting |

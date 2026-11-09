@@ -1,5 +1,5 @@
 ; n16i.nas - a NaN16 interpreter written in NaN16 (r23, Stage 3 of NAN_MIGRATION_PLAN).
-; Runs a guest program of NaN16 words (all 68 ops 0x00-0x43 + HALT) on top of the host machine.
+; Runs a guest program of NaN16 words (all 73 ops 0x00-0x48 + HALT) on top of the host machine.
 ;   entry:  r1 = guest start pc, r2 = host word address of guest word 0 (GB), r3 = guest mask (size-1)
 ;           CALL @n16i_run     -> returns r1 = guest steps executed (every fetch counts, as in the model)
 ; Host needs the integer ext ops (MUL/DIVU/...), r0=0, r13=1. Clobbers r1-r12,r14,r15.
@@ -46,7 +46,7 @@ ni_loop:
   MOVI r5,255
   CMP r4,r5
   JMP[EQ] @ni_halt
-  MOVI r5,67
+  MOVI r5,72
   CMP r4,r5
   JMP[GT] @ni_trapo
   CMP r4,r0
@@ -456,6 +456,21 @@ ni_h_cvtif:
 ni_h_cvtfi:
   CVTFI r4,r8
   JMP @ni_t_stf
+ni_h_cpuid:
+  MOVI r4,0
+  JMP @ni_t_st
+ni_h_rdtsc:
+  LD r4,r0,@ni_steps
+  JMP @ni_t_st
+ni_h_fexp:
+  FEXP r4,r8
+  JMP @ni_t_stf
+ni_h_ftanh:
+  FTANH r4,r8
+  JMP @ni_t_stf
+ni_h_flog:
+  FLOG r4,r8
+  JMP @ni_t_stf
 ni_h_nop2:
   JMP @ni_loop
 ni_h_fbinfo:
@@ -524,3 +539,4 @@ ni_optab:
 .word @ni_h_fadd,@ni_h_fsub,@ni_h_fmul,@ni_h_fdiv,@ni_h_fsqrt,@ni_h_fcmp,@ni_h_cvtif,@ni_h_cvtfi
 .word @ni_h_jmp,@ni_h_call,@ni_h_fbinfo,@ni_h_vsync,@ni_h_fbcopy,@ni_h_fbfill,@ni_h_outb,@ni_h_inb
 .word @ni_h_inw,@ni_h_outw,@ni_h_outsw,@ni_h_outl
+.word @ni_h_cpuid,@ni_h_rdtsc,@ni_h_fexp,@ni_h_ftanh,@ni_h_flog

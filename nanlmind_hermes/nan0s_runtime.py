@@ -112,11 +112,8 @@ def _layout(root: Path) -> dict[str, Any] | None:
 
 def discover_core(ctx=None) -> dict[str, Any]:
     """Find a configured, sibling or bundled NaN0S source layout."""
-    if bool(_setting(ctx, "nan0s_prefer_bundled", False)):
-        builtin = _layout(_BUNDLED)
-        if builtin is not None:
-            builtin["discovered_from"] = "bundled-preferred"
-            return builtin
+    # NaN0S is the canonical dependency. The bundled snapshot is only a
+    # last-resort wheel fallback, never preferred over a real checkout.
     configured = str(_setting(ctx, "nan0s_root", "") or "").strip()
     candidates: list[Path] = []
     if configured:
