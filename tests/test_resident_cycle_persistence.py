@@ -394,7 +394,7 @@ class DenialTests(RealUniverseTestCase):
         with self.assertRaises(CyclePersistenceSecretError):
             persistence.save_cycle(
                 0, 1, RAW, source=SOURCE, approved=True,
-                metadata={"note": "-----BEGIN PRIVATE KEY-----"})
+                metadata={"note": "-----BEGIN " "PRIVATE KEY-----"})
 
         with self.assertRaises(CyclePersistencePathError):
             persistence.save_cycle(

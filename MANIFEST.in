@@ -16,3 +16,5 @@ recursive-include experiments/round033 *.md *.py *.cpp *.json *.bin *.pt *.log *
 recursive-include experiments/round034 *.md *.py *.cpp *.json *.bin *.pt *.log *.tsv
 recursive-include experiments/round035 *.md *.py *.cpp *.json *.bin *.pt *.log *.tsv
 recursive-include experiments/round036 *.md *.py *.cpp *.json *.bin *.pt *.log
+global-exclude *.pt
+global-exclude *.bin
