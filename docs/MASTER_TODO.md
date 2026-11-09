@@ -47,7 +47,7 @@ for the round-specific items are in `ROUNDS_023_036_TODO.md` and
 | A-12 | Verify Round 035 two/three-source composition | linked answer; broken abstention; cycle exact | done |
 | A-13 | Verify Round 036 contradiction rule and symbolic depth | `opposes` abstains; 4-hop symbolic only | done |
 | A-14 | Add `Round033/034/035/036` docs to the index and MANIFEST | paths present; package build includes archives | done |
-| A-15 | Re-run packaging tests after new binary/checkpoint archives | wheel 330 files / sdist 837 files; verifier pass; checkpoint/root binaries, corpus JSONL and BPE model excluded | done |
+| A-15 | Re-run packaging tests after new binary/checkpoint archives | wheel 340 files / sdist 867 files; verifier pass; checkpoint/root binaries, corpus JSONL and BPE model excluded | done |
 | A-16 | Re-run Alpine/proot suite | 1,459 tests, 1 skipped, OK (654 s) | done |
 | A-17 | Confirm no legacy branded filenames/strings remain | repository search for the retired label is empty | done |
 | A-18 | Confirm canonical merge stays disabled everywhere | all receipts/flags false | done |
