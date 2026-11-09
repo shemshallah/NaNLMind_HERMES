@@ -13,6 +13,20 @@ def register(ctx):
     from .universe_chart import LocalRunner
     LocalRunner.open(ctx)
 
+    # A model-supplied approved=true cannot authorize external operations.
+    # Hermes checks pre_tool_call on actual model tool dispatch and prompts
+    # the human (or fails closed in unattended runs).
+    from .catalog_approval import make_approval_hook
+    human_approval_available = callable(getattr(ctx, "register_hook", None))
+    if human_approval_available:
+        ctx.register_hook("pre_tool_call", make_approval_hook(ctx))
+
+    def _require_human_approval_route():
+        if not human_approval_available:
+            raise PermissionError(
+                "This protected tool requires Hermes pre_tool_call human approval"
+            )
+
     _learning_cache: dict[str, object] = {}
 
     def _learning_policy():
@@ -279,10 +293,11 @@ def register(ctx):
             params.get("sources", []), params.get("scratch_id", "default"))
 
     def handle_clocked_execute(params, **kwargs):
+        _require_human_approval_route()
         _require_scope("universe:read")
         return clocked_tools.clocked_execute(ctx, params["question"],
             params.get("sources", []), params.get("scratch_id", "default"),
-            params.get("approved", False), params.get("plan_sha256", ""),
+            True, params.get("plan_sha256", ""),
             params.get("max_requests", 16), params.get("max_bytes", 1048576))
 
     def handle_clocked_scratch(params, **kwargs):
@@ -302,22 +317,25 @@ def register(ctx):
             params.get("scratch_id", "default"), params.get("max_tokens", 2048))
 
     def handle_head_candidate(params, **kwargs):
+        _require_human_approval_route()
         _require_scope("training:execute")
         return clocked_tools.head_candidate(ctx, params["mutation_id"],
             params["head_index"], params["patch_mask"],
-            params["base_topology_digest"], params.get("approved", False),
+            params["base_topology_digest"], True,
             params.get("scratch_id", "default"))
 
     def handle_head_learn_candidate(params, **kwargs):
+        _require_human_approval_route()
         _require_scope("training:execute")
         return clocked_tools.head_learn_candidate(ctx, params["mutation_id"],
-            params.get("base_topology_digest"), params.get("approved", False),
+            params.get("base_topology_digest"), True,
             params.get("scratch_id", "default"), params.get("epochs", 1))
 
     def handle_head_candidate_evaluate(params, **kwargs):
+        _require_human_approval_route()
         _require_scope("training:execute")
         return clocked_tools.head_candidate_evaluate(ctx, params["mutation_id"],
-            params["records"], params.get("approved", False),
+            params["records"], True,
             params.get("scratch_id", "default"))
 
     def handle_status(params, **kwargs):
@@ -717,17 +735,16 @@ def register(ctx):
              "text": {"type": "string", "minLength": 1, "maxLength": 65536}}}},
           "scratch_id": {"type": "string", "maxLength": 80}},
          ["question"], handle_clocked_plan),
-        ("nanlm_clocked_execute", "Execute a reviewed multi-source CLOCKED task plan through the scoped CLOCKED gateway. Requires explicit approved=true.",
+        ("nanlm_clocked_execute", "Execute a reviewed multi-source CLOCKED task plan through the scoped CLOCKED gateway. Requires Hermes human tool approval.",
          {"question": {"type": "string", "minLength": 1, "maxLength": 65536},
           "sources": {"type": "array", "maxItems": 7, "items": {"type": "object",
              "required": ["text"], "properties": {"id": {"type": "string", "maxLength": 80},
              "text": {"type": "string", "minLength": 1, "maxLength": 65536}}}},
           "scratch_id": {"type": "string", "maxLength": 80},
-          "approved": {"type": "boolean", "default": False},
           "plan_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
           "max_requests": {"type": "integer", "minimum": 1, "maximum": 16, "default": 16},
           "max_bytes": {"type": "integer", "minimum": 1, "maximum": 1048576, "default": 1048576}},
-         ["question", "approved", "plan_sha256"], handle_clocked_execute),
+         ["question", "plan_sha256"], handle_clocked_execute),
         ("nanlm_clocked_scratch", "Inspect a revisioned HERMES scratch or one writer-owned lane.",
          {"scratch_id": {"type": "string", "maxLength": 80},
           "lane": {"type": "string", "enum": ["user", "hermes_plan", "clocked_request", "clocked_result", "evidence_atoms", "conflict_map", "nan16_package", "head_response", "hermes_synthesis", "head_validation", "final", "learning_proposal", "phone_user", "phone_hermes", "phone_nanlm", "phone_event"]}},
@@ -743,28 +760,26 @@ def register(ctx):
           "scratch_id": {"type": "string", "maxLength": 80},
           "max_tokens": {"type": "integer", "minimum": 1, "maximum": 8192, "default": 2048}},
          ["question"], handle_clocked_synthesize),
-        ("nanlm_head_candidate", "Create an isolated Boolean-mask mutation candidate for one NaNLMind head. Requires explicit approval and training:execute scope; never changes canonical state.",
+        ("nanlm_head_candidate", "Create an isolated Boolean-mask mutation candidate for one NaNLMind head. Requires Hermes human approval and training:execute scope; never changes canonical state.",
          {"mutation_id": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,64}$"},
           "head_index": {"type": "integer", "minimum": 0, "maximum": 255},
           "patch_mask": {"type": "integer", "minimum": 1, "maximum": 65535},
           "base_topology_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
-          "approved": {"type": "boolean", "default": False},
           "scratch_id": {"type": "string", "maxLength": 80}},
-         ["mutation_id", "head_index", "patch_mask", "base_topology_digest", "approved"],
+         ["mutation_id", "head_index", "patch_mask", "base_topology_digest"],
          handle_head_candidate),
-        ("nanlm_head_learn_candidate", "Transform CLOCKED observations in revisioned scratch into a weak-supervision training set and train an isolated NaNLMind candidate topology. Requires explicit approval and training:execute; CLOCKED is not ground truth and canonical state is never modified.",
+        ("nanlm_head_learn_candidate", "Transform CLOCKED observations in revisioned scratch into a weak-supervision training set and train an isolated NaNLMind candidate topology. Requires Hermes human approval and training:execute; CLOCKED is not ground truth and canonical state is never modified.",
          {"mutation_id": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,64}$"},
           "base_topology_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
           "scratch_id": {"type": "string", "maxLength": 80},
           "epochs": {"type": "integer", "minimum": 1, "maximum": 8, "default": 1},
-          "approved": {"type": "boolean", "default": False}},
-         ["mutation_id", "approved"], handle_head_learn_candidate),
-        ("nanlm_head_candidate_evaluate", "Evaluate an isolated Boolean-head candidate against explicit held-out N16REL rows and record baseline/candidate metrics. Requires approval and training:execute; never promotes.",
+         },
+         ["mutation_id"], handle_head_learn_candidate),
+        ("nanlm_head_candidate_evaluate", "Evaluate an isolated Boolean-head candidate against explicit held-out N16REL rows and record baseline/candidate metrics. Requires Hermes human approval and training:execute; never promotes.",
          {"mutation_id": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,64}$"},
           "records": {"type": "array", "minItems": 1, "maxItems": 512},
-          "approved": {"type": "boolean", "default": False},
           "scratch_id": {"type": "string", "maxLength": 80}},
-         ["mutation_id", "records", "approved"], handle_head_candidate_evaluate),
+         ["mutation_id", "records"], handle_head_candidate_evaluate),
         ("nanlm_status", "Inspect local NaNLMind universe and durable mathematical-memory status.", {}, [], handle_status),
         ("nanlm_chart_storage", "Inspect the SHA-verified local 8 MiB NaN16 chart snapshot or explicitly checkpoint it; this is never a canonical training or NANNET merge commit.",
          {"action": {"type": "string", "enum": ["inspect", "checkpoint"], "default": "inspect"},
