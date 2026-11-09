@@ -12,6 +12,8 @@ on:
       - 'nanlmind_hermes/universe_pack.py'
       - 'tests/test_native_head_checkpoint.py'
       - 'tests/test_native_head_reconstruction.py'
+      - 'tests/test_n16snap_dirfd_race.py'
+      - 'tests/test_native_snapshot_directory.py'
       - 'tests/test_local_runner_native_rebase.py'
       - '.github/workflows/native-head-cross-repo.yml'
   pull_request:
@@ -26,6 +28,8 @@ on:
       - 'nanlmind_hermes/universe_pack.py'
       - 'tests/test_native_head_checkpoint.py'
       - 'tests/test_native_head_reconstruction.py'
+      - 'tests/test_n16snap_dirfd_race.py'
+      - 'tests/test_native_snapshot_directory.py'
       - 'tests/test_local_runner_native_rebase.py'
       - '.github/workflows/native-head-cross-repo.yml'
   workflow_dispatch:
@@ -46,12 +50,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: shemshallah/NaNROUTER
-          ref: 96a760fac100d92365560530634affc2d6a71145
+          ref: 63f6f51cbd14557c70d959d70f5d8f8e21797fa1
           path: router
       - uses: actions/checkout@v4
         with:
           repository: shemshallah/NaN0S
-          ref: ddb6297a6c62d4bdee673ba3971129ec2dc73446
+          ref: 1dc1c8ef7ebfd7118d4032e1c19f552af0cc7cd3
           path: nan0s
       - uses: actions/setup-python@v5
         with:
@@ -71,7 +75,7 @@ jobs:
             src/nannet/n16_head_worker.nas > "$GITHUB_WORKSPACE/nan0s/head.nan"
           test -s head.nan
           test -s head.labels
-      - name: Verify current chart, four NaN16 classes, multi-head generations and crash recovery
+      - name: Verify current chart, dirfd snapshots, journal inode fence, NaN classes and recovery
         working-directory: router
         env:
           PYTHONPATH: ${{ github.workspace }}/router:${{ github.workspace }}/hermes
