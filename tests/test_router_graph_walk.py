@@ -78,6 +78,16 @@ class VerifiedGraphWalkTests(unittest.TestCase):
         self.assertEqual(self.query(target=10, max_hops=1)["paths"], [])
         self.assertEqual(self.query(target=10, layer=4)["paths"], [])
         self.assertEqual(self.query(target=10, relation="isa")["paths"], [])
+        expected_contested = [{
+            "src": 7, "dst": 9, "layer": 4,
+            "relations": ["refutes", "supports"],
+        }]
+        for only_relation in ("supports", "refutes"):
+            narrowed = self.query(target=9, relation=only_relation)
+            self.assertEqual(narrowed["matched_candidate_edges"], 1)
+            self.assertEqual(narrowed["contested_pairs"], expected_contested)
+            self.assertEqual(narrowed["paths"][0]["edges"][0]["relation"],
+                             only_relation)
         self.assertEqual(self.query(target=11)["paths"], [])
         self.assertEqual(self.query(target=10, max_hops=2)["paths"],
                          self.query(target=10, max_hops=2)["paths"])
