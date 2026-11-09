@@ -1,0 +1,44 @@
+name: hermes-native-graph-claim-input
+on:
+  pull_request:
+    paths:
+      - 'nanlmind_hermes/router_graph_native_input.py'
+      - 'tests/test_router_graph_native_input.py'
+      - 'scripts/verify_real_router_native_claim_input.py'
+      - '.github/workflows/hermes-native-graph-claim-input.yml'
+  push:
+    paths:
+      - 'nanlmind_hermes/router_graph_native_input.py'
+      - 'tests/test_router_graph_native_input.py'
+      - 'scripts/verify_real_router_native_claim_input.py'
+      - '.github/workflows/hermes-native-graph-claim-input.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  signed-graph-to-native-candidate-words:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.10', '3.12']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Replay verified graph history regression
+        run: python -m unittest discover -s tests -p 'test_router_graph_history.py' -v
+      - name: Verify native claim wire input and reject cases
+        run: python -m unittest discover -s tests -p 'test_router_graph_native_input.py' -v
+      - name: Checkout real NaNROUTER graph producer
+        uses: actions/checkout@v4
+        with:
+          repository: shemshallah/NaNROUTER
+          path: router
+      - name: Check real MC0DB state/history into non-authorizing native words
+        env:
+          PYTHONPATH: .:router
+        run: python scripts/verify_real_router_native_claim_input.py
