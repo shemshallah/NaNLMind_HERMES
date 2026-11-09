@@ -48,7 +48,7 @@ for the round-specific items are in `ROUNDS_023_036_TODO.md` and
 | A-13 | Verify Round 036 contradiction rule and symbolic depth | `opposes` abstains; 4-hop symbolic only | done |
 | A-14 | Add `Round033/034/035/036` docs to the index and MANIFEST | paths present; package build includes archives | done |
 | A-15 | Re-run packaging tests after new binary/checkpoint archives | wheel 347 files / sdist 899 files; verifier pass; checkpoint/root binaries, corpus JSONL and BPE model excluded | done |
-| A-16 | Re-run Alpine/proot suite | 1,459 tests, 1 skipped, OK (654 s) | done |
+| A-16 | Re-run Alpine/proot suite | 1,613 tests, 8 skipped, OK (884 s); Alpine skips the 7 optional PyTorch TRIGON tests and 1 existing test | done |
 | A-17 | Confirm no legacy branded filenames/strings remain | repository search for the retired label is empty | done |
 | A-18 | Confirm canonical merge stays disabled everywhere | all receipts/flags false | done |
 | A-19 | Merge all local feature branches into `main` without losing current integration | no unmerged local branch; single `main` remains; conflicts documented | done |
