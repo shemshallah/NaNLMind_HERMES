@@ -15,6 +15,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import sqlite3
 import struct
 import tempfile
 import unittest
@@ -152,6 +153,18 @@ def sha256_file(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def _database_logical_digest(root: Path) -> str | None:
+    database = root / "universe" / "mathematical_memory.sqlite3"
+    if not database.is_file():
+        return None
+    connection = sqlite3.connect(str(database), timeout=10)
+    try:
+        dump = "\n".join(connection.iterdump())
+    finally:
+        connection.close()
+    return hashlib.sha256(dump.encode("utf-8")).hexdigest()
+
+
 def learner_state_fingerprint(root: Path) -> tuple[str, dict]:
     """Fingerprint every durable learner file, excluding transient sidecars.
 
@@ -165,10 +178,15 @@ def learner_state_fingerprint(root: Path) -> tuple[str, dict]:
         relative = str(path.relative_to(root))
         if path.name.endswith(".lock") or relative.endswith(("-wal", "-shm")):
             continue
-        entries[relative] = {
-            "bytes": path.stat().st_size,
-            "sha256": sha256_file(path),
-        }
+        if relative == "universe/mathematical_memory.sqlite3":
+            entries[relative] = {
+                "logical_dump_sha256": _database_logical_digest(root),
+            }
+        else:
+            entries[relative] = {
+                "bytes": path.stat().st_size,
+                "sha256": sha256_file(path),
+            }
     payload = json.dumps(entries, sort_keys=True, separators=(",", ":"))
     return hashlib.sha256(payload.encode("utf-8")).hexdigest(), entries
 
@@ -258,7 +276,7 @@ class StudentStatePersistenceTests(unittest.TestCase):
         self.assertEqual([row["role"] for row in transcript["messages"]],
                          ["user", "assistant"])
 
-        before_restart, _ = learner_state_fingerprint(self.root)
+        before_restart, before_entries = learner_state_fingerprint(self.root)
         reset_process_state()
 
         # A brand-new context sees only the durable files and the native .nmg.
@@ -300,8 +318,12 @@ class StudentStatePersistenceTests(unittest.TestCase):
 
         # Reopening is read-only: no durable file changed, and the canonical
         # native .nmg was never rewritten by the local chart checkpoint.
-        after_restart, _ = learner_state_fingerprint(self.root)
-        self.assertEqual(after_restart, before_restart)
+        after_restart, after_entries = learner_state_fingerprint(self.root)
+        changed = sorted(
+            key for key in set(before_entries) | set(after_entries)
+            if before_entries.get(key) != after_entries.get(key))
+        self.assertEqual(after_restart, before_restart,
+                         "reload changed durable files: %r" % (changed,))
         self.assertEqual(sha256_file(native_path), native_digest)
 
     def test_probe_only_turns_do_not_persist_or_advance_register(self):

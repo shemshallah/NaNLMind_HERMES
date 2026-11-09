@@ -1,0 +1,21 @@
+TRAIN conventional
+conventional test 0.4889 gauge 0.4889 CE 0.237
+TRAIN deepsets
+deepsets test 0.4889 gauge 0.4889 CE 0.2354
+TRAIN scalar
+scalar test 1.0 gauge 1.0 CE 0.016
+TRAIN phase
+phase test 1.0 gauge 1.0 CE 0.0501
+TRAIN frozen_phase
+frozen_phase test 0.4889 gauge 0.4889 CE 0.2344
+TRAIN rotation
+rotation test 0.7278 gauge 0.7278 CE 0.1233
+TRAIN frozen_rotation
+frozen_rotation test 0.9278 gauge 0.9278 CE 0.0832
+TRAIN holonomy
+holonomy test 1.0 gauge 1.0 CE 0.0058
+TRAIN dynamic
+dynamic test 1.0 gauge 1.0 CE 0.0053
+TRAIN full
+full test 1.0 gauge 1.0 CE 0.005
+COMPLETE 27.2

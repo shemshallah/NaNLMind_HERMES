@@ -77,6 +77,19 @@ def _scratch_page_files(root: Path) -> list[Path]:
     return sorted(directory.rglob("page-*.n16")) if directory.is_dir() else []
 
 
+def _database_logical_digest(root: Path) -> str | None:
+    """Hash SQLite logical content, independent of WAL checkpoint timing."""
+    database = root / "universe" / "mathematical_memory.sqlite3"
+    if not database.is_file():
+        return None
+    connection = sqlite3.connect(str(database), timeout=10)
+    try:
+        dump = "\n".join(connection.iterdump())
+    finally:
+        connection.close()
+    return hashlib.sha256(dump.encode("utf-8")).hexdigest()
+
+
 def learner_state_fingerprint(root: Path) -> tuple[str, dict]:
     """Return a deterministic SHA-256 over the durable learner state.
 
@@ -90,10 +103,15 @@ def learner_state_fingerprint(root: Path) -> tuple[str, dict]:
         "language/temporal_mirror.json",
     ):
         path = root / relative
-        entries[relative] = None if not path.is_file() else {
-            "bytes": path.stat().st_size,
-            "sha256": _sha256(path),
-        }
+        if relative.endswith(".sqlite3"):
+            entries[relative] = None if not path.is_file() else {
+                "logical_dump_sha256": _database_logical_digest(root),
+            }
+        else:
+            entries[relative] = None if not path.is_file() else {
+                "bytes": path.stat().st_size,
+                "sha256": _sha256(path),
+            }
 
     entries["scratch_register/pages"] = [
         {

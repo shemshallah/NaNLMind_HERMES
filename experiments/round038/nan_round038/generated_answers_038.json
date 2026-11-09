@@ -1,0 +1,127 @@
+{
+  "checkpoint": "trig_wordnet_full_29.pt",
+  "heldout_episodes": 180,
+  "exact_autoregressive_label_predictions": 180,
+  "generated_examples": [
+    {
+      "question": "Does the supplied evidence establish that 'dragunov' is a kind of 'firearm'?",
+      "generated_tokens": [
+        "evidence",
+        "unknown",
+        "<eos>"
+      ],
+      "evidence_state": "unknown",
+      "note": "Synthetic additional negation/uncertainty/distractor facts are part of the episode, not necessarily WordNet ontology assertions."
+    },
+    {
+      "question": "Does the supplied evidence establish that 'tibetan terrier' is a kind of 'dog'?",
+      "generated_tokens": [
+        "evidence",
+        "unknown",
+        "<eos>"
+      ],
+      "evidence_state": "unknown",
+      "note": "Synthetic additional negation/uncertainty/distractor facts are part of the episode, not necessarily WordNet ontology assertions."
+    },
+    {
+      "question": "Does the supplied evidence establish that 'benefit' is a kind of 'social event'?",
+      "generated_tokens": [
+        "evidence",
+        "unknown",
+        "<eos>"
+      ],
+      "evidence_state": "unknown",
+      "note": "Synthetic additional negation/uncertainty/distractor facts are part of the episode, not necessarily WordNet ontology assertions."
+    },
+    {
+      "question": "Does the supplied evidence establish that 'pheasant under glass' is a kind of 'food'?",
+      "generated_tokens": [
+        "evidence",
+        "supports",
+        "<eos>"
+      ],
+      "evidence_state": "supports",
+      "note": "Synthetic additional negation/uncertainty/distractor facts are part of the episode, not necessarily WordNet ontology assertions."
+    },
+    {
+      "question": "Does the supplied evidence establish that 'demeanor' is a kind of 'abstraction'?",
+      "generated_tokens": [
+        "evidence",
+        "supports",
+        "<eos>"
+      ],
+      "evidence_state": "supports",
+      "note": "Synthetic additional negation/uncertainty/distractor facts are part of the episode, not necessarily WordNet ontology assertions."
+    },
+    {
+      "question": "Does the supplied evidence establish that 'jute' is a kind of 'person'?",
+      "generated_tokens": [
+        "evidence",
+        "supports",
+        "<eos>"
+      ],
+      "evidence_state": "supports",
+      "note": "Synthetic additional negation/uncertainty/distractor facts are part of the episode, not necessarily WordNet ontology assertions."
+    },
+    {
+      "question": "Does the supplied evidence establish that 'paganism' is a kind of 'content'?",
+      "generated_tokens": [
+        "evidence",
+        "refutes",
+        "<eos>"
+      ],
+      "evidence_state": "refutes",
+      "note": "Synthetic additional negation/uncertainty/distractor facts are part of the episode, not necessarily WordNet ontology assertions."
+    },
+    {
+      "question": "Does the supplied evidence establish that 'mechanism' is a kind of 'process'?",
+      "generated_tokens": [
+        "evidence",
+        "refutes",
+        "<eos>"
+      ],
+      "evidence_state": "refutes",
+      "note": "Synthetic additional negation/uncertainty/distractor facts are part of the episode, not necessarily WordNet ontology assertions."
+    },
+    {
+      "question": "Does the supplied evidence establish that 'emergency' is a kind of 'happening'?",
+      "generated_tokens": [
+        "evidence",
+        "refutes",
+        "<eos>"
+      ],
+      "evidence_state": "refutes",
+      "note": "Synthetic additional negation/uncertainty/distractor facts are part of the episode, not necessarily WordNet ontology assertions."
+    },
+    {
+      "question": "Does the supplied evidence establish that 'anointer' is a kind of 'organism'?",
+      "generated_tokens": [
+        "evidence",
+        "both",
+        "<eos>"
+      ],
+      "evidence_state": "both",
+      "note": "Synthetic additional negation/uncertainty/distractor facts are part of the episode, not necessarily WordNet ontology assertions."
+    },
+    {
+      "question": "Does the supplied evidence establish that 'power' is a kind of 'entity'?",
+      "generated_tokens": [
+        "evidence",
+        "both",
+        "<eos>"
+      ],
+      "evidence_state": "both",
+      "note": "Synthetic additional negation/uncertainty/distractor facts are part of the episode, not necessarily WordNet ontology assertions."
+    },
+    {
+      "question": "Does the supplied evidence establish that 'dandruff' is a kind of 'fragment'?",
+      "generated_tokens": [
+        "evidence",
+        "both",
+        "<eos>"
+      ],
+      "evidence_state": "both",
+      "note": "Synthetic additional negation/uncertainty/distractor facts are part of the episode, not necessarily WordNet ontology assertions."
+    }
+  ]
+}

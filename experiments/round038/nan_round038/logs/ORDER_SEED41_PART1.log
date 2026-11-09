@@ -1,0 +1,19 @@
+TRAIN conventional
+conventional 0.7333 0.128
+TRAIN deepsets
+deepsets 1.0 0.0053
+TRAIN scalar
+scalar 0.2722 0.4668
+TRAIN phase
+phase 0.2556 0.4645
+TRAIN frozen_phase
+frozen_phase 0.2556 0.4645
+TRAIN rotation
+rotation 1.0 0.0066
+TRAIN frozen_rotation
+frozen_rotation 0.7611 0.2214
+TRAIN holonomy
+holonomy 1.0 0.0895
+TRAIN dynamic
+dynamic 0.9944 0.0122
+TRAIN full

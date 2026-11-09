@@ -1,0 +1,6 @@
+Commands: add <sentence> | ask <source> <target> | save | quit
+nan://local> Stored: bota mera 1
+nan://local> Stored: mera zena 1
+nan://local> bota is a kind of zena. Evidence chain: bota -> mera -> zena
+nan://local> Saved native root and metadata
+nan://local> 

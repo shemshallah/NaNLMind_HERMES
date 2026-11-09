@@ -1,0 +1,9 @@
+TRAIN deepsets
+deepsets test 1.0 gauge 1.0 CE 0.006
+TRAIN phase
+phase test 1.0 gauge 1.0 CE 0.005
+TRAIN rotation
+rotation test 1.0 gauge 1.0 CE 0.0035
+TRAIN full
+full test 1.0 gauge 1.0 CE 0.0054
+COMPLETE 12.8

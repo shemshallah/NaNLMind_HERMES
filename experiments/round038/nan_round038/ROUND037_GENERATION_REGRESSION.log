@@ -1,0 +1,12 @@
+{
+  "episodes": 90,
+  "input_bytes_stored": 10080,
+  "neural_checkpoint": "Round036 robust_29.pt",
+  "generative_model_parameters": 38365,
+  "native_cycle_source_recovery": 90,
+  "raw_source_recovery": 0,
+  "cycle_neural_outputs_unchanged": 90,
+  "raw_neural_outputs_unchanged": 30,
+  "native_semantic_correct": 90,
+  "conventional_index_semantic_correct": 90
+}

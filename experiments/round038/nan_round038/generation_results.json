@@ -1,0 +1,90 @@
+{
+  "episodes": 90,
+  "input_bytes_stored": 10080,
+  "neural_checkpoint": "Round036 robust_29.pt",
+  "generative_model_parameters": 38365,
+  "native_cycle_source_recovery": 90,
+  "raw_source_recovery": 0,
+  "cycle_neural_outputs_unchanged": 90,
+  "raw_neural_outputs_unchanged": 30,
+  "native_semantic_correct": 90,
+  "conventional_index_semantic_correct": 90,
+  "examples": [
+    {
+      "premises": " premise : e3 is a type of e2 . next : e0 is a type of e1 . question : what is e0 relative to e2 ?",
+      "native_generated_slots": "the evidence is insufficient .",
+      "actual_names": [
+        "salamander",
+        "amphibian",
+        "vertebrate"
+      ]
+    },
+    {
+      "premises": " premise : e2 is a type of e3 . next : e1 is a type of e2 . next : e0 is a type of e1 . question : what is e0 relative to e3 ?",
+      "native_generated_slots": "e0 is classified as e3 .",
+      "actual_names": [
+        "idolizer",
+        "lover",
+        "person",
+        "organism"
+      ]
+    },
+    {
+      "premises": " premise : e0 is a type of e1 . next : e1 is a type of e2 . question : what is e0 relative to e2 ?",
+      "native_generated_slots": "e0 is classified as e2 .",
+      "actual_names": [
+        "swallow",
+        "oscine",
+        "passerine"
+      ]
+    },
+    {
+      "premises": " premise : e1 is a type of e2 . next : e4 is a type of e3 . next : e0 is a type of e1 . question : what is e0 relative to e3 ?",
+      "native_generated_slots": "the evidence is insufficient .",
+      "actual_names": [
+        "greater omentum",
+        "omentum",
+        "peritoneum",
+        "serous membrane"
+      ]
+    },
+    {
+      "premises": " premise : e0 is a type of e1 . next : e1 is a type of e2 . question : what is e0 relative to e2 ?",
+      "native_generated_slots": "e0 is classified as e2 .",
+      "actual_names": [
+        "welsh pony",
+        "pony",
+        "horse"
+      ]
+    },
+    {
+      "premises": " premise : e2 is a type of e3 . next : e0 is a type of e1 . next : e1 is a type of e2 . question : what is e0 relative to e3 ?",
+      "native_generated_slots": "e0 is classified as e3 .",
+      "actual_names": [
+        "satellite",
+        "follower",
+        "person",
+        "organism"
+      ]
+    },
+    {
+      "premises": " premise : e0 is a type of e1 . next : e3 is a type of e2 . question : what is e0 relative to e2 ?",
+      "native_generated_slots": "the evidence is insufficient .",
+      "actual_names": [
+        "tracing",
+        "drawing",
+        "art"
+      ]
+    },
+    {
+      "premises": " premise : e0 is a type of e1 . next : e1 is a type of e2 . next : e2 is a type of e3 . question : what is e0 relative to e3 ?",
+      "native_generated_slots": "e0 is classified as e3 .",
+      "actual_names": [
+        "open",
+        "tournament",
+        "contest",
+        "social event"
+      ]
+    }
+  ]
+}
