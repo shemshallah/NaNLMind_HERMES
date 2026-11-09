@@ -247,30 +247,34 @@ def save_chart_snapshot(state_dir: str | Path, root_hash: str,
     data = bytes(page)
     _validate_chart(data)
     root = _parent(root_hash)
-    folder = _root(state_dir)
-    folder.mkdir(parents=True, exist_ok=True, mode=0o700)
-    if folder.is_symlink():
-        raise ChartStorageError("checkpoint directory must not be a symlink")
-    os.chmod(folder, 0o700)
-    lockpath = folder / ".write.lock"
-    if lockpath.is_symlink():
-        raise ChartStorageError("snapshot lock must not be a symlink")
-    flags = os.O_CREAT | os.O_RDWR
-    if hasattr(os, "O_NOFOLLOW"):
-        flags |= os.O_NOFOLLOW
-    fd = os.open(lockpath, flags, 0o600)
-    try:
-        with os.fdopen(fd, "rb") as lock:
-            os.chmod(lockpath, 0o600)
+    with _opened_folder(state_dir, create=True) as folder_fd:
+        if folder_fd is None:
+            raise ChartStorageError("checkpoint directory unavailable")
+        flags = os.O_CREAT | os.O_RDWR | os.O_NOFOLLOW | os.O_NONBLOCK
+        try:
+            lock_fd = os.open(".write.lock", flags, 0o600, dir_fd=folder_fd)
+        except OSError as exc:
+            raise ChartStorageError("snapshot lock cannot be followed or opened") from exc
+        with os.fdopen(lock_fd, "rb") as lock:
+            lock_stat = os.fstat(lock.fileno())
+            if not stat.S_ISREG(lock_stat.st_mode):
+                raise ChartStorageError("snapshot lock is not a regular file")
+            os.fchmod(lock.fileno(), 0o600)
             fcntl.flock(lock.fileno(), fcntl.LOCK_EX)
-            current = _candidates(folder, root)
+            # Check lock ownership after admission. This closes a common
+            # pre-flock replacement case, but hostile concurrent unlink of
+            # the lock by the same privileged filesystem owner still needs
+            # an OS-level exclusive directory owner/lease.
+            current_lock = os.stat(
+                ".write.lock", dir_fd=folder_fd, follow_symlinks=False
+            )
+            if (current_lock.st_dev != lock_stat.st_dev or
+                    current_lock.st_ino != lock_stat.st_ino):
+                raise ChartStorageError("snapshot lock identity changed")
+            current = _candidates(folder_fd, root)
             generation = current[0] if current else 0
             if generation != expected_generation:
                 raise ChartStorageError("stale snapshot generation; reload before writing")
-            # The digest fence must be checked UNDER the same exclusive file
-            # lock as the generation check. A valid same-generation but
-            # different chart page must not be overwritten by a native bank
-            # handoff that was prepared against unrelated chart bytes.
             if expected_page_sha256 is not None:
                 if current is None or (
                     hashlib.sha256(current[2]).hexdigest() != expected_page_sha256
@@ -279,30 +283,39 @@ def save_chart_snapshot(state_dir: str | Path, root_hash: str,
             if generation == 0xFFFFFFFFFFFFFFFF:
                 raise ChartStorageError("snapshot generation exhausted")
             target_slot = (current[1] ^ 1) if current else 0
-            target = folder / SLOT_NAMES[target_slot]
-            if target.is_symlink():
-                raise ChartStorageError("target slot must not be a symlink")
+            target = SLOT_NAMES[target_slot]
+            try:
+                target_stat = os.stat(target, dir_fd=folder_fd, follow_symlinks=False)
+            except FileNotFoundError:
+                pass
+            else:
+                if stat.S_ISLNK(target_stat.st_mode) or not stat.S_ISREG(target_stat.st_mode):
+                    raise ChartStorageError("target slot must be a regular file, not a symlink")
             new_generation = generation + 1
-            header = HEADER.pack(MAGIC, new_generation, root,
-                                 hashlib.sha256(data).digest())
-            temporary = folder / (".chart." + uuid.uuid4().hex + ".tmp")
-            temp_fd = os.open(temporary, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
+            header = HEADER.pack(
+                MAGIC, new_generation, root, hashlib.sha256(data).digest()
+            )
+            temporary = ".chart." + uuid.uuid4().hex + ".tmp"
+            temp_fd = os.open(
+                temporary, os.O_CREAT | os.O_EXCL | os.O_WRONLY | os.O_NOFOLLOW,
+                0o600, dir_fd=folder_fd,
+            )
             try:
                 with os.fdopen(temp_fd, "wb") as stream:
                     stream.write(header)
                     stream.write(data)
                     stream.flush()
                     os.fsync(stream.fileno())
-                os.replace(temporary, target)
-                dir_fd = os.open(folder, os.O_RDONLY)
-                try:
-                    os.fsync(dir_fd)
-                finally:
-                    os.close(dir_fd)
+                # Both endpoints refer to the same pinned physical folder.
+                # A retargeted path alias cannot change the CAS destination.
+                os.replace(
+                    temporary, target, src_dir_fd=folder_fd,
+                    dst_dir_fd=folder_fd,
+                )
+                os.fsync(folder_fd)
             finally:
-                if temporary.exists():
-                    temporary.unlink()
+                try:
+                    os.unlink(temporary, dir_fd=folder_fd)
+                except FileNotFoundError:
+                    pass
             return new_generation
-    except BaseException:
-        # fdopen owns the descriptor once entered; avoid closing twice.
-        raise
