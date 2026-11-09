@@ -4,12 +4,18 @@ Runs without creating a second chart or executing a training update.
 """
 import copy
 import tempfile
+import time
+
+from nanlmind_hermes.crypto_compat import Ed25519PrivateKey, serialization
+from nanlmind_hermes.router_graph_attestation import verify_graph_sender_attestation
+from nanlmind_hermes.router_graph_evidence import audit_graph_revision_evidence
 
 from nanlmind_hermes.router_graph_history import RouterGraphHistoryVerifier
 from nanlmind_hermes.router_graph_native_input import pack_native_graph_claim_input
 from nanlmind_hermes.router_graph_page import RouterGraphPageError
 from nanlmind_hermes.universe_chart import Chart8MiB
 from nanlmind_hermes.universe_root import attach_universe_root
+from runner_riddle.graph_sender_attestation import sign_graph_attestation
 from runner_riddle.math_objects import MathLeaf
 from runner_riddle.math_store import MathStore
 from runner_riddle.nan_layer_graph import NanLayerGraph
@@ -65,6 +71,34 @@ def main():
             verifier.add_history_page(item)
         assert verifier.status()["history_verified"]
 
+        # Distinct trust checks: local operator-pinned router signature, then
+        # immutable MathStore evidence for EVERY revision including tombstones.
+        signer = Ed25519PrivateKey.generate()
+        public_hex = signer.public_key().public_bytes(
+            encoding=serialization.Encoding.Raw,
+            format=serialization.PublicFormat.Raw,
+        ).hex()
+        now = int(time.time())
+        attestation = sign_graph_attestation(
+            state_pages[0], router_id="native-graph-router-ci",
+            key_id="native-graph-key-ci", private_key=signer,
+            issued_at=now, nonce="d" * 32,
+        )
+        authenticated = verify_graph_sender_attestation(
+            verifier, attestation,
+            expected_router_id="native-graph-router-ci",
+            expected_key_id="native-graph-key-ci",
+            public_key_hex=public_hex, now=now,
+        )
+        assert authenticated["sender_authenticated"]
+        evidence_audit = audit_graph_revision_evidence(
+            verifier, state_pages, history_pages,
+            resolve_trusted_leaf=store.get_leaf,
+        )
+        assert evidence_audit["evidence_digest_integrity_verified"]
+        assert evidence_audit["historical_revisions_checked"] == 5
+        assert not evidence_audit["learning_admitted"]
+
         packet = pack_native_graph_claim_input(
             verifier, state_pages, history_pages)
         assert packet["words"] == [7, 265, 4, 1, 7, 265, 4, 2]
@@ -90,7 +124,7 @@ def main():
         assert before == bytes(chart.bytes)
 
     print("PASS: real MC0DB candidate graph + retraction -> HERMES history "
-          "replay -> bounded NaN16 U32 input, opposing claims intact, "
+          "replay -> pinned sender + immutable MathLeaf audit -> bounded NaN16 U32 input, opposing claims intact, "
           "untampered chart, NO native execution or learning admission")
     return packet
 
