@@ -195,12 +195,14 @@ At the earlier 1.2.3 pin, upstream reviewer `teknium1` requested:
    `/nanlm clocked ... --approved` path remains explicitly user-invoked.
    A denied, timed-out or unavailable Hermes gate does not dispatch the tool.
 
-Reviewer recommendations: restrict corpus paths to the configured corpora
-directory, use a unique `state_dir` per Hermes profile (default is not
-profile aware), and recommend the optional [auth] crypto backend because the
-pure-Python compatibility path is not audited for constant-time behavior.
-Current limitations are explicitly documented in README; do not represent
-these recommendations as remediated until source code enforces them.
+Reviewer recommendations: **model-selected corpus paths are now restricted**
+to files beneath the configured `state_dir/corpora`, with symlink and traversal
+escapes rejected. The `state_dir` default is still not automatically
+profile-aware: operators must set a distinct absolute directory for each
+Hermes profile. The optional `[auth]` crypto backend is recommended because
+the dependency-free fallback is not audited for constant-time behavior.
+The path guard is a tool-level boundary; trusted direct Python APIs retain
+their explicitly supplied filesystem paths.
 
 ## Current cross-repository evidence
 
