@@ -445,6 +445,12 @@ def main(argv=None):
         call("nanlm_status")
         call("nanlm_session_context", {"document": "nannet-routing"})
         call("nanlm_chart_storage", {"action": "inspect"})
+        call("nanlm_resident_status")
+        call("nanlm_resident_ingest", {"approved": True,
+             "message": "A river carries water to the sea.", "head": 3})
+        call("nanlm_resident_query", {"text": "river water", "top_k": 4})
+        call("nanlm_head_field", {"action": "status", "limit": 8})
+        call("nanlm_head_field", {"action": "query", "head": 3})
 
         # Universal native MTH catalog/runtime and bounded execution.
         call("nanlm_mth_catalog", {"limit": 3})
