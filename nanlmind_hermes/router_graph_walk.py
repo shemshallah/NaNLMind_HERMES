@@ -75,14 +75,17 @@ def verified_candidate_walk(
             or chart.snapshot_generation != state.generation):
         raise VerifiedGraphWalkError("resident chart changed during query")
 
+    candidate = [
+        entry for entry in entries
+        if entry["status"] == "candidate"
+        and (layer is None or entry["layer"] == layer)
+    ]
     active = [
         {key: entry[key] for key in (
             "edge_id", "src", "dst", "layer", "relation",
             "evidence_id", "evidence_version", "evidence_digest", "generation")}
-        for entry in entries
-        if entry["status"] == "candidate"
-        and (layer is None or entry["layer"] == layer)
-        and (relation is None or entry["relation"] == relation)
+        for entry in candidate
+        if relation is None or entry["relation"] == relation
     ]
     if len(active) > max_edges:
         raise VerifiedGraphWalkError("query exceeds complete edge bound")
@@ -90,9 +93,14 @@ def verified_candidate_walk(
     active.sort(key=lambda e: (
         e["src"], e["dst"], e["layer"], e["relation"], e["edge_id"]))
     adjacency = defaultdict(list)
-    competing = defaultdict(set)
     for entry in active:
         adjacency[entry["src"]].append(entry)
+
+    # A relation filter controls navigation, not truth visibility. In
+    # particular filtering to 'supports' must never erase a simultaneous
+    # 'refutes' candidate from the contested-claim report.
+    competing = defaultdict(set)
+    for entry in candidate:
         competing[(entry["src"], entry["dst"], entry["layer"])].add(
             entry["relation"])
     contested = [
@@ -101,6 +109,8 @@ def verified_candidate_walk(
         for (src, dst, level), kinds in sorted(competing.items())
         if "supports" in kinds and "refutes" in kinds
     ]
+    if len(contested) > max_edges:
+        raise VerifiedGraphWalkError("query exceeds contested-claim bound")
 
     # A visit is a canonical head/MP cell, never an independent universe.
     discovered = {start: (0, None)}
