@@ -219,7 +219,9 @@ class TypedMembers(list):
             "leaf_id": getattr(self, "leaf_id", None),
             "pair_refs": getattr(self, "pair_refs", ()),
             "heads": getattr(self, "heads", ()),
-            "cycle_ids": getattr(self, "cycle_ids", ()),
+            "cycle_ids": [
+                item.hex() if isinstance(item, (bytes, bytearray, memoryview))
+                else item for item in getattr(self, "cycle_ids", ())],
             "concept_ids": getattr(self, "concept_ids", ()),
             "parent_ids": getattr(self, "parent_ids", ()),
             "members": list(self),
@@ -305,7 +307,7 @@ class Composition(dict):
         if isinstance(other, int):
             return int(self) == other
         if isinstance(other, (tuple, list)):
-            return tuple(self.get("cycles", ())) == tuple(other)
+            return tuple(self.get("cycle", ())) == tuple(other)
         if isinstance(other, Mapping):
             return dict(self) == dict(other)
         return NotImplemented
@@ -1094,6 +1096,19 @@ class FullCycleHypergraph:
         return False
 
     @property
+    def no_duplicate_storage(self) -> bool:
+        """Pair cells, cycles and parent members are stored by reference."""
+        return True
+
+    @property
+    def bounded(self) -> bool:
+        return True
+
+    @property
+    def cycle_dimension(self) -> int:
+        return self.full_cycle_count
+
+    @property
     def head_count(self) -> int:
         return self.nodes
 
@@ -1130,6 +1145,9 @@ class FullCycleHypergraph:
 
     def cycle_hyperedge_id(self, i: int, j: int) -> bytes:
         return cycle_hyperedge_id((i, j), self.nodes, self.root)
+
+    def cycle_leaf_id(self, i: int, j: int) -> bytes:
+        return cycle_leaf_id((i, j), self.nodes, self.root)
 
     def cycle_ids(self, limit: int | None = None) -> tuple[str, ...]:
         return tuple(cycle_id_for_index(index, self.nodes, self.root)
@@ -1516,7 +1534,16 @@ class FullCycleHypergraph:
             except FullCycleHypergraphError:
                 cycle = None
         kind = "unknown"
-        if len(pair_refs) == 3 and len(heads) == 3:
+        cycle_like = (
+            (len(pair_refs) == 3
+             and (heads or value is not None or payload_digest is not None))
+            or (len(heads) == 3
+                and (pair_refs or value is not None
+                     or payload_digest is not None))
+            or (edge_id is not None and edge_id in cycle_ids)
+            or (value is not None and payload_digest is not None
+                and not cycle_ids and not concept_ids and not parent_ids))
+        if cycle_like:
             kind = "cycle"
         elif concept_ids and (cycle_ids or parent_ids or hyperedge_ids):
             kind = "link"
@@ -2059,6 +2086,7 @@ class FullCycleHypergraph:
             "truncated": requested < self.full_cycle_count,
             "bounded": True,
             "canonical_merge": False,
+            "no_duplicate_storage": True,
             "generation": self.generation,
         }
 
@@ -2932,6 +2960,8 @@ class FullCycleHypergraph:
             for item in resolved_cycles[1:]:
                 shared &= set(item["pair_refs"])
         values = [int(item["value"]) for item in resolved_cycles]
+        if status == "composed" and not shared:
+            status = "union"
         return Composition({
             "status": status,
             "created": created,
@@ -3033,11 +3063,15 @@ class FullCycleHypergraph:
         truncated = total is not None and parsed_count < total
         return list(dict.fromkeys(edges))[:limit], truncated
 
-    def members(self, ref: Any = None, *, include_parents: bool = False,
+    def members(self, ref: Any = None, j: int | None = None, *,
+                include_parents: bool = False,
                 limit: int = DEFAULT_LINK_LIMIT, required: bool = False,
                 cycle: Any = None, concept: Any = None) -> TypedMembers:
         """Return bounded typed members for a cycle, concept or edge."""
         limit = _check_bounded_int(limit, "limit", 1, MAX_NEIGHBOR_LIMIT)
+        if j is not None and isinstance(ref, int) \
+                and not isinstance(ref, bool):
+            ref = (ref, j)
         if cycle is not None:
             ref = cycle
         if concept is not None:
@@ -3656,6 +3690,9 @@ class FullCycleHypergraph:
                     if parsed["source_digest"] in (None, ZERO_ID):
                         add_problem("missing provenance for concept edge %s"
                                     % parsed["hyperedge_id_hex"])
+                    if parsed["duplicate_member_count"]:
+                        add_problem("duplicate members for concept edge %s"
+                                    % parsed["hyperedge_id_hex"])
                 continue
             if kind in ("link", "compose"):
                 if validate:
@@ -3727,6 +3764,8 @@ class FullCycleHypergraph:
             "truncated": scan["truncated"],
             "bounded": True,
             "canonical_merge": False,
+            "no_duplicate_storage": True,
+            "generation": self.generation,
         }
 
     def audit(self, limit: int | None = None, *,
@@ -3799,6 +3838,8 @@ class FullCycleHypergraph:
             "capacity": {
                 "relation_capacity": status.get("relation_capacity"),
                 "hyperedge_capacity": status.get("hyperedge_capacity"),
+                "chain_used": status.get("chain_used"),
+                "chain_capacity": status.get("chain_capacity"),
                 "arena_bytes": status.get("arena_bytes"),
                 "arena_used": status.get("arena_used"),
             },
@@ -3848,6 +3889,15 @@ class FullCycleHypergraph:
             "generation": self.generation,
             "nodes": self.nodes,
             "root": self.root,
+            "capacity": {
+                "relation_capacity": self._relation_status().get(
+                    "relation_capacity"),
+                "hyperedge_capacity": self._relation_status().get(
+                    "hyperedge_capacity"),
+                "chain_capacity": self._relation_status().get(
+                    "chain_capacity"),
+                "arena_bytes": self._relation_status().get("arena_bytes"),
+            },
         }
 
     # -- disabled canonical merge --------------------------------------
@@ -3904,6 +3954,7 @@ class FullCycleHypergraph:
             "full_cycle_count": self.full_cycle_count,
             "cycle_capacity": self.cycle_capacity,
             "attached_cycle_count": scan["attached_cycle_count"],
+            "cycle_count": scan["attached_cycle_count"],
             "missing_cycle_count": scan["missing_cycle_count"],
             "hyperedge_count": scan["hyperedge_count"],
             "leaf_count": self._leaf_count(),
@@ -3911,6 +3962,7 @@ class FullCycleHypergraph:
             "link_count": scan["kind_counts"].get("link", 0),
             "parent_count": scan["kind_counts"].get("compose", 0),
             "canonical_merge": False,
+            "no_duplicate_storage": True,
             "bounded": True,
             "generation": self.generation,
         }

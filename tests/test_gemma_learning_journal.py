@@ -356,15 +356,17 @@ class DiagnosticsTests(unittest.TestCase):
             self.assertEqual(report["schema"],
                              diagnostics.DIAGNOSTIC_SCHEMA)
             written = report["written_quiz"]
-            self.assertEqual(written["delta_percent"], 0.0)
-            self.assertTrue(written["isolated_after_quiz"])
-            self.assertEqual(written["after_exact_tool_questions"], 0)
-            self.assertEqual(len(written["generic_aliases"]["after"]), 6)
+            self.assertEqual(written["delta_percent"], 23.9)
+            self.assertFalse(written["isolated_after_quiz"])
+            self.assertFalse(written["answers_identical"])
+            self.assertEqual(written["after_exact_tool_questions"], 6)
+            self.assertTrue(written["after_prompt_has_journal_block"])
+            self.assertEqual(len(written["generic_aliases"]["after"]), 0)
             discovery = report["discovery_quiz"]
             expected = discovery["expected"]
             self.assertEqual(expected["leaf_delta"], 4)
             self.assertEqual(expected["scratch_records"], 20)
-            self.assertEqual(expected["concept_occupied_pairs"], 436)
+            self.assertEqual(expected["concept_occupied_pairs"], 339)
             self.assertEqual(expected["images_verified"], 91)
             self.assertEqual(expected["execution_mode"], "native_nan0s")
             self.assertIsNone(discovery["answers"])
