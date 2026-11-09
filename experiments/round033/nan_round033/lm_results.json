@@ -1,0 +1,229 @@
+{
+  "corpus_counts": {
+    "train": 1800,
+    "val": 1800,
+    "test": 1800
+  },
+  "runs": {
+    "plain_17": {
+      "best_step": 180,
+      "history": [
+        {
+          "step": 1,
+          "bytes": 6990,
+          "bpb": 7.965934991297547,
+          "accuracy": 0.01044349070100143
+        },
+        {
+          "step": 45,
+          "bytes": 6990,
+          "bpb": 4.3445830362132964,
+          "accuracy": 0.15536480686695278
+        },
+        {
+          "step": 90,
+          "bytes": 6990,
+          "bpb": 4.084682599134124,
+          "accuracy": 0.19198855507868384
+        },
+        {
+          "step": 135,
+          "bytes": 6990,
+          "bpb": 3.8504883418578486,
+          "accuracy": 0.24163090128755366
+        },
+        {
+          "step": 180,
+          "bytes": 6990,
+          "bpb": 3.6417876991424922,
+          "accuracy": 0.26223175965665235
+        }
+      ],
+      "test": {
+        "bytes": 12467,
+        "bpb": 3.6707045824532676,
+        "accuracy": 0.26895002807411567
+      },
+      "gauge": {
+        "bytes": 4650,
+        "bpb": 3.6500456274476245,
+        "accuracy": 0.27204301075268816
+      },
+      "wrong_cycle": null,
+      "zero_memory": {
+        "bytes": 4650,
+        "bpb": 3.929176360585918,
+        "accuracy": 0.25548387096774194
+      },
+      "sample": "a living creatured r ad soly                                                                                         ",
+      "parameters": 43648
+    },
+    "cycle_17": {
+      "best_step": 180,
+      "history": [
+        {
+          "step": 1,
+          "bytes": 6990,
+          "bpb": 7.96593501334282,
+          "accuracy": 0.01044349070100143
+        },
+        {
+          "step": 45,
+          "bytes": 6990,
+          "bpb": 4.34458641071466,
+          "accuracy": 0.15536480686695278
+        },
+        {
+          "step": 90,
+          "bytes": 6990,
+          "bpb": 4.08467642803247,
+          "accuracy": 0.19198855507868384
+        },
+        {
+          "step": 135,
+          "bytes": 6990,
+          "bpb": 3.8504456133956464,
+          "accuracy": 0.24177396280400573
+        },
+        {
+          "step": 180,
+          "bytes": 6990,
+          "bpb": 3.6418440720537455,
+          "accuracy": 0.2620886981402003
+        }
+      ],
+      "test": {
+        "bytes": 12467,
+        "bpb": 3.6707721997355347,
+        "accuracy": 0.26895002807411567
+      },
+      "gauge": {
+        "bytes": 4650,
+        "bpb": 3.650118897826632,
+        "accuracy": 0.27204301075268816
+      },
+      "wrong_cycle": {
+        "bytes": 4650,
+        "bpb": 4.422264080378688,
+        "accuracy": 0.21870967741935485
+      },
+      "zero_memory": {
+        "bytes": 4650,
+        "bpb": 3.929138177330643,
+        "accuracy": 0.2544086021505376
+      },
+      "sample": "a living creaturer          d         ethie rtlon s os  tpore comofl plor w ache ar en cerde  in an c) ache toma  eri",
+      "parameters": 43648
+    },
+    "plain_29": {
+      "best_step": 180,
+      "history": [
+        {
+          "step": 1,
+          "bytes": 6990,
+          "bpb": 7.884042935483576,
+          "accuracy": 0.0061516452074391985
+        },
+        {
+          "step": 45,
+          "bytes": 6990,
+          "bpb": 4.347234057396724,
+          "accuracy": 0.16580829756795423
+        },
+        {
+          "step": 90,
+          "bytes": 6990,
+          "bpb": 4.105662944881625,
+          "accuracy": 0.21716738197424892
+        },
+        {
+          "step": 135,
+          "bytes": 6990,
+          "bpb": 3.8947262202522333,
+          "accuracy": 0.23333333333333334
+        },
+        {
+          "step": 180,
+          "bytes": 6990,
+          "bpb": 3.6476190044128938,
+          "accuracy": 0.27467811158798283
+        }
+      ],
+      "test": {
+        "bytes": 12467,
+        "bpb": 3.6788053601226918,
+        "accuracy": 0.27632950990615224
+      },
+      "gauge": {
+        "bytes": 4650,
+        "bpb": 3.663006071954459,
+        "accuracy": 0.27806451612903227
+      },
+      "wrong_cycle": null,
+      "zero_memory": {
+        "bytes": 4650,
+        "bpb": 3.909193963121712,
+        "accuracy": 0.26086021505376344
+      },
+      "sample": "a living creatured                                                                  ste                              ",
+      "parameters": 43648
+    },
+    "cycle_29": {
+      "best_step": 180,
+      "history": [
+        {
+          "step": 1,
+          "bytes": 6990,
+          "bpb": 7.884042834705186,
+          "accuracy": 0.0061516452074391985
+        },
+        {
+          "step": 45,
+          "bytes": 6990,
+          "bpb": 4.347236652440236,
+          "accuracy": 0.16580829756795423
+        },
+        {
+          "step": 90,
+          "bytes": 6990,
+          "bpb": 4.105663795199281,
+          "accuracy": 0.21716738197424892
+        },
+        {
+          "step": 135,
+          "bytes": 6990,
+          "bpb": 3.8947274815567554,
+          "accuracy": 0.23333333333333334
+        },
+        {
+          "step": 180,
+          "bytes": 6990,
+          "bpb": 3.6476200499886775,
+          "accuracy": 0.27467811158798283
+        }
+      ],
+      "test": {
+        "bytes": 12467,
+        "bpb": 3.678806995220121,
+        "accuracy": 0.27632950990615224
+      },
+      "gauge": {
+        "bytes": 4650,
+        "bpb": 3.6630075703116964,
+        "accuracy": 0.27806451612903227
+      },
+      "wrong_cycle": {
+        "bytes": 4650,
+        "bpb": 4.302669227383529,
+        "accuracy": 0.21591397849462365
+      },
+      "zero_memory": {
+        "bytes": 4650,
+        "bpb": 3.9091957407935682,
+        "accuracy": 0.26086021505376344
+      },
+      "sample": "a living creaturer          d rancarliethien t on on sh teind comof                                                  ",
+      "parameters": 43648
+    }
+  }
+}

@@ -703,7 +703,8 @@ class OptionalFullCycleModulesTests(unittest.TestCase):
         delta = module.cycle_edge_delta(cycle_id, 7)
         self.assertEqual(module.gauge_residual(delta), 0)
         shifted = dict(edges)
-        shifted.update(delta)
+        for edge_id, amount in delta.items():
+            shifted[edge_id] = shifted.get(edge_id, 0) + amount
         self.assertEqual(module.triangle_flux(shifted, cycle_id), 46)
 
     def test_cycle_native_surface_stays_float32_and_noncanonical(self):

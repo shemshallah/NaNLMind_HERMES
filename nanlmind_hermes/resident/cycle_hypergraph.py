@@ -260,6 +260,39 @@ class CycleComposition(int):
     def value(self) -> int:
         return int(self)
 
+    @property
+    def raw_value(self) -> int:
+        return int(self)
+
+    @property
+    def cycle_id(self) -> str | None:
+        cycle = getattr(self, "cycle", None)
+        if isinstance(cycle, (tuple, list)) and all(
+                isinstance(item, int) for item in cycle):
+            return ":".join(str(item) for item in cycle)
+        return None
+
+    @property
+    def shared_edges(self):
+        return getattr(self, "shared", ())
+
+    @property
+    def outer_cycle(self):
+        return getattr(self, "cycle", None)
+
+    @property
+    def triangle(self):
+        """The shortcut triangle of two adjacent fundamental cycles, if any."""
+        cycles = tuple(getattr(self, "cycles", ()))
+        if len(cycles) != 2:
+            return None
+        first, second = cycles
+        shared_vertices = set(first) & set(second)
+        others = sorted((set(first) | set(second)) - shared_vertices)
+        if len(others) != 2:
+            return None
+        return normalize_cycle((0, others[0], others[1]))
+
     def __getitem__(self, key):
         if isinstance(key, str):
             if key in ("members", "edges"):

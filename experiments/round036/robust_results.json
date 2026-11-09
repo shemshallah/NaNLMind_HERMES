@@ -1,0 +1,71 @@
+{
+  "metrics": [
+    {
+      "kind": "connected",
+      "n": 1499,
+      "semantic_accuracy": 1.0,
+      "samples": [
+        {
+          "prompt": " premise : e0 is classified as e1 . next : e1 is classified as e2 . question : what is e0 relative to e2 ?",
+          "generated": "e0 is classified as e2 .",
+          "target": "e0 is classified as e2 ."
+        },
+        {
+          "prompt": " premise : e0 is a type of e1 . next : e1 is a type of e2 . next : e2 is a type of e3 . question : what is e0 relative to e3 ?",
+          "generated": "e0 is classified as e3 .",
+          "target": "e0 belongs to e3 ."
+        },
+        {
+          "prompt": " premise : e1 is a type of e2 . next : e0 is a type of e1 . question : what is e0 relative to e2 ?",
+          "generated": "e0 is classified as e2 .",
+          "target": "e0 belongs to e2 ."
+        }
+      ]
+    },
+    {
+      "kind": "disconnected",
+      "n": 1499,
+      "semantic_accuracy": 1.0,
+      "samples": [
+        {
+          "prompt": " premise : e0 is classified as e1 . next : e3 is classified as e2 . question : what is e0 relative to e2 ?",
+          "generated": "the evidence is insufficient .",
+          "target": "the evidence is insufficient ."
+        },
+        {
+          "prompt": " premise : e3 is a type of e2 . next : e0 is a type of e1 . question : what is e0 relative to e2 ?",
+          "generated": "the evidence is insufficient .",
+          "target": "the evidence is insufficient ."
+        },
+        {
+          "prompt": " premise : e1 belongs to e2 . next : e4 belongs to e3 . next : e0 belongs to e1 . question : what is e0 relative to e3 ?",
+          "generated": "the evidence is insufficient .",
+          "target": "the evidence is insufficient ."
+        }
+      ]
+    },
+    {
+      "kind": "relation_conflict",
+      "n": 1499,
+      "semantic_accuracy": 1.0,
+      "samples": [
+        {
+          "prompt": " premise : e0 opposes e1 . next : e1 belongs to e2 . question : what is e0 relative to e2 ?",
+          "generated": "the evidence is insufficient .",
+          "target": "the evidence is insufficient ."
+        },
+        {
+          "prompt": " premise : e0 opposes e1 . next : e2 is classified as e3 . next : e1 is classified as e2 . question : what is e0 relative to e3 ?",
+          "generated": "the evidence is insufficient .",
+          "target": "the evidence is insufficient ."
+        },
+        {
+          "prompt": " premise : e1 opposes e2 . next : e0 is a type of e1 . question : what is e0 relative to e2 ?",
+          "generated": "the evidence is insufficient .",
+          "target": "the evidence is insufficient ."
+        }
+      ]
+    }
+  ],
+  "seconds": 9.931925552999019
+}

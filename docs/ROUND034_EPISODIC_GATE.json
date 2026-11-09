@@ -1,0 +1,461 @@
+{
+  "artifact": {
+    "hybrid": {
+      "17": {
+        "accepted_queries": 89,
+        "bytes": 2160,
+        "conventional_index_hybrid_bpb": 0.18297396075946312,
+        "correct_retrieved": 88,
+        "cycle_hybrid_bpb": 0.18297396075946312,
+        "episodes": 90,
+        "lm_only_bpb": 3.60888772893835,
+        "note": "Mixture is supervised by a learned open-set router; source bytes are copied, not generated autonomously."
+      },
+      "29": {
+        "accepted_queries": 87,
+        "bytes": 2160,
+        "conventional_index_hybrid_bpb": 0.44815594018609434,
+        "correct_retrieved": 84,
+        "cycle_hybrid_bpb": 0.44815594018609434,
+        "episodes": 90,
+        "lm_only_bpb": 3.6645858764648436,
+        "note": "Mixture is supervised by a learned open-set router; source bytes are copied, not generated autonomously."
+      },
+      "41": {
+        "accepted_queries": 87,
+        "bytes": 2160,
+        "conventional_index_hybrid_bpb": 0.2320803987759131,
+        "correct_retrieved": 86,
+        "cycle_hybrid_bpb": 0.2320803987759131,
+        "episodes": 90,
+        "lm_only_bpb": 3.598170953326755,
+        "note": "Mixture is supervised by a learned open-set router; source bytes are copied, not generated autonomously."
+      }
+    },
+    "recursive": null,
+    "results": {
+      "17": {
+        "cosine_confidence": {
+          "accept_accuracy": 0.9183333333333333,
+          "exact_grounded_completion": 0.44666666666666666,
+          "f1": 0.9173693086003373,
+          "false_answer_rate": 0.035,
+          "n": 600,
+          "negative_reject": 0.93,
+          "positive_accept": 0.9066666666666666
+        },
+        "edit_distance": {
+          "accept_accuracy": 0.9883333333333333,
+          "exact_grounded_completion": 0.49333333333333335,
+          "f1": 0.9884678747940692,
+          "false_answer_rate": 0.011666666666666667,
+          "n": 600,
+          "negative_reject": 0.9766666666666667,
+          "positive_accept": 1.0
+        },
+        "forced_copy": {
+          "exact_grounded_completion": 0.49333333333333335,
+          "false_answer_rate": 0.5
+        },
+        "learned_router": {
+          "accept_accuracy": 0.9933333333333333,
+          "exact_grounded_completion": 0.49333333333333335,
+          "f1": 0.9933554817275747,
+          "false_answer_rate": 0.005,
+          "n": 600,
+          "negative_reject": 0.99,
+          "positive_accept": 0.9966666666666667
+        },
+        "native": {
+          "accepted": 30,
+          "episodes": 60,
+          "false_accept": 0,
+          "native_exact": 30,
+          "plain_index_exact": 30,
+          "positive": 30,
+          "raw_exact": 0,
+          "root_bytes": 8388608
+        },
+        "thresholds": {
+          "cosine": 0.785,
+          "edit": 0.43,
+          "learned": 0.44
+        }
+      },
+      "29": {
+        "cosine_confidence": {
+          "accept_accuracy": 0.925,
+          "exact_grounded_completion": 0.46166666666666667,
+          "f1": 0.9256198347107438,
+          "false_answer_rate": 0.041666666666666664,
+          "n": 600,
+          "negative_reject": 0.9166666666666666,
+          "positive_accept": 0.9333333333333333
+        },
+        "edit_distance": {
+          "accept_accuracy": 0.98,
+          "exact_grounded_completion": 0.47333333333333333,
+          "f1": 0.9796610169491525,
+          "false_answer_rate": 0.0016666666666666668,
+          "n": 600,
+          "negative_reject": 0.9966666666666667,
+          "positive_accept": 0.9633333333333334
+        },
+        "forced_copy": {
+          "exact_grounded_completion": 0.49166666666666664,
+          "false_answer_rate": 0.5
+        },
+        "learned_router": {
+          "accept_accuracy": 0.995,
+          "exact_grounded_completion": 0.49166666666666664,
+          "f1": 0.9950083194675541,
+          "false_answer_rate": 0.0033333333333333335,
+          "n": 600,
+          "negative_reject": 0.9933333333333333,
+          "positive_accept": 0.9966666666666667
+        },
+        "native": {
+          "accepted": 29,
+          "episodes": 60,
+          "false_accept": 0,
+          "native_exact": 29,
+          "plain_index_exact": 29,
+          "positive": 30,
+          "raw_exact": 0,
+          "root_bytes": 8388608
+        },
+        "thresholds": {
+          "cosine": 0.77,
+          "edit": 0.54,
+          "learned": 0.485
+        }
+      },
+      "41": {
+        "cosine_confidence": {
+          "accept_accuracy": 0.9166666666666666,
+          "exact_grounded_completion": 0.43666666666666665,
+          "f1": 0.9128919860627178,
+          "false_answer_rate": 0.02,
+          "n": 600,
+          "negative_reject": 0.96,
+          "positive_accept": 0.8733333333333333
+        },
+        "edit_distance": {
+          "accept_accuracy": 0.9766666666666667,
+          "exact_grounded_completion": 0.4683333333333333,
+          "f1": 0.9761092150170648,
+          "false_answer_rate": 0.0,
+          "n": 600,
+          "negative_reject": 1.0,
+          "positive_accept": 0.9533333333333334
+        },
+        "forced_copy": {
+          "exact_grounded_completion": 0.48833333333333334,
+          "false_answer_rate": 0.5
+        },
+        "learned_router": {
+          "accept_accuracy": 0.9816666666666667,
+          "exact_grounded_completion": 0.48333333333333334,
+          "f1": 0.9815126050420168,
+          "false_answer_rate": 0.005,
+          "n": 600,
+          "negative_reject": 0.99,
+          "positive_accept": 0.9733333333333334
+        },
+        "native": {
+          "accepted": 30,
+          "episodes": 60,
+          "false_accept": 0,
+          "native_exact": 30,
+          "plain_index_exact": 30,
+          "positive": 30,
+          "raw_exact": 0,
+          "root_bytes": 8388608
+        },
+        "thresholds": {
+          "cosine": 0.76,
+          "edit": 0.56,
+          "learned": 0.5
+        }
+      }
+    },
+    "stress": {
+      "17": {
+        "0": {
+          "accept_accuracy": 0.9966666666666667,
+          "exact_complete_all": 0.5,
+          "false_answer_rate": 0.0033333333333333335,
+          "n": 300,
+          "negative_reject_rate": 0.9933333333333333,
+          "positive_accept_rate": 1.0
+        },
+        "1": {
+          "accept_accuracy": 0.9933333333333333,
+          "exact_complete_all": 0.5,
+          "false_answer_rate": 0.006666666666666667,
+          "n": 300,
+          "negative_reject_rate": 0.9866666666666667,
+          "positive_accept_rate": 1.0
+        },
+        "2": {
+          "accept_accuracy": 0.9933333333333333,
+          "exact_complete_all": 0.49,
+          "false_answer_rate": 0.0,
+          "n": 300,
+          "negative_reject_rate": 1.0,
+          "positive_accept_rate": 0.9866666666666667
+        },
+        "3": {
+          "accept_accuracy": 0.9433333333333334,
+          "exact_complete_all": 0.43,
+          "false_answer_rate": 0.0,
+          "n": 300,
+          "negative_reject_rate": 1.0,
+          "positive_accept_rate": 0.8866666666666667
+        },
+        "4": {
+          "accept_accuracy": 0.8133333333333334,
+          "exact_complete_all": 0.31333333333333335,
+          "false_answer_rate": 0.0033333333333333335,
+          "n": 300,
+          "negative_reject_rate": 0.9933333333333333,
+          "positive_accept_rate": 0.6333333333333333
+        },
+        "6": {
+          "accept_accuracy": 0.6266666666666667,
+          "exact_complete_all": 0.12666666666666668,
+          "false_answer_rate": 0.0,
+          "n": 300,
+          "negative_reject_rate": 1.0,
+          "positive_accept_rate": 0.25333333333333335
+        }
+      },
+      "29": {
+        "0": {
+          "accept_accuracy": 0.9933333333333333,
+          "exact_complete_all": 0.5,
+          "false_answer_rate": 0.006666666666666667,
+          "n": 300,
+          "negative_reject_rate": 0.9866666666666667,
+          "positive_accept_rate": 1.0
+        },
+        "1": {
+          "accept_accuracy": 0.9966666666666667,
+          "exact_complete_all": 0.49666666666666665,
+          "false_answer_rate": 0.0033333333333333335,
+          "n": 300,
+          "negative_reject_rate": 0.9933333333333333,
+          "positive_accept_rate": 1.0
+        },
+        "2": {
+          "accept_accuracy": 0.9933333333333333,
+          "exact_complete_all": 0.4866666666666667,
+          "false_answer_rate": 0.0,
+          "n": 300,
+          "negative_reject_rate": 1.0,
+          "positive_accept_rate": 0.9866666666666667
+        },
+        "3": {
+          "accept_accuracy": 0.9466666666666667,
+          "exact_complete_all": 0.44666666666666666,
+          "false_answer_rate": 0.0,
+          "n": 300,
+          "negative_reject_rate": 1.0,
+          "positive_accept_rate": 0.8933333333333333
+        },
+        "4": {
+          "accept_accuracy": 0.7866666666666666,
+          "exact_complete_all": 0.2833333333333333,
+          "false_answer_rate": 0.0,
+          "n": 300,
+          "negative_reject_rate": 1.0,
+          "positive_accept_rate": 0.5733333333333334
+        },
+        "6": {
+          "accept_accuracy": 0.6,
+          "exact_complete_all": 0.1,
+          "false_answer_rate": 0.0,
+          "n": 300,
+          "negative_reject_rate": 1.0,
+          "positive_accept_rate": 0.2
+        }
+      },
+      "41": {
+        "0": {
+          "accept_accuracy": 0.9933333333333333,
+          "exact_complete_all": 0.5,
+          "false_answer_rate": 0.006666666666666667,
+          "n": 300,
+          "negative_reject_rate": 0.9866666666666667,
+          "positive_accept_rate": 1.0
+        },
+        "1": {
+          "accept_accuracy": 1.0,
+          "exact_complete_all": 0.5,
+          "false_answer_rate": 0.0,
+          "n": 300,
+          "negative_reject_rate": 1.0,
+          "positive_accept_rate": 1.0
+        },
+        "2": {
+          "accept_accuracy": 0.9833333333333333,
+          "exact_complete_all": 0.49,
+          "false_answer_rate": 0.006666666666666667,
+          "n": 300,
+          "negative_reject_rate": 0.9866666666666667,
+          "positive_accept_rate": 0.98
+        },
+        "3": {
+          "accept_accuracy": 0.9466666666666667,
+          "exact_complete_all": 0.44,
+          "false_answer_rate": 0.0,
+          "n": 300,
+          "negative_reject_rate": 1.0,
+          "positive_accept_rate": 0.8933333333333333
+        },
+        "4": {
+          "accept_accuracy": 0.8233333333333334,
+          "exact_complete_all": 0.31666666666666665,
+          "false_answer_rate": 0.0,
+          "n": 300,
+          "negative_reject_rate": 1.0,
+          "positive_accept_rate": 0.6466666666666666
+        },
+        "6": {
+          "accept_accuracy": 0.63,
+          "exact_complete_all": 0.13,
+          "false_answer_rate": 0.0,
+          "n": 300,
+          "negative_reject_rate": 1.0,
+          "positive_accept_rate": 0.26
+        }
+      }
+    }
+  },
+  "checksums": {
+    "missing": [
+      "run.log",
+      "stress.log"
+    ],
+    "verified": [
+      "README.md",
+      "build.sh",
+      "demo.py",
+      "episodic.py",
+      "episodic_17.pt",
+      "episodic_29.pt",
+      "episodic_41.pt",
+      "experiment.py",
+      "hybrid_eval.py",
+      "hybrid_results.json",
+      "native_episodic.cpp",
+      "plain_17.pt",
+      "results.json",
+      "route_train.py",
+      "router_17.pt",
+      "router_29.pt",
+      "router_41.pt",
+      "stress.py",
+      "stress_results.json",
+      "wordnet_episodic_pool.json"
+    ]
+  },
+  "claims": {
+    "canonical": false,
+    "language_model_win": false,
+    "nan_unique_advantage": false
+  },
+  "pure": {
+    "canonical_merge": false,
+    "cycle_copy": {
+      "cycle_exact": true,
+      "raw_exact": false
+    },
+    "language_generation_claim": false,
+    "queries": 300,
+    "router": {
+      "accept_accuracy": 0.98,
+      "accepted": 149,
+      "canonical_merge": false,
+      "corruption": 2,
+      "exact_copy_rate": 0.9933333333333333,
+      "false_answer_rate": 0.016666666666666666,
+      "language_generation_claim": false,
+      "negative": 150,
+      "negative_reject_rate": 0.9666666666666667,
+      "positive": 150,
+      "positive_accept_rate": 0.9933333333333333,
+      "queries": 300,
+      "schema": "nanlm.resident-episodic-gate/1",
+      "threshold": 0.5
+    },
+    "seed": 17,
+    "stress": {
+      "0": {
+        "accept_accuracy": 0.97,
+        "accepted": 50,
+        "canonical_merge": false,
+        "corruption": 0,
+        "exact_copy_rate": 1.0,
+        "false_answer_rate": 0.03,
+        "language_generation_claim": false,
+        "negative": 50,
+        "negative_reject_rate": 0.94,
+        "positive": 50,
+        "positive_accept_rate": 1.0,
+        "queries": 100,
+        "schema": "nanlm.resident-episodic-gate/1",
+        "threshold": 0.5
+      },
+      "2": {
+        "accept_accuracy": 1.0,
+        "accepted": 50,
+        "canonical_merge": false,
+        "corruption": 2,
+        "exact_copy_rate": 1.0,
+        "false_answer_rate": 0.0,
+        "language_generation_claim": false,
+        "negative": 50,
+        "negative_reject_rate": 1.0,
+        "positive": 50,
+        "positive_accept_rate": 1.0,
+        "queries": 100,
+        "schema": "nanlm.resident-episodic-gate/1",
+        "threshold": 0.5
+      },
+      "4": {
+        "accept_accuracy": 0.95,
+        "accepted": 46,
+        "canonical_merge": false,
+        "corruption": 4,
+        "exact_copy_rate": 0.92,
+        "false_answer_rate": 0.01,
+        "language_generation_claim": false,
+        "negative": 50,
+        "negative_reject_rate": 0.98,
+        "positive": 50,
+        "positive_accept_rate": 0.92,
+        "queries": 100,
+        "schema": "nanlm.resident-episodic-gate/1",
+        "threshold": 0.5
+      },
+      "6": {
+        "accept_accuracy": 0.86,
+        "accepted": 36,
+        "canonical_merge": false,
+        "corruption": 6,
+        "exact_copy_rate": 0.72,
+        "false_answer_rate": 0.0,
+        "language_generation_claim": false,
+        "negative": 50,
+        "negative_reject_rate": 1.0,
+        "positive": 50,
+        "positive_accept_rate": 0.72,
+        "queries": 100,
+        "schema": "nanlm.resident-episodic-gate/1",
+        "threshold": 0.5
+      }
+    }
+  },
+  "schema": "nanlm.round034-episodic-audit/1"
+}

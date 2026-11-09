@@ -1,0 +1,2352 @@
+[
+  {
+    "child": "00826666",
+    "path": [
+      "00826666",
+      "00826469",
+      "00819341",
+      "00408356"
+    ],
+    "hops": 2,
+    "negative": false,
+    "premises": [
+      "e1 belongs to e2 .",
+      "e0 belongs to e1 ."
+    ],
+    "prompt": " premise : e1 belongs to e2 . next : e0 belongs to e1 . question : what is e0 relative to e2 ?",
+    "answer": "e0 belongs to e2 .",
+    "entities": [
+      "airborne patrol",
+      "patrol",
+      "protection",
+      "activity"
+    ]
+  },
+  {
+    "child": "00826666",
+    "path": [
+      "00826666",
+      "00826469",
+      "00819341",
+      "00408356"
+    ],
+    "hops": 3,
+    "negative": false,
+    "premises": [
+      "e1 belongs to e2 .",
+      "e0 belongs to e1 .",
+      "e2 belongs to e3 ."
+    ],
+    "prompt": " premise : e1 belongs to e2 . next : e0 belongs to e1 . next : e2 belongs to e3 . question : what is e0 relative to e3 ?",
+    "answer": "e0 is classified as e3 .",
+    "entities": [
+      "airborne patrol",
+      "patrol",
+      "protection",
+      "activity"
+    ]
+  },
+  {
+    "child": "00826666",
+    "path": [
+      "00826666",
+      "00826469",
+      "00819341",
+      "00408356"
+    ],
+    "hops": 2,
+    "negative": true,
+    "premises": [
+      "e0 is classified as e1 .",
+      "e3 is classified as e2 ."
+    ],
+    "prompt": " premise : e0 is classified as e1 . next : e3 is classified as e2 . question : what is e0 relative to e2 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "airborne patrol",
+      "patrol",
+      "protection",
+      "activity"
+    ]
+  },
+  {
+    "child": "00826666",
+    "path": [
+      "00826666",
+      "00826469",
+      "00819341",
+      "00408356"
+    ],
+    "hops": 3,
+    "negative": true,
+    "premises": [
+      "e0 is classified as e1 .",
+      "e1 is classified as e2 .",
+      "e4 is classified as e3 ."
+    ],
+    "prompt": " premise : e0 is classified as e1 . next : e1 is classified as e2 . next : e4 is classified as e3 . question : what is e0 relative to e3 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "airborne patrol",
+      "patrol",
+      "protection",
+      "activity"
+    ]
+  },
+  {
+    "child": "14199854",
+    "path": [
+      "14199854",
+      "14476082",
+      "14475377",
+      "13943868"
+    ],
+    "hops": 2,
+    "negative": false,
+    "premises": [
+      "e1 is classified as e2 .",
+      "e0 is classified as e1 ."
+    ],
+    "prompt": " premise : e1 is classified as e2 . next : e0 is classified as e1 . question : what is e0 relative to e2 ?",
+    "answer": "e0 belongs to e2 .",
+    "entities": [
+      "enterobiasis",
+      "infestation",
+      "fullness",
+      "condition"
+    ]
+  },
+  {
+    "child": "14199854",
+    "path": [
+      "14199854",
+      "14476082",
+      "14475377",
+      "13943868"
+    ],
+    "hops": 3,
+    "negative": false,
+    "premises": [
+      "e0 is classified as e1 .",
+      "e1 is classified as e2 .",
+      "e2 is classified as e3 ."
+    ],
+    "prompt": " premise : e0 is classified as e1 . next : e1 is classified as e2 . next : e2 is classified as e3 . question : what is e0 relative to e3 ?",
+    "answer": "e0 is a type of e3 .",
+    "entities": [
+      "enterobiasis",
+      "infestation",
+      "fullness",
+      "condition"
+    ]
+  },
+  {
+    "child": "14199854",
+    "path": [
+      "14199854",
+      "14476082",
+      "14475377",
+      "13943868"
+    ],
+    "hops": 2,
+    "negative": true,
+    "premises": [
+      "e0 belongs to e1 .",
+      "e3 belongs to e2 ."
+    ],
+    "prompt": " premise : e0 belongs to e1 . next : e3 belongs to e2 . question : what is e0 relative to e2 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "enterobiasis",
+      "infestation",
+      "fullness",
+      "condition"
+    ]
+  },
+  {
+    "child": "14199854",
+    "path": [
+      "14199854",
+      "14476082",
+      "14475377",
+      "13943868"
+    ],
+    "hops": 3,
+    "negative": true,
+    "premises": [
+      "e1 belongs to e2 .",
+      "e0 belongs to e1 .",
+      "e4 belongs to e3 ."
+    ],
+    "prompt": " premise : e1 belongs to e2 . next : e0 belongs to e1 . next : e4 belongs to e3 . question : what is e0 relative to e3 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "enterobiasis",
+      "infestation",
+      "fullness",
+      "condition"
+    ]
+  },
+  {
+    "child": "06482593",
+    "path": [
+      "06482593",
+      "06481744",
+      "06374360",
+      "06360590"
+    ],
+    "hops": 2,
+    "negative": false,
+    "premises": [
+      "e0 is classified as e1 .",
+      "e1 is classified as e2 ."
+    ],
+    "prompt": " premise : e0 is classified as e1 . next : e1 is classified as e2 . question : what is e0 relative to e2 ?",
+    "answer": "e0 is classified as e2 .",
+    "entities": [
+      "ballot",
+      "document",
+      "writing",
+      "written communication"
+    ]
+  },
+  {
+    "child": "06482593",
+    "path": [
+      "06482593",
+      "06481744",
+      "06374360",
+      "06360590"
+    ],
+    "hops": 3,
+    "negative": false,
+    "premises": [
+      "e1 belongs to e2 .",
+      "e2 belongs to e3 .",
+      "e0 belongs to e1 ."
+    ],
+    "prompt": " premise : e1 belongs to e2 . next : e2 belongs to e3 . next : e0 belongs to e1 . question : what is e0 relative to e3 ?",
+    "answer": "e0 is a type of e3 .",
+    "entities": [
+      "ballot",
+      "document",
+      "writing",
+      "written communication"
+    ]
+  },
+  {
+    "child": "06482593",
+    "path": [
+      "06482593",
+      "06481744",
+      "06374360",
+      "06360590"
+    ],
+    "hops": 2,
+    "negative": true,
+    "premises": [
+      "e0 is a type of e1 .",
+      "e3 is a type of e2 ."
+    ],
+    "prompt": " premise : e0 is a type of e1 . next : e3 is a type of e2 . question : what is e0 relative to e2 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "ballot",
+      "document",
+      "writing",
+      "written communication"
+    ]
+  },
+  {
+    "child": "06482593",
+    "path": [
+      "06482593",
+      "06481744",
+      "06374360",
+      "06360590"
+    ],
+    "hops": 3,
+    "negative": true,
+    "premises": [
+      "e4 belongs to e3 .",
+      "e0 belongs to e1 .",
+      "e1 belongs to e2 ."
+    ],
+    "prompt": " premise : e4 belongs to e3 . next : e0 belongs to e1 . next : e1 belongs to e2 . question : what is e0 relative to e3 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "ballot",
+      "document",
+      "writing",
+      "written communication"
+    ]
+  },
+  {
+    "child": "06646103",
+    "path": [
+      "06646103",
+      "06641368",
+      "06611268",
+      "00033319"
+    ],
+    "hops": 2,
+    "negative": false,
+    "premises": [
+      "e0 is classified as e1 .",
+      "e1 is classified as e2 ."
+    ],
+    "prompt": " premise : e0 is classified as e1 . next : e1 is classified as e2 . question : what is e0 relative to e2 ?",
+    "answer": "e0 is a type of e2 .",
+    "entities": [
+      "mea culpa",
+      "acknowledgment",
+      "message",
+      "communication"
+    ]
+  },
+  {
+    "child": "06646103",
+    "path": [
+      "06646103",
+      "06641368",
+      "06611268",
+      "00033319"
+    ],
+    "hops": 3,
+    "negative": false,
+    "premises": [
+      "e0 is a type of e1 .",
+      "e1 is a type of e2 .",
+      "e2 is a type of e3 ."
+    ],
+    "prompt": " premise : e0 is a type of e1 . next : e1 is a type of e2 . next : e2 is a type of e3 . question : what is e0 relative to e3 ?",
+    "answer": "e0 belongs to e3 .",
+    "entities": [
+      "mea culpa",
+      "acknowledgment",
+      "message",
+      "communication"
+    ]
+  },
+  {
+    "child": "06646103",
+    "path": [
+      "06646103",
+      "06641368",
+      "06611268",
+      "00033319"
+    ],
+    "hops": 2,
+    "negative": true,
+    "premises": [
+      "e3 is classified as e2 .",
+      "e0 is classified as e1 ."
+    ],
+    "prompt": " premise : e3 is classified as e2 . next : e0 is classified as e1 . question : what is e0 relative to e2 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "mea culpa",
+      "acknowledgment",
+      "message",
+      "communication"
+    ]
+  },
+  {
+    "child": "06646103",
+    "path": [
+      "06646103",
+      "06641368",
+      "06611268",
+      "00033319"
+    ],
+    "hops": 3,
+    "negative": true,
+    "premises": [
+      "e1 is classified as e2 .",
+      "e4 is classified as e3 .",
+      "e0 is classified as e1 ."
+    ],
+    "prompt": " premise : e1 is classified as e2 . next : e4 is classified as e3 . next : e0 is classified as e1 . question : what is e0 relative to e3 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "mea culpa",
+      "acknowledgment",
+      "message",
+      "communication"
+    ]
+  },
+  {
+    "child": "09157583",
+    "path": [
+      "09157583",
+      "09070916",
+      "08591861",
+      "08648560"
+    ],
+    "hops": 2,
+    "negative": false,
+    "premises": [
+      "e0 belongs to e1 .",
+      "e1 belongs to e2 ."
+    ],
+    "prompt": " premise : e0 belongs to e1 . next : e1 belongs to e2 . question : what is e0 relative to e2 ?",
+    "answer": "e0 is a type of e2 .",
+    "entities": [
+      "pennsylvania",
+      "colony",
+      "geographical area",
+      "region"
+    ]
+  },
+  {
+    "child": "09157583",
+    "path": [
+      "09157583",
+      "09070916",
+      "08591861",
+      "08648560"
+    ],
+    "hops": 3,
+    "negative": false,
+    "premises": [
+      "e2 is classified as e3 .",
+      "e1 is classified as e2 .",
+      "e0 is classified as e1 ."
+    ],
+    "prompt": " premise : e2 is classified as e3 . next : e1 is classified as e2 . next : e0 is classified as e1 . question : what is e0 relative to e3 ?",
+    "answer": "e0 belongs to e3 .",
+    "entities": [
+      "pennsylvania",
+      "colony",
+      "geographical area",
+      "region"
+    ]
+  },
+  {
+    "child": "09157583",
+    "path": [
+      "09157583",
+      "09070916",
+      "08591861",
+      "08648560"
+    ],
+    "hops": 2,
+    "negative": true,
+    "premises": [
+      "e0 is a type of e1 .",
+      "e3 is a type of e2 ."
+    ],
+    "prompt": " premise : e0 is a type of e1 . next : e3 is a type of e2 . question : what is e0 relative to e2 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "pennsylvania",
+      "colony",
+      "geographical area",
+      "region"
+    ]
+  },
+  {
+    "child": "09157583",
+    "path": [
+      "09157583",
+      "09070916",
+      "08591861",
+      "08648560"
+    ],
+    "hops": 3,
+    "negative": true,
+    "premises": [
+      "e4 belongs to e3 .",
+      "e1 belongs to e2 .",
+      "e0 belongs to e1 ."
+    ],
+    "prompt": " premise : e4 belongs to e3 . next : e1 belongs to e2 . next : e0 belongs to e1 . question : what is e0 relative to e3 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "pennsylvania",
+      "colony",
+      "geographical area",
+      "region"
+    ]
+  },
+  {
+    "child": "03528153",
+    "path": [
+      "03528153",
+      "03994528",
+      "04522424",
+      "04348492"
+    ],
+    "hops": 2,
+    "negative": false,
+    "premises": [
+      "e0 is a type of e1 .",
+      "e1 is a type of e2 ."
+    ],
+    "prompt": " premise : e0 is a type of e1 . next : e1 is a type of e2 . question : what is e0 relative to e2 ?",
+    "answer": "e0 is classified as e2 .",
+    "entities": [
+      "hitching post",
+      "post",
+      "upright",
+      "structural member"
+    ]
+  },
+  {
+    "child": "03528153",
+    "path": [
+      "03528153",
+      "03994528",
+      "04522424",
+      "04348492"
+    ],
+    "hops": 3,
+    "negative": false,
+    "premises": [
+      "e0 belongs to e1 .",
+      "e2 belongs to e3 .",
+      "e1 belongs to e2 ."
+    ],
+    "prompt": " premise : e0 belongs to e1 . next : e2 belongs to e3 . next : e1 belongs to e2 . question : what is e0 relative to e3 ?",
+    "answer": "e0 belongs to e3 .",
+    "entities": [
+      "hitching post",
+      "post",
+      "upright",
+      "structural member"
+    ]
+  },
+  {
+    "child": "03528153",
+    "path": [
+      "03528153",
+      "03994528",
+      "04522424",
+      "04348492"
+    ],
+    "hops": 2,
+    "negative": true,
+    "premises": [
+      "e3 is classified as e2 .",
+      "e0 is classified as e1 ."
+    ],
+    "prompt": " premise : e3 is classified as e2 . next : e0 is classified as e1 . question : what is e0 relative to e2 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "hitching post",
+      "post",
+      "upright",
+      "structural member"
+    ]
+  },
+  {
+    "child": "03528153",
+    "path": [
+      "03528153",
+      "03994528",
+      "04522424",
+      "04348492"
+    ],
+    "hops": 3,
+    "negative": true,
+    "premises": [
+      "e1 belongs to e2 .",
+      "e0 belongs to e1 .",
+      "e4 belongs to e3 ."
+    ],
+    "prompt": " premise : e1 belongs to e2 . next : e0 belongs to e1 . next : e4 belongs to e3 . question : what is e0 relative to e3 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "hitching post",
+      "post",
+      "upright",
+      "structural member"
+    ]
+  },
+  {
+    "child": "10176391",
+    "path": [
+      "10176391",
+      "09717504",
+      "09662736",
+      "09643248"
+    ],
+    "hops": 2,
+    "negative": false,
+    "premises": [
+      "e1 belongs to e2 .",
+      "e0 belongs to e1 ."
+    ],
+    "prompt": " premise : e1 belongs to e2 . next : e0 belongs to e1 . question : what is e0 relative to e2 ?",
+    "answer": "e0 is classified as e2 .",
+    "entities": [
+      "hakka",
+      "chinese",
+      "asian",
+      "inhabitant"
+    ]
+  },
+  {
+    "child": "10176391",
+    "path": [
+      "10176391",
+      "09717504",
+      "09662736",
+      "09643248"
+    ],
+    "hops": 3,
+    "negative": false,
+    "premises": [
+      "e2 belongs to e3 .",
+      "e1 belongs to e2 .",
+      "e0 belongs to e1 ."
+    ],
+    "prompt": " premise : e2 belongs to e3 . next : e1 belongs to e2 . next : e0 belongs to e1 . question : what is e0 relative to e3 ?",
+    "answer": "e0 is a type of e3 .",
+    "entities": [
+      "hakka",
+      "chinese",
+      "asian",
+      "inhabitant"
+    ]
+  },
+  {
+    "child": "10176391",
+    "path": [
+      "10176391",
+      "09717504",
+      "09662736",
+      "09643248"
+    ],
+    "hops": 2,
+    "negative": true,
+    "premises": [
+      "e3 belongs to e2 .",
+      "e0 belongs to e1 ."
+    ],
+    "prompt": " premise : e3 belongs to e2 . next : e0 belongs to e1 . question : what is e0 relative to e2 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "hakka",
+      "chinese",
+      "asian",
+      "inhabitant"
+    ]
+  },
+  {
+    "child": "10176391",
+    "path": [
+      "10176391",
+      "09717504",
+      "09662736",
+      "09643248"
+    ],
+    "hops": 3,
+    "negative": true,
+    "premises": [
+      "e0 belongs to e1 .",
+      "e4 belongs to e3 .",
+      "e1 belongs to e2 ."
+    ],
+    "prompt": " premise : e0 belongs to e1 . next : e4 belongs to e3 . next : e1 belongs to e2 . question : what is e0 relative to e3 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "hakka",
+      "chinese",
+      "asian",
+      "inhabitant"
+    ]
+  },
+  {
+    "child": "13913775",
+    "path": [
+      "13913775",
+      "13913562",
+      "13910202",
+      "13933399"
+    ],
+    "hops": 2,
+    "negative": false,
+    "premises": [
+      "e1 is a type of e2 .",
+      "e0 is a type of e1 ."
+    ],
+    "prompt": " premise : e1 is a type of e2 . next : e0 is a type of e1 . question : what is e0 relative to e2 ?",
+    "answer": "e0 is classified as e2 .",
+    "entities": [
+      "angle of attack",
+      "angle of incidence",
+      "angle",
+      "space"
+    ]
+  },
+  {
+    "child": "13913775",
+    "path": [
+      "13913775",
+      "13913562",
+      "13910202",
+      "13933399"
+    ],
+    "hops": 3,
+    "negative": false,
+    "premises": [
+      "e2 is classified as e3 .",
+      "e0 is classified as e1 .",
+      "e1 is classified as e2 ."
+    ],
+    "prompt": " premise : e2 is classified as e3 . next : e0 is classified as e1 . next : e1 is classified as e2 . question : what is e0 relative to e3 ?",
+    "answer": "e0 belongs to e3 .",
+    "entities": [
+      "angle of attack",
+      "angle of incidence",
+      "angle",
+      "space"
+    ]
+  },
+  {
+    "child": "13913775",
+    "path": [
+      "13913775",
+      "13913562",
+      "13910202",
+      "13933399"
+    ],
+    "hops": 2,
+    "negative": true,
+    "premises": [
+      "e0 is a type of e1 .",
+      "e3 is a type of e2 ."
+    ],
+    "prompt": " premise : e0 is a type of e1 . next : e3 is a type of e2 . question : what is e0 relative to e2 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "angle of attack",
+      "angle of incidence",
+      "angle",
+      "space"
+    ]
+  },
+  {
+    "child": "13913775",
+    "path": [
+      "13913775",
+      "13913562",
+      "13910202",
+      "13933399"
+    ],
+    "hops": 3,
+    "negative": true,
+    "premises": [
+      "e1 belongs to e2 .",
+      "e0 belongs to e1 .",
+      "e4 belongs to e3 ."
+    ],
+    "prompt": " premise : e1 belongs to e2 . next : e0 belongs to e1 . next : e4 belongs to e3 . question : what is e0 relative to e3 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "angle of attack",
+      "angle of incidence",
+      "angle",
+      "space"
+    ]
+  },
+  {
+    "child": "05289838",
+    "path": [
+      "05289838",
+      "05289932",
+      "08013131",
+      "07968050"
+    ],
+    "hops": 2,
+    "negative": false,
+    "premises": [
+      "e0 is a type of e1 .",
+      "e1 is a type of e2 ."
+    ],
+    "prompt": " premise : e0 is a type of e1 . next : e1 is a type of e2 . question : what is e0 relative to e2 ?",
+    "answer": "e0 is a type of e2 .",
+    "entities": [
+      "secondary dentition",
+      "dentition",
+      "set",
+      "collection"
+    ]
+  },
+  {
+    "child": "05289838",
+    "path": [
+      "05289838",
+      "05289932",
+      "08013131",
+      "07968050"
+    ],
+    "hops": 3,
+    "negative": false,
+    "premises": [
+      "e0 is a type of e1 .",
+      "e1 is a type of e2 .",
+      "e2 is a type of e3 ."
+    ],
+    "prompt": " premise : e0 is a type of e1 . next : e1 is a type of e2 . next : e2 is a type of e3 . question : what is e0 relative to e3 ?",
+    "answer": "e0 belongs to e3 .",
+    "entities": [
+      "secondary dentition",
+      "dentition",
+      "set",
+      "collection"
+    ]
+  },
+  {
+    "child": "05289838",
+    "path": [
+      "05289838",
+      "05289932",
+      "08013131",
+      "07968050"
+    ],
+    "hops": 2,
+    "negative": true,
+    "premises": [
+      "e0 belongs to e1 .",
+      "e3 belongs to e2 ."
+    ],
+    "prompt": " premise : e0 belongs to e1 . next : e3 belongs to e2 . question : what is e0 relative to e2 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "secondary dentition",
+      "dentition",
+      "set",
+      "collection"
+    ]
+  },
+  {
+    "child": "05289838",
+    "path": [
+      "05289838",
+      "05289932",
+      "08013131",
+      "07968050"
+    ],
+    "hops": 3,
+    "negative": true,
+    "premises": [
+      "e4 is classified as e3 .",
+      "e1 is classified as e2 .",
+      "e0 is classified as e1 ."
+    ],
+    "prompt": " premise : e4 is classified as e3 . next : e1 is classified as e2 . next : e0 is classified as e1 . question : what is e0 relative to e3 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "secondary dentition",
+      "dentition",
+      "set",
+      "collection"
+    ]
+  },
+  {
+    "child": "07830766",
+    "path": [
+      "07830766",
+      "07828160",
+      "07825344",
+      "07825072"
+    ],
+    "hops": 2,
+    "negative": false,
+    "premises": [
+      "e1 is a type of e2 .",
+      "e0 is a type of e1 ."
+    ],
+    "prompt": " premise : e1 is a type of e2 . next : e0 is a type of e1 . question : what is e0 relative to e2 ?",
+    "answer": "e0 is a type of e2 .",
+    "entities": [
+      "fennel",
+      "spice",
+      "flavorer",
+      "ingredient"
+    ]
+  },
+  {
+    "child": "07830766",
+    "path": [
+      "07830766",
+      "07828160",
+      "07825344",
+      "07825072"
+    ],
+    "hops": 3,
+    "negative": false,
+    "premises": [
+      "e0 is a type of e1 .",
+      "e2 is a type of e3 .",
+      "e1 is a type of e2 ."
+    ],
+    "prompt": " premise : e0 is a type of e1 . next : e2 is a type of e3 . next : e1 is a type of e2 . question : what is e0 relative to e3 ?",
+    "answer": "e0 is a type of e3 .",
+    "entities": [
+      "fennel",
+      "spice",
+      "flavorer",
+      "ingredient"
+    ]
+  },
+  {
+    "child": "07830766",
+    "path": [
+      "07830766",
+      "07828160",
+      "07825344",
+      "07825072"
+    ],
+    "hops": 2,
+    "negative": true,
+    "premises": [
+      "e3 is classified as e2 .",
+      "e0 is classified as e1 ."
+    ],
+    "prompt": " premise : e3 is classified as e2 . next : e0 is classified as e1 . question : what is e0 relative to e2 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "fennel",
+      "spice",
+      "flavorer",
+      "ingredient"
+    ]
+  },
+  {
+    "child": "07830766",
+    "path": [
+      "07830766",
+      "07828160",
+      "07825344",
+      "07825072"
+    ],
+    "hops": 3,
+    "negative": true,
+    "premises": [
+      "e4 is classified as e3 .",
+      "e1 is classified as e2 .",
+      "e0 is classified as e1 ."
+    ],
+    "prompt": " premise : e4 is classified as e3 . next : e1 is classified as e2 . next : e0 is classified as e1 . question : what is e0 relative to e3 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "fennel",
+      "spice",
+      "flavorer",
+      "ingredient"
+    ]
+  },
+  {
+    "child": "13243883",
+    "path": [
+      "13243883",
+      "13242427",
+      "11568013",
+      "11565975"
+    ],
+    "hops": 2,
+    "negative": false,
+    "premises": [
+      "e0 belongs to e1 .",
+      "e1 belongs to e2 ."
+    ],
+    "prompt": " premise : e0 belongs to e1 . next : e1 belongs to e2 . question : what is e0 relative to e2 ?",
+    "answer": "e0 belongs to e2 .",
+    "entities": [
+      "alpine clubmoss",
+      "club moss",
+      "fern ally",
+      "pteridophyte"
+    ]
+  },
+  {
+    "child": "13243883",
+    "path": [
+      "13243883",
+      "13242427",
+      "11568013",
+      "11565975"
+    ],
+    "hops": 3,
+    "negative": false,
+    "premises": [
+      "e1 belongs to e2 .",
+      "e2 belongs to e3 .",
+      "e0 belongs to e1 ."
+    ],
+    "prompt": " premise : e1 belongs to e2 . next : e2 belongs to e3 . next : e0 belongs to e1 . question : what is e0 relative to e3 ?",
+    "answer": "e0 is a type of e3 .",
+    "entities": [
+      "alpine clubmoss",
+      "club moss",
+      "fern ally",
+      "pteridophyte"
+    ]
+  },
+  {
+    "child": "13243883",
+    "path": [
+      "13243883",
+      "13242427",
+      "11568013",
+      "11565975"
+    ],
+    "hops": 2,
+    "negative": true,
+    "premises": [
+      "e3 is classified as e2 .",
+      "e0 is classified as e1 ."
+    ],
+    "prompt": " premise : e3 is classified as e2 . next : e0 is classified as e1 . question : what is e0 relative to e2 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "alpine clubmoss",
+      "club moss",
+      "fern ally",
+      "pteridophyte"
+    ]
+  },
+  {
+    "child": "13243883",
+    "path": [
+      "13243883",
+      "13242427",
+      "11568013",
+      "11565975"
+    ],
+    "hops": 3,
+    "negative": true,
+    "premises": [
+      "e1 is classified as e2 .",
+      "e0 is classified as e1 .",
+      "e4 is classified as e3 ."
+    ],
+    "prompt": " premise : e1 is classified as e2 . next : e0 is classified as e1 . next : e4 is classified as e3 . question : what is e0 relative to e3 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "alpine clubmoss",
+      "club moss",
+      "fern ally",
+      "pteridophyte"
+    ]
+  },
+  {
+    "child": "11440745",
+    "path": [
+      "11440745",
+      "11511038",
+      "11439518",
+      "11428673"
+    ],
+    "hops": 2,
+    "negative": false,
+    "premises": [
+      "e1 is classified as e2 .",
+      "e0 is classified as e1 ."
+    ],
+    "prompt": " premise : e1 is classified as e2 . next : e0 is classified as e1 . question : what is e0 relative to e2 ?",
+    "answer": "e0 belongs to e2 .",
+    "entities": [
+      "absorption band",
+      "optical phenomenon",
+      "physical phenomenon",
+      "natural phenomenon"
+    ]
+  },
+  {
+    "child": "11440745",
+    "path": [
+      "11440745",
+      "11511038",
+      "11439518",
+      "11428673"
+    ],
+    "hops": 3,
+    "negative": false,
+    "premises": [
+      "e1 belongs to e2 .",
+      "e0 belongs to e1 .",
+      "e2 belongs to e3 ."
+    ],
+    "prompt": " premise : e1 belongs to e2 . next : e0 belongs to e1 . next : e2 belongs to e3 . question : what is e0 relative to e3 ?",
+    "answer": "e0 belongs to e3 .",
+    "entities": [
+      "absorption band",
+      "optical phenomenon",
+      "physical phenomenon",
+      "natural phenomenon"
+    ]
+  },
+  {
+    "child": "11440745",
+    "path": [
+      "11440745",
+      "11511038",
+      "11439518",
+      "11428673"
+    ],
+    "hops": 2,
+    "negative": true,
+    "premises": [
+      "e0 is classified as e1 .",
+      "e3 is classified as e2 ."
+    ],
+    "prompt": " premise : e0 is classified as e1 . next : e3 is classified as e2 . question : what is e0 relative to e2 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "absorption band",
+      "optical phenomenon",
+      "physical phenomenon",
+      "natural phenomenon"
+    ]
+  },
+  {
+    "child": "11440745",
+    "path": [
+      "11440745",
+      "11511038",
+      "11439518",
+      "11428673"
+    ],
+    "hops": 3,
+    "negative": true,
+    "premises": [
+      "e4 is a type of e3 .",
+      "e1 is a type of e2 .",
+      "e0 is a type of e1 ."
+    ],
+    "prompt": " premise : e4 is a type of e3 . next : e1 is a type of e2 . next : e0 is a type of e1 . question : what is e0 relative to e3 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "absorption band",
+      "optical phenomenon",
+      "physical phenomenon",
+      "natural phenomenon"
+    ]
+  },
+  {
+    "child": "01800242",
+    "path": [
+      "01800242",
+      "01797729",
+      "02155855",
+      "02155643"
+    ],
+    "hops": 2,
+    "negative": false,
+    "premises": [
+      "e1 belongs to e2 .",
+      "e0 belongs to e1 ."
+    ],
+    "prompt": " premise : e1 belongs to e2 . next : e0 belongs to e1 . question : what is e0 relative to e2 ?",
+    "answer": "e0 belongs to e2 .",
+    "entities": [
+      "sage grouse",
+      "grouse",
+      "game bird",
+      "game"
+    ]
+  },
+  {
+    "child": "01800242",
+    "path": [
+      "01800242",
+      "01797729",
+      "02155855",
+      "02155643"
+    ],
+    "hops": 3,
+    "negative": false,
+    "premises": [
+      "e1 belongs to e2 .",
+      "e0 belongs to e1 .",
+      "e2 belongs to e3 ."
+    ],
+    "prompt": " premise : e1 belongs to e2 . next : e0 belongs to e1 . next : e2 belongs to e3 . question : what is e0 relative to e3 ?",
+    "answer": "e0 belongs to e3 .",
+    "entities": [
+      "sage grouse",
+      "grouse",
+      "game bird",
+      "game"
+    ]
+  },
+  {
+    "child": "01800242",
+    "path": [
+      "01800242",
+      "01797729",
+      "02155855",
+      "02155643"
+    ],
+    "hops": 2,
+    "negative": true,
+    "premises": [
+      "e0 is a type of e1 .",
+      "e3 is a type of e2 ."
+    ],
+    "prompt": " premise : e0 is a type of e1 . next : e3 is a type of e2 . question : what is e0 relative to e2 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "sage grouse",
+      "grouse",
+      "game bird",
+      "game"
+    ]
+  },
+  {
+    "child": "01800242",
+    "path": [
+      "01800242",
+      "01797729",
+      "02155855",
+      "02155643"
+    ],
+    "hops": 3,
+    "negative": true,
+    "premises": [
+      "e0 belongs to e1 .",
+      "e4 belongs to e3 .",
+      "e1 belongs to e2 ."
+    ],
+    "prompt": " premise : e0 belongs to e1 . next : e4 belongs to e3 . next : e1 belongs to e2 . question : what is e0 relative to e3 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "sage grouse",
+      "grouse",
+      "game bird",
+      "game"
+    ]
+  },
+  {
+    "child": "15190004",
+    "path": [
+      "15190004",
+      "15137796",
+      "13597072",
+      "00033914"
+    ],
+    "hops": 2,
+    "negative": false,
+    "premises": [
+      "e1 is classified as e2 .",
+      "e0 is classified as e1 ."
+    ],
+    "prompt": " premise : e1 is classified as e2 . next : e0 is classified as e1 . question : what is e0 relative to e2 ?",
+    "answer": "e0 belongs to e2 .",
+    "entities": [
+      "day",
+      "time period",
+      "fundamental quantity",
+      "measure"
+    ]
+  },
+  {
+    "child": "15190004",
+    "path": [
+      "15190004",
+      "15137796",
+      "13597072",
+      "00033914"
+    ],
+    "hops": 3,
+    "negative": false,
+    "premises": [
+      "e0 belongs to e1 .",
+      "e1 belongs to e2 .",
+      "e2 belongs to e3 ."
+    ],
+    "prompt": " premise : e0 belongs to e1 . next : e1 belongs to e2 . next : e2 belongs to e3 . question : what is e0 relative to e3 ?",
+    "answer": "e0 is a type of e3 .",
+    "entities": [
+      "day",
+      "time period",
+      "fundamental quantity",
+      "measure"
+    ]
+  },
+  {
+    "child": "15190004",
+    "path": [
+      "15190004",
+      "15137796",
+      "13597072",
+      "00033914"
+    ],
+    "hops": 2,
+    "negative": true,
+    "premises": [
+      "e3 is classified as e2 .",
+      "e0 is classified as e1 ."
+    ],
+    "prompt": " premise : e3 is classified as e2 . next : e0 is classified as e1 . question : what is e0 relative to e2 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "day",
+      "time period",
+      "fundamental quantity",
+      "measure"
+    ]
+  },
+  {
+    "child": "15190004",
+    "path": [
+      "15190004",
+      "15137796",
+      "13597072",
+      "00033914"
+    ],
+    "hops": 3,
+    "negative": true,
+    "premises": [
+      "e4 is classified as e3 .",
+      "e1 is classified as e2 .",
+      "e0 is classified as e1 ."
+    ],
+    "prompt": " premise : e4 is classified as e3 . next : e1 is classified as e2 . next : e0 is classified as e1 . question : what is e0 relative to e3 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "day",
+      "time period",
+      "fundamental quantity",
+      "measure"
+    ]
+  },
+  {
+    "child": "10460611",
+    "path": [
+      "10460611",
+      "09965384",
+      "10132360",
+      "00007846"
+    ],
+    "hops": 2,
+    "negative": false,
+    "premises": [
+      "e1 is a type of e2 .",
+      "e0 is a type of e1 ."
+    ],
+    "prompt": " premise : e1 is a type of e2 . next : e0 is a type of e1 . question : what is e0 relative to e2 ?",
+    "answer": "e0 belongs to e2 .",
+    "entities": [
+      "playmate",
+      "companion",
+      "friend",
+      "person"
+    ]
+  },
+  {
+    "child": "10460611",
+    "path": [
+      "10460611",
+      "09965384",
+      "10132360",
+      "00007846"
+    ],
+    "hops": 3,
+    "negative": false,
+    "premises": [
+      "e0 is classified as e1 .",
+      "e1 is classified as e2 .",
+      "e2 is classified as e3 ."
+    ],
+    "prompt": " premise : e0 is classified as e1 . next : e1 is classified as e2 . next : e2 is classified as e3 . question : what is e0 relative to e3 ?",
+    "answer": "e0 belongs to e3 .",
+    "entities": [
+      "playmate",
+      "companion",
+      "friend",
+      "person"
+    ]
+  },
+  {
+    "child": "10460611",
+    "path": [
+      "10460611",
+      "09965384",
+      "10132360",
+      "00007846"
+    ],
+    "hops": 2,
+    "negative": true,
+    "premises": [
+      "e0 is classified as e1 .",
+      "e3 is classified as e2 ."
+    ],
+    "prompt": " premise : e0 is classified as e1 . next : e3 is classified as e2 . question : what is e0 relative to e2 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "playmate",
+      "companion",
+      "friend",
+      "person"
+    ]
+  },
+  {
+    "child": "10460611",
+    "path": [
+      "10460611",
+      "09965384",
+      "10132360",
+      "00007846"
+    ],
+    "hops": 3,
+    "negative": true,
+    "premises": [
+      "e4 is a type of e3 .",
+      "e1 is a type of e2 .",
+      "e0 is a type of e1 ."
+    ],
+    "prompt": " premise : e4 is a type of e3 . next : e1 is a type of e2 . next : e0 is a type of e1 . question : what is e0 relative to e3 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "playmate",
+      "companion",
+      "friend",
+      "person"
+    ]
+  },
+  {
+    "child": "12890428",
+    "path": [
+      "12890428",
+      "12890238",
+      "13139466",
+      "13133423"
+    ],
+    "hops": 2,
+    "negative": false,
+    "premises": [
+      "e0 is a type of e1 .",
+      "e1 is a type of e2 ."
+    ],
+    "prompt": " premise : e0 is a type of e1 . next : e1 is a type of e2 . question : what is e0 relative to e2 ?",
+    "answer": "e0 is classified as e2 .",
+    "entities": [
+      "american germander",
+      "germander",
+      "subshrub",
+      "shrub"
+    ]
+  },
+  {
+    "child": "12890428",
+    "path": [
+      "12890428",
+      "12890238",
+      "13139466",
+      "13133423"
+    ],
+    "hops": 3,
+    "negative": false,
+    "premises": [
+      "e2 is a type of e3 .",
+      "e0 is a type of e1 .",
+      "e1 is a type of e2 ."
+    ],
+    "prompt": " premise : e2 is a type of e3 . next : e0 is a type of e1 . next : e1 is a type of e2 . question : what is e0 relative to e3 ?",
+    "answer": "e0 is classified as e3 .",
+    "entities": [
+      "american germander",
+      "germander",
+      "subshrub",
+      "shrub"
+    ]
+  },
+  {
+    "child": "12890428",
+    "path": [
+      "12890428",
+      "12890238",
+      "13139466",
+      "13133423"
+    ],
+    "hops": 2,
+    "negative": true,
+    "premises": [
+      "e0 is a type of e1 .",
+      "e3 is a type of e2 ."
+    ],
+    "prompt": " premise : e0 is a type of e1 . next : e3 is a type of e2 . question : what is e0 relative to e2 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "american germander",
+      "germander",
+      "subshrub",
+      "shrub"
+    ]
+  },
+  {
+    "child": "12890428",
+    "path": [
+      "12890428",
+      "12890238",
+      "13139466",
+      "13133423"
+    ],
+    "hops": 3,
+    "negative": true,
+    "premises": [
+      "e4 is classified as e3 .",
+      "e0 is classified as e1 .",
+      "e1 is classified as e2 ."
+    ],
+    "prompt": " premise : e4 is classified as e3 . next : e0 is classified as e1 . next : e1 is classified as e2 . question : what is e0 relative to e3 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "american germander",
+      "germander",
+      "subshrub",
+      "shrub"
+    ]
+  },
+  {
+    "child": "01584515",
+    "path": [
+      "01584515",
+      "01584371",
+      "01581216",
+      "01528361"
+    ],
+    "hops": 2,
+    "negative": false,
+    "premises": [
+      "e1 is a type of e2 .",
+      "e0 is a type of e1 ."
+    ],
+    "prompt": " premise : e1 is a type of e2 . next : e0 is a type of e1 . question : what is e0 relative to e2 ?",
+    "answer": "e0 is a type of e2 .",
+    "entities": [
+      "common nutcracker",
+      "nutcracker",
+      "corvine bird",
+      "oscine"
+    ]
+  },
+  {
+    "child": "01584515",
+    "path": [
+      "01584515",
+      "01584371",
+      "01581216",
+      "01528361"
+    ],
+    "hops": 3,
+    "negative": false,
+    "premises": [
+      "e1 belongs to e2 .",
+      "e0 belongs to e1 .",
+      "e2 belongs to e3 ."
+    ],
+    "prompt": " premise : e1 belongs to e2 . next : e0 belongs to e1 . next : e2 belongs to e3 . question : what is e0 relative to e3 ?",
+    "answer": "e0 is a type of e3 .",
+    "entities": [
+      "common nutcracker",
+      "nutcracker",
+      "corvine bird",
+      "oscine"
+    ]
+  },
+  {
+    "child": "01584515",
+    "path": [
+      "01584515",
+      "01584371",
+      "01581216",
+      "01528361"
+    ],
+    "hops": 2,
+    "negative": true,
+    "premises": [
+      "e3 belongs to e2 .",
+      "e0 belongs to e1 ."
+    ],
+    "prompt": " premise : e3 belongs to e2 . next : e0 belongs to e1 . question : what is e0 relative to e2 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "common nutcracker",
+      "nutcracker",
+      "corvine bird",
+      "oscine"
+    ]
+  },
+  {
+    "child": "01584515",
+    "path": [
+      "01584515",
+      "01584371",
+      "01581216",
+      "01528361"
+    ],
+    "hops": 3,
+    "negative": true,
+    "premises": [
+      "e0 belongs to e1 .",
+      "e1 belongs to e2 .",
+      "e4 belongs to e3 ."
+    ],
+    "prompt": " premise : e0 belongs to e1 . next : e1 belongs to e2 . next : e4 belongs to e3 . question : what is e0 relative to e3 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "common nutcracker",
+      "nutcracker",
+      "corvine bird",
+      "oscine"
+    ]
+  },
+  {
+    "child": "07248656",
+    "path": [
+      "07248656",
+      "07248294",
+      "07247648",
+      "07175534"
+    ],
+    "hops": 2,
+    "negative": false,
+    "premises": [
+      "e0 is classified as e1 .",
+      "e1 is classified as e2 ."
+    ],
+    "prompt": " premise : e0 is classified as e1 . next : e1 is classified as e2 . question : what is e0 relative to e2 ?",
+    "answer": "e0 belongs to e2 .",
+    "entities": [
+      "imprecation",
+      "execration",
+      "denunciation",
+      "speech act"
+    ]
+  },
+  {
+    "child": "07248656",
+    "path": [
+      "07248656",
+      "07248294",
+      "07247648",
+      "07175534"
+    ],
+    "hops": 3,
+    "negative": false,
+    "premises": [
+      "e0 belongs to e1 .",
+      "e2 belongs to e3 .",
+      "e1 belongs to e2 ."
+    ],
+    "prompt": " premise : e0 belongs to e1 . next : e2 belongs to e3 . next : e1 belongs to e2 . question : what is e0 relative to e3 ?",
+    "answer": "e0 is classified as e3 .",
+    "entities": [
+      "imprecation",
+      "execration",
+      "denunciation",
+      "speech act"
+    ]
+  },
+  {
+    "child": "07248656",
+    "path": [
+      "07248656",
+      "07248294",
+      "07247648",
+      "07175534"
+    ],
+    "hops": 2,
+    "negative": true,
+    "premises": [
+      "e0 is classified as e1 .",
+      "e3 is classified as e2 ."
+    ],
+    "prompt": " premise : e0 is classified as e1 . next : e3 is classified as e2 . question : what is e0 relative to e2 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "imprecation",
+      "execration",
+      "denunciation",
+      "speech act"
+    ]
+  },
+  {
+    "child": "07248656",
+    "path": [
+      "07248656",
+      "07248294",
+      "07247648",
+      "07175534"
+    ],
+    "hops": 3,
+    "negative": true,
+    "premises": [
+      "e1 belongs to e2 .",
+      "e0 belongs to e1 .",
+      "e4 belongs to e3 ."
+    ],
+    "prompt": " premise : e1 belongs to e2 . next : e0 belongs to e1 . next : e4 belongs to e3 . question : what is e0 relative to e3 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "imprecation",
+      "execration",
+      "denunciation",
+      "speech act"
+    ]
+  },
+  {
+    "child": "05048749",
+    "path": [
+      "05048749",
+      "05047429",
+      "04923519",
+      "00024444"
+    ],
+    "hops": 2,
+    "negative": false,
+    "premises": [
+      "e1 belongs to e2 .",
+      "e0 belongs to e1 ."
+    ],
+    "prompt": " premise : e1 belongs to e2 . next : e0 belongs to e1 . question : what is e0 relative to e2 ?",
+    "answer": "e0 is classified as e2 .",
+    "entities": [
+      "insubstantiality",
+      "weakness",
+      "property",
+      "attribute"
+    ]
+  },
+  {
+    "child": "05048749",
+    "path": [
+      "05048749",
+      "05047429",
+      "04923519",
+      "00024444"
+    ],
+    "hops": 3,
+    "negative": false,
+    "premises": [
+      "e0 is a type of e1 .",
+      "e2 is a type of e3 .",
+      "e1 is a type of e2 ."
+    ],
+    "prompt": " premise : e0 is a type of e1 . next : e2 is a type of e3 . next : e1 is a type of e2 . question : what is e0 relative to e3 ?",
+    "answer": "e0 is a type of e3 .",
+    "entities": [
+      "insubstantiality",
+      "weakness",
+      "property",
+      "attribute"
+    ]
+  },
+  {
+    "child": "05048749",
+    "path": [
+      "05048749",
+      "05047429",
+      "04923519",
+      "00024444"
+    ],
+    "hops": 2,
+    "negative": true,
+    "premises": [
+      "e0 is a type of e1 .",
+      "e3 is a type of e2 ."
+    ],
+    "prompt": " premise : e0 is a type of e1 . next : e3 is a type of e2 . question : what is e0 relative to e2 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "insubstantiality",
+      "weakness",
+      "property",
+      "attribute"
+    ]
+  },
+  {
+    "child": "05048749",
+    "path": [
+      "05048749",
+      "05047429",
+      "04923519",
+      "00024444"
+    ],
+    "hops": 3,
+    "negative": true,
+    "premises": [
+      "e0 is classified as e1 .",
+      "e4 is classified as e3 .",
+      "e1 is classified as e2 ."
+    ],
+    "prompt": " premise : e0 is classified as e1 . next : e4 is classified as e3 . next : e1 is classified as e2 . question : what is e0 relative to e3 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "insubstantiality",
+      "weakness",
+      "property",
+      "attribute"
+    ]
+  },
+  {
+    "child": "01945242",
+    "path": [
+      "01945242",
+      "01941491",
+      "08124465",
+      "08008892"
+    ],
+    "hops": 2,
+    "negative": false,
+    "premises": [
+      "e0 is a type of e1 .",
+      "e1 is a type of e2 ."
+    ],
+    "prompt": " premise : e0 is a type of e1 . next : e1 is a type of e2 . question : what is e0 relative to e2 ?",
+    "answer": "e0 is classified as e2 .",
+    "entities": [
+      "haliotidae",
+      "mollusk family",
+      "family",
+      "taxonomic group"
+    ]
+  },
+  {
+    "child": "01945242",
+    "path": [
+      "01945242",
+      "01941491",
+      "08124465",
+      "08008892"
+    ],
+    "hops": 3,
+    "negative": false,
+    "premises": [
+      "e0 is a type of e1 .",
+      "e2 is a type of e3 .",
+      "e1 is a type of e2 ."
+    ],
+    "prompt": " premise : e0 is a type of e1 . next : e2 is a type of e3 . next : e1 is a type of e2 . question : what is e0 relative to e3 ?",
+    "answer": "e0 is a type of e3 .",
+    "entities": [
+      "haliotidae",
+      "mollusk family",
+      "family",
+      "taxonomic group"
+    ]
+  },
+  {
+    "child": "01945242",
+    "path": [
+      "01945242",
+      "01941491",
+      "08124465",
+      "08008892"
+    ],
+    "hops": 2,
+    "negative": true,
+    "premises": [
+      "e0 is a type of e1 .",
+      "e3 is a type of e2 ."
+    ],
+    "prompt": " premise : e0 is a type of e1 . next : e3 is a type of e2 . question : what is e0 relative to e2 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "haliotidae",
+      "mollusk family",
+      "family",
+      "taxonomic group"
+    ]
+  },
+  {
+    "child": "01945242",
+    "path": [
+      "01945242",
+      "01941491",
+      "08124465",
+      "08008892"
+    ],
+    "hops": 3,
+    "negative": true,
+    "premises": [
+      "e0 is a type of e1 .",
+      "e1 is a type of e2 .",
+      "e4 is a type of e3 ."
+    ],
+    "prompt": " premise : e0 is a type of e1 . next : e1 is a type of e2 . next : e4 is a type of e3 . question : what is e0 relative to e3 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "haliotidae",
+      "mollusk family",
+      "family",
+      "taxonomic group"
+    ]
+  },
+  {
+    "child": "14718833",
+    "path": [
+      "14718833",
+      "15129835",
+      "14998823",
+      "14604877"
+    ],
+    "hops": 2,
+    "negative": false,
+    "premises": [
+      "e0 belongs to e1 .",
+      "e1 belongs to e2 ."
+    ],
+    "prompt": " premise : e0 belongs to e1 . next : e1 belongs to e2 . question : what is e0 relative to e2 ?",
+    "answer": "e0 belongs to e2 .",
+    "entities": [
+      "rag paper",
+      "writing paper",
+      "paper",
+      "material"
+    ]
+  },
+  {
+    "child": "14718833",
+    "path": [
+      "14718833",
+      "15129835",
+      "14998823",
+      "14604877"
+    ],
+    "hops": 3,
+    "negative": false,
+    "premises": [
+      "e0 is classified as e1 .",
+      "e1 is classified as e2 .",
+      "e2 is classified as e3 ."
+    ],
+    "prompt": " premise : e0 is classified as e1 . next : e1 is classified as e2 . next : e2 is classified as e3 . question : what is e0 relative to e3 ?",
+    "answer": "e0 belongs to e3 .",
+    "entities": [
+      "rag paper",
+      "writing paper",
+      "paper",
+      "material"
+    ]
+  },
+  {
+    "child": "14718833",
+    "path": [
+      "14718833",
+      "15129835",
+      "14998823",
+      "14604877"
+    ],
+    "hops": 2,
+    "negative": true,
+    "premises": [
+      "e3 is classified as e2 .",
+      "e0 is classified as e1 ."
+    ],
+    "prompt": " premise : e3 is classified as e2 . next : e0 is classified as e1 . question : what is e0 relative to e2 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "rag paper",
+      "writing paper",
+      "paper",
+      "material"
+    ]
+  },
+  {
+    "child": "14718833",
+    "path": [
+      "14718833",
+      "15129835",
+      "14998823",
+      "14604877"
+    ],
+    "hops": 3,
+    "negative": true,
+    "premises": [
+      "e4 is classified as e3 .",
+      "e0 is classified as e1 .",
+      "e1 is classified as e2 ."
+    ],
+    "prompt": " premise : e4 is classified as e3 . next : e0 is classified as e1 . next : e1 is classified as e2 . question : what is e0 relative to e3 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "rag paper",
+      "writing paper",
+      "paper",
+      "material"
+    ]
+  },
+  {
+    "child": "10796967",
+    "path": [
+      "10796967",
+      "10649550",
+      "09831117",
+      "09633690"
+    ],
+    "hops": 2,
+    "negative": false,
+    "premises": [
+      "e1 is a type of e2 .",
+      "e0 is a type of e1 ."
+    ],
+    "prompt": " premise : e1 is a type of e2 . next : e0 is a type of e1 . question : what is e0 relative to e2 ?",
+    "answer": "e0 is a type of e2 .",
+    "entities": [
+      "whisperer",
+      "speaker",
+      "articulator",
+      "communicator"
+    ]
+  },
+  {
+    "child": "10796967",
+    "path": [
+      "10796967",
+      "10649550",
+      "09831117",
+      "09633690"
+    ],
+    "hops": 3,
+    "negative": false,
+    "premises": [
+      "e1 is a type of e2 .",
+      "e2 is a type of e3 .",
+      "e0 is a type of e1 ."
+    ],
+    "prompt": " premise : e1 is a type of e2 . next : e2 is a type of e3 . next : e0 is a type of e1 . question : what is e0 relative to e3 ?",
+    "answer": "e0 is classified as e3 .",
+    "entities": [
+      "whisperer",
+      "speaker",
+      "articulator",
+      "communicator"
+    ]
+  },
+  {
+    "child": "10796967",
+    "path": [
+      "10796967",
+      "10649550",
+      "09831117",
+      "09633690"
+    ],
+    "hops": 2,
+    "negative": true,
+    "premises": [
+      "e3 belongs to e2 .",
+      "e0 belongs to e1 ."
+    ],
+    "prompt": " premise : e3 belongs to e2 . next : e0 belongs to e1 . question : what is e0 relative to e2 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "whisperer",
+      "speaker",
+      "articulator",
+      "communicator"
+    ]
+  },
+  {
+    "child": "10796967",
+    "path": [
+      "10796967",
+      "10649550",
+      "09831117",
+      "09633690"
+    ],
+    "hops": 3,
+    "negative": true,
+    "premises": [
+      "e0 belongs to e1 .",
+      "e4 belongs to e3 .",
+      "e1 belongs to e2 ."
+    ],
+    "prompt": " premise : e0 belongs to e1 . next : e4 belongs to e3 . next : e1 belongs to e2 . question : what is e0 relative to e3 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "whisperer",
+      "speaker",
+      "articulator",
+      "communicator"
+    ]
+  },
+  {
+    "child": "07316161",
+    "path": [
+      "07316161",
+      "07315954",
+      "07329027",
+      "07319470"
+    ],
+    "hops": 2,
+    "negative": false,
+    "premises": [
+      "e0 belongs to e1 .",
+      "e1 belongs to e2 ."
+    ],
+    "prompt": " premise : e0 belongs to e1 . next : e1 belongs to e2 . question : what is e0 relative to e2 ?",
+    "answer": "e0 belongs to e2 .",
+    "entities": [
+      "collision",
+      "accident",
+      "mishap",
+      "misfortune"
+    ]
+  },
+  {
+    "child": "07316161",
+    "path": [
+      "07316161",
+      "07315954",
+      "07329027",
+      "07319470"
+    ],
+    "hops": 3,
+    "negative": false,
+    "premises": [
+      "e2 belongs to e3 .",
+      "e0 belongs to e1 .",
+      "e1 belongs to e2 ."
+    ],
+    "prompt": " premise : e2 belongs to e3 . next : e0 belongs to e1 . next : e1 belongs to e2 . question : what is e0 relative to e3 ?",
+    "answer": "e0 is a type of e3 .",
+    "entities": [
+      "collision",
+      "accident",
+      "mishap",
+      "misfortune"
+    ]
+  },
+  {
+    "child": "07316161",
+    "path": [
+      "07316161",
+      "07315954",
+      "07329027",
+      "07319470"
+    ],
+    "hops": 2,
+    "negative": true,
+    "premises": [
+      "e3 belongs to e2 .",
+      "e0 belongs to e1 ."
+    ],
+    "prompt": " premise : e3 belongs to e2 . next : e0 belongs to e1 . question : what is e0 relative to e2 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "collision",
+      "accident",
+      "mishap",
+      "misfortune"
+    ]
+  },
+  {
+    "child": "07316161",
+    "path": [
+      "07316161",
+      "07315954",
+      "07329027",
+      "07319470"
+    ],
+    "hops": 3,
+    "negative": true,
+    "premises": [
+      "e1 is classified as e2 .",
+      "e4 is classified as e3 .",
+      "e0 is classified as e1 ."
+    ],
+    "prompt": " premise : e1 is classified as e2 . next : e4 is classified as e3 . next : e0 is classified as e1 . question : what is e0 relative to e3 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "collision",
+      "accident",
+      "mishap",
+      "misfortune"
+    ]
+  },
+  {
+    "child": "02699024",
+    "path": [
+      "02699024",
+      "04024793",
+      "04403010",
+      "02916498"
+    ],
+    "hops": 2,
+    "negative": false,
+    "premises": [
+      "e1 is classified as e2 .",
+      "e0 is classified as e1 ."
+    ],
+    "prompt": " premise : e1 is classified as e2 . next : e0 is classified as e1 . question : what is e0 relative to e2 ?",
+    "answer": "e0 is classified as e2 .",
+    "entities": [
+      "alehouse",
+      "public house",
+      "tavern",
+      "building"
+    ]
+  },
+  {
+    "child": "02699024",
+    "path": [
+      "02699024",
+      "04024793",
+      "04403010",
+      "02916498"
+    ],
+    "hops": 3,
+    "negative": false,
+    "premises": [
+      "e2 belongs to e3 .",
+      "e1 belongs to e2 .",
+      "e0 belongs to e1 ."
+    ],
+    "prompt": " premise : e2 belongs to e3 . next : e1 belongs to e2 . next : e0 belongs to e1 . question : what is e0 relative to e3 ?",
+    "answer": "e0 is classified as e3 .",
+    "entities": [
+      "alehouse",
+      "public house",
+      "tavern",
+      "building"
+    ]
+  },
+  {
+    "child": "02699024",
+    "path": [
+      "02699024",
+      "04024793",
+      "04403010",
+      "02916498"
+    ],
+    "hops": 2,
+    "negative": true,
+    "premises": [
+      "e3 is a type of e2 .",
+      "e0 is a type of e1 ."
+    ],
+    "prompt": " premise : e3 is a type of e2 . next : e0 is a type of e1 . question : what is e0 relative to e2 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "alehouse",
+      "public house",
+      "tavern",
+      "building"
+    ]
+  },
+  {
+    "child": "02699024",
+    "path": [
+      "02699024",
+      "04024793",
+      "04403010",
+      "02916498"
+    ],
+    "hops": 3,
+    "negative": true,
+    "premises": [
+      "e4 is a type of e3 .",
+      "e1 is a type of e2 .",
+      "e0 is a type of e1 ."
+    ],
+    "prompt": " premise : e4 is a type of e3 . next : e1 is a type of e2 . next : e0 is a type of e1 . question : what is e0 relative to e3 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "alehouse",
+      "public house",
+      "tavern",
+      "building"
+    ]
+  },
+  {
+    "child": "12470439",
+    "path": [
+      "12470439",
+      "12469801",
+      "12445786",
+      "13155061"
+    ],
+    "hops": 2,
+    "negative": false,
+    "premises": [
+      "e1 is classified as e2 .",
+      "e0 is classified as e1 ."
+    ],
+    "prompt": " premise : e1 is classified as e2 . next : e0 is classified as e1 . question : what is e0 relative to e2 ?",
+    "answer": "e0 is a type of e2 .",
+    "entities": [
+      "wild hyacinth",
+      "camas",
+      "liliaceous plant",
+      "bulbous plant"
+    ]
+  },
+  {
+    "child": "12470439",
+    "path": [
+      "12470439",
+      "12469801",
+      "12445786",
+      "13155061"
+    ],
+    "hops": 3,
+    "negative": false,
+    "premises": [
+      "e0 is a type of e1 .",
+      "e2 is a type of e3 .",
+      "e1 is a type of e2 ."
+    ],
+    "prompt": " premise : e0 is a type of e1 . next : e2 is a type of e3 . next : e1 is a type of e2 . question : what is e0 relative to e3 ?",
+    "answer": "e0 is a type of e3 .",
+    "entities": [
+      "wild hyacinth",
+      "camas",
+      "liliaceous plant",
+      "bulbous plant"
+    ]
+  },
+  {
+    "child": "12470439",
+    "path": [
+      "12470439",
+      "12469801",
+      "12445786",
+      "13155061"
+    ],
+    "hops": 2,
+    "negative": true,
+    "premises": [
+      "e3 is a type of e2 .",
+      "e0 is a type of e1 ."
+    ],
+    "prompt": " premise : e3 is a type of e2 . next : e0 is a type of e1 . question : what is e0 relative to e2 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "wild hyacinth",
+      "camas",
+      "liliaceous plant",
+      "bulbous plant"
+    ]
+  },
+  {
+    "child": "12470439",
+    "path": [
+      "12470439",
+      "12469801",
+      "12445786",
+      "13155061"
+    ],
+    "hops": 3,
+    "negative": true,
+    "premises": [
+      "e0 is a type of e1 .",
+      "e4 is a type of e3 .",
+      "e1 is a type of e2 ."
+    ],
+    "prompt": " premise : e0 is a type of e1 . next : e4 is a type of e3 . next : e1 is a type of e2 . question : what is e0 relative to e3 ?",
+    "answer": "the evidence is insufficient .",
+    "entities": [
+      "wild hyacinth",
+      "camas",
+      "liliaceous plant",
+      "bulbous plant"
+    ]
+  }
+]

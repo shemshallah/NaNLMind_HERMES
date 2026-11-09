@@ -1,0 +1,18 @@
+{
+  "in_distribution": {
+    "n": 300,
+    "valid_answer_rate": 1.0
+  },
+  "contradiction_wording": {
+    "n": 300,
+    "valid_answer_rate": 0.0
+  },
+  "unseen_paraphrase": {
+    "n": 300,
+    "valid_answer_rate": 1.0
+  },
+  "four_hop_extrapolation": {
+    "n": 150,
+    "valid_answer_rate": 0.0
+  }
+}

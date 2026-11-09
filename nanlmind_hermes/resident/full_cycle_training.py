@@ -66,6 +66,8 @@ FULL_CYCLE_DIMENSION = FULL_CYCLE_COUNT
 CYCLE_SPACE_DIMENSION = FULL_CYCLE_COUNT
 CYCLE_COUNT = FULL_CYCLE_COUNT
 ROOT_CYCLE_COUNT = FULL_CYCLE_COUNT
+cycle_count = FULL_CYCLE_COUNT
+root_cycle_count = FULL_CYCLE_COUNT
 ROOT_HEAD = DEFAULT_ROOT
 
 WORD_BITS = 32
@@ -743,7 +745,7 @@ _COEFFICIENT_SEQUENCE_NAMES = (
 
 def _memory_dimension(memory: Any) -> int:
     for name in ("cycle_count", "cycle_dimension", "dimension",
-                 "root_cycle_count"):
+                 "root_cycle_count", "num_cycles", "n_cycles"):
         value = getattr(memory, name, None)
         if callable(value):
             value = value()
@@ -767,6 +769,17 @@ def _memory_dimension(memory: Any) -> int:
             raise FullCycleTruncationError(
                 "memory %s has %d words, expected all %d"
                 % (name, length, FULL_CYCLE_COUNT))
+    length_method = getattr(type(memory), "__len__", None)
+    if length_method is not None and not isinstance(
+            memory, (str, bytes, bytearray)):
+        try:
+            length = len(memory)
+        except TypeError:
+            length = None
+        if length is not None and length != FULL_CYCLE_COUNT:
+            raise FullCycleTruncationError(
+                "memory length is %d words, expected all %d"
+                % (length, FULL_CYCLE_COUNT))
     return FULL_CYCLE_COUNT
 
 

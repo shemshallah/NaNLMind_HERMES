@@ -1,0 +1,748 @@
+{
+  "artifact": {
+    "audit_results.json": {
+      "native": {
+        "conventional_generation_unchanged": 1.0,
+        "conventional_memory_prompt_recovery": 1.0,
+        "cycle_exact_prompt_recovery": 1.0,
+        "cycle_generation_unchanged": 1.0,
+        "cycle_semantic_accuracy": 1.0,
+        "pristine_root_sha256": "38222e0bd0848941660bbfc87bd68de1249d3d6db047cf1fadfa9bce47e96773",
+        "raw_exact_prompt_recovery": 0.0,
+        "raw_generation_unchanged": 0.0,
+        "raw_semantic_accuracy": 0.0,
+        "root_size_bytes": 8388608,
+        "test_cases": 90
+      },
+      "semantic": [
+        {
+          "exact_surface_match": 0.5,
+          "examples": [
+            {
+              "facts": [
+                "e1 belongs to e2 .",
+                "e0 belongs to e1 ."
+              ],
+              "generated": "the evidence is insufficient .",
+              "reference": "e0 belongs to e2 .",
+              "semantic_correct": false
+            },
+            {
+              "facts": [
+                "e1 belongs to e2 .",
+                "e0 belongs to e1 .",
+                "e2 belongs to e3 ."
+              ],
+              "generated": "the evidence is insufficient .",
+              "reference": "e0 is classified as e3 .",
+              "semantic_correct": false
+            },
+            {
+              "facts": [
+                "e0 is classified as e1 .",
+                "e3 is classified as e2 ."
+              ],
+              "generated": "the evidence is insufficient .",
+              "reference": "the evidence is insufficient .",
+              "semantic_correct": true
+            },
+            {
+              "facts": [
+                "e0 is classified as e1 .",
+                "e1 is classified as e2 .",
+                "e4 is classified as e3 ."
+              ],
+              "generated": "the evidence is insufficient .",
+              "reference": "the evidence is insufficient .",
+              "semantic_correct": true
+            },
+            {
+              "facts": [
+                "e1 is classified as e2 .",
+                "e0 is classified as e1 ."
+              ],
+              "generated": "the evidence is insufficient .",
+              "reference": "e0 belongs to e2 .",
+              "semantic_correct": false
+            },
+            {
+              "facts": [
+                "e0 is classified as e1 .",
+                "e1 is classified as e2 .",
+                "e2 is classified as e3 ."
+              ],
+              "generated": "the evidence is insufficient .",
+              "reference": "e0 is a type of e3 .",
+              "semantic_correct": false
+            },
+            {
+              "facts": [
+                "e0 belongs to e1 .",
+                "e3 belongs to e2 ."
+              ],
+              "generated": "the evidence is insufficient .",
+              "reference": "the evidence is insufficient .",
+              "semantic_correct": true
+            },
+            {
+              "facts": [
+                "e1 belongs to e2 .",
+                "e0 belongs to e1 .",
+                "e4 belongs to e3 ."
+              ],
+              "generated": "the evidence is insufficient .",
+              "reference": "the evidence is insufficient .",
+              "semantic_correct": true
+            },
+            {
+              "facts": [
+                "e0 is classified as e1 .",
+                "e1 is classified as e2 ."
+              ],
+              "generated": "the evidence is insufficient .",
+              "reference": "e0 is classified as e2 .",
+              "semantic_correct": false
+            },
+            {
+              "facts": [
+                "e1 belongs to e2 .",
+                "e2 belongs to e3 .",
+                "e0 belongs to e1 ."
+              ],
+              "generated": "the evidence is insufficient .",
+              "reference": "e0 is a type of e3 .",
+              "semantic_correct": false
+            },
+            {
+              "facts": [
+                "e0 is a type of e1 .",
+                "e3 is a type of e2 ."
+              ],
+              "generated": "the evidence is insufficient .",
+              "reference": "the evidence is insufficient .",
+              "semantic_correct": true
+            },
+            {
+              "facts": [
+                "e4 belongs to e3 .",
+                "e0 belongs to e1 .",
+                "e1 belongs to e2 ."
+              ],
+              "generated": "the evidence is insufficient .",
+              "reference": "the evidence is insufficient .",
+              "semantic_correct": true
+            }
+          ],
+          "n": 2998,
+          "negative_abstention_accuracy": 1.0,
+          "seed": 17,
+          "semantic_accuracy": 0.5,
+          "valid_positive_accuracy": 0.0
+        },
+        {
+          "exact_surface_match": 0.6701134089392928,
+          "examples": [
+            {
+              "facts": [
+                "e1 belongs to e2 .",
+                "e0 belongs to e1 ."
+              ],
+              "generated": "e0 is classified as e2 .",
+              "reference": "e0 belongs to e2 .",
+              "semantic_correct": true
+            },
+            {
+              "facts": [
+                "e1 belongs to e2 .",
+                "e0 belongs to e1 .",
+                "e2 belongs to e3 ."
+              ],
+              "generated": "e0 is classified as e3 .",
+              "reference": "e0 is classified as e3 .",
+              "semantic_correct": true
+            },
+            {
+              "facts": [
+                "e0 is classified as e1 .",
+                "e3 is classified as e2 ."
+              ],
+              "generated": "the evidence is insufficient .",
+              "reference": "the evidence is insufficient .",
+              "semantic_correct": true
+            },
+            {
+              "facts": [
+                "e0 is classified as e1 .",
+                "e1 is classified as e2 .",
+                "e4 is classified as e3 ."
+              ],
+              "generated": "the evidence is insufficient .",
+              "reference": "the evidence is insufficient .",
+              "semantic_correct": true
+            },
+            {
+              "facts": [
+                "e1 is classified as e2 .",
+                "e0 is classified as e1 ."
+              ],
+              "generated": "e0 is classified as e2 .",
+              "reference": "e0 belongs to e2 .",
+              "semantic_correct": true
+            },
+            {
+              "facts": [
+                "e0 is classified as e1 .",
+                "e1 is classified as e2 .",
+                "e2 is classified as e3 ."
+              ],
+              "generated": "e0 is classified as e3 .",
+              "reference": "e0 is a type of e3 .",
+              "semantic_correct": true
+            },
+            {
+              "facts": [
+                "e0 belongs to e1 .",
+                "e3 belongs to e2 ."
+              ],
+              "generated": "the evidence is insufficient .",
+              "reference": "the evidence is insufficient .",
+              "semantic_correct": true
+            },
+            {
+              "facts": [
+                "e1 belongs to e2 .",
+                "e0 belongs to e1 .",
+                "e4 belongs to e3 ."
+              ],
+              "generated": "the evidence is insufficient .",
+              "reference": "the evidence is insufficient .",
+              "semantic_correct": true
+            },
+            {
+              "facts": [
+                "e0 is classified as e1 .",
+                "e1 is classified as e2 ."
+              ],
+              "generated": "e0 is classified as e2 .",
+              "reference": "e0 is classified as e2 .",
+              "semantic_correct": true
+            },
+            {
+              "facts": [
+                "e1 belongs to e2 .",
+                "e2 belongs to e3 .",
+                "e0 belongs to e1 ."
+              ],
+              "generated": "e0 is classified as e3 .",
+              "reference": "e0 is a type of e3 .",
+              "semantic_correct": true
+            },
+            {
+              "facts": [
+                "e0 is a type of e1 .",
+                "e3 is a type of e2 ."
+              ],
+              "generated": "the evidence is insufficient .",
+              "reference": "the evidence is insufficient .",
+              "semantic_correct": true
+            },
+            {
+              "facts": [
+                "e4 belongs to e3 .",
+                "e0 belongs to e1 .",
+                "e1 belongs to e2 ."
+              ],
+              "generated": "the evidence is insufficient .",
+              "reference": "the evidence is insufficient .",
+              "semantic_correct": true
+            }
+          ],
+          "n": 2998,
+          "negative_abstention_accuracy": 1.0,
+          "seed": 29,
+          "semantic_accuracy": 1.0,
+          "valid_positive_accuracy": 1.0
+        }
+      ]
+    },
+    "results.json": {
+      "elapsed_s": 13.358051707000413,
+      "seeds": [
+        {
+          "correct": 1499,
+          "exact": 0.5,
+          "examples": [
+            {
+              "entities": [
+                "airborne patrol",
+                "patrol",
+                "protection",
+                "activity"
+              ],
+              "generated": "the evidence is insufficient .",
+              "input": " premise : e1 belongs to e2 . next : e0 belongs to e1 . question : what is e0 relative to e2 ?",
+              "target": "e0 belongs to e2 ."
+            },
+            {
+              "entities": [
+                "airborne patrol",
+                "patrol",
+                "protection",
+                "activity"
+              ],
+              "generated": "the evidence is insufficient .",
+              "input": " premise : e1 belongs to e2 . next : e0 belongs to e1 . next : e2 belongs to e3 . question : what is e0 relative to e3 ?",
+              "target": "e0 is classified as e3 ."
+            },
+            {
+              "entities": [
+                "airborne patrol",
+                "patrol",
+                "protection",
+                "activity"
+              ],
+              "generated": "the evidence is insufficient .",
+              "input": " premise : e0 is classified as e1 . next : e3 is classified as e2 . question : what is e0 relative to e2 ?",
+              "target": "the evidence is insufficient ."
+            },
+            {
+              "entities": [
+                "airborne patrol",
+                "patrol",
+                "protection",
+                "activity"
+              ],
+              "generated": "the evidence is insufficient .",
+              "input": " premise : e0 is classified as e1 . next : e1 is classified as e2 . next : e4 is classified as e3 . question : what is e0 relative to e3 ?",
+              "target": "the evidence is insufficient ."
+            },
+            {
+              "entities": [
+                "enterobiasis",
+                "infestation",
+                "fullness",
+                "condition"
+              ],
+              "generated": "the evidence is insufficient .",
+              "input": " premise : e1 is classified as e2 . next : e0 is classified as e1 . question : what is e0 relative to e2 ?",
+              "target": "e0 belongs to e2 ."
+            }
+          ],
+          "n": 2998,
+          "nll_nats_per_token": 0.2064604942822361,
+          "parameters": 38268,
+          "seed": 17,
+          "validation_trace": [
+            {
+              "step": 1,
+              "train_loss": 3.3214163780212402,
+              "validation_loss": 3.2101666927337646
+            },
+            {
+              "step": 49,
+              "train_loss": 0.37528008222579956,
+              "validation_loss": 0.35502225160598755
+            },
+            {
+              "step": 97,
+              "train_loss": 0.25452226400375366,
+              "validation_loss": 0.2238379716873169
+            },
+            {
+              "step": 145,
+              "train_loss": 0.20604850351810455,
+              "validation_loss": 0.1893821507692337
+            }
+          ]
+        },
+        {
+          "correct": 2009,
+          "exact": 0.6701134089392928,
+          "examples": [
+            {
+              "entities": [
+                "airborne patrol",
+                "patrol",
+                "protection",
+                "activity"
+              ],
+              "generated": "e0 is classified as e2 .",
+              "input": " premise : e1 belongs to e2 . next : e0 belongs to e1 . question : what is e0 relative to e2 ?",
+              "target": "e0 belongs to e2 ."
+            },
+            {
+              "entities": [
+                "airborne patrol",
+                "patrol",
+                "protection",
+                "activity"
+              ],
+              "generated": "e0 is classified as e3 .",
+              "input": " premise : e1 belongs to e2 . next : e0 belongs to e1 . next : e2 belongs to e3 . question : what is e0 relative to e3 ?",
+              "target": "e0 is classified as e3 ."
+            },
+            {
+              "entities": [
+                "airborne patrol",
+                "patrol",
+                "protection",
+                "activity"
+              ],
+              "generated": "the evidence is insufficient .",
+              "input": " premise : e0 is classified as e1 . next : e3 is classified as e2 . question : what is e0 relative to e2 ?",
+              "target": "the evidence is insufficient ."
+            },
+            {
+              "entities": [
+                "airborne patrol",
+                "patrol",
+                "protection",
+                "activity"
+              ],
+              "generated": "the evidence is insufficient .",
+              "input": " premise : e0 is classified as e1 . next : e1 is classified as e2 . next : e4 is classified as e3 . question : what is e0 relative to e3 ?",
+              "target": "the evidence is insufficient ."
+            },
+            {
+              "entities": [
+                "enterobiasis",
+                "infestation",
+                "fullness",
+                "condition"
+              ],
+              "generated": "e0 is classified as e2 .",
+              "input": " premise : e1 is classified as e2 . next : e0 is classified as e1 . question : what is e0 relative to e2 ?",
+              "target": "e0 belongs to e2 ."
+            }
+          ],
+          "n": 2998,
+          "nll_nats_per_token": 0.09347580301527836,
+          "parameters": 38268,
+          "seed": 29,
+          "validation_trace": [
+            {
+              "step": 1,
+              "train_loss": 3.359043598175049,
+              "validation_loss": 3.252257823944092
+            },
+            {
+              "step": 49,
+              "train_loss": 0.29082363843917847,
+              "validation_loss": 0.32292085886001587
+            },
+            {
+              "step": 97,
+              "train_loss": 0.1157974898815155,
+              "validation_loss": 0.10489645600318909
+            },
+            {
+              "step": 145,
+              "train_loss": 0.09718723595142365,
+              "validation_loss": 0.08476884663105011
+            }
+          ]
+        }
+      ],
+      "splits": {
+        "test": 2998,
+        "train": 17986,
+        "validation": 2998
+      },
+      "vocab": [
+        "<pad>",
+        "<unk>",
+        "<bos>",
+        "<eos>",
+        ".",
+        ":",
+        "?",
+        "a",
+        "as",
+        "belongs",
+        "classified",
+        "e0",
+        "e1",
+        "e2",
+        "e3",
+        "e4",
+        "evidence",
+        "insufficient",
+        "is",
+        "next",
+        "of",
+        "premise",
+        "question",
+        "relative",
+        "the",
+        "to",
+        "type",
+        "what"
+      ],
+      "wordnet_synsets": 81499
+    },
+    "robust_results.json": {
+      "metrics": [
+        {
+          "kind": "connected",
+          "n": 1499,
+          "samples": [
+            {
+              "generated": "e0 is classified as e2 .",
+              "prompt": " premise : e0 is classified as e1 . next : e1 is classified as e2 . question : what is e0 relative to e2 ?",
+              "target": "e0 is classified as e2 ."
+            },
+            {
+              "generated": "e0 is classified as e3 .",
+              "prompt": " premise : e0 is a type of e1 . next : e1 is a type of e2 . next : e2 is a type of e3 . question : what is e0 relative to e3 ?",
+              "target": "e0 belongs to e3 ."
+            },
+            {
+              "generated": "e0 is classified as e2 .",
+              "prompt": " premise : e1 is a type of e2 . next : e0 is a type of e1 . question : what is e0 relative to e2 ?",
+              "target": "e0 belongs to e2 ."
+            }
+          ],
+          "semantic_accuracy": 1.0
+        },
+        {
+          "kind": "disconnected",
+          "n": 1499,
+          "samples": [
+            {
+              "generated": "the evidence is insufficient .",
+              "prompt": " premise : e0 is classified as e1 . next : e3 is classified as e2 . question : what is e0 relative to e2 ?",
+              "target": "the evidence is insufficient ."
+            },
+            {
+              "generated": "the evidence is insufficient .",
+              "prompt": " premise : e3 is a type of e2 . next : e0 is a type of e1 . question : what is e0 relative to e2 ?",
+              "target": "the evidence is insufficient ."
+            },
+            {
+              "generated": "the evidence is insufficient .",
+              "prompt": " premise : e1 belongs to e2 . next : e4 belongs to e3 . next : e0 belongs to e1 . question : what is e0 relative to e3 ?",
+              "target": "the evidence is insufficient ."
+            }
+          ],
+          "semantic_accuracy": 1.0
+        },
+        {
+          "kind": "relation_conflict",
+          "n": 1499,
+          "samples": [
+            {
+              "generated": "the evidence is insufficient .",
+              "prompt": " premise : e0 opposes e1 . next : e1 belongs to e2 . question : what is e0 relative to e2 ?",
+              "target": "the evidence is insufficient ."
+            },
+            {
+              "generated": "the evidence is insufficient .",
+              "prompt": " premise : e0 opposes e1 . next : e2 is classified as e3 . next : e1 is classified as e2 . question : what is e0 relative to e3 ?",
+              "target": "the evidence is insufficient ."
+            },
+            {
+              "generated": "the evidence is insufficient .",
+              "prompt": " premise : e1 opposes e2 . next : e0 is a type of e1 . question : what is e0 relative to e2 ?",
+              "target": "the evidence is insufficient ."
+            }
+          ],
+          "semantic_accuracy": 1.0
+        }
+      ],
+      "seconds": 9.931925552999019
+    },
+    "stress_results.json": {
+      "contradiction_wording": {
+        "first_samples": [
+          {
+            "expected": "the evidence is insufficient .",
+            "generated": "e0 is classified as e2 .",
+            "prompt": " premise : e1 opposes e2 . next : e0 opposes e1 . question : what is e0 relative to e2 ?"
+          },
+          {
+            "expected": "the evidence is insufficient .",
+            "generated": "e0 is classified as e3 .",
+            "prompt": " premise : e1 opposes e2 . next : e0 opposes e1 . next : e2 opposes e3 . question : what is e0 relative to e3 ?"
+          },
+          {
+            "expected": "the evidence is insufficient .",
+            "generated": "e0 is classified as e2 .",
+            "prompt": " premise : e1 opposes e2 . next : e0 opposes e1 . question : what is e0 relative to e2 ?"
+          }
+        ],
+        "n": 300,
+        "valid_answer_rate": 0.0
+      },
+      "four_hop_extrapolation": {
+        "first_samples": [
+          {
+            "expected": "e0 belongs to e4 .",
+            "generated": "the evidence is insufficient .",
+            "prompt": " premise : e1 belongs to e2 . next : e0 belongs to e1 . next : e2 belongs to e3 . next : e3 belongs to e4 . question : what is e0 relative to e4 ?"
+          },
+          {
+            "expected": "e0 belongs to e4 .",
+            "generated": "the evidence is insufficient .",
+            "prompt": " premise : e0 is classified as e1 . next : e1 is classified as e2 . next : e2 is classified as e3 . next : e3 belongs to e4 . question : what is e0 relative to e4 ?"
+          },
+          {
+            "expected": "e0 belongs to e4 .",
+            "generated": "the evidence is insufficient .",
+            "prompt": " premise : e1 belongs to e2 . next : e2 belongs to e3 . next : e0 belongs to e1 . next : e3 belongs to e4 . question : what is e0 relative to e4 ?"
+          }
+        ],
+        "n": 150,
+        "valid_answer_rate": 0.0
+      },
+      "in_distribution": {
+        "first_samples": [
+          {
+            "expected": "e0 belongs to e2 .",
+            "generated": "e0 is classified as e2 .",
+            "prompt": " premise : e1 belongs to e2 . next : e0 belongs to e1 . question : what is e0 relative to e2 ?"
+          },
+          {
+            "expected": "e0 is classified as e3 .",
+            "generated": "e0 is classified as e3 .",
+            "prompt": " premise : e1 belongs to e2 . next : e0 belongs to e1 . next : e2 belongs to e3 . question : what is e0 relative to e3 ?"
+          },
+          {
+            "expected": "e0 belongs to e2 .",
+            "generated": "e0 is classified as e2 .",
+            "prompt": " premise : e1 is classified as e2 . next : e0 is classified as e1 . question : what is e0 relative to e2 ?"
+          }
+        ],
+        "n": 300,
+        "valid_answer_rate": 1.0
+      },
+      "unseen_paraphrase": {
+        "first_samples": [
+          {
+            "expected": "e0 belongs to e2 .",
+            "generated": "e0 is classified as e2 .",
+            "prompt": " premise : e1 descends from e2 . next : e0 descends from e1 . question : what is e0 relative to e2 ?"
+          },
+          {
+            "expected": "e0 is classified as e3 .",
+            "generated": "e0 is classified as e3 .",
+            "prompt": " premise : e1 descends from e2 . next : e0 descends from e1 . next : e2 descends from e3 . question : what is e0 relative to e3 ?"
+          },
+          {
+            "expected": "e0 belongs to e2 .",
+            "generated": "e0 is classified as e2 .",
+            "prompt": " premise : e1 is a subclass of e2 . next : e0 is a subclass of e1 . question : what is e0 relative to e2 ?"
+          }
+        ],
+        "n": 300,
+        "valid_answer_rate": 1.0
+      }
+    }
+  },
+  "checksums": {
+    "missing": [],
+    "verified": [
+      "README.md",
+      "train.py",
+      "audit.py",
+      "stress.py",
+      "robust.py",
+      "native_episodic.cpp",
+      "results.json",
+      "audit_results.json",
+      "stress_results.json",
+      "robust_results.json",
+      "run.log",
+      "audit.log",
+      "stress.log",
+      "robust.log",
+      "seq2seq_17.pt",
+      "seq2seq_29.pt",
+      "robust_29.pt",
+      "test_examples.json"
+    ]
+  },
+  "claims": {
+    "canonical": false,
+    "nan_unique_advantage": false,
+    "neural_sequence_generation": false
+  },
+  "pure": {
+    "canonical_merge": false,
+    "composition": {
+      "accuracy": 1.0,
+      "canonical_merge": false,
+      "language_generation_claim": false,
+      "negative_abstentions": 60,
+      "negative_total": 60,
+      "positive_correct": 60,
+      "positive_total": 60,
+      "schema": "nanlm.resident-composition-gate/1"
+    },
+    "contradiction_abstentions": 180,
+    "contradiction_example": {
+      "accepted": false,
+      "answer": "I do not have enough evidence.",
+      "canonical_merge": false,
+      "path": [
+        [
+          "mopper",
+          "is a",
+          "worker"
+        ],
+        [
+          "worker",
+          "opposes",
+          "person"
+        ]
+      ],
+      "raw_answer": null,
+      "reason": "relation_conflict",
+      "schema": "nanlm.resident-composition-gate/1"
+    },
+    "cycle_read_exact": true,
+    "dimension": 32385,
+    "gate": {
+      "accepted_positive": 60,
+      "accuracy": 1.0,
+      "canonical_merge": false,
+      "false_accept": 0,
+      "false_negative": 0,
+      "negatives": 60,
+      "positives": 60,
+      "schema": "nanlm.resident-composition-gate/1"
+    },
+    "neural_sequence_generation": false,
+    "raw_read_exact": false,
+    "symbolic_four_hop": {
+      "accepted": true,
+      "answer": "a is a kind of e.",
+      "canonical_merge": false,
+      "path": [
+        [
+          "a",
+          "is a",
+          "b"
+        ],
+        [
+          "b",
+          "is a",
+          "c"
+        ],
+        [
+          "c",
+          "is a",
+          "d"
+        ],
+        [
+          "d",
+          "is a",
+          "e"
+        ]
+      ],
+      "raw_answer": null,
+      "reason": "linked",
+      "schema": "nanlm.resident-composition-gate/1"
+    }
+  },
+  "schema": "nanlm.round036-robust-audit/1"
+}

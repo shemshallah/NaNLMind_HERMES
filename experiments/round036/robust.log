@@ -1,0 +1,14 @@
+MODEL 17 0.5 0.0 1.0
+MODEL 29 1.0 1.0 1.0
+NATIVE {'root_size_bytes': 8388608, 'test_cases': 90, 'pristine_root_sha256': '38222e0bd0848941660bbfc87bd68de1249d3d6db047cf1fadfa9bce47e96773', 'cycle_exact_prompt_recovery': 1.0, 'raw_exact_prompt_recovery': 0.0, 'cycle_generation_unchanged': 1.0, 'raw_generation_unchanged': 0.0, 'cycle_semantic_accuracy': 1.0, 'raw_semantic_accuracy': 0.0, 'conventional_memory_prompt_recovery': 1.0, 'conventional_generation_unchanged': 1.0}
+data {'train': 26979, 'validation': 4497, 'test': 4497} vocab 29
+1 train 3.3716 val 3.2535
+46 train 0.4736 val 0.3618
+91 train 0.167 val 0.1466
+136 train 0.1668 val 0.1226
+181 train 0.076 val 0.0644
+226 train 0.0708 val 0.0662
+270 train 0.0586 val 0.0649
+connected 1499 1.0
+disconnected 1499 1.0
+relation_conflict 1499 1.0

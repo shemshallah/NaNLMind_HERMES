@@ -1,0 +1,179 @@
+{
+  "artifact": {
+    "recursive": {
+      "broken_path_negatives": 60,
+      "episodes": 120,
+      "examples": [
+        {
+          "expected": "aura is a kind of information.",
+          "facts": [
+            [
+              "aura",
+              "symptom"
+            ],
+            [
+              "symptom",
+              "evidence"
+            ],
+            [
+              "evidence",
+              "information"
+            ]
+          ],
+          "generated": "aura is a kind of information."
+        },
+        {
+          "expected": "I do not have enough evidence.",
+          "facts": [
+            [
+              "rocket firing",
+              "launching"
+            ],
+            [
+              "launching",
+              "propulsion"
+            ],
+            [
+              "trotting horse",
+              "racehorse"
+            ]
+          ],
+          "generated": "I do not have enough evidence."
+        }
+      ],
+      "native_cycle_exact_answers": 120,
+      "negative_abstentions": 60,
+      "note": "A deterministic typed-path interpreter, not a trained 3-hop neural generalizer. Negative cases are constructed by replacing the third source edge.",
+      "positive_correct": 60,
+      "raw_edge_exact_answers": 60,
+      "real_wordnet_three_hop_positives": 60,
+      "slots_used": 28800
+    },
+    "results": {
+      "conventional_two_source_composition": {
+        "correct": 900,
+        "total": 900
+      },
+      "eligible_two_hop_child_disjoint_chains": 81564,
+      "examples_total": 6000,
+      "interpretation": "Template-and-pointer generative composition, not free-form fluent generation. Geometric advantage is gauge invariance; conventional invariant/indexed control ties.",
+      "learned_token_level_mixture_gate": [
+        {
+          "seed": 17,
+          "target_bits_per_byte_mixture": 0.001261323907882039,
+          "test_accuracy": 1.0,
+          "test_binary_cross_entropy": 0.0008711571572348475,
+          "test_examples": 900,
+          "train_examples": 4200,
+          "validation_examples": 900
+        },
+        {
+          "seed": 29,
+          "target_bits_per_byte_mixture": 0.001299273022164781,
+          "test_accuracy": 1.0,
+          "test_binary_cross_entropy": 0.0008997628465294838,
+          "test_examples": 900,
+          "train_examples": 4200,
+          "validation_examples": 900
+        },
+        {
+          "seed": 41,
+          "target_bits_per_byte_mixture": 0.0014652099236055365,
+          "test_accuracy": 1.0,
+          "test_binary_cross_entropy": 0.0010121844243258238,
+          "test_examples": 900,
+          "train_examples": 4200,
+          "validation_examples": 900
+        }
+      ],
+      "native": {
+        "cycle_composed_answers_correct": 80,
+        "episodes": 80,
+        "native_pair_slots_used": 11200,
+        "raw_single_edge_answers_correct": 5,
+        "root_size_bytes": 8388608
+      },
+      "runtime_seconds": 5.29,
+      "second_source_removed": {
+        "correct": 450,
+        "total": 900
+      },
+      "source": "WordNet 3.1 data.noun in user-supplied archive",
+      "synsets": 82192
+    }
+  },
+  "checksums": {
+    "missing": [],
+    "verified": [
+      "README.md",
+      "experiment.py",
+      "gate_17.pt",
+      "gate_29.pt",
+      "gate_41.pt",
+      "native_episodic.cpp",
+      "recursive_results.json",
+      "recursive_test.py",
+      "results.json",
+      "run.log"
+    ]
+  },
+  "claims": {
+    "canonical": false,
+    "language_model_win": false,
+    "nan_unique_advantage": false
+  },
+  "pure": {
+    "broken_abstained": true,
+    "canonical_merge": false,
+    "composition": {
+      "accuracy": 1.0,
+      "canonical_merge": false,
+      "language_generation_claim": false,
+      "negative_abstentions": 40,
+      "negative_total": 40,
+      "positive_correct": 40,
+      "positive_total": 40,
+      "schema": "nanlm.resident-composition-gate/1"
+    },
+    "cycle_read_exact": true,
+    "cycle_three_hop": {
+      "accepted": true,
+      "answer": "aura is a kind of information.",
+      "canonical_merge": false,
+      "path": [
+        [
+          "aura",
+          "is a",
+          "symptom"
+        ],
+        [
+          "symptom",
+          "is a",
+          "evidence"
+        ],
+        [
+          "evidence",
+          "is a",
+          "information"
+        ]
+      ],
+      "raw_answer": null,
+      "reason": "linked",
+      "schema": "nanlm.resident-composition-gate/1"
+    },
+    "dimension": 32385,
+    "gate": {
+      "accepted_positive": 40,
+      "accuracy": 1.0,
+      "canonical_merge": false,
+      "false_accept": 0,
+      "false_negative": 0,
+      "negatives": 40,
+      "positives": 40,
+      "schema": "nanlm.resident-composition-gate/1"
+    },
+    "language_generation_claim": false,
+    "raw_read_exact": false
+  },
+  "schema": "nanlm.round035-composition-audit/1"
+}

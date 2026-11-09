@@ -1,0 +1,146 @@
+{
+  "17": {
+    "learned_router": {
+      "accept_accuracy": 0.9933333333333333,
+      "positive_accept": 0.9966666666666667,
+      "negative_reject": 0.99,
+      "exact_grounded_completion": 0.49333333333333335,
+      "false_answer_rate": 0.005,
+      "f1": 0.9933554817275747,
+      "n": 600
+    },
+    "edit_distance": {
+      "accept_accuracy": 0.9883333333333333,
+      "positive_accept": 1.0,
+      "negative_reject": 0.9766666666666667,
+      "exact_grounded_completion": 0.49333333333333335,
+      "false_answer_rate": 0.011666666666666667,
+      "f1": 0.9884678747940692,
+      "n": 600
+    },
+    "cosine_confidence": {
+      "accept_accuracy": 0.9183333333333333,
+      "positive_accept": 0.9066666666666666,
+      "negative_reject": 0.93,
+      "exact_grounded_completion": 0.44666666666666666,
+      "false_answer_rate": 0.035,
+      "f1": 0.9173693086003373,
+      "n": 600
+    },
+    "thresholds": {
+      "learned": 0.44,
+      "edit": 0.43,
+      "cosine": 0.785
+    },
+    "forced_copy": {
+      "exact_grounded_completion": 0.49333333333333335,
+      "false_answer_rate": 0.5
+    },
+    "native": {
+      "episodes": 60,
+      "accepted": 30,
+      "positive": 30,
+      "native_exact": 30,
+      "plain_index_exact": 30,
+      "raw_exact": 0,
+      "false_accept": 0,
+      "root_bytes": 8388608
+    }
+  },
+  "29": {
+    "learned_router": {
+      "accept_accuracy": 0.995,
+      "positive_accept": 0.9966666666666667,
+      "negative_reject": 0.9933333333333333,
+      "exact_grounded_completion": 0.49166666666666664,
+      "false_answer_rate": 0.0033333333333333335,
+      "f1": 0.9950083194675541,
+      "n": 600
+    },
+    "edit_distance": {
+      "accept_accuracy": 0.98,
+      "positive_accept": 0.9633333333333334,
+      "negative_reject": 0.9966666666666667,
+      "exact_grounded_completion": 0.47333333333333333,
+      "false_answer_rate": 0.0016666666666666668,
+      "f1": 0.9796610169491525,
+      "n": 600
+    },
+    "cosine_confidence": {
+      "accept_accuracy": 0.925,
+      "positive_accept": 0.9333333333333333,
+      "negative_reject": 0.9166666666666666,
+      "exact_grounded_completion": 0.46166666666666667,
+      "false_answer_rate": 0.041666666666666664,
+      "f1": 0.9256198347107438,
+      "n": 600
+    },
+    "thresholds": {
+      "learned": 0.485,
+      "edit": 0.54,
+      "cosine": 0.77
+    },
+    "forced_copy": {
+      "exact_grounded_completion": 0.49166666666666664,
+      "false_answer_rate": 0.5
+    },
+    "native": {
+      "episodes": 60,
+      "accepted": 29,
+      "positive": 30,
+      "native_exact": 29,
+      "plain_index_exact": 29,
+      "raw_exact": 0,
+      "false_accept": 0,
+      "root_bytes": 8388608
+    }
+  },
+  "41": {
+    "learned_router": {
+      "accept_accuracy": 0.9816666666666667,
+      "positive_accept": 0.9733333333333334,
+      "negative_reject": 0.99,
+      "exact_grounded_completion": 0.48333333333333334,
+      "false_answer_rate": 0.005,
+      "f1": 0.9815126050420168,
+      "n": 600
+    },
+    "edit_distance": {
+      "accept_accuracy": 0.9766666666666667,
+      "positive_accept": 0.9533333333333334,
+      "negative_reject": 1.0,
+      "exact_grounded_completion": 0.4683333333333333,
+      "false_answer_rate": 0.0,
+      "f1": 0.9761092150170648,
+      "n": 600
+    },
+    "cosine_confidence": {
+      "accept_accuracy": 0.9166666666666666,
+      "positive_accept": 0.8733333333333333,
+      "negative_reject": 0.96,
+      "exact_grounded_completion": 0.43666666666666665,
+      "false_answer_rate": 0.02,
+      "f1": 0.9128919860627178,
+      "n": 600
+    },
+    "thresholds": {
+      "learned": 0.5,
+      "edit": 0.56,
+      "cosine": 0.76
+    },
+    "forced_copy": {
+      "exact_grounded_completion": 0.48833333333333334,
+      "false_answer_rate": 0.5
+    },
+    "native": {
+      "episodes": 60,
+      "accepted": 30,
+      "positive": 30,
+      "native_exact": 30,
+      "plain_index_exact": 30,
+      "raw_exact": 0,
+      "false_accept": 0,
+      "root_bytes": 8388608
+    }
+  }
+}

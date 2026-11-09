@@ -1,0 +1,32 @@
+{
+  "17": {
+    "episodes": 90,
+    "bytes": 2160,
+    "lm_only_bpb": 3.60888772893835,
+    "cycle_hybrid_bpb": 0.18297396075946312,
+    "conventional_index_hybrid_bpb": 0.18297396075946312,
+    "accepted_queries": 89,
+    "correct_retrieved": 88,
+    "note": "Mixture is supervised by a learned open-set router; source bytes are copied, not generated autonomously."
+  },
+  "29": {
+    "episodes": 90,
+    "bytes": 2160,
+    "lm_only_bpb": 3.6645858764648436,
+    "cycle_hybrid_bpb": 0.44815594018609434,
+    "conventional_index_hybrid_bpb": 0.44815594018609434,
+    "accepted_queries": 87,
+    "correct_retrieved": 84,
+    "note": "Mixture is supervised by a learned open-set router; source bytes are copied, not generated autonomously."
+  },
+  "41": {
+    "episodes": 90,
+    "bytes": 2160,
+    "lm_only_bpb": 3.598170953326755,
+    "cycle_hybrid_bpb": 0.2320803987759131,
+    "conventional_index_hybrid_bpb": 0.2320803987759131,
+    "accepted_queries": 87,
+    "correct_retrieved": 86,
+    "note": "Mixture is supervised by a learned open-set router; source bytes are copied, not generated autonomously."
+  }
+}

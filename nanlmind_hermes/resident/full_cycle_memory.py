@@ -68,6 +68,8 @@ __all__ = (
     "CYCLE_COUNT",
     "DIMENSION",
     "BASIS_SIZE",
+    "FULL_BASIS_COUNT",
+    "FULL_BASIS_CYCLES",
     "ROOT_CYCLE_COUNT",
     "PAIR_COUNT",
     "WORD_BITS",
@@ -93,13 +95,18 @@ __all__ = (
     "FullCycleFeatureError",
     "FullCycleBackendError",
     "cycle_row_start",
+    "row_start",
     "cycle_index",
     "cycle_pair",
     "index_of",
+    "index_for_pair",
     "pair_of_index",
+    "pair_for_index",
+    "pair_from_index",
     "index_to_pair",
     "pair_to_index",
     "iter_cycle_pairs",
+    "iter_pairs",
     "signed_word",
     "word_from_signed",
     "FullCycleMemory",
@@ -118,6 +125,8 @@ assert FULL_CYCLE_COUNT == (HEAD_COUNT - 1) * (HEAD_COUNT - 2) // 2
 CYCLE_COUNT = FULL_CYCLE_COUNT
 DIMENSION = FULL_CYCLE_COUNT
 BASIS_SIZE = FULL_CYCLE_COUNT
+FULL_BASIS_COUNT = FULL_CYCLE_COUNT
+FULL_BASIS_CYCLES = FULL_CYCLE_COUNT
 ROOT_CYCLE_COUNT = FULL_CYCLE_COUNT
 
 I32_MIN = -(1 << 31)
@@ -288,8 +297,12 @@ def cycle_pair(index) -> tuple[int, int]:
 
 
 # Stable common spellings, all exact and exhaustive over the same dense basis.
+row_start = cycle_row_start
 index_of = cycle_index
+index_for_pair = cycle_index
 pair_of_index = cycle_pair
+pair_for_index = cycle_pair
+pair_from_index = cycle_pair
 index_to_pair = cycle_pair
 pair_to_index = cycle_index
 
@@ -299,6 +312,9 @@ def iter_cycle_pairs():
     for first in range(CYCLE_HEAD_MIN, CYCLE_HEAD_MAX):
         for second in range(first + 1, CYCLE_HEAD_MAX + 1):
             yield first, second
+
+
+iter_pairs = iter_cycle_pairs
 
 
 # ---------------------------------------------------------------------------
@@ -420,12 +436,13 @@ class Occupancy(int):
 # ---------------------------------------------------------------------------
 # feature-vector coercion (dense or sparse, integer only)
 # ---------------------------------------------------------------------------
-def _feature_key(key) -> tuple[int, int]:
+def _feature_key(key) -> tuple[tuple[int, int], int]:
+    """Return ``((i, j), orientation_sign)`` for a feature key."""
     if isinstance(key, bool):
         raise FullCycleFeatureError(
             "feature key may not be a bool: %r" % (key,))
     if isinstance(key, int):
-        return cycle_pair(key)
+        return cycle_pair(key), 1
     if isinstance(key, (str, bytes, bytearray, memoryview)):
         raise FullCycleFeatureError(
             "feature key must be an index or an (i, j) pair, not text")
@@ -445,7 +462,8 @@ def _feature_key(key) -> tuple[int, int]:
     if not isinstance(first, int) or not isinstance(second, int):
         raise FullCycleFeatureError(
             "feature key heads must be integers: %r" % (key,))
-    return _check_cycle_pair(first, second, "feature i", "feature j")
+    sign = -1 if first > second else 1
+    return _check_cycle_pair(first, second, "feature i", "feature j"), sign
 
 
 def _mapping_key(key) -> tuple[int, bool]:
@@ -490,8 +508,8 @@ def _append_feature(entries: dict, key, value) -> None:
         raise FullCycleOverflowError(
             "feature value must fit a signed 32-bit coefficient [%d, %d]: %r"
             % (I32_MIN, I32_MAX, value))
-    pair = _feature_key(key)
-    entries[pair] = entries.get(pair, 0) + value
+    pair, sign = _feature_key(key)
+    entries[pair] = entries.get(pair, 0) + sign * value
 
 
 def _coerce_features(features) -> list[tuple[tuple[int, int], int]]:
@@ -526,15 +544,19 @@ def _coerce_features(features) -> list[tuple[tuple[int, int], int]]:
                 % (2 * FULL_CYCLE_COUNT))
         items.append(item)
 
-    if len(items) == FULL_CYCLE_COUNT:
-        if all(not isinstance(item, bool) and isinstance(item, int)
-               for item in items):
-            dense = []
-            for index, value in enumerate(items):
-                _check_signed(value, "features[%d]" % index)
-                if value:
-                    dense.append((cycle_pair(index), value))
-            return dense
+    all_integers = all(not isinstance(item, bool) and isinstance(item, int)
+                       for item in items)
+    if len(items) == FULL_CYCLE_COUNT and all_integers:
+        dense = []
+        for index, value in enumerate(items):
+            _check_signed(value, "features[%d]" % index)
+            if value:
+                dense.append((cycle_pair(index), value))
+        return dense
+    if all_integers and items:
+        raise FullCycleDimensionError(
+            "a dense feature vector must contain exactly %d integers, got %d"
+            % (FULL_CYCLE_COUNT, len(items)))
 
     if len(items) == 0:
         return []
@@ -569,6 +591,8 @@ class FullCycleMemory:
     pair_count = PAIR_COUNT
     dimension = FULL_CYCLE_COUNT
     cycle_count = FULL_CYCLE_COUNT
+    full_cycle_count = FULL_CYCLE_COUNT
+    basis_size = FULL_CYCLE_COUNT
     root = ROOT_HEAD
 
     def __init__(self, cells):
@@ -732,6 +756,15 @@ class FullCycleMemory:
                     % (head, forward, reverse))
         return 2 * ROOT_EDGE_COUNT
 
+    def _check_root_heads(self, *heads) -> None:
+        for head in dict.fromkeys(heads):
+            forward = self._field.get_oriented(ROOT_HEAD, head)
+            reverse = self._field.get_oriented(head, ROOT_HEAD)
+            if forward or reverse:
+                raise FullCycleRootError(
+                    "root edge (0, %d) conflict: %08x/%08x"
+                    % (head, forward, reverse))
+
     # -- public dense-basis access ------------------------------------
     def index(self, i, j) -> int:
         """Dense index of a cycle pair (same as :func:`cycle_index`)."""
@@ -790,6 +823,7 @@ class FullCycleMemory:
                 "a cycle needs two distinct non-root heads: (%r, %r)"
                 % (first, second))
         value = _check_word(word)
+        self._check_root_heads(first, second)
         oriented = value if first < second else (-value) & WORD_MASK
         self._write_index(cycle_index(first, second), oriented)
         return value
@@ -937,7 +971,8 @@ class FullCycleMemory:
                 values = self._coerce_full_mapping(words)
             else:
                 values = self._coerce_full_sequence(words)
-        # All input is now checked.  Write canonical pairs in index order.
+        # All input is now checked.  Root edges must still be canonical.
+        self.validate_root_edges()
         for index, word in enumerate(values):
             self._write_index(index, word)
         return len(values)
@@ -978,6 +1013,7 @@ class FullCycleMemory:
         target_value = _check_signed(target, "target")
         learning_rate = _check_signed(lr, "lr")
         entries = _coerce_features(features)
+        self.validate_root_edges()
         prediction = 0
         for pair, value in entries:
             if value:
@@ -992,6 +1028,8 @@ class FullCycleMemory:
             index = cycle_index(*pair)
             current = signed_word(self._read_index(index))
             delta = learning_rate * error * value
+            if delta == 0:
+                continue
             if not I32_MIN <= delta <= I32_MAX:
                 raise FullCycleOverflowError(
                     "gradient delta %d for cycle %d does not fit i32"
@@ -1042,6 +1080,8 @@ class FullCycleMemory:
              self._field.get_oriented(ROOT_HEAD, head),
              self._field.get_oriented(head, ROOT_HEAD))
             for head in range(CYCLE_HEAD_MIN, CYCLE_HEAD_MAX + 1))
+        pairs = tuple(iter_cycle_pairs())
+        word_map = MappingProxyType(dict(zip(pairs, words)))
         occupied = sum(1 for word in words if word)
         return MappingProxyType({
             "schema": SCHEMA,
@@ -1058,7 +1098,10 @@ class FullCycleMemory:
             "occupancy": Occupancy(occupied),
             "words": words,
             "cycles": cycles,
-            "pairs": tuple(iter_cycle_pairs()),
+            "root_cycles": cycles,
+            "pairs": pairs,
+            "word_map": word_map,
+            "word_by_pair": word_map,
             "root_edges": root_edges,
         })
 
@@ -1190,18 +1233,23 @@ class FullCycleMemory:
             "dimension": FULL_CYCLE_COUNT,
             "dimension_ok": dimension_ok,
             "cycle_count": FULL_CYCLE_COUNT,
+            "word_bits": WORD_BITS,
+            "pairs_checked": cycles_checked,
             "cycles_checked": cycles_checked,
             "cycles_ok": cycles_ok,
             "nonzero_cycles": nonzero_cycles,
+            "occupied": nonzero_cycles,
             "occupancy": Occupancy(nonzero_cycles) if full
             else Occupancy(self.occupancy),
             "root_edge_count": ROOT_EDGE_COUNT,
             "root_edges_checked": root_edges_checked,
             "root_conflicts": root_conflicts,
             "root_ok": roots_ok,
+            "root_zero": roots_ok,
             "mirror_checked": mirror_checked,
             "mirror_mismatches": mirror_mismatches,
             "mirror_ok": mirror_ok,
+            "mirror_antisymmetry": mirror_ok,
             "head_identity_ok": head_identity_ok,
             "pair_identity_checked": pair_identity_checked,
             "pair_identity_ok": pair_identity_ok,
@@ -1209,4 +1257,6 @@ class FullCycleMemory:
             "problems": tuple(problems),
             "problem_codes": tuple(problem_codes),
             "full_scan": bool(full),
+            "no_float": True,
+            "integer_words_only": True,
         })

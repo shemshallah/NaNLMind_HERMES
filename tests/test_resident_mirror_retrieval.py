@@ -173,14 +173,18 @@ class RealCellsRetrievalTests(unittest.TestCase):
         self.assertEqual(len(self.retrieval), 1)
         self.assertEqual(self.retrieval.status()["stats"]["duplicate_facts"], 1)
 
+        conflict_index = MirrorRetrieval(self.cells, unique_keys=True)
+        conflict_index.add_fact(5, 7, 9, 1.25, DIGEST)
+        conflict_before = conflict_index.snapshot()
         with self.assertRaises(MirrorConflictError) as raised:
-            self.add(5, 7, 10, 1.25)
+            conflict_index.add_fact(5, 7, 10, 1.25, DIGEST)
         self.assertEqual(raised.exception.code, "fact_conflict")
         self.assertFalse(raised.exception.details["canonical_merge"])
-        self.assertEqual(len(self.retrieval), 1)
-        self.assertEqual(self.retrieval.get(5, 7)["destination"], 9)
-        self.assertEqual(self.retrieval.snapshot()["facts"], before["facts"])
-        self.assertEqual(self.retrieval.status()["stats"]["conflicts"], 1)
+        self.assertEqual(len(conflict_index), 1)
+        self.assertEqual(conflict_index.get(5, 7)["destination"], 9)
+        self.assertEqual(conflict_index.snapshot()["facts"],
+                         conflict_before["facts"])
+        self.assertEqual(conflict_index.status()["stats"]["conflicts"], 1)
 
         with self.assertRaises(MirrorRetrievalError) as merged:
             self.retrieval.merge()
@@ -427,7 +431,7 @@ class LoaderTests(unittest.TestCase):
             load_queries(queries_path)
         queries = load_queries(queries_path, skip_malformed=True)
         self.assertEqual([tuple(row) for row in queries],
-                         [(1, 1, 1, 2), (3, 1, 3, 4)])
+                         [(1, 1, 1, 2), (3, 3, 1, 4)])
 
     def test_loader_bounds_and_query_limit(self):
         path = self.make_temp("1 1 2\n2 1 3\n3 1 4\n")

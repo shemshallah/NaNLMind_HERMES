@@ -1,0 +1,215 @@
+{
+  "wordnet_synsets": 81499,
+  "splits": {
+    "train": 17986,
+    "validation": 2998,
+    "test": 2998
+  },
+  "vocab": [
+    "<pad>",
+    "<unk>",
+    "<bos>",
+    "<eos>",
+    ".",
+    ":",
+    "?",
+    "a",
+    "as",
+    "belongs",
+    "classified",
+    "e0",
+    "e1",
+    "e2",
+    "e3",
+    "e4",
+    "evidence",
+    "insufficient",
+    "is",
+    "next",
+    "of",
+    "premise",
+    "question",
+    "relative",
+    "the",
+    "to",
+    "type",
+    "what"
+  ],
+  "seeds": [
+    {
+      "exact": 0.5,
+      "correct": 1499,
+      "n": 2998,
+      "nll_nats_per_token": 0.2064604942822361,
+      "examples": [
+        {
+          "input": " premise : e1 belongs to e2 . next : e0 belongs to e1 . question : what is e0 relative to e2 ?",
+          "target": "e0 belongs to e2 .",
+          "generated": "the evidence is insufficient .",
+          "entities": [
+            "airborne patrol",
+            "patrol",
+            "protection",
+            "activity"
+          ]
+        },
+        {
+          "input": " premise : e1 belongs to e2 . next : e0 belongs to e1 . next : e2 belongs to e3 . question : what is e0 relative to e3 ?",
+          "target": "e0 is classified as e3 .",
+          "generated": "the evidence is insufficient .",
+          "entities": [
+            "airborne patrol",
+            "patrol",
+            "protection",
+            "activity"
+          ]
+        },
+        {
+          "input": " premise : e0 is classified as e1 . next : e3 is classified as e2 . question : what is e0 relative to e2 ?",
+          "target": "the evidence is insufficient .",
+          "generated": "the evidence is insufficient .",
+          "entities": [
+            "airborne patrol",
+            "patrol",
+            "protection",
+            "activity"
+          ]
+        },
+        {
+          "input": " premise : e0 is classified as e1 . next : e1 is classified as e2 . next : e4 is classified as e3 . question : what is e0 relative to e3 ?",
+          "target": "the evidence is insufficient .",
+          "generated": "the evidence is insufficient .",
+          "entities": [
+            "airborne patrol",
+            "patrol",
+            "protection",
+            "activity"
+          ]
+        },
+        {
+          "input": " premise : e1 is classified as e2 . next : e0 is classified as e1 . question : what is e0 relative to e2 ?",
+          "target": "e0 belongs to e2 .",
+          "generated": "the evidence is insufficient .",
+          "entities": [
+            "enterobiasis",
+            "infestation",
+            "fullness",
+            "condition"
+          ]
+        }
+      ],
+      "seed": 17,
+      "validation_trace": [
+        {
+          "step": 1,
+          "train_loss": 3.3214163780212402,
+          "validation_loss": 3.2101666927337646
+        },
+        {
+          "step": 49,
+          "train_loss": 0.37528008222579956,
+          "validation_loss": 0.35502225160598755
+        },
+        {
+          "step": 97,
+          "train_loss": 0.25452226400375366,
+          "validation_loss": 0.2238379716873169
+        },
+        {
+          "step": 145,
+          "train_loss": 0.20604850351810455,
+          "validation_loss": 0.1893821507692337
+        }
+      ],
+      "parameters": 38268
+    },
+    {
+      "exact": 0.6701134089392928,
+      "correct": 2009,
+      "n": 2998,
+      "nll_nats_per_token": 0.09347580301527836,
+      "examples": [
+        {
+          "input": " premise : e1 belongs to e2 . next : e0 belongs to e1 . question : what is e0 relative to e2 ?",
+          "target": "e0 belongs to e2 .",
+          "generated": "e0 is classified as e2 .",
+          "entities": [
+            "airborne patrol",
+            "patrol",
+            "protection",
+            "activity"
+          ]
+        },
+        {
+          "input": " premise : e1 belongs to e2 . next : e0 belongs to e1 . next : e2 belongs to e3 . question : what is e0 relative to e3 ?",
+          "target": "e0 is classified as e3 .",
+          "generated": "e0 is classified as e3 .",
+          "entities": [
+            "airborne patrol",
+            "patrol",
+            "protection",
+            "activity"
+          ]
+        },
+        {
+          "input": " premise : e0 is classified as e1 . next : e3 is classified as e2 . question : what is e0 relative to e2 ?",
+          "target": "the evidence is insufficient .",
+          "generated": "the evidence is insufficient .",
+          "entities": [
+            "airborne patrol",
+            "patrol",
+            "protection",
+            "activity"
+          ]
+        },
+        {
+          "input": " premise : e0 is classified as e1 . next : e1 is classified as e2 . next : e4 is classified as e3 . question : what is e0 relative to e3 ?",
+          "target": "the evidence is insufficient .",
+          "generated": "the evidence is insufficient .",
+          "entities": [
+            "airborne patrol",
+            "patrol",
+            "protection",
+            "activity"
+          ]
+        },
+        {
+          "input": " premise : e1 is classified as e2 . next : e0 is classified as e1 . question : what is e0 relative to e2 ?",
+          "target": "e0 belongs to e2 .",
+          "generated": "e0 is classified as e2 .",
+          "entities": [
+            "enterobiasis",
+            "infestation",
+            "fullness",
+            "condition"
+          ]
+        }
+      ],
+      "seed": 29,
+      "validation_trace": [
+        {
+          "step": 1,
+          "train_loss": 3.359043598175049,
+          "validation_loss": 3.252257823944092
+        },
+        {
+          "step": 49,
+          "train_loss": 0.29082363843917847,
+          "validation_loss": 0.32292085886001587
+        },
+        {
+          "step": 97,
+          "train_loss": 0.1157974898815155,
+          "validation_loss": 0.10489645600318909
+        },
+        {
+          "step": 145,
+          "train_loss": 0.09718723595142365,
+          "validation_loss": 0.08476884663105011
+        }
+      ],
+      "parameters": 38268
+    }
+  ],
+  "elapsed_s": 13.358051707000413
+}

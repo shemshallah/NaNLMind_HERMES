@@ -12,3 +12,7 @@ recursive-include experiments/round029 *.md *.py *.cpp *.json
 recursive-include experiments/round030 *.md *.py *.cpp *.json *.bin
 recursive-include experiments/round031 *.md *.py *.cpp *.json *.bin *.pt *.log
 recursive-include experiments/round032 *.md *.py *.cpp *.json *.tsv
+recursive-include experiments/round033 *.md *.py *.cpp *.json *.bin *.pt *.log *.tsv
+recursive-include experiments/round034 *.md *.py *.cpp *.json *.bin *.pt *.log *.tsv
+recursive-include experiments/round035 *.md *.py *.cpp *.json *.bin *.pt *.log *.tsv
+recursive-include experiments/round036 *.md *.py *.cpp *.json *.bin *.pt *.log
