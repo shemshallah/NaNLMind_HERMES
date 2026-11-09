@@ -112,7 +112,10 @@ COMPOSE_PREDICATE = hashlib.sha256(
 FULL_CYCLE_COUNT = (DEFAULT_NODES - 1) * (DEFAULT_NODES - 2) // 2  # 32,385
 ROOT = DEFAULT_ROOT
 ROOT_HEAD = DEFAULT_ROOT
+CYCLE_HEAD_MIN = 1
+CYCLE_HEAD_MAX = DEFAULT_NODES - 1
 CYCLE_HEAD_COUNT = DEFAULT_NODES - 1
+ROOT_EDGE_COUNT = DEFAULT_NODES - 1
 CYCLE_COUNT = FULL_CYCLE_COUNT
 DIMENSION = FULL_CYCLE_COUNT
 BASIS_SIZE = FULL_CYCLE_COUNT
@@ -1146,7 +1149,10 @@ class FullCycleHypergraph:
     def attached_cycle_count(self) -> int:
         return self._scan_cycles(validate=False)["attached_cycle_count"]
 
-    cycle_count = attached_cycle_count
+    @property
+    def cycle_count(self) -> int:
+        """Full cycle-space dimension (32,385 for the default graph)."""
+        return self.full_cycle_count
 
     @property
     def generation(self) -> int | None:
@@ -3217,6 +3223,15 @@ class FullCycleHypergraph:
                 concept_ids.extend(link["concept_ids"])
                 parent_ids.extend(link["parent_ids"])
             if include_parents:
+                for ancestor in self._concept_ancestors(concept_ref)[:limit]:
+                    if ancestor in concept_ids:
+                        continue
+                    concept_ids.append(ancestor)
+                    members.append({
+                        "kind": "concept", "kind_code": MEMBER_CONCEPT,
+                        "id": ancestor.hex(), "concept_id": ancestor.hex(),
+                        "leaf_id": ancestor.hex(), "role": "ancestor",
+                    })
                 for parent_id in list(dict.fromkeys(parent_ids)):
                     parent_view = self._get_hyperedge(parent_id)
                     if parent_view is None:
@@ -3920,7 +3935,8 @@ __all__ = (
     "DEFAULT_LINK_LIMIT", "MAX_NEIGHBOR_HOPS", "MAX_NEIGHBOR_LIMIT",
     "MAX_SNAPSHOT_LIMIT", "MAX_AUDIT_LIMIT", "MAX_PROBLEMS",
     "MAX_PARENT_DEPTH", "VALUE_BYTES", "FULL_CYCLE_COUNT", "ROOT",
-    "ROOT_HEAD", "CYCLE_HEAD_COUNT", "CYCLE_COUNT", "DIMENSION",
+    "ROOT_HEAD", "CYCLE_HEAD_MIN", "CYCLE_HEAD_MAX", "CYCLE_HEAD_COUNT",
+    "ROOT_EDGE_COUNT", "CYCLE_COUNT", "DIMENSION",
     "BASIS_SIZE", "ROOT_CYCLE_COUNT", "full_cycle_count", "MEMBER_LEAF",
     "MEMBER_PAIR", "MEMBER_CYCLE", "MEMBER_VALUE", "MEMBER_HEAD",
     "MEMBER_VERTEX", "MEMBER_PAYLOAD", "MEMBER_CONCEPT", "MEMBER_PARENT",
