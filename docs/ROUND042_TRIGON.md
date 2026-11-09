@@ -149,8 +149,8 @@ only described in the archive:
   JSON-safe save/load.
 - `resident/universe.py` exposes `evidence_lanes()` and `evidence_session()`;
   the session survives universe reopen.
-- `nanlm_resident_evidence` exposes `status/state/ask/tell/save/load` as a
-  plugin tool; writes require `training:execute` and `approved=true`.
+- `nanlm_resident_evidence` exposes `status/state/ask/tell/delete/save/load`
+  as a plugin tool; writes require `training:execute` and `approved=true`.
 - `ConventionalEvidence` is the indexed four-state control. It ties the
   geometric path on clean records by design.
 - Deletion zeroes the record run and restore rewrites it. Both accept an
