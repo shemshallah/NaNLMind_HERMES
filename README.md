@@ -5,7 +5,7 @@ learning, explicit native training, durable mathematical memory, and approved
 CLOCKED evidence plans. Training and inference stay local; NANNET is the
 identity/authorization boundary and CLOCKED is an evidence service.
 
-**Version 1.3.2 — catalog submission pending.**
+**Version 1.5.1 — upstream catalog PR #150755 pending maintainer re-review.**
 
 ## What it does
 
@@ -135,7 +135,7 @@ Secrets are declared in `plugin.yaml` and read only through Hermes:
 | `/nanlm status` | state, memory, and native-run status |
 | `/nanlm help` | usage |
 
-All 34 registered tools, their schemas, and their approval/scope requirements
+All 64 registered tools, their schemas, and their approval/scope requirements
 are listed in [docs/TOOLS_REFERENCE.md](docs/TOOLS_REFERENCE.md).
 
 ## Training
@@ -167,6 +167,37 @@ The token must be a scoped participant credential (`clu_...`), not the
 privileged upstream CLOCKED API key. See
 [docs/CLOCKED_AUTONOMOUS_HEAD_CORTEX.md](docs/CLOCKED_AUTONOMOUS_HEAD_CORTEX.md).
 
+## Catalog security and human approvals
+
+The local native `nanlm-universal` process runs with an explicit, minimal
+environment (`PATH`, `HOME`, `LANG` and, when set, `LC_ALL` and
+`TMPDIR`). It does **not** inherit Hermes provider keys, profile credentials,
+NANNET/CLOCKED tokens, arbitrary `NANLM_*` variables or unrelated shell state.
+
+Model-issued tool calls to `nanlm_clocked_execute`,
+`nanlm_head_candidate`, `nanlm_head_learn_candidate` and
+`nanlm_head_candidate_evaluate` invoke Hermes's `pre_tool_call` **human
+approval gate**; a model-controlled `approved: true` input is not sufficient.
+The CLOCKED prompt names the saved plan's SHA-256 and endpoints, without
+showing source contents; Hermes controls denial/timeout and unattended
+execution. User-typed `/nanlm clocked ... --approved` is a separate explicit
+command path, not a model-initiated tool bypass.
+
+**Production recommendation:** install the reviewed optional
+`cryptography` backend, for example with
+`python -m pip install -e '.[auth]'` from the checked-out plugin source.
+The dependency-free Ed25519/AES compatibility implementation is primarily
+for constrained test environments and is **not audited for constant-time
+operation**. Do not rely on it for high-value credentials.
+
+This plugin's default state directory remains
+`~/.local/share/nanlmind-hermes`, not intrinsically profile-isolated.
+Configure a unique absolute `state_dir` for each Hermes profile to prevent
+cross-profile universe and credential-state sharing. Source corpus files may
+be read via configured training tools; supply only files you intend to expose
+to local native learning and evaluation. See
+[Catalog admission](docs/HERMES_CATALOG_ADMISSION.md).
+
 ## Security boundaries
 
 - BS0:0 has one shared runner-ring NANNET port. Each HERMES guest universe must be explicitly leased and bound to its own NANNET identity; a hardware-node registration alone grants no model-state access. No implicit registration or environment credential reads.
@@ -182,7 +213,7 @@ Report security issues privately as described in [SECURITY.md](SECURITY.md).
 
 ## Verification
 
-- 272 unit/integration tests pass locally; CI runs Python 3.10, 3.11, and 3.12.
+- Python unit/integration tests run in CI on Python 3.10, 3.11 and 3.12; verify current results from the release commit, not historical test counts.
 - Hermes Agent v0.23.0 `plugins validate` and `plugins doctor` pass in CI.
 - Wheel and source distribution builds, metadata checks, installation/import,
   and SHA-256 checksums pass in CI.
@@ -194,7 +225,7 @@ Report security issues privately as described in [SECURITY.md](SECURITY.md).
   before training; rebinds to the trained chart). It links through `HW2:0`
   (NaN16DE) to `BS0:0::HW0:0` without using the RunnerRing for compute; see
   [docs/LOCAL_RUNNER.md](docs/LOCAL_RUNNER.md).
-- The exhaustive demo passed 38/38 calls across all 34 registered tools.
+- The historical v1.3.2 demo passed 38/38 calls across its then-current 34-tool surface; this is not 64-tool release coverage.
 - A genuine held-out session asked unseen questions before and after new
   exposure, and a "No, that's incorrect" feedback turn triggered a fresh
   deliberation with the rejected answer suppressed; see
