@@ -113,7 +113,7 @@ has a trigonometric role; this is not a positional add-on.
 
 | Layer | Semantic role | Trigonometric role in TRIGON-9 |
 |---|---|---|
-| L0 | bit | 16 root Boolean functions map to 16 phase offsets; `cos/sin` of the root signature |
+| L0 | bit | 16 root Boolean functions from the MTH root table map to 16 phase offsets; `cos/sin` of the root signature |
 | L1 | nibble | two 4-bit rotors; phase of the low/high nibble |
 | L2 | byte | multi-frequency byte phase (`1×, 2×, 4×, 8×` turns) |
 | L3 | phonetic | vowel/consonant/space/digit oscillator flags |
@@ -536,7 +536,8 @@ R039's fluency problem is not solved by this run.
 4. **Heads have a direct token-loss path.** A 256-way head readout is trained
    with an auxiliary next-token loss, so heads are not decorative.
 5. **Architecture evolution is gated.** NANNET-P changes `head_k`/gates/order
-   under a held-out-loss and generation-digest gate; one change was accepted.
+   under a held-out-loss and generation-digest gate; one change was accepted in
+   seed 17 and two in seed 29.
 6. **The native contract is raw NaN16.** The triangle/holonomy/sin-cos kernel
    is pure 0xNaN words and executes on the included NaNVM0 boundary.
 

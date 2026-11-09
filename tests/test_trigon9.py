@@ -32,6 +32,23 @@ class TrigonReferenceTest(unittest.TestCase):
         self.assertEqual(PAIR_COUNT, 32640)
         self.assertEqual(CYCLE_COUNT, 32385)
 
+    def test_l0_root_matches_mth_root_table(self) -> None:
+        from trigon import apply_bits, bool_class, ROOT_NAMES
+        from nanlmind_hermes.mth_layers import ROOT_NAMES as MTH_NAMES
+        from nanlmind_hermes.mth_layers import apply_bits as mth_apply_bits
+        self.assertEqual(tuple(ROOT_NAMES), tuple(MTH_NAMES[index] for index in range(16)))
+        for mask in range(16):
+            for left in range(16):
+                for right in range(16):
+                    self.assertEqual(
+                        apply_bits(mask, left, right, 4),
+                        mth_apply_bits(mask, left, right, 4),
+                    )
+            for a in (0, 1):
+                for b in (0, 1):
+                    self.assertEqual(bool_class(mask, a, b),
+                                     (mask >> ((a << 1) | b)) & 1)
+
     def test_gauge_is_exactly_invariant(self) -> None:
         indices = torch.arange(0, 2000)
         signs = torch.ones(2000)
