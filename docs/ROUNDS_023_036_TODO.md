@@ -102,7 +102,7 @@ do not merge the two numbers into one claim.
 | R036-05 | Native prompt recovery audit | `episodic_gate`/native bridge | 90/90 cycle, 0/90 raw | conventional ties | partial |
 | X-01 | Keep canonical merge off | plugin/config/modules | every receipt false | fail closed | done |
 | X-02 | Keep 2 GiB map unused | universe | max 1 GiB | reject >1 GiB | done |
-| X-03 | Remove stale branding | repo | `grep -ri hyperllm` empty | — | done |
+| X-03 | Remove stale branding | repo | repository search for the retired label is empty | — | done |
 | X-04 | Full no-Torch test path | tests | pure modules pass without torch | skip optional natives | done |
 | X-05 | Optional Torch artifact path | scripts | exact checkpoint replay | unavailable skip | open |
 
