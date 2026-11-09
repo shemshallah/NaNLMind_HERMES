@@ -27,3 +27,7 @@ experiments/baseline_*_state/
 build/
 dist/
 *.egg-info/
+
+# Round 042 regenerated per-seed checkpoints
+experiments/round042/results/seed*/*.pt
+experiments/round042/results_long/

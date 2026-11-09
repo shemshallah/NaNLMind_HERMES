@@ -1631,6 +1631,24 @@ class ResidentUniverse:
             self._full_cycle_object = cache
         return cache
 
+    def evidence_lanes(self):
+        """Return the independent support/refute ledger over cycle memory."""
+        from .evidence_lanes import EvidenceLanes
+        cache = getattr(self, "_evidence_lanes_object", None)
+        if cache is None:
+            cache = EvidenceLanes(self.full_cycle_memory())
+            self._evidence_lanes_object = cache
+        return cache
+
+    def evidence_session(self):
+        """Return the bounded add/ask session over the evidence lanes."""
+        from .evidence_session import EvidenceSession
+        cache = getattr(self, "_evidence_session_object", None)
+        if cache is None:
+            cache = EvidenceSession(self.evidence_lanes())
+            self._evidence_session_object = cache
+        return cache
+
     def directed_weight(self, left: int, right: int) -> float:
         """Signed Q16.16 pair weight in the ``left -> right`` direction."""
         state = self.cells.pair_state(int(left), int(right))

@@ -46,10 +46,59 @@ class ResidentToolTests(unittest.TestCase):
 
     def test_resident_tools_are_registered_and_read_only_status(self):
         for name in ("nanlm_resident_status", "nanlm_resident_ingest",
-                     "nanlm_resident_query"):
+                     "nanlm_resident_query", "nanlm_resident_evidence"):
             self.assertIn(name, self.ctx.tools)
         status = self._call("nanlm_resident_status")
         self.assertFalse(status["opened"])
+        self.assertFalse(status["canonical_merge"]["enabled"])
+
+    def test_resident_evidence_requires_approval_and_preserves_four_states(self):
+        with self.assertRaises(RuntimeError):
+            self._call("nanlm_resident_evidence", {
+                "action": "tell", "statement": "quokka is a kind of animal"})
+        first = self._call("nanlm_resident_evidence", {
+            "action": "tell", "approved": True,
+            "statement": "quokka is a kind of animal"})
+        self.assertTrue(first["opened"])
+        self.assertEqual(first["polarity"], "supports")
+        second = self._call("nanlm_resident_evidence", {
+            "action": "tell", "approved": True,
+            "statement": "quokka is not a kind of animal"})
+        self.assertEqual(second["polarity"], "refutes")
+        answer = self._call("nanlm_resident_evidence", {
+            "action": "ask", "question": "is quokka a kind of animal?"})
+        self.assertEqual(answer["status"], "both")
+        state = self._call("nanlm_resident_evidence", {
+            "action": "state", "subject": "quokka",
+            "predicate": "is a kind of", "object": "animal"})
+        self.assertEqual(state["status"], "both")
+        snapshot = self._call("nanlm_resident_evidence", {"action": "save"})
+        self.assertEqual(len(snapshot["records"]), 2)
+        deleted = self._call("nanlm_resident_evidence", {
+            "action": "delete", "approved": True,
+            "subject": "quokka", "predicate": "is a kind of",
+            "object": "animal", "polarity": "supports",
+            "expected_generation": second["lane"]["generation"]})
+        self.assertEqual(deleted["deleted"], 1)
+        self.assertEqual(self._call("nanlm_resident_evidence", {
+            "action": "ask", "question": "is quokka a kind of animal?"
+        })["status"], "refutes")
+        with self.assertRaises(Exception):
+            self._call("nanlm_resident_evidence", {
+                "action": "delete", "approved": True,
+                "subject": "quokka", "predicate": "is a kind of",
+                "object": "animal", "polarity": "refutes",
+                "expected_generation": second["lane"]["generation"] - 1})
+        loaded = self._call("nanlm_resident_evidence", {
+            "action": "load", "approved": True, "snapshot": snapshot,
+            "expected_generation": deleted["generation"]})
+        self.assertEqual(loaded["restored"], 1)
+        self.assertEqual(self._call("nanlm_resident_evidence", {
+            "action": "ask", "question": "is quokka a kind of animal?"
+        })["status"], "both")
+        status = self._call("nanlm_resident_evidence", {"action": "status"})
+        self.assertEqual(status["supports"], 1)
+        self.assertEqual(status["refutes"], 1)
         self.assertFalse(status["canonical_merge"]["enabled"])
 
     def test_ingest_requires_approval_and_query_returns_exact_hit(self):

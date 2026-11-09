@@ -1,0 +1,204 @@
+{
+  "schema": "nanlm.trigon9/1",
+  "route": "nan://GM0:SC0:MC0:BS0:0:HW0:0::HW4:0",
+  "mode": "local-unverified",
+  "live_nannet_route": false,
+  "canonical_merge": false,
+  "config": {
+    "steps": 120,
+    "relation_steps": 60,
+    "arch_generations": 6,
+    "d_model": 80,
+    "batch": 8,
+    "context": 48,
+    "seed": 43
+  },
+  "test": {
+    "tokens": 4483,
+    "nats_per_token": 2.657281321232643,
+    "bits_per_token": 3.8336465843892067,
+    "perplexity": 14.25747486667426,
+    "top1": 0.24715592237341066
+  },
+  "gauge": {
+    "before": {
+      "tokens": 2472,
+      "nats_per_token": 2.6971600973876164,
+      "bits_per_token": 3.8911794969847078,
+      "perplexity": 14.837534681982062,
+      "top1": 0.24393203883495146
+    },
+    "after": {
+      "tokens": 2472,
+      "nats_per_token": 2.6971599986252275,
+      "bits_per_token": 3.891179354500699,
+      "perplexity": 14.837533216591762,
+      "top1": 0.24393203883495146
+    },
+    "argmax_agreement": 1.0
+  },
+  "ablations": {
+    "full": {
+      "tokens": 2472,
+      "nats_per_token": 2.6971600480064217,
+      "bits_per_token": 3.891179425742703,
+      "perplexity": 14.83753394928689,
+      "top1": 0.24393203883495146
+    },
+    "no_write": {
+      "tokens": 2472,
+      "nats_per_token": 2.6973388573112613,
+      "bits_per_token": 3.8914373930400603,
+      "perplexity": 14.840187275630546,
+      "top1": 0.24393203883495146
+    },
+    "no_memory": {
+      "tokens": 2472,
+      "nats_per_token": 2.726624720304915,
+      "bits_per_token": 3.933687962349158,
+      "perplexity": 15.28122147955653,
+      "top1": 0.24271844660194175
+    },
+    "no_trig": {
+      "tokens": 2472,
+      "nats_per_token": 2.810588552728054,
+      "bits_per_token": 4.054822167000053,
+      "perplexity": 16.619696908822196,
+      "top1": 0.24190938511326862
+    },
+    "no_holonomy": {
+      "tokens": 2472,
+      "nats_per_token": 2.524316732165883,
+      "bits_per_token": 3.641819231128753,
+      "perplexity": 12.482363551707937,
+      "top1": 0.2564724919093851
+    },
+    "no_heads": {
+      "tokens": 2472,
+      "nats_per_token": 2.7012057504993425,
+      "bits_per_token": 3.8970161406661523,
+      "perplexity": 14.897683789510689,
+      "top1": 0.24352750809061488
+    },
+    "no_copy": {
+      "tokens": 2472,
+      "nats_per_token": 2.7402149188094156,
+      "bits_per_token": 3.9532944743362974,
+      "perplexity": 15.490313898436556,
+      "top1": 0.23948220064724918
+    }
+  },
+  "best_genome": {
+    "layer_gates": [
+      0.6947979390621185,
+      0.8580695580691099,
+      0.7768626123666763,
+      0.8538042971864342,
+      0.904987646639347,
+      0.7738354191184044,
+      0.8995982579886913,
+      0.7270565390586853,
+      0.8798720672726631,
+      0.7142688393592834
+    ],
+    "order": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "head_k": 8,
+    "write_rate": 0.04444197177886963,
+    "read_temp": 1.0,
+    "holonomy_gain": 0.1,
+    "copy_gain": 0.15,
+    "phase_gain": [
+      0.03464905917644501,
+      0.02,
+      0.42686086893081665,
+      0.4759811758995056,
+      0.31870636343955994,
+      0.24640474282205105,
+      0.25359683111310005,
+      0.27051870711147785,
+      0.09056392312049866,
+      0.14755935221910477
+    ],
+    "memory_decay": 0.9913905078172683,
+    "digest": "ebb333e55bae54acec1c517c9ae1c768cba16f171e6ae1230f77a3ea5cbb34c4"
+  },
+  "nannet_p": [
+    {
+      "generation": 0,
+      "parent_digest": "14d6d4778069b706e5eacece17f6cdbeebebf847eb53b8f79ecd0aa6199f3096",
+      "candidate_digest": "82cb1535d0a4a517a91e33ae3074b4cb2599922d3238fe41b20190602a631c47",
+      "baseline_loss": 2.565117120742798,
+      "candidate_loss": 2.5617952744166055,
+      "reward": 0.0012950076623520564,
+      "accepted": true,
+      "route": "nan://GM0:SC0:MC0:BS0:0:HW0:0::HW4:0",
+      "mode": "local-unverified",
+      "live_nannet_route": false,
+      "canonical_merge": false,
+      "genes": {
+        "layer_gates": [
+          0.6947979390621185,
+          0.8580695580691099,
+          0.7768626123666763,
+          0.8538042971864342,
+          0.904987646639347,
+          0.7738354191184044,
+          0.8995982579886913,
+          0.7270565390586853,
+          0.8798720672726631,
+          0.7142688393592834
+        ],
+        "order": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "head_k": 8,
+        "write_rate": 0.04444197177886963,
+        "read_temp": 1.0,
+        "holonomy_gain": 0.1,
+        "copy_gain": 0.15,
+        "phase_gain": [
+          0.03464905917644501,
+          0.02,
+          0.42686086893081665,
+          0.4759811758995056,
+          0.31870636343955994,
+          0.24640474282205105,
+          0.25359683111310005,
+          0.27051870711147785,
+          0.09056392312049866,
+          0.14755935221910477
+        ],
+        "memory_decay": 0.9913905078172683,
+        "digest": "82cb1535d0a4a517a91e33ae3074b4cb2599922d3238fe41b20190602a631c47"
+      }
+    }
+  ],
+  "samples": {
+    "a person who": "a person whow olth ad as owom atrd wrsty ols sofofed",
+    "a place where": "a place whered shatasind peven coofassthy oq: of did ",
+    "an instrument used for": "an instrument used for ss the that athinant ar at as foud th o",
+    "the act of": "the act of ad thop sirdus cegr tmald al tos strstf",
+    "a small animal": "a small animal tenal sof pocra risil atl lanesd thac o"
+  },
+  "note": "final evaluation resumed after interrupted shell; relation task checkpoint not retained"
+}

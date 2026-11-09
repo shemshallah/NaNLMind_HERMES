@@ -449,6 +449,11 @@ def main(argv=None):
         call("nanlm_resident_ingest", {"approved": True,
              "message": "A river carries water to the sea.", "head": 3})
         call("nanlm_resident_query", {"text": "river water", "top_k": 4})
+        call("nanlm_resident_evidence", {
+            "action": "tell", "approved": True,
+            "statement": "quokka is a kind of animal"})
+        call("nanlm_resident_evidence", {
+            "action": "ask", "question": "is quokka a kind of animal?"})
         call("nanlm_head_field", {"action": "status", "limit": 8})
         call("nanlm_head_field", {"action": "query", "head": 3})
 

@@ -317,13 +317,13 @@ def main() -> None:
 
     # Stage C: NANNET-P architecture evolution.
     nannet = NannetP(model, seed=args.seed)
-    arch_batches = [make_batch(docs["val"], rng, 4, args.context) for _ in range(4)]
+    arch_batches = [make_batch(docs["val"], rng, 4, args.context) for _ in range(6)]
     arch_history = []
     for generation in range(args.arch_generations):
         state = nannet.state(
             model, float(best_nats), 0.0, generation
         )
-        record = nannet.step(model, state, arch_batches, count=3, margin=1e-3)
+        record = nannet.step(model, state, arch_batches, count=4, margin=5e-4)
         arch_history.append(record)
         print("NANNET-P", generation,
               "base", round(record["baseline_loss"], 4),

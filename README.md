@@ -34,11 +34,6 @@ identity/authorization boundary and CLOCKED is an evidence service.
   privacy, injection, and synthesis. Multi-source results are written to an
   append-only scratch journal; source text is not sent during planning, and
   execution requires explicit approval.
-- **Round 042 raw trig cycle** — `nanlmind_hermes/nan/trig_cycle.nan` is a
-  pure 0x-word NaN16 kernel for triangle phase and holonomy; the resident bridge
-  executes it through NaNVM0 and tests gauge cancellation. Dynamic dialogue,
-  four-state speaker and writer checkpoints remain explicit external/TODO
-  items in [ROUND042_TRIGON.md](docs/ROUND042_TRIGON.md).
 - **Round 038/040 architecture inputs** — order-sensitive SO(2)/SO(3)
   transport and holonomy trace algebra are in `resident/rotation_holonomy.py`;
   dynamic write/query/snapshot value is recorded in
@@ -46,6 +41,23 @@ identity/authorization boundary and CLOCKED is an evidence service.
   [ROUND038_ROTATION_HOLONOMY.md](docs/ROUND038_ROTATION_HOLONOMY.md). The
   neural checkpoints and dynamic resident session remain explicit TODO items,
   not silently claimed as implemented.
+- **TRIGON-9 experimental synthesis (Round 042)** — a byte-level generative
+  language model couples the full 32,385-cycle gauge-invariant mirror memory,
+  256 sparse heads, L0–L9 complex rotor layers, ordered SO(3) transport,
+  typed HW4 WordNet evidence and a generation-gated architecture evolver.
+  The native triangle/holonomy/sin-cos primitive is 513 words of **raw
+  NaN16** (`nanlmind_hermes/nan/trig_cycle.nan`); the trainable 1.08M-parameter
+  reference model is a host PyTorch harness under `experiments/round042/`.
+  Measured internal test: 3.60 bits/byte, perplexity 12.13, 26.97% next-byte
+  accuracy, exact gauge invariance; free text is still malformed. See
+  [NANLM_42_TRIGON.md](docs/NANLM_42_TRIGON.md). This is an experiment, not a
+  production model or a live NANNET route.
+- **Resident evidence lanes** — independent support/refute records over the
+  full 32,385-cycle basis preserve `unknown/supports/refutes/both` without
+  cancellation. `resident/evidence_session.py` provides the bounded
+  add/ask/save grammar and `nanlm_resident_evidence` exposes it as a tool;
+  writes require approval and the indexed `ConventionalEvidence` control ties
+  on clean records. See [ROUND042_TRIGON.md](docs/ROUND042_TRIGON.md).
 - **Recursive geometry** — rounds 023–036 are implemented or explicitly
   audited in the resident layer: 256 mirror heads, 32,640 pair cells, the full
   32,385 root-cycle basis, raw NaN payload lanes, typed recursive hyperedges,
@@ -265,6 +277,11 @@ Report security issues privately as described in [SECURITY.md](SECURITY.md).
 - The phone-call routing kernel is raw NaN16, verified word-for-word against
   the native nan0s C VM core across an eight-case routing matrix; see
   [docs/PHONE_CALL_NAN16.md](docs/PHONE_CALL_NAN16.md).
+- The Round 042 trigonometric kernel is 513 pure raw NaN16 words; its triangle
+  and closed-loop gauge invariance, Q15 sin/cos readout and pure-image format
+  are verified by `tests/test_trig_cycle_nan.py`. The host TRIGON-9 reference
+  model is a separate experimental harness, not a native full-model claim; see
+  [docs/NANLM_42_TRIGON.md](docs/NANLM_42_TRIGON.md).
 - Hermes boots a local-CPU runner over an in-memory 8 MiB chart with real
   `s+`/`s-` pair-cell rails and a mapped temporal register (genesis chart
   before training; rebinds to the trained chart). It links through `HW2:0`
@@ -293,6 +310,7 @@ Report security issues privately as described in [SECURITY.md](SECURITY.md).
 | [Demo guide](docs/DEMO.md) | offline, NANNET, and CLOCKED scenarios with success signals |
 | [Demo transcript](docs/HERMES_DEMO.md) | native chat, three-way call, training, CLOCKED, and live head-cortex output |
 | [Phone-call kernel](docs/PHONE_CALL_NAN16.md) | raw NaN16 routing kernel, memory map, routing matrix, C-core parity |
+| [TRIGON-9 synthesis](docs/NANLM_42_TRIGON.md) | Round 030–041 synthesis, L0–L9 trig rotors, 32,385 cycles, 256 heads, NANNET-P, HW4 matrix, raw NaN16 kernel, measured limits |
 | [Local runner](docs/LOCAL_RUNNER.md) | boot-time 8 MiB chart, mapped temporal register, real rails, HW2:0 link |
 | [MTH layers](docs/MTH_LAYERS.md) | root 4x4 Boolean table, L0–L9 curriculum, truth/frame scoring, concept matrix |
 | [Free chat baseline](docs/FREE_CHAT.md) | cold direct address, self-contemplation, unknown questions |

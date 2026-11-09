@@ -1,0 +1,40 @@
+{
+  "schema": "nanlm.trigon-order-probe/1",
+  "source": "controlled synthetic order probe",
+  "claim_boundary": "The phase-only control is mathematically permutation-invariant. This does not establish open-domain reasoning or a unique NaN advantage; a conventional sequence model can also solve it.",
+  "results": [
+    {
+      "seed": 17,
+      "train": 900,
+      "val": 300,
+      "test": 300,
+      "full_test_accuracy": 1.0,
+      "phase_only_test_accuracy": 0.3333333432674408,
+      "parameters": 643,
+      "phase_parameters": 18,
+      "val_accuracy": 1.0
+    },
+    {
+      "seed": 29,
+      "train": 900,
+      "val": 300,
+      "test": 300,
+      "full_test_accuracy": 1.0,
+      "phase_only_test_accuracy": 0.3333333432674408,
+      "parameters": 643,
+      "phase_parameters": 18,
+      "val_accuracy": 1.0
+    },
+    {
+      "seed": 43,
+      "train": 900,
+      "val": 300,
+      "test": 300,
+      "full_test_accuracy": 1.0,
+      "phase_only_test_accuracy": 0.3333333432674408,
+      "parameters": 643,
+      "phase_parameters": 18,
+      "val_accuracy": 1.0
+    }
+  ]
+}

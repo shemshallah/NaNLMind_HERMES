@@ -42,7 +42,7 @@ does not prove a unique NaN advantage.
 ## Raw 0xNaN code
 
 `nanlmind_hermes/nan/trig_cycle.nan` is the pure raw implementation requested
-for this round. It contains only `0xXXXX_0xXXXXXXXX_0xXXXX` word lines, with no
+for this round. It contains only `NNNN_PPPPPPPP_FFFF` word lines, with no
 Python, comments, C, or hidden host fallback.
 
 - mode 0: exact Q16.16 triangle phase `e(0,a)+e(a,b)-e(0,b)` and Q15 cos/sin;
@@ -107,3 +107,56 @@ python3 -c 'from nanlmind_hermes.resident.trig_cycle import triangle; print(tria
 
 The full archive command sequence is documented in
 `experiments/round042/nan_round042/README.md`.
+
+---
+
+## Addendum — TRIGON-9 synthesis (2026-11-09)
+
+The supplied Round 042 archive above is preserved in
+`experiments/round042/nan_round042/`. The subsequent synthesis requested after
+Rounds 030–041 is documented separately in
+[NANLM_42_TRIGON.md](NANLM_42_TRIGON.md) and implemented under
+`experiments/round042/` (top-level `trigon.py`, `wordnet_hw4.py`,
+`nannet_p.py`, `train.py`, `order_probe.py`).
+
+The synthesis keeps this archive's support/refute lane work and adds:
+
+- a full 32,385-cycle differentiable field with 256 sparse heads;
+- L0–L9 complex rotor layers and ordered SO(3) holonomy;
+- a byte-level generative LM (3.60 held-out bits/byte, perplexity 12.13 on
+  its internal split) with honest malformed-sample disclosure;
+- a bounded NANNET-P architecture-evolution gate;
+- a 513-word pure raw NaN16 triangle/holonomy/sin-cos kernel.
+
+The archive's controlled dialogue results and the synthesis's language-model
+results are separate experiments with separate corpora and evaluation
+protocols. Do not merge their numbers into one headline.
+
+---
+
+## Resident support/refute lanes (implemented 2026-11-09)
+
+The four-state lane contour is now implemented in the resident package, not
+only described in the archive:
+
+- `resident/evidence_lanes.py` stores each support/refute record in 48 raw
+  cycle coefficients, keeps the lanes independent, and returns
+  `unknown/supports/refutes/both` without cancellation. Its default namespace
+  reserves the final 64 records so the usual composition prefix is untouched;
+  `slot_base` can partition another range explicitly.
+- `resident/evidence_session.py` adds the bounded
+  `X is [not] a [kind of] Y` / `is X a [kind of] Y?` add-ask grammar and
+  JSON-safe save/load.
+- `resident/universe.py` exposes `evidence_lanes()` and `evidence_session()`;
+  the session survives universe reopen.
+- `nanlm_resident_evidence` exposes `status/state/ask/tell/delete/save/load`
+  as a plugin tool; writes require `training:execute` and `approved=true`.
+- `ConventionalEvidence` is the indexed four-state control. It ties the
+  geometric path on clean records by design.
+- Deletion zeroes the record run and restore rewrites it. Both accept an
+  optional generation check; the current check is the in-process field
+  generation, not a cross-process canonical CAS.
+
+This closes the bounded B-21, B-22, B-23 and B-25 implementation gates. It does
+not add learned propagation, a neural speaker or canonical merge.
+
