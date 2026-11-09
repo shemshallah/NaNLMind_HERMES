@@ -68,6 +68,9 @@ them.
 ## B. Rounds 023–036 integration (verification + open items)
 
 The detailed table is in [ROUNDS_023_036_TODO.md](ROUNDS_023_036_TODO.md).
+The new validated architecture inputs are [ROUND038_ROTATION_HOLONOMY.md](ROUND038_ROTATION_HOLONOMY.md)
+and [ROUND040_DYNAMIC_MEMORY.md](ROUND040_DYNAMIC_MEMORY.md); their tasks are
+B-11..B-20 below.
 Summary of what is still genuinely open:
 
 | ID | Open item | Gate |
@@ -82,6 +85,16 @@ Summary of what is still genuinely open:
 | B-08 | Continuous corpus/chat → cycle/hyperedge write path | provenance, contradiction, replay |
 | B-09 | Free-form generation evaluation with no stored answers | human/teacher evaluation and controls |
 | B-10 | Android ARM RSS/cache/energy measurement | measured on target device |
+| B-11 | Dynamic fact write API over full-cycle slots (R040) | 32,385 capacity; one generation commit; duplicate idempotent |
+| B-12 | Resident add/ask session and bounded typed BFS (R040) | answered path or explicit abstention |
+| B-13 | Root + metadata snapshot pair with shared generation/digest (R040) | reopen equality; mismatch denied |
+| B-14 | Interactive `add/ask/save/quit` resident CLI (R040) | scripted session test |
+| B-15 | Retention after new writes and frozen-reader adaptation (R040) | old + new held-out queries |
+| B-16 | SO(2) phase vs SO(3) order-sensitive transport (R038) | order probe; phase near chance, rotation/control comparison |
+| B-17 | Conjugation-invariant holonomy trace audit (R038) | trace error <= 1e-6; no frame-gauge claim beyond test |
+| B-18 | Four-valued support/refute/unknown/both evidence (R038) | contradiction preserved, not phase-cancelled |
+| B-19 | Token-conditioned rotation/attention bridge (R038) | nonzero angle/token gradients; restricted decoder |
+| B-20 | Deterministic replay of R038 checkpoints/artifacts | three-seed table and native snapshot audit |
 
 These remain open until their gates pass. No item is promoted because a
 related artifact reports a number.

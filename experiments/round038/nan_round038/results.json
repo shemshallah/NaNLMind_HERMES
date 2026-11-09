@@ -1,0 +1,593 @@
+{
+  "design": "controlled supervised predicate extraction + explicit graph composition + native cycle evidence; no unrestricted prose understanding",
+  "source": "WordNet 3.1 data.noun",
+  "synsets": 81102,
+  "train_child_count": 1251,
+  "validation_child_count": 179,
+  "test_child_count": 200,
+  "seeds": [
+    {
+      "seed": 17,
+      "writer": {
+        "seen_template_accuracy": 1.0,
+        "unseen_template_accuracy": 1.0,
+        "predictions": [
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          0,
+          1,
+          2,
+          2,
+          3,
+          3
+        ],
+        "trace": [
+          [
+            0,
+            1.394484519958496
+          ],
+          [
+            50,
+            0.0009728430304676294
+          ],
+          [
+            100,
+            0.0005470860633067787
+          ],
+          [
+            150,
+            0.000421029282733798
+          ],
+          [
+            200,
+            0.00032290193485096097
+          ],
+          [
+            250,
+            0.0002798021014314145
+          ],
+          [
+            300,
+            0.00020259348093532026
+          ]
+        ],
+        "parameters": 31044
+      },
+      "after_adaptation_template_predictions": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        2,
+        2,
+        3,
+        3
+      ],
+      "facts_written": 500,
+      "distinct_facts": 662,
+      "before_gauge": {
+        "geometry_correct": 400,
+        "conventional_correct": 400,
+        "total": 400,
+        "geometry_accuracy": 1.0,
+        "conventional_accuracy": 1.0
+      },
+      "after_gauge": {
+        "geometry_correct": 400,
+        "conventional_correct": 400,
+        "total": 400,
+        "geometry_accuracy": 1.0,
+        "conventional_accuracy": 1.0
+      },
+      "raw_edges_after_gauge": {
+        "geometry_correct": 307,
+        "conventional_correct": 400,
+        "total": 400,
+        "geometry_accuracy": 0.7675,
+        "conventional_accuracy": 1.0
+      },
+      "after_writer_adaptation": {
+        "geometry_correct": 400,
+        "conventional_correct": 400,
+        "total": 400,
+        "geometry_accuracy": 1.0,
+        "conventional_accuracy": 1.0
+      },
+      "after_root_restore": {
+        "geometry_correct": 400,
+        "conventional_correct": 400,
+        "total": 400,
+        "geometry_accuracy": 1.0,
+        "conventional_accuracy": 1.0
+      },
+      "old_after_new_memory_writes": {
+        "geometry_correct": 400,
+        "conventional_correct": 400,
+        "total": 400,
+        "geometry_accuracy": 1.0,
+        "conventional_accuracy": 1.0
+      },
+      "new_knowledge_positive": {
+        "cycle_correct": 80,
+        "conventional_correct": 80,
+        "total": 80
+      },
+      "native_snapshot_sha256": "555c2b588eccd2458f2e86afc38d1b40ae330a04515e4373dcd5c2aebf61ece3",
+      "tested_sample": [
+        {
+          "premises": [
+            "rootage is a kind of system.",
+            "system is a kind of group."
+          ],
+          "question": "Is rootage a kind of group?",
+          "composed_answer": "rootage is a kind of group.",
+          "gold": true
+        },
+        {
+          "premises": [
+            "rootage is a kind of system.",
+            "system is a kind of group."
+          ],
+          "question": "Is rootage a kind of unknown_17_0?",
+          "composed_answer": "The evidence is insufficient.",
+          "gold": false
+        },
+        {
+          "premises": [
+            "neophyte is a kind of plant.",
+            "plant is a kind of organism.",
+            "organism is a kind of living thing."
+          ],
+          "question": "Is neophyte a kind of living thing?",
+          "composed_answer": "neophyte is a kind of living thing.",
+          "gold": true
+        },
+        {
+          "premises": [
+            "neophyte is a kind of plant.",
+            "plant is a kind of organism.",
+            "organism is a kind of living thing."
+          ],
+          "question": "Is neophyte a kind of unknown_17_1?",
+          "composed_answer": "The evidence is insufficient.",
+          "gold": false
+        },
+        {
+          "premises": [
+            "reservation is a kind of prearrangement.",
+            "prearrangement is a kind of agreement."
+          ],
+          "question": "Is reservation a kind of agreement?",
+          "composed_answer": "reservation is a kind of agreement.",
+          "gold": true
+        },
+        {
+          "premises": [
+            "reservation is a kind of prearrangement.",
+            "prearrangement is a kind of agreement."
+          ],
+          "question": "Is reservation a kind of unknown_17_2?",
+          "composed_answer": "The evidence is insufficient.",
+          "gold": false
+        },
+        {
+          "premises": [
+            "psychopsis krameriana is a kind of butterfly orchid.",
+            "butterfly orchid is a kind of orchid.",
+            "orchid is a kind of flower."
+          ],
+          "question": "Is psychopsis krameriana a kind of flower?",
+          "composed_answer": "psychopsis krameriana is a kind of flower.",
+          "gold": true
+        },
+        {
+          "premises": [
+            "psychopsis krameriana is a kind of butterfly orchid.",
+            "butterfly orchid is a kind of orchid.",
+            "orchid is a kind of flower."
+          ],
+          "question": "Is psychopsis krameriana a kind of unknown_17_3?",
+          "composed_answer": "The evidence is insufficient.",
+          "gold": false
+        }
+      ]
+    },
+    {
+      "seed": 29,
+      "writer": {
+        "seen_template_accuracy": 1.0,
+        "unseen_template_accuracy": 1.0,
+        "predictions": [
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          0,
+          1,
+          2,
+          2,
+          3,
+          3
+        ],
+        "trace": [
+          [
+            0,
+            1.414707899093628
+          ],
+          [
+            50,
+            0.0012939791195094585
+          ],
+          [
+            100,
+            0.0006798526737838984
+          ],
+          [
+            150,
+            0.0004143353144172579
+          ],
+          [
+            200,
+            0.0003180972416885197
+          ],
+          [
+            250,
+            0.0002543920709285885
+          ],
+          [
+            300,
+            0.0002060776751022786
+          ]
+        ],
+        "parameters": 31044
+      },
+      "after_adaptation_template_predictions": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        2,
+        2,
+        3,
+        3
+      ],
+      "facts_written": 500,
+      "distinct_facts": 662,
+      "before_gauge": {
+        "geometry_correct": 400,
+        "conventional_correct": 400,
+        "total": 400,
+        "geometry_accuracy": 1.0,
+        "conventional_accuracy": 1.0
+      },
+      "after_gauge": {
+        "geometry_correct": 400,
+        "conventional_correct": 400,
+        "total": 400,
+        "geometry_accuracy": 1.0,
+        "conventional_accuracy": 1.0
+      },
+      "raw_edges_after_gauge": {
+        "geometry_correct": 220,
+        "conventional_correct": 400,
+        "total": 400,
+        "geometry_accuracy": 0.55,
+        "conventional_accuracy": 1.0
+      },
+      "after_writer_adaptation": {
+        "geometry_correct": 400,
+        "conventional_correct": 400,
+        "total": 400,
+        "geometry_accuracy": 1.0,
+        "conventional_accuracy": 1.0
+      },
+      "after_root_restore": {
+        "geometry_correct": 400,
+        "conventional_correct": 400,
+        "total": 400,
+        "geometry_accuracy": 1.0,
+        "conventional_accuracy": 1.0
+      },
+      "old_after_new_memory_writes": {
+        "geometry_correct": 400,
+        "conventional_correct": 400,
+        "total": 400,
+        "geometry_accuracy": 1.0,
+        "conventional_accuracy": 1.0
+      },
+      "new_knowledge_positive": {
+        "cycle_correct": 80,
+        "conventional_correct": 80,
+        "total": 80
+      },
+      "native_snapshot_sha256": "555c2b588eccd2458f2e86afc38d1b40ae330a04515e4373dcd5c2aebf61ece3",
+      "tested_sample": [
+        {
+          "premises": [
+            "rootage is a kind of system.",
+            "system is a kind of group."
+          ],
+          "question": "Is rootage a kind of group?",
+          "composed_answer": "rootage is a kind of group.",
+          "gold": true
+        },
+        {
+          "premises": [
+            "rootage is a kind of system.",
+            "system is a kind of group."
+          ],
+          "question": "Is rootage a kind of unknown_29_0?",
+          "composed_answer": "The evidence is insufficient.",
+          "gold": false
+        },
+        {
+          "premises": [
+            "neophyte is a kind of plant.",
+            "plant is a kind of organism.",
+            "organism is a kind of living thing."
+          ],
+          "question": "Is neophyte a kind of living thing?",
+          "composed_answer": "neophyte is a kind of living thing.",
+          "gold": true
+        },
+        {
+          "premises": [
+            "neophyte is a kind of plant.",
+            "plant is a kind of organism.",
+            "organism is a kind of living thing."
+          ],
+          "question": "Is neophyte a kind of unknown_29_1?",
+          "composed_answer": "The evidence is insufficient.",
+          "gold": false
+        },
+        {
+          "premises": [
+            "reservation is a kind of prearrangement.",
+            "prearrangement is a kind of agreement."
+          ],
+          "question": "Is reservation a kind of agreement?",
+          "composed_answer": "reservation is a kind of agreement.",
+          "gold": true
+        },
+        {
+          "premises": [
+            "reservation is a kind of prearrangement.",
+            "prearrangement is a kind of agreement."
+          ],
+          "question": "Is reservation a kind of unknown_29_2?",
+          "composed_answer": "The evidence is insufficient.",
+          "gold": false
+        },
+        {
+          "premises": [
+            "psychopsis krameriana is a kind of butterfly orchid.",
+            "butterfly orchid is a kind of orchid.",
+            "orchid is a kind of flower."
+          ],
+          "question": "Is psychopsis krameriana a kind of flower?",
+          "composed_answer": "psychopsis krameriana is a kind of flower.",
+          "gold": true
+        },
+        {
+          "premises": [
+            "psychopsis krameriana is a kind of butterfly orchid.",
+            "butterfly orchid is a kind of orchid.",
+            "orchid is a kind of flower."
+          ],
+          "question": "Is psychopsis krameriana a kind of unknown_29_3?",
+          "composed_answer": "The evidence is insufficient.",
+          "gold": false
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "writer": {
+        "seen_template_accuracy": 1.0,
+        "unseen_template_accuracy": 1.0,
+        "predictions": [
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          0,
+          1,
+          2,
+          2,
+          3,
+          3
+        ],
+        "trace": [
+          [
+            0,
+            1.424950122833252
+          ],
+          [
+            50,
+            0.002133462578058243
+          ],
+          [
+            100,
+            0.0007632704800926149
+          ],
+          [
+            150,
+            0.0006030758377164602
+          ],
+          [
+            200,
+            0.0004554237239062786
+          ],
+          [
+            250,
+            0.00035005895188078284
+          ],
+          [
+            300,
+            0.00028243413544259965
+          ]
+        ],
+        "parameters": 31044
+      },
+      "after_adaptation_template_predictions": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        2,
+        2,
+        3,
+        3
+      ],
+      "facts_written": 500,
+      "distinct_facts": 662,
+      "before_gauge": {
+        "geometry_correct": 400,
+        "conventional_correct": 400,
+        "total": 400,
+        "geometry_accuracy": 1.0,
+        "conventional_accuracy": 1.0
+      },
+      "after_gauge": {
+        "geometry_correct": 400,
+        "conventional_correct": 400,
+        "total": 400,
+        "geometry_accuracy": 1.0,
+        "conventional_accuracy": 1.0
+      },
+      "raw_edges_after_gauge": {
+        "geometry_correct": 252,
+        "conventional_correct": 400,
+        "total": 400,
+        "geometry_accuracy": 0.63,
+        "conventional_accuracy": 1.0
+      },
+      "after_writer_adaptation": {
+        "geometry_correct": 400,
+        "conventional_correct": 400,
+        "total": 400,
+        "geometry_accuracy": 1.0,
+        "conventional_accuracy": 1.0
+      },
+      "after_root_restore": {
+        "geometry_correct": 400,
+        "conventional_correct": 400,
+        "total": 400,
+        "geometry_accuracy": 1.0,
+        "conventional_accuracy": 1.0
+      },
+      "old_after_new_memory_writes": {
+        "geometry_correct": 400,
+        "conventional_correct": 400,
+        "total": 400,
+        "geometry_accuracy": 1.0,
+        "conventional_accuracy": 1.0
+      },
+      "new_knowledge_positive": {
+        "cycle_correct": 80,
+        "conventional_correct": 80,
+        "total": 80
+      },
+      "native_snapshot_sha256": "555c2b588eccd2458f2e86afc38d1b40ae330a04515e4373dcd5c2aebf61ece3",
+      "tested_sample": [
+        {
+          "premises": [
+            "rootage is a kind of system.",
+            "system is a kind of group."
+          ],
+          "question": "Is rootage a kind of group?",
+          "composed_answer": "rootage is a kind of group.",
+          "gold": true
+        },
+        {
+          "premises": [
+            "rootage is a kind of system.",
+            "system is a kind of group."
+          ],
+          "question": "Is rootage a kind of unknown_43_0?",
+          "composed_answer": "The evidence is insufficient.",
+          "gold": false
+        },
+        {
+          "premises": [
+            "neophyte is a kind of plant.",
+            "plant is a kind of organism.",
+            "organism is a kind of living thing."
+          ],
+          "question": "Is neophyte a kind of living thing?",
+          "composed_answer": "neophyte is a kind of living thing.",
+          "gold": true
+        },
+        {
+          "premises": [
+            "neophyte is a kind of plant.",
+            "plant is a kind of organism.",
+            "organism is a kind of living thing."
+          ],
+          "question": "Is neophyte a kind of unknown_43_1?",
+          "composed_answer": "The evidence is insufficient.",
+          "gold": false
+        },
+        {
+          "premises": [
+            "reservation is a kind of prearrangement.",
+            "prearrangement is a kind of agreement."
+          ],
+          "question": "Is reservation a kind of agreement?",
+          "composed_answer": "reservation is a kind of agreement.",
+          "gold": true
+        },
+        {
+          "premises": [
+            "reservation is a kind of prearrangement.",
+            "prearrangement is a kind of agreement."
+          ],
+          "question": "Is reservation a kind of unknown_43_2?",
+          "composed_answer": "The evidence is insufficient.",
+          "gold": false
+        },
+        {
+          "premises": [
+            "psychopsis krameriana is a kind of butterfly orchid.",
+            "butterfly orchid is a kind of orchid.",
+            "orchid is a kind of flower."
+          ],
+          "question": "Is psychopsis krameriana a kind of flower?",
+          "composed_answer": "psychopsis krameriana is a kind of flower.",
+          "gold": true
+        },
+        {
+          "premises": [
+            "psychopsis krameriana is a kind of butterfly orchid.",
+            "butterfly orchid is a kind of orchid.",
+            "orchid is a kind of flower."
+          ],
+          "question": "Is psychopsis krameriana a kind of unknown_43_3?",
+          "composed_answer": "The evidence is insufficient.",
+          "gold": false
+        }
+      ]
+    }
+  ],
+  "elapsed_s": 30.590429067611694
+}

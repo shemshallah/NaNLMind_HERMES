@@ -1,0 +1,383 @@
+{
+  "source": "Round 037 native 8MiB C++ mirror-pair root + trained relation writer checkpoint; WordNet 3.1 concept-chain identities",
+  "limitation": "Controlled simulated candidate-path evidence from true WordNet chains; negations, ambiguity and distractors are synthetic; entity spans supplied, no free-form prose encoder or semantic open-world model",
+  "seed": 43,
+  "wordnet_concepts": 81102,
+  "episodes": 896,
+  "splits": [
+    537,
+    179,
+    180
+  ],
+  "class_counts": {
+    "unknown": 227,
+    "both": 223,
+    "refutes": 232,
+    "supports": 214
+  },
+  "writer_template_predictions": [
+    0,
+    0,
+    0,
+    0,
+    1,
+    1,
+    0,
+    1,
+    2,
+    2,
+    3,
+    3
+  ],
+  "memory_audit": {
+    "edges": 10752,
+    "gauge_max_abs": 7.62939453125e-06,
+    "raw_exact_feature_matches": 0,
+    "snapshot_exact": true,
+    "size_bytes": 8388608
+  },
+  "baseline_oracle_accuracy": 1.0,
+  "models": [
+    {
+      "mode": "deepsets",
+      "parameters": 8856,
+      "validation_accuracy": 1.0,
+      "test_accuracy": 1.0,
+      "test_token_cross_entropy": 0.006,
+      "gauge_accuracy": 1.0,
+      "gauge_token_cross_entropy": 0.006,
+      "gauge_output_unchanged": 1.0,
+      "attention_mean_entropy": 1.082,
+      "trace": [
+        [
+          0,
+          2.09,
+          0.257,
+          2.0057
+        ],
+        [
+          40,
+          0.5538,
+          0.257,
+          0.5473
+        ],
+        [
+          80,
+          0.4845,
+          0.257,
+          0.4859
+        ],
+        [
+          120,
+          0.3762,
+          0.5196,
+          0.3594
+        ],
+        [
+          160,
+          0.2597,
+          0.5196,
+          0.2544
+        ],
+        [
+          200,
+          0.2342,
+          0.4693,
+          0.2392
+        ],
+        [
+          240,
+          0.1666,
+          0.7318,
+          0.1673
+        ],
+        [
+          280,
+          0.0368,
+          1.0,
+          0.034
+        ],
+        [
+          320,
+          0.0141,
+          1.0,
+          0.0141
+        ],
+        [
+          360,
+          0.0093,
+          1.0,
+          0.0092
+        ],
+        [
+          400,
+          0.0068,
+          1.0,
+          0.0068
+        ],
+        [
+          419,
+          0.0061,
+          1.0,
+          0.006
+        ]
+      ]
+    },
+    {
+      "mode": "phase",
+      "parameters": 6744,
+      "validation_accuracy": 1.0,
+      "test_accuracy": 1.0,
+      "test_token_cross_entropy": 0.005,
+      "gauge_accuracy": 1.0,
+      "gauge_token_cross_entropy": 0.005,
+      "gauge_output_unchanged": 1.0,
+      "attention_mean_entropy": 1.2199,
+      "trace": [
+        [
+          0,
+          2.1094,
+          0.2682,
+          2.0353
+        ],
+        [
+          40,
+          0.5822,
+          0.2793,
+          0.5775
+        ],
+        [
+          80,
+          0.3267,
+          0.5307,
+          0.3251
+        ],
+        [
+          120,
+          0.2496,
+          0.6089,
+          0.2497
+        ],
+        [
+          160,
+          0.1989,
+          0.7821,
+          0.1937
+        ],
+        [
+          200,
+          0.1148,
+          1.0,
+          0.1057
+        ],
+        [
+          240,
+          0.0379,
+          1.0,
+          0.0376
+        ],
+        [
+          280,
+          0.0184,
+          1.0,
+          0.0181
+        ],
+        [
+          320,
+          0.0108,
+          1.0,
+          0.0106
+        ],
+        [
+          360,
+          0.0076,
+          1.0,
+          0.0074
+        ],
+        [
+          400,
+          0.0057,
+          1.0,
+          0.0056
+        ],
+        [
+          419,
+          0.0051,
+          1.0,
+          0.005
+        ]
+      ]
+    },
+    {
+      "mode": "rotation",
+      "parameters": 6792,
+      "validation_accuracy": 1.0,
+      "test_accuracy": 1.0,
+      "test_token_cross_entropy": 0.0035,
+      "gauge_accuracy": 1.0,
+      "gauge_token_cross_entropy": 0.0035,
+      "gauge_output_unchanged": 1.0,
+      "attention_mean_entropy": 0.7158,
+      "trace": [
+        [
+          0,
+          2.0797,
+          0.2067,
+          2.0127
+        ],
+        [
+          40,
+          0.5635,
+          0.257,
+          0.5543
+        ],
+        [
+          80,
+          0.3325,
+          0.4693,
+          0.3269
+        ],
+        [
+          120,
+          0.1751,
+          1.0,
+          0.1742
+        ],
+        [
+          160,
+          0.0337,
+          1.0,
+          0.0331
+        ],
+        [
+          200,
+          0.0153,
+          1.0,
+          0.0152
+        ],
+        [
+          240,
+          0.01,
+          1.0,
+          0.0099
+        ],
+        [
+          280,
+          0.0072,
+          1.0,
+          0.0072
+        ],
+        [
+          320,
+          0.0057,
+          1.0,
+          0.0056
+        ],
+        [
+          360,
+          0.0046,
+          1.0,
+          0.0045
+        ],
+        [
+          400,
+          0.0038,
+          1.0,
+          0.0037
+        ],
+        [
+          419,
+          0.0035,
+          1.0,
+          0.0034
+        ]
+      ]
+    },
+    {
+      "mode": "full",
+      "parameters": 6960,
+      "validation_accuracy": 1.0,
+      "test_accuracy": 1.0,
+      "test_token_cross_entropy": 0.0054,
+      "gauge_accuracy": 1.0,
+      "gauge_token_cross_entropy": 0.0054,
+      "gauge_output_unchanged": 1.0,
+      "attention_mean_entropy": 1.1091,
+      "trace": [
+        [
+          0,
+          2.0194,
+          0.2123,
+          1.9609
+        ],
+        [
+          40,
+          0.5903,
+          0.257,
+          0.5744
+        ],
+        [
+          80,
+          0.4132,
+          0.5307,
+          0.3981
+        ],
+        [
+          120,
+          0.1554,
+          1.0,
+          0.1539
+        ],
+        [
+          160,
+          0.0491,
+          1.0,
+          0.0477
+        ],
+        [
+          200,
+          0.0241,
+          1.0,
+          0.0237
+        ],
+        [
+          240,
+          0.0155,
+          1.0,
+          0.0156
+        ],
+        [
+          280,
+          0.0115,
+          1.0,
+          0.0114
+        ],
+        [
+          320,
+          0.0089,
+          1.0,
+          0.0088
+        ],
+        [
+          360,
+          0.0071,
+          1.0,
+          0.0071
+        ],
+        [
+          400,
+          0.0059,
+          1.0,
+          0.0059
+        ],
+        [
+          419,
+          0.0054,
+          1.0,
+          0.0054
+        ]
+      ]
+    }
+  ],
+  "elapsed_seconds": 12.8
+}

@@ -1,0 +1,188 @@
+[
+  {
+    "seed": 17,
+    "train_pattern_count": 10,
+    "source_train_sentences": 1200,
+    "old_questions": 400,
+    "new_questions": 160,
+    "native_written_records": 1120,
+    "baseline_before": [
+      400,
+      400
+    ],
+    "native_before": [
+      400,
+      400
+    ],
+    "native_after_gauge": [
+      400,
+      400
+    ],
+    "raw_after_gauge": [
+      281,
+      400
+    ],
+    "native_old_after_adaptation": [
+      400,
+      400
+    ],
+    "native_new_after_adaptation": [
+      160,
+      160
+    ],
+    "control_old_after_adaptation": [
+      400,
+      400
+    ],
+    "control_new_after_adaptation": [
+      160,
+      160
+    ],
+    "native_pair_audit": 1,
+    "max_snapshot_readout_error": 0.0,
+    "positive_native_records": 840,
+    "snapshot_exact": true,
+    "example": {
+      "premises": [
+        "z17k0x1 encompasses z17k0x0.",
+        "z17k0x1 belongs to the class z17k0x2.",
+        "z17k0x2 belongs to the class z17k0x3.",
+        "z17k0x4 opposes z17k0x0."
+      ],
+      "query": [
+        "z17k0x0",
+        "z17k0x3"
+      ],
+      "answer_path": [
+        "z17k0x0",
+        "z17k0x1",
+        "z17k0x2",
+        "z17k0x3"
+      ]
+    }
+  },
+  {
+    "seed": 29,
+    "train_pattern_count": 10,
+    "source_train_sentences": 1200,
+    "old_questions": 400,
+    "new_questions": 160,
+    "native_written_records": 1120,
+    "baseline_before": [
+      400,
+      400
+    ],
+    "native_before": [
+      400,
+      400
+    ],
+    "native_after_gauge": [
+      400,
+      400
+    ],
+    "raw_after_gauge": [
+      210,
+      400
+    ],
+    "native_old_after_adaptation": [
+      400,
+      400
+    ],
+    "native_new_after_adaptation": [
+      160,
+      160
+    ],
+    "control_old_after_adaptation": [
+      400,
+      400
+    ],
+    "control_new_after_adaptation": [
+      160,
+      160
+    ],
+    "native_pair_audit": 1,
+    "max_snapshot_readout_error": 0.0,
+    "positive_native_records": 840,
+    "snapshot_exact": true,
+    "example": {
+      "premises": [
+        "z29k0x1 encompasses z29k0x0.",
+        "z29k0x1 is a type of z29k0x2.",
+        "z29k0x2 belongs to the class z29k0x3.",
+        "z29k0x4 opposes z29k0x0."
+      ],
+      "query": [
+        "z29k0x0",
+        "z29k0x3"
+      ],
+      "answer_path": [
+        "z29k0x0",
+        "z29k0x1",
+        "z29k0x2",
+        "z29k0x3"
+      ]
+    }
+  },
+  {
+    "seed": 43,
+    "train_pattern_count": 10,
+    "source_train_sentences": 1200,
+    "old_questions": 400,
+    "new_questions": 160,
+    "native_written_records": 1120,
+    "baseline_before": [
+      400,
+      400
+    ],
+    "native_before": [
+      400,
+      400
+    ],
+    "native_after_gauge": [
+      400,
+      400
+    ],
+    "raw_after_gauge": [
+      206,
+      400
+    ],
+    "native_old_after_adaptation": [
+      400,
+      400
+    ],
+    "native_new_after_adaptation": [
+      160,
+      160
+    ],
+    "control_old_after_adaptation": [
+      400,
+      400
+    ],
+    "control_new_after_adaptation": [
+      160,
+      160
+    ],
+    "native_pair_audit": 1,
+    "max_snapshot_readout_error": 0.0,
+    "positive_native_records": 840,
+    "snapshot_exact": true,
+    "example": {
+      "premises": [
+        "z43k0x0 is a type of z43k0x1.",
+        "z43k0x1 belongs to the class z43k0x2.",
+        "z43k0x3 encompasses z43k0x2.",
+        "z43k0x4 opposes z43k0x0."
+      ],
+      "query": [
+        "z43k0x0",
+        "z43k0x3"
+      ],
+      "answer_path": [
+        "z43k0x0",
+        "z43k0x1",
+        "z43k0x2",
+        "z43k0x3"
+      ]
+    }
+  }
+]

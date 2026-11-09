@@ -1,0 +1,14 @@
+{
+  "native_bytes": 8388608,
+  "native_pair_slot_count": 32640,
+  "independent_triangle_slot_capacity": 32385,
+  "raw_exact_after_large_gauge": 0,
+  "gauge_max_deviation": 1.52587890625e-05,
+  "snapshot_exact": true,
+  "so2_commutator_norm": 0.0,
+  "so3_commutator_norm": 1.1399238109588623,
+  "holonomy_trace_gauge_error": 1.1920928955078125e-07,
+  "angle_gradient_norm": 0.010279673151671886,
+  "token_conditioning_gradient_norm": 0.00855877622961998,
+  "contradictory_support_and_refute_state": 3
+}

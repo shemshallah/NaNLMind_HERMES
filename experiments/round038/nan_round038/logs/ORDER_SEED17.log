@@ -1,0 +1,9 @@
+TRAIN deepsets
+deepsets 0.6833 0.1232
+TRAIN phase
+phase 0.1833 0.4669
+TRAIN rotation
+rotation 0.1833 0.4656
+TRAIN full
+full 1.0 0.0125
+COMPLETE 15.52
