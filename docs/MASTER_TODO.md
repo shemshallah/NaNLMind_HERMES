@@ -47,7 +47,7 @@ for the round-specific items are in `ROUNDS_023_036_TODO.md` and
 | A-12 | Verify Round 035 two/three-source composition | linked answer; broken abstention; cycle exact | done |
 | A-13 | Verify Round 036 contradiction rule and symbolic depth | `opposes` abstains; 4-hop symbolic only | done |
 | A-14 | Add `Round033/034/035/036` docs to the index and MANIFEST | paths present; package build includes archives | done |
-| A-15 | Re-run packaging tests after new binary/checkpoint archives | wheel 330 files / sdist 829 files; verifier pass; checkpoint/root binaries, corpus JSONL and BPE model excluded | done |
+| A-15 | Re-run packaging tests after new binary/checkpoint archives | wheel 330 files / sdist 837 files; verifier pass; checkpoint/root binaries, corpus JSONL and BPE model excluded | done |
 | A-16 | Re-run Alpine/proot suite | 1,459 tests, 1 skipped, OK (654 s) | done |
 | A-17 | Confirm no legacy branded filenames/strings remain | repository search for the retired label is empty | done |
 | A-18 | Confirm canonical merge stays disabled everywhere | all receipts/flags false | done |
@@ -152,12 +152,14 @@ PyTorch. No live NANNET route or canonical merge is authorized.
 | T-16 | Android ARM RSS/cache/energy measurement | measured on target device | open |
 | T-17 | Snapshot pair with shared generation/digest | reopen equality; mismatch denied | open |
 | T-18 | Keep canonical merge disabled | every receipt false | done |
+| T-19 | Head-usage load balancing and coverage audit | all 255 heads exercised; entropy/usage report; no rich-get-richer collapse | open |
 
 **Current honest reading:** the LM is real but undertrained; memory/head/copy
 channels are measurably used but small; trig/holonomy are neutral-to-negative
 on byte LM at this budget; the order probe shows the trig algebra is
-order-sensitive (100% vs 33.3% phase-only, three seeds). The next falsifiable
-task is T-11, not another headline number.
+order-sensitive (100% vs 33.3% phase-only, three seeds); the seed-17 router
+collapsed to 4 of 255 heads. The next falsifiable tasks are T-11 (in-LM order
+task) and T-19 (head coverage), not another headline number.
 
 ---
 

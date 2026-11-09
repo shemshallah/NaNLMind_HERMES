@@ -23,7 +23,8 @@ steps, 6 NANNET-P generations.
 | Matched byte Transformer | 3.7377 / 3.7329 / 3.7234 bpb across seeds 17/29/43 (1.22M params, ~55 s) |
 
 Ablations and the honest limits are in `docs/NANLM_42_TRIGON.md`. Free samples
-are malformed; the model is not fluent.
+are malformed; the model is not fluent. The seed-17 router collapsed to 4 of
+255 heads; load balancing is an explicit open gate.
 
 ## Reproduce
 

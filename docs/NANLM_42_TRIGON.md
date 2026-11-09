@@ -551,6 +551,12 @@ R039's fluency problem is not solved by this run.
 - **Not a compute-matched win.** The byte Transformer control is
   data/parameter-comparable and has more parameters, but it is about 12× faster
   on CPU. The TRIGON-9 advantage is not yet separated from extra compute.
+- **Head usage collapsed in the seed-17 checkpoint.** With the NANNET-P
+  accepted `head_k=4`, a 16-document probe selected only **4 unique heads out
+  of 255**. The router's hard top-k selection is rich-get-richer. The head
+  readout still carries next-token information, but this is not "all 256 heads
+  at full capability". A load-balancing/diversity pressure is a required next
+  step (T-19); it was not present in the measured run.
 - **Not open-domain relation extraction.** The relation probe uses WordNet
   lemma pairs and a controlled graph; it does not parse arbitrary prose.
 - **Not a live NANNET route.** `mode: local-unverified`; the HW4 address is a
