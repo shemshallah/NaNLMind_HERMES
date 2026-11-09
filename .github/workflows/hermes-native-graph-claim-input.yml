@@ -5,6 +5,7 @@ on:
       - 'nanlmind_hermes/router_graph_native_input.py'
       - 'tests/test_router_graph_native_input.py'
       - 'scripts/verify_real_router_native_claim_input.py'
+      - 'scripts/verify_native_graph_claim_guest.py'
       - '.github/workflows/hermes-native-graph-claim-input.yml'
   push:
     paths:
@@ -42,3 +43,32 @@ jobs:
         env:
           PYTHONPATH: .:router
         run: python scripts/verify_real_router_native_claim_input.py
+      - name: Checkout pinned canonical NaN0S source assembler and native VM
+        uses: actions/checkout@v4
+        with:
+          repository: shemshallah/NaN0S
+          ref: 7f250a11bdb7845eae06ffb50df202187543ea5e
+          path: nan0s
+      - name: Build actual NaN16 guest harness
+        run: make -s -C nan0s/aarch64/android nan_cli
+      - name: Generate native guest fixture from real replay-verified MC0DB claims
+        env:
+          PYTHONPATH: .:router
+        run: python scripts/verify_native_graph_claim_guest.py
+      - name: Assemble real candidate claims into NaN16 image
+        run: |
+          mkdir -p build/native-graph
+          awk -f nan0s/tools/nmk.awk -v CMD=emit \
+            router/mth/tests/hermes_real_claim_probe_test.nas \
+            > build/native-graph/real-claim.nan
+      - name: Execute real MC0DB candidate claims in native NaN16 guest
+        run: |
+          nan0s/aarch64/android/nan_cli \
+            --img build/native-graph/real-claim.nan \
+            --steps 2000000 --serial \
+            > build/native-graph/real-claim.out \
+            2> build/native-graph/real-claim.err
+          cat build/native-graph/real-claim.out
+          cat build/native-graph/real-claim.err
+          grep -q '^HERMES MC0DB TO NATIVE CLAIM PASS' build/native-graph/real-claim.out
+          ! grep -q 'HERMES MC0DB TO NATIVE CLAIM FAIL' build/native-graph/real-claim.out
