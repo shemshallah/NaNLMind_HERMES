@@ -23,10 +23,10 @@ from .router_graph_page import RouterGraphPageError
 
 _RECEIPT_DOMAIN = b"nanlm.hermes.graph-native-worker-receipt/1\0"
 SCHEMA = "nanlm.hermes.graph-native-worker-receipt/1"
-_IDENT = re.compile(r"[A-Za-z0-9_.:-]{1,160}\\Z")
-_HEX64 = re.compile(r"[0-9a-f]{64}\\Z")
-_HEX32 = re.compile(r"[0-9a-f]{32}\\Z")
-_HEX128 = re.compile(r"[0-9a-f]{128}\\Z")
+_IDENT = re.compile(r"[A-Za-z0-9_.:-]{1,160}\Z")
+_HEX64 = re.compile(r"[0-9a-f]{64}\Z")
+_HEX32 = re.compile(r"[0-9a-f]{32}\Z")
+_HEX128 = re.compile(r"[0-9a-f]{128}\Z")
 _FIELDS = (
     "schema", "worker_id", "key_id", "graph_envelope_sha256",
     "word_digest_sha256", "provenance_sha256", "graph_commitment_sha256",
