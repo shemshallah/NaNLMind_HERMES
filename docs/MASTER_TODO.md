@@ -68,9 +68,9 @@ them.
 ## B. Rounds 023–036 integration (verification + open items)
 
 The detailed table is in [ROUNDS_023_036_TODO.md](ROUNDS_023_036_TODO.md).
-The new validated architecture inputs are [ROUND038_ROTATION_HOLONOMY.md](ROUND038_ROTATION_HOLONOMY.md)
-and [ROUND040_DYNAMIC_MEMORY.md](ROUND040_DYNAMIC_MEMORY.md); their tasks are
-B-11..B-20 below.
+The new validated architecture inputs are [ROUND038_ROTATION_HOLONOMY.md](ROUND038_ROTATION_HOLONOMY.md),
+[ROUND040_DYNAMIC_MEMORY.md](ROUND040_DYNAMIC_MEMORY.md) and
+[ROUND042_TRIGON.md](ROUND042_TRIGON.md); their tasks are B-11..B-28 below.
 Summary of what is still genuinely open:
 
 | ID | Open item | Gate |
@@ -95,6 +95,14 @@ Summary of what is still genuinely open:
 | B-18 | Four-valued support/refute/unknown/both evidence (R038) | contradiction preserved, not phase-cancelled |
 | B-19 | Token-conditioned rotation/attention bridge (R038) | nonzero angle/token gradients; restricted decoder |
 | B-20 | Deterministic replay of R038 checkpoints/artifacts | three-seed table and native snapshot audit |
+| B-21 | Expose explicit support/refute cycle lanes (R042) | both lanes preserved; no phase cancellation |
+| B-22 | Causal delete/restore of a resident pair/cycle (R042) | answer changes/restores with generation CAS |
+| B-23 | Persistent add/ask session over raw cycle memory (R042) | save/reload; path or abstention |
+| B-24 | Bounded propagation over typed resident edges (R042) | two-to-five-hop positive/negative split |
+| B-25 | Four-state `unknown/supports/refutes/both` output (R042) | all four states preserved |
+| B-26 | Optional replay of supplied writer/decoder checkpoints (R042) | pytest skip if unavailable; pure path remains |
+| B-27 | Matched conventional-memory comparison in NaN (R042) | exact tie documented, no unique claim |
+| B-28 | Few-shot phrase adaptation with rehearsal (R042) | old/new phrase classes retained |
 
 These remain open until their gates pass. No item is promoted because a
 related artifact reports a number.

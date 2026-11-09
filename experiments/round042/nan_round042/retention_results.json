@@ -1,0 +1,141 @@
+{
+  "old_phrases": {
+    "correct": 180,
+    "total": 180,
+    "examples": [
+      {
+        "question": "anthropoid -> placental",
+        "generated": "the information shows that anthropoid is a kind of placental.",
+        "correct": true
+      },
+      {
+        "question": "protection -> offense",
+        "generated": "the available facts do not establish that protection belongs to offense.",
+        "correct": true
+      },
+      {
+        "question": "caress -> touch",
+        "generated": "the information shows that caress is a kind of touch.",
+        "correct": true
+      },
+      {
+        "question": "weaver -> passerine",
+        "generated": "the available facts do not establish that weaver belongs to passerine.",
+        "correct": true
+      },
+      {
+        "question": "drifting -> change",
+        "generated": "the information shows that drifting is a kind of change.",
+        "correct": true
+      },
+      {
+        "question": "dobson -> invertebrate",
+        "generated": "the available facts do not establish that dobson belongs to invertebrate.",
+        "correct": true
+      },
+      {
+        "question": "bunker -> artifact",
+        "generated": "the information shows that bunker is a kind of artifact.",
+        "correct": true
+      },
+      {
+        "question": "jird -> placental",
+        "generated": "the available facts do not establish that jird belongs to placental.",
+        "correct": true
+      }
+    ]
+  },
+  "new_phrases": {
+    "correct": 180,
+    "total": 180,
+    "examples": [
+      {
+        "question": "anthropoid -> placental",
+        "generated": "the information shows that anthropoid is a kind of placental.",
+        "correct": true
+      },
+      {
+        "question": "protection -> offense",
+        "generated": "the available facts do not establish that protection belongs to offense.",
+        "correct": true
+      },
+      {
+        "question": "caress -> touch",
+        "generated": "the information shows that caress is a kind of touch.",
+        "correct": true
+      },
+      {
+        "question": "weaver -> passerine",
+        "generated": "the available facts do not establish that weaver belongs to passerine.",
+        "correct": true
+      },
+      {
+        "question": "drifting -> change",
+        "generated": "the information shows that drifting is a kind of change.",
+        "correct": true
+      },
+      {
+        "question": "dobson -> invertebrate",
+        "generated": "the available facts do not establish that dobson belongs to invertebrate.",
+        "correct": true
+      },
+      {
+        "question": "bunker -> artifact",
+        "generated": "the information shows that bunker is a kind of artifact.",
+        "correct": true
+      },
+      {
+        "question": "jird -> placental",
+        "generated": "the available facts do not establish that jird belongs to placental.",
+        "correct": true
+      }
+    ]
+  },
+  "new_phrases_after_gauge": {
+    "correct": 180,
+    "total": 180,
+    "examples": [
+      {
+        "question": "anthropoid -> placental",
+        "generated": "the information shows that anthropoid is a kind of placental.",
+        "correct": true
+      },
+      {
+        "question": "protection -> offense",
+        "generated": "the available facts do not establish that protection belongs to offense.",
+        "correct": true
+      },
+      {
+        "question": "caress -> touch",
+        "generated": "the information shows that caress is a kind of touch.",
+        "correct": true
+      },
+      {
+        "question": "weaver -> passerine",
+        "generated": "the available facts do not establish that weaver belongs to passerine.",
+        "correct": true
+      },
+      {
+        "question": "drifting -> change",
+        "generated": "the information shows that drifting is a kind of change.",
+        "correct": true
+      },
+      {
+        "question": "dobson -> invertebrate",
+        "generated": "the available facts do not establish that dobson belongs to invertebrate.",
+        "correct": true
+      },
+      {
+        "question": "bunker -> artifact",
+        "generated": "the information shows that bunker is a kind of artifact.",
+        "correct": true
+      },
+      {
+        "question": "jird -> placental",
+        "generated": "the available facts do not establish that jird belongs to placental.",
+        "correct": true
+      }
+    ]
+  },
+  "native_integrity": true
+}

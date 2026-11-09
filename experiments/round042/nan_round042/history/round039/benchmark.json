@@ -1,0 +1,101 @@
+{
+  "n_docs_test": 1500,
+  "methods": {
+    "plain_17": {
+      "full": {
+        "tokens": 7863,
+        "nats_per_token": 5.528814880747566,
+        "perplexity": 251.84526741927124,
+        "next_token_acc": 0.12997583619483657
+      },
+      "without_memory": {
+        "tokens": 7863,
+        "nats_per_token": 5.574635008523653,
+        "perplexity": 263.6533068633006,
+        "next_token_acc": 0.12997583619483657
+      },
+      "shuffled_memory": {
+        "tokens": 7863,
+        "nats_per_token": 5.607662045196102,
+        "perplexity": 272.506385047593,
+        "next_token_acc": 0.12972148035101105
+      }
+    },
+    "native_17": {
+      "full": {
+        "tokens": 7863,
+        "nats_per_token": 5.543662874264737,
+        "perplexity": 255.61256349895953,
+        "next_token_acc": 0.12972148035101105
+      },
+      "without_memory": {
+        "tokens": 7863,
+        "nats_per_token": 5.55987620435567,
+        "perplexity": 259.7906733783739,
+        "next_token_acc": 0.1313747933358769
+      },
+      "shuffled_memory": {
+        "tokens": 7863,
+        "nats_per_token": 5.563694627294403,
+        "perplexity": 260.7845603777275,
+        "next_token_acc": 0.13112043749205138
+      },
+      "gauge_max_abs": 1.126900315284729e-06,
+      "gauge": {
+        "tokens": 7863,
+        "nats_per_token": 5.543662930299016,
+        "perplexity": 255.61257782202551,
+        "next_token_acc": 0.12972148035101105
+      },
+      "address_audit": true
+    },
+    "plain_29": {
+      "full": {
+        "tokens": 7863,
+        "nats_per_token": 5.5511975063404995,
+        "perplexity": 257.54578402571667,
+        "next_token_acc": 0.12603332061554115
+      },
+      "without_memory": {
+        "tokens": 7863,
+        "nats_per_token": 5.601749525442539,
+        "perplexity": 270.89993941362536,
+        "next_token_acc": 0.1255246089278901
+      },
+      "shuffled_memory": {
+        "tokens": 7863,
+        "nats_per_token": 5.622973825463687,
+        "perplexity": 276.71105125089684,
+        "next_token_acc": 0.12450718555258806
+      }
+    },
+    "native_29": {
+      "full": {
+        "tokens": 7863,
+        "nats_per_token": 5.5676038851950835,
+        "perplexity": 261.8060297735463,
+        "next_token_acc": 0.12577896477171563
+      },
+      "without_memory": {
+        "tokens": 7863,
+        "nats_per_token": 5.586302200680271,
+        "perplexity": 266.7474153379726,
+        "next_token_acc": 0.1255246089278901
+      },
+      "shuffled_memory": {
+        "tokens": 7863,
+        "nats_per_token": 5.579341884303999,
+        "perplexity": 264.8972153927167,
+        "next_token_acc": 0.12539743100597736
+      },
+      "gauge_max_abs": 1.0980293154716492e-06,
+      "gauge": {
+        "tokens": 7863,
+        "nats_per_token": 5.5676038813139215,
+        "perplexity": 261.80602875743466,
+        "next_token_acc": 0.12577896477171563
+      },
+      "address_audit": true
+    }
+  }
+}

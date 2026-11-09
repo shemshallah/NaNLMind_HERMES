@@ -1,0 +1,121 @@
+{
+  "seed": 43,
+  "correct": 160,
+  "total": 160,
+  "gauge_output_stability": 160,
+  "gauge_total": 160,
+  "categories": {
+    "supports": {
+      "correct": 40,
+      "total": 40
+    },
+    "refutes": {
+      "correct": 40,
+      "total": 40
+    },
+    "both": {
+      "correct": 40,
+      "total": 40
+    },
+    "unknown": {
+      "correct": 40,
+      "total": 40
+    }
+  },
+  "history": [
+    {
+      "step": 1,
+      "train_ce": 4.261202335357666,
+      "val_ce": 4.086546421051025
+    },
+    {
+      "step": 120,
+      "train_ce": 0.11083097755908966,
+      "val_ce": 0.10605941712856293
+    },
+    {
+      "step": 240,
+      "train_ce": 0.08739023655653,
+      "val_ce": 0.0837751030921936
+    },
+    {
+      "step": 360,
+      "train_ce": 0.08191943913698196,
+      "val_ce": 0.07708606868982315
+    },
+    {
+      "step": 480,
+      "train_ce": 0.08679576963186264,
+      "val_ce": 0.07855605334043503
+    },
+    {
+      "step": 600,
+      "train_ce": 0.08322393894195557,
+      "val_ce": 0.08281946182250977
+    }
+  ],
+  "examples": [
+    {
+      "state": "supports",
+      "generated": "the recorded facts establish that opossum is a type of vertebrate.",
+      "correct": true
+    },
+    {
+      "state": "refutes",
+      "generated": "a negative claim explicitly rejects the relationship between jird and rodent.",
+      "correct": true
+    },
+    {
+      "state": "both",
+      "generated": "the evidence is conflicting: one path supports junketing as a kind of action, but another statement refutes it.",
+      "correct": true
+    },
+    {
+      "state": "unknown",
+      "generated": "the available information does not establish a relationship between emu and vertebrate.",
+      "correct": true
+    },
+    {
+      "state": "supports",
+      "generated": "the recorded facts establish that furor is a type of action.",
+      "correct": true
+    },
+    {
+      "state": "refutes",
+      "generated": "a negative claim explicitly rejects the relationship between centrifuge and equipment.",
+      "correct": true
+    },
+    {
+      "state": "both",
+      "generated": "the evidence is conflicting: one path supports funambulism as a kind of activity, but another statement refutes it.",
+      "correct": true
+    },
+    {
+      "state": "unknown",
+      "generated": "the available information does not establish a relationship between footwork and choice.",
+      "correct": true
+    },
+    {
+      "state": "supports",
+      "generated": "the recorded facts establish that aardvark is a type of vertebrate.",
+      "correct": true
+    },
+    {
+      "state": "refutes",
+      "generated": "a negative claim explicitly rejects the relationship between crab and diversion.",
+      "correct": true
+    },
+    {
+      "state": "both",
+      "generated": "the evidence is conflicting: one path supports sleeper as a kind of success, but another statement refutes it.",
+      "correct": true
+    },
+    {
+      "state": "unknown",
+      "generated": "the available information does not establish a relationship between masse and change.",
+      "correct": true
+    }
+  ],
+  "native_audit": true,
+  "parameter_count": 56628
+}

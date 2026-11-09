@@ -39,6 +39,11 @@
   `nanlm_mth_leaf_create`, `nanlm_mth_leaf_get`, `nanlm_mth_pair` and
   `nanlm_mth_leaf_verify`, `nanlm_mth_tree`, `nanlm_hw2_bind`,
   `nanlm_hw2_status` and `nanlm_hw2_report`.
+- Added Round 042 architecture input: pure raw 0xNaN16
+  `trig_cycle.nan` triangle/holonomy kernel, `resident/trig_cycle.py` bridge,
+  `docs/ROUND042_TRIGON.md`, and tasks B-21..B-28 for support/refute lanes,
+  causal delete/restore, persistent add/ask, propagation, four-state output,
+  optional checkpoint replay and matched-memory comparison.
 - Added Round 038 order/holonomy algebra (`rotation_holonomy.py`) and added
   Round 038/040 architecture inputs to the master TODO: SO(2)/SO(3) order
   sensitivity, conjugation-invariant trace, dynamic fact writes, add/ask

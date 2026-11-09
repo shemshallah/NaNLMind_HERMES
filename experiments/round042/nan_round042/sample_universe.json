@@ -1,0 +1,53 @@
+{
+  "names": {
+    "penguin": 1,
+    "bird": 2,
+    "animal": 3,
+    "organism": 4,
+    "mammal": 5,
+    "machine": 6
+  },
+  "facts": [
+    {
+      "a": "penguin",
+      "b": "bird",
+      "phrase": "is a kind of",
+      "strength": 0.979912281036377,
+      "type": "supports",
+      "statement": "penguin is a kind of bird"
+    },
+    {
+      "a": "bird",
+      "b": "animal",
+      "phrase": "is a kind of",
+      "strength": 0.979912281036377,
+      "type": "supports",
+      "statement": "bird is a kind of animal"
+    },
+    {
+      "a": "animal",
+      "b": "organism",
+      "phrase": "is subsumed by",
+      "strength": 0.9799732565879822,
+      "type": "supports",
+      "statement": "animal is subsumed by organism"
+    },
+    {
+      "a": "animal",
+      "b": "mammal",
+      "phrase": "comprises",
+      "strength": -0.9799980521202087,
+      "type": "supports",
+      "statement": "animal comprises mammal"
+    },
+    {
+      "a": "penguin",
+      "b": "machine",
+      "phrase": "is not a kind of",
+      "strength": 0.999255359172821,
+      "type": "refutes",
+      "statement": "penguin is not a kind of machine"
+    }
+  ],
+  "sha256": "248e7a3736710a68797e10c0106ceeb4a697c9303516b84ac3554b338f43ec04"
+}

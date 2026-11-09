@@ -1,0 +1,121 @@
+{
+  "seed": 29,
+  "correct": 160,
+  "total": 160,
+  "gauge_output_stability": 160,
+  "gauge_total": 160,
+  "categories": {
+    "supports": {
+      "correct": 40,
+      "total": 40
+    },
+    "refutes": {
+      "correct": 40,
+      "total": 40
+    },
+    "both": {
+      "correct": 40,
+      "total": 40
+    },
+    "unknown": {
+      "correct": 40,
+      "total": 40
+    }
+  },
+  "history": [
+    {
+      "step": 1,
+      "train_ce": 4.239083766937256,
+      "val_ce": 4.083430290222168
+    },
+    {
+      "step": 120,
+      "train_ce": 0.11356736719608307,
+      "val_ce": 0.10751848667860031
+    },
+    {
+      "step": 240,
+      "train_ce": 0.09377038478851318,
+      "val_ce": 0.08292919397354126
+    },
+    {
+      "step": 360,
+      "train_ce": 0.0883161798119545,
+      "val_ce": 0.0853877067565918
+    },
+    {
+      "step": 480,
+      "train_ce": 0.08640306442975998,
+      "val_ce": 0.08839505910873413
+    },
+    {
+      "step": 600,
+      "train_ce": 0.0763939842581749,
+      "val_ce": 0.08416642248630524
+    }
+  ],
+  "examples": [
+    {
+      "state": "supports",
+      "generated": "the relationships support that mole belongs to mammal.",
+      "correct": true
+    },
+    {
+      "state": "refutes",
+      "generated": "no, the stored statement denies that salvation belongs to event.",
+      "correct": true
+    },
+    {
+      "state": "both",
+      "generated": "the stored facts disagree: interception is supported and refuted as a type of act.",
+      "correct": true
+    },
+    {
+      "state": "unknown",
+      "generated": "there is not enough evidence to say that engineering belongs to application.",
+      "correct": true
+    },
+    {
+      "state": "supports",
+      "generated": "the relationships support that carbomycin belongs to antibacterial.",
+      "correct": true
+    },
+    {
+      "state": "refutes",
+      "generated": "no, the stored statement denies that disparagement belongs to judgment.",
+      "correct": true
+    },
+    {
+      "state": "both",
+      "generated": "the stored facts disagree: therapsid is supported and refuted as a type of chordate.",
+      "correct": true
+    },
+    {
+      "state": "unknown",
+      "generated": "there is not enough evidence to say that oyster belongs to invertebrate.",
+      "correct": true
+    },
+    {
+      "state": "supports",
+      "generated": "the relationships support that americanism belongs to act.",
+      "correct": true
+    },
+    {
+      "state": "refutes",
+      "generated": "no, the stored statement denies that insult belongs to act.",
+      "correct": true
+    },
+    {
+      "state": "both",
+      "generated": "the stored facts disagree: doliolum is supported and refuted as a type of chordate.",
+      "correct": true
+    },
+    {
+      "state": "unknown",
+      "generated": "there is not enough evidence to say that extension belongs to activity.",
+      "correct": true
+    }
+  ],
+  "native_audit": true,
+  "parameter_count": 56628
+}
