@@ -35,6 +35,29 @@ def _paths(ctx):
     return root, root / "corpora", root / "universe"
 
 
+def resolve_tool_corpus_path(ctx, path: str) -> str:
+    """Constrain model-selected corpora to this plugin's configured corpus home.
+
+    Resolve the complete path before checking containment so traversal and
+    symlinks into other profiles or credential stores are rejected. This
+    protects model-callable training tools; trusted local code may still
+    explicitly invoke the lower-level native Python API on other files.
+    """
+    if type(path) is not str or not path.strip():
+        raise ValueError("a corpus file inside the configured corpora directory is required")
+    _, corpora, _ = _paths(ctx)
+    allowed = corpora.resolve()
+    try:
+        source = Path(path).expanduser().resolve(strict=True)
+    except (OSError, RuntimeError) as exc:
+        raise ValueError("corpus file is not accessible") from exc
+    if not source.is_file() or not source.is_relative_to(allowed):
+        raise PermissionError(
+            "model tools may only access files under the plugin's corpora directory"
+        )
+    return str(source)
+
+
 def _universe_id(universe: Path) -> str:
     universe.mkdir(parents=True, exist_ok=True)
     identity = universe / "identity.json"

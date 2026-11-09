@@ -589,13 +589,25 @@ def main(argv=None):
             b"nanrouter.nan-layer-commitment/1\0" +
             json.dumps(graph_header,sort_keys=True,separators=(",",":")).encode()
         ).hexdigest()
-        call("nanlm_router_graph_verify", {"pages": [{
+        graph_demo_page = {
             **graph_header,
             "graph_commitment_sha256": graph_commit,
             "entries": [], "offset": 0, "next_offset": None,
             "signed_by_router": False, "native_mth_receipt": False,
             "mathematical_truth_promoted": False, "snapshot_consistent": True,
-        }]})
+        }
+        call("nanlm_router_graph_verify", {"pages": [graph_demo_page]})
+        # Exact empty revision history: exercise the new protected read-only
+        # navigation tool without inventing evidence or sender credentials.
+        call("nanlm_router_graph_walk", {
+            "pages": [graph_demo_page],
+            "history_pages": [{
+                **graph_demo_page,
+                "history_offset": 0, "history_total": 0,
+                "history_entries": [], "history_next_offset": None,
+            }],
+            "start": 7, "target": 265, "max_hops": 2,
+        })
         call("nanlm_mirror_topology", {
             "route": "nan://GM0:0::SC0:0::MC0:0::BS0:0::HW0:0::HW0:7::L5"})
         call("nanlm_self_modify", {

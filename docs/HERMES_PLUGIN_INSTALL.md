@@ -14,15 +14,29 @@ hermes tools
 ```
 
 The plugin must register the tools declared in `plugin.yaml`. The manifest
-declares all **75** tools, including chat, native training, mathematical
-memory, NANNET auth and lease/universe operations, NaN16DE routing, MTH
-catalog/runtime/leaves, CLOCKED plans, head processing, and isolated candidate
-learning. See [TOOLS_REFERENCE.md](TOOLS_REFERENCE.md).
+declares all **86** tools, including chat, native training, mathematical
+memory, resident evidence lanes, NANNET auth and lease/universe operations,
+NaN16DE routing, MTH catalog/runtime/leaves, signed graph navigation,
+CLOCKED plans, head processing, and isolated candidate learning. See
+[TOOLS_REFERENCE.md](TOOLS_REFERENCE.md).
 
 Free-form chat learning is enabled by default through `chat_learning: true`.
 It requires the `training:execute` scope when enabled. Set it to false for
 chat-only sessions that retain symbolic reflection without native head,
 mirror-pair or hyperedge updates.
+
+## Source installation security
+
+The reviewed `nanlmind-hermes[auth]` extra is strongly recommended for
+production identity and tokens: from the plugin checkout run
+`python -m pip install -e '.[auth]'`. The dependency-free crypto fallback
+is not audited for constant-time behavior.
+
+For each Hermes profile, configure a separate absolute `state_dir` to keep
+native 8 MiB universe, transcripts and encrypted identity from crossing
+profiles. Native executables receive only a restricted environment; protected
+CLOCKED/candidate model tools use real Hermes human approval via
+`pre_tool_call`, not model-supplied `approved` flags.
 
 ## Repository/catalog install
 

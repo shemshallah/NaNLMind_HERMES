@@ -416,8 +416,16 @@ class TemporalRegister:
         self._sync_extension()
 
     @classmethod
-    def open(cls, ctx, chart: "Chart8MiB | None" = None) -> "TemporalRegister":
-        state_dir = Path(str(ctx.get_config("state_dir", "~/.local/share/nanlmind-hermes"))).expanduser()
+    def open(cls, ctx, chart: "Chart8MiB | None" = None, *,
+             resolved_state_dir: Path | None = None) -> "TemporalRegister":
+        # LocalRunner supplies the ALREADY resolved cache directory. Do not
+        # resolve the original ctx symlink a second time after chart startup:
+        # it could be retargeted between cache lookup and register binding.
+        state_dir = resolved_state_dir
+        if state_dir is None:
+            state_dir = Path(str(ctx.get_config(
+                "state_dir", "~/.local/share/nanlmind-hermes"
+            ))).expanduser().resolve()
         if chart is None:
             try:
                 chart = load_chart(state_dir)
@@ -782,7 +790,9 @@ class LocalRunner:
             restore_local_chart(chart, state_dir)
             from .universe_root import attach_universe_root
             attach_universe_root(chart)
-            register = TemporalRegister.open(ctx, chart)
+            register = TemporalRegister.open(
+                ctx, chart, resolved_state_dir=state_dir
+            )
             runner = cls(chart, register)
             _RUNNERS[key] = runner
         elif latest is not None:

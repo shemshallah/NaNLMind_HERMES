@@ -8,6 +8,7 @@ SHA-256 digest and canonical parent root bind every slot to its source.
 """
 from __future__ import annotations
 
+from contextlib import contextmanager
 import fcntl
 import hashlib
 import os
@@ -28,7 +29,74 @@ class ChartStorageError(ValueError):
 
 
 def _root(state_dir: str | Path) -> Path:
-    return Path(state_dir).expanduser() / "language" / "chart-checkpoints"
+    """Resolve the fixed checkpoint location without accepting child aliases.
+
+    The caller (LocalRunner / SnapshotHeadBankFence) pins its trusted physical
+    state home, but a *nested* language/ or chart-checkpoints/ symlink could
+    still redirect a later read/write to another, individually SHA-valid
+    N16SNAP1 chart. Reject pre-existing aliases or non-directory nodes
+    before reading, creating or replacing a slot. This is not a substitute
+    for exclusive host filesystem ownership or a cross-process lease.
+    """
+    base = Path(state_dir).expanduser()
+    language = base / "language"
+    folder = language / "chart-checkpoints"
+    for component in (language, folder):
+        if component.is_symlink():
+            raise ChartStorageError("checkpoint directory components cannot be symlinks")
+        if component.exists() and not component.is_dir():
+            raise ChartStorageError("checkpoint directory component is not a directory")
+    return folder
+
+
+@contextmanager
+def _opened_folder(state_dir: str | Path, *, create: bool):
+    """Open the fixed checkpoint chain with O_NOFOLLOW at *each* level.
+
+    All subsequent slot, lock, rename and fsync operations use the opened
+    chart-checkpoints directory fd, never a re-resolved path. This prevents
+    replacing language/ or chart-checkpoints/ with aliases between a path
+    validation and a native checkpoint operation.
+    """
+    base = Path(state_dir).expanduser()
+    # Preserve the existing precise rejection of pre-existing aliases while
+    # descriptor-relative O_NOFOLLOW closes the post-check redirect window.
+    _root(base)
+    flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW
+    opened = []
+    try:
+        if create:
+            base.mkdir(parents=True, exist_ok=True, mode=0o700)
+        try:
+            parent_fd = os.open(base, flags)
+        except FileNotFoundError:
+            if not create:
+                yield None
+                return
+            raise
+        opened.append(parent_fd)
+        for name in ("language", "chart-checkpoints"):
+            try:
+                child_fd = os.open(name, flags, dir_fd=parent_fd)
+            except FileNotFoundError:
+                if not create:
+                    yield None
+                    return
+                try:
+                    os.mkdir(name, mode=0o700, dir_fd=parent_fd)
+                except FileExistsError:
+                    pass
+                child_fd = os.open(name, flags, dir_fd=parent_fd)
+            opened.append(child_fd)
+            parent_fd = child_fd
+        if create:
+            os.fchmod(parent_fd, 0o700)
+        yield parent_fd
+    except OSError as exc:
+        raise ChartStorageError("checkpoint directory descriptor could not be opened") from exc
+    finally:
+        for fd in reversed(opened):
+            os.close(fd)
 
 
 def _parent(root_hash: str) -> bytes:
@@ -52,14 +120,25 @@ def _validate_chart(page: bytes) -> None:
         raise ChartStorageError("invalid NaN16 chart head count")
 
 
-def _read(path: Path):
-    if not path.exists() and not path.is_symlink():
+def _read_at(folder_fd: int, name: str):
+    """Open a snapshot exactly once, refusing symlinks and nonregular nodes.
+
+    fstat/read share one descriptor: swapping the filename after validation
+    cannot cause the reader to verify a different object's bytes.
+    """
+    flags = os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK
+    try:
+        fd = os.open(name, flags, dir_fd=folder_fd)
+    except FileNotFoundError:
         return None
-    if path.is_symlink() or not path.is_file():
-        raise ChartStorageError("snapshot slot is not a regular file")
-    if path.stat().st_size != HEADER.size + PAGE_BYTES:
-        raise ChartStorageError("snapshot slot length mismatch")
-    with path.open("rb") as stream:
+    except OSError as exc:
+        raise ChartStorageError("snapshot slot cannot be opened without following links") from exc
+    with os.fdopen(fd, "rb") as stream:
+        info = os.fstat(stream.fileno())
+        if not stat.S_ISREG(info.st_mode):
+            raise ChartStorageError("snapshot slot is not a regular file")
+        if info.st_size != HEADER.size + PAGE_BYTES:
+            raise ChartStorageError("snapshot slot length mismatch")
         head = stream.read(HEADER.size)
         body = stream.read(PAGE_BYTES)
         if stream.read(1):
@@ -73,13 +152,13 @@ def _read(path: Path):
     return (generation, root, body)
 
 
-def _candidates(folder: Path, parent: bytes):
+
+def _candidates(folder_fd: int, parent: bytes):
     valid = []
     corrupt = []
     for slot, name in enumerate(SLOT_NAMES):
-        path = folder / name
         try:
-            record = _read(path)
+            record = _read_at(folder_fd, name)
             if record is not None and record[1] == parent:
                 valid.append((record[0], slot, record[2]))
         except (OSError, ValueError, struct.error) as exc:
@@ -111,9 +190,12 @@ def load_chart_snapshot(state_dir: str | Path, root_hash: str):
     A damaged pair never silently resets the chart to genesis.
     A checkpoint for another canonical root is never applied.
     """
-    folder = _root(state_dir)
-    entry = _candidates(folder, _parent(root_hash))
-    return (entry[0], entry[2]) if entry else (0, None)
+    parent = _parent(root_hash)
+    with _opened_folder(state_dir, create=False) as folder_fd:
+        if folder_fd is None:
+            return (0, None)
+        entry = _candidates(folder_fd, parent)
+        return (entry[0], entry[2]) if entry else (0, None)
 
 
 def load_chart_snapshot_pair(state_dir: str | Path, root_hash: str,
@@ -129,19 +211,20 @@ def load_chart_snapshot_pair(state_dir: str | Path, root_hash: str,
     if type(prior_generation) is not int or prior_generation < 1:
         raise ChartStorageError("prior chart generation must be positive")
     parent = _parent(root_hash)
-    folder = _root(state_dir)
-    current = _candidates(folder, parent)
-    if current is None or current[0] != prior_generation + 1:
-        raise ChartStorageError("exact next-generation snapshot unavailable")
-    prior_path = folder / SLOT_NAMES[current[1] ^ 1]
-    try:
-        prior = _read(prior_path)
-    except (ValueError, OSError, struct.error) as exc:
-        raise ChartStorageError("adjacent prior snapshot is corrupt") from exc
-    if (prior is None or prior[0] != prior_generation
-            or prior[1] != parent):
-        raise ChartStorageError("adjacent parent-bound prior snapshot unavailable")
-    return prior[2], current[2]
+    with _opened_folder(state_dir, create=False) as folder_fd:
+        if folder_fd is None:
+            raise ChartStorageError("exact next-generation snapshot unavailable")
+        current = _candidates(folder_fd, parent)
+        if current is None or current[0] != prior_generation + 1:
+            raise ChartStorageError("exact next-generation snapshot unavailable")
+        try:
+            prior = _read_at(folder_fd, SLOT_NAMES[current[1] ^ 1])
+        except (ValueError, OSError, struct.error) as exc:
+            raise ChartStorageError("adjacent prior snapshot is corrupt") from exc
+        if (prior is None or prior[0] != prior_generation
+                or prior[1] != parent):
+            raise ChartStorageError("adjacent parent-bound prior snapshot unavailable")
+        return prior[2], current[2]
 
 
 def save_chart_snapshot(state_dir: str | Path, root_hash: str,
@@ -164,30 +247,34 @@ def save_chart_snapshot(state_dir: str | Path, root_hash: str,
     data = bytes(page)
     _validate_chart(data)
     root = _parent(root_hash)
-    folder = _root(state_dir)
-    folder.mkdir(parents=True, exist_ok=True, mode=0o700)
-    if folder.is_symlink():
-        raise ChartStorageError("checkpoint directory must not be a symlink")
-    os.chmod(folder, 0o700)
-    lockpath = folder / ".write.lock"
-    if lockpath.is_symlink():
-        raise ChartStorageError("snapshot lock must not be a symlink")
-    flags = os.O_CREAT | os.O_RDWR
-    if hasattr(os, "O_NOFOLLOW"):
-        flags |= os.O_NOFOLLOW
-    fd = os.open(lockpath, flags, 0o600)
-    try:
-        with os.fdopen(fd, "rb") as lock:
-            os.chmod(lockpath, 0o600)
+    with _opened_folder(state_dir, create=True) as folder_fd:
+        if folder_fd is None:
+            raise ChartStorageError("checkpoint directory unavailable")
+        flags = os.O_CREAT | os.O_RDWR | os.O_NOFOLLOW | os.O_NONBLOCK
+        try:
+            lock_fd = os.open(".write.lock", flags, 0o600, dir_fd=folder_fd)
+        except OSError as exc:
+            raise ChartStorageError("snapshot lock cannot be followed or opened") from exc
+        with os.fdopen(lock_fd, "rb") as lock:
+            lock_stat = os.fstat(lock.fileno())
+            if not stat.S_ISREG(lock_stat.st_mode):
+                raise ChartStorageError("snapshot lock is not a regular file")
+            os.fchmod(lock.fileno(), 0o600)
             fcntl.flock(lock.fileno(), fcntl.LOCK_EX)
-            current = _candidates(folder, root)
+            # Check lock ownership after admission. This closes a common
+            # pre-flock replacement case, but hostile concurrent unlink of
+            # the lock by the same privileged filesystem owner still needs
+            # an OS-level exclusive directory owner/lease.
+            current_lock = os.stat(
+                ".write.lock", dir_fd=folder_fd, follow_symlinks=False
+            )
+            if (current_lock.st_dev != lock_stat.st_dev or
+                    current_lock.st_ino != lock_stat.st_ino):
+                raise ChartStorageError("snapshot lock identity changed")
+            current = _candidates(folder_fd, root)
             generation = current[0] if current else 0
             if generation != expected_generation:
                 raise ChartStorageError("stale snapshot generation; reload before writing")
-            # The digest fence must be checked UNDER the same exclusive file
-            # lock as the generation check. A valid same-generation but
-            # different chart page must not be overwritten by a native bank
-            # handoff that was prepared against unrelated chart bytes.
             if expected_page_sha256 is not None:
                 if current is None or (
                     hashlib.sha256(current[2]).hexdigest() != expected_page_sha256
@@ -196,30 +283,39 @@ def save_chart_snapshot(state_dir: str | Path, root_hash: str,
             if generation == 0xFFFFFFFFFFFFFFFF:
                 raise ChartStorageError("snapshot generation exhausted")
             target_slot = (current[1] ^ 1) if current else 0
-            target = folder / SLOT_NAMES[target_slot]
-            if target.is_symlink():
-                raise ChartStorageError("target slot must not be a symlink")
+            target = SLOT_NAMES[target_slot]
+            try:
+                target_stat = os.stat(target, dir_fd=folder_fd, follow_symlinks=False)
+            except FileNotFoundError:
+                pass
+            else:
+                if stat.S_ISLNK(target_stat.st_mode) or not stat.S_ISREG(target_stat.st_mode):
+                    raise ChartStorageError("target slot must be a regular file, not a symlink")
             new_generation = generation + 1
-            header = HEADER.pack(MAGIC, new_generation, root,
-                                 hashlib.sha256(data).digest())
-            temporary = folder / (".chart." + uuid.uuid4().hex + ".tmp")
-            temp_fd = os.open(temporary, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
+            header = HEADER.pack(
+                MAGIC, new_generation, root, hashlib.sha256(data).digest()
+            )
+            temporary = ".chart." + uuid.uuid4().hex + ".tmp"
+            temp_fd = os.open(
+                temporary, os.O_CREAT | os.O_EXCL | os.O_WRONLY | os.O_NOFOLLOW,
+                0o600, dir_fd=folder_fd,
+            )
             try:
                 with os.fdopen(temp_fd, "wb") as stream:
                     stream.write(header)
                     stream.write(data)
                     stream.flush()
                     os.fsync(stream.fileno())
-                os.replace(temporary, target)
-                dir_fd = os.open(folder, os.O_RDONLY)
-                try:
-                    os.fsync(dir_fd)
-                finally:
-                    os.close(dir_fd)
+                # Both endpoints refer to the same pinned physical folder.
+                # A retargeted path alias cannot change the CAS destination.
+                os.replace(
+                    temporary, target, src_dir_fd=folder_fd,
+                    dst_dir_fd=folder_fd,
+                )
+                os.fsync(folder_fd)
             finally:
-                if temporary.exists():
-                    temporary.unlink()
+                try:
+                    os.unlink(temporary, dir_fd=folder_fd)
+                except FileNotFoundError:
+                    pass
             return new_generation
-    except BaseException:
-        # fdopen owns the descriptor once entered; avoid closing twice.
-        raise

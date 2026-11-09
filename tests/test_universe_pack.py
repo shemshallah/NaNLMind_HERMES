@@ -1,5 +1,6 @@
 """N16PACK1: secure single-file offline chart + typed SQLite backups."""
 import hashlib
+import json
 import sqlite3
 import tempfile
 import unittest
@@ -47,6 +48,71 @@ class PackTests(unittest.TestCase):
                       mc0db=self.mc, bs0db=self.bs, destination=self.dest)
         params.update(changes)
         return export_n16pack(**params)
+
+    def _forge_sections(self, replacements, filename):
+        """Rewrite manifest and hashes, modelling an adversarial pack author."""
+        archive = self.dest.read_bytes()
+        magic, version, manifest_size, _ = HEADER.unpack(archive[:HEADER.size])
+        manifest = json.loads(archive[HEADER.size:HEADER.size + manifest_size])
+        offset = HEADER.size + manifest_size
+        contents = {}
+        for spec in manifest["sections"]:
+            size = spec["length"]
+            contents[spec["name"]] = archive[offset:offset + size]
+            offset += size
+        for name, payload in replacements.items():
+            contents[name] = bytes(payload)
+        for spec in manifest["sections"]:
+            payload = contents[spec["name"]]
+            spec["length"] = len(payload)
+            spec["sha256"] = hashlib.sha256(payload).hexdigest()
+        encoded = json.dumps(
+            manifest, ensure_ascii=True, sort_keys=True, separators=(",", ":")
+        ).encode("ascii")
+        forged = (HEADER.pack(magic, version, len(encoded),
+                              hashlib.sha256(encoded).digest())
+                  + encoded + b"".join(
+                      contents[spec["name"]] for spec in manifest["sections"]
+                  ))
+        result = self.base / filename
+        result.write_bytes(forged)
+        return result, contents
+
+    def test_reject_digest_consistent_swapped_typed_store(self):
+        self.export()
+        _, payloads = self._forge_sections({}, "copy.n16pack")
+        # Valid, integrity-checked SQLite bytes with the wrong store ID.
+        swapped, _ = self._forge_sections(
+            {"mc0db": payloads["bs0db"], "bs0db": payloads["mc0db"]},
+            "wrong-store.n16pack",
+        )
+        with self.assertRaisesRegex(UniversePackError, "MC0DB.*schema"):
+            inspect_n16pack(swapped)
+        self.assertTrue(inspect_n16pack(self.dest)["verified"])
+
+    def test_reject_digest_consistent_corrupt_sqlite_header(self):
+        self.export()
+        _, payloads = self._forge_sections({}, "copy.n16pack")
+        corrupted = bytearray(payloads["mc0db"])
+        self.assertTrue(corrupted.startswith(b"SQLite format 3\0"))
+        # SQLite page-size field is at offsets 16..17: 3 is invalid.
+        corrupted[16:18] = bytes((0, 3))
+        forged, _ = self._forge_sections(
+            {"mc0db": corrupted}, "invalid-page-size.n16pack",
+        )
+        with self.assertRaises(UniversePackError):
+            inspect_n16pack(forged)
+
+    def test_reject_hash_consistent_chart_header_geometry_tamper(self):
+        self.export()
+        _, payloads = self._forge_sections({}, "copy.n16pack")
+        chart = bytearray(payloads["chart"])
+        chart[0] ^= 0x01  # Mounted N16ROOT1 remains intact.
+        forged, _ = self._forge_sections(
+            {"chart": chart}, "corrupt-chart-header.n16pack",
+        )
+        with self.assertRaisesRegex(UniversePackError, "chart header"):
+            inspect_n16pack(forged)
 
     def test_roundtrip_single_file_chart_and_databases(self):
         result = self.export()

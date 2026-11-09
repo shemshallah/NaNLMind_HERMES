@@ -1,5 +1,5 @@
 name: nanlmind-hermes
-version: 1.5.0
+version: 1.5.1
 manifest_version: 2
 api_version: 1
 requires_hermes: ">=0.23.0"
@@ -17,6 +17,7 @@ provides_tools:
   - nanlm_scratch_register
   - nanlm_mirror_topology
   - nanlm_router_graph_verify
+  - nanlm_router_graph_walk
   - nanlm_self_modify
   - nanlm_mth_tools
   - nanlm_teacher_teach
@@ -93,7 +94,21 @@ provides_tools:
   - nanlm_head_candidate
   - nanlm_head_candidate_evaluate
   - nanlm_head_learn_candidate
+provides_hooks:
+  - pre_tool_call
 config_schema:
+  router_graph_sender_id:
+    type: str
+    default: ""
+    description: Trusted expected NaNROUTER sender ID for detached graph attestation; never accept a peer-supplied value as authority.
+  router_graph_sender_key_id:
+    type: str
+    default: ""
+    description: Trusted expected Ed25519 signing key ID, managed by the operator.
+  router_graph_sender_public_key_hex:
+    type: str
+    default: ""
+    description: Trusted operator-pinned 32-byte Ed25519 public key in lowercase hex. Empty disables graph sender authentication.
   duration_minutes:
     type: int
     default: 30

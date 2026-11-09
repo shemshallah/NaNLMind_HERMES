@@ -15,6 +15,9 @@ from types import SimpleNamespace
 from .chart_storage import ChartStorageError, load_chart_snapshot, PAGE_BYTES
 from .head_bank_transport import BANK_OFFSET, BANK_END, BANK_BYTES
 from .universe_root import read_universe_root, UniverseRootError
+from .native_chart_reconstruction import (
+    NativeChartReconstructionError, verify_native_chart_reconstruction,
+)
 
 
 class NativeHeadFenceError(ValueError):
@@ -40,7 +43,10 @@ class SnapshotHeadBankFence:
                 raise ValueError("noncanonical digest")
         except ValueError as exc:
             raise NativeHeadFenceError("trusted lowercase parent root required") from exc
-        self._state_dir = Path(state_dir).expanduser()
+        # Capture the physical checkpoint home once. A trusted configured
+        # symlink can be redirected after this fence is constructed; following
+        # it again would certify or write a different 8 MiB universe.
+        self._state_dir = Path(state_dir).expanduser().resolve()
         self._parent = parent_root_sha256
         self._universe = universe_id
 
@@ -56,6 +62,18 @@ class SnapshotHeadBankFence:
         if len(page) != PAGE_BYTES or BANK_END > PAGE_BYTES or (
                 BANK_END - BANK_OFFSET != BANK_BYTES):
             raise NativeHeadFenceError("native bank geometry is invalid")
+        # Outer snapshot SHA and N16ROOT1 do not cover the immutable
+        # topology tables. Match the same canonical reconstruction used by
+        # LocalRunner restore before this page certifies native dispatch.
+        try:
+            verify_native_chart_reconstruction(
+                page=page, state_dir=self._state_dir,
+                parent_root_sha256=self._parent,
+            )
+        except NativeChartReconstructionError as exc:
+            raise NativeHeadFenceError(
+                "native chart immutable reconstruction invalid"
+            ) from exc
         try:
             root = read_universe_root(
                 SimpleNamespace(bytes=page, root_hash=self._parent)

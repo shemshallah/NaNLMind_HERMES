@@ -1,0 +1,40 @@
+name: hermes-router-graph-evidence-audit
+on:
+  pull_request:
+    paths:
+      - 'nanlmind_hermes/router_graph_evidence.py'
+      - 'tests/test_router_graph_evidence.py'
+      - 'scripts/verify_real_router_graph_evidence.py'
+      - '.github/workflows/hermes-router-graph-evidence-audit.yml'
+  push:
+    paths:
+      - 'nanlmind_hermes/router_graph_evidence.py'
+      - 'tests/test_router_graph_evidence.py'
+      - 'scripts/verify_real_router_graph_evidence.py'
+      - '.github/workflows/hermes-router-graph-evidence-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  independent-evidence-digests:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.10', '3.12']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Unit-test complete replay and evidence failures
+        run: python -m unittest discover -s tests -p 'test_router_graph_evidence.py' -v
+      - name: Check out actual NaNROUTER MathStore
+        uses: actions/checkout@v4
+        with:
+          repository: shemshallah/NaNROUTER
+          path: router
+      - name: Revalidate immutable evidence in real MC0DB and BS0DB
+        env:
+          PYTHONPATH: .:router
+        run: python scripts/verify_real_router_graph_evidence.py

@@ -5,11 +5,15 @@ on:
       - 'nanlmind_hermes/chart_storage.py'
       - 'nanlmind_hermes/head_bank_transport.py'
       - 'nanlmind_hermes/native_head_fence.py'
+      - 'nanlmind_hermes/native_chart_reconstruction.py'
       - 'nanlmind_hermes/native_head_checkpoint.py'
       - 'nanlmind_hermes/universe_chart.py'
       - 'nanlmind_hermes/universe_root.py'
       - 'nanlmind_hermes/universe_pack.py'
       - 'tests/test_native_head_checkpoint.py'
+      - 'tests/test_native_head_reconstruction.py'
+      - 'tests/test_n16snap_dirfd_race.py'
+      - 'tests/test_native_snapshot_directory.py'
       - 'tests/test_local_runner_native_rebase.py'
       - '.github/workflows/native-head-cross-repo.yml'
   pull_request:
@@ -17,11 +21,15 @@ on:
       - 'nanlmind_hermes/chart_storage.py'
       - 'nanlmind_hermes/head_bank_transport.py'
       - 'nanlmind_hermes/native_head_fence.py'
+      - 'nanlmind_hermes/native_chart_reconstruction.py'
       - 'nanlmind_hermes/native_head_checkpoint.py'
       - 'nanlmind_hermes/universe_chart.py'
       - 'nanlmind_hermes/universe_root.py'
       - 'nanlmind_hermes/universe_pack.py'
       - 'tests/test_native_head_checkpoint.py'
+      - 'tests/test_native_head_reconstruction.py'
+      - 'tests/test_n16snap_dirfd_race.py'
+      - 'tests/test_native_snapshot_directory.py'
       - 'tests/test_local_runner_native_rebase.py'
       - '.github/workflows/native-head-cross-repo.yml'
   workflow_dispatch:
@@ -42,12 +50,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: shemshallah/NaNROUTER
-          ref: 738d715ff2f4001ec6702af22277802b83b1ccce
+          ref: 63f6f51cbd14557c70d959d70f5d8f8e21797fa1
           path: router
       - uses: actions/checkout@v4
         with:
           repository: shemshallah/NaN0S
-          ref: ddb6297a6c62d4bdee673ba3971129ec2dc73446
+          ref: 24b358403226fa5bb5b5d108960f03cd9e32536b
           path: nan0s
       - uses: actions/setup-python@v5
         with:
@@ -67,7 +75,7 @@ jobs:
             src/nannet/n16_head_worker.nas > "$GITHUB_WORKSPACE/nan0s/head.nan"
           test -s head.nan
           test -s head.labels
-      - name: Verify current HERMES chart against authenticated multi-head revisions and races
+      - name: Verify current chart, dirfd snapshots, journal inode fence, NaN classes and recovery
         working-directory: router
         env:
           PYTHONPATH: ${{ github.workspace }}/router:${{ github.workspace }}/hermes

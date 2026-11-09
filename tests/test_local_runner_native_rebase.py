@@ -240,6 +240,50 @@ class SingleLiveRunnerRebaseTests(unittest.TestCase):
         finally:
             _RUNNERS.pop(key, None)
 
+    def test_boot_via_symlink_cannot_redirect_state_during_retarget(self):
+        """An alias moved mid-open cannot split the cached chart from its IO."""
+        from unittest.mock import patch
+        from nanlmind_hermes.universe_chart import _RUNNERS
+        real = self.state / "pinned-universe-real"
+        decoy = self.state / "pinned-universe-other"
+        real.mkdir()
+        decoy.mkdir()
+        alias = self.state / "pinned-universe-link"
+        alias.symlink_to(real, target_is_directory=True)
+        key = str(real.resolve())
+        _RUNNERS.pop(key, None)
+        try:
+            real_genesis = Chart8MiB.genesis
+
+            def move_alias_during_boot():
+                # LocalRunner has already resolved the real cache key, but
+                # the register has not yet been instantiated.
+                alias.unlink()
+                alias.symlink_to(decoy, target_is_directory=True)
+                return real_genesis()
+
+            with patch.object(Chart8MiB, "genesis", side_effect=move_alias_during_boot):
+                runner = LocalRunner.open(TestContext(alias))
+            self.assertEqual(alias.resolve(), decoy.resolve())
+            self.assertEqual(runner.register.state_dir, real.resolve())
+            self.assertEqual(runner.heads.state_dir, real.resolve())
+            # Sidecars and the durable chart checkpoint must remain under the
+            # original resolved directory, not follow the changed alias.
+            runner.register.save()
+            result = runner.checkpoint()
+            self.assertEqual(result["generation"], 1)
+            self.assertTrue(
+                (real / "language" / "temporal_register.json").is_file()
+            )
+            self.assertTrue(
+                (real / "language" / "chart-checkpoints" / "chart.0.n16s").is_file()
+            )
+            self.assertFalse((decoy / "language").exists())
+            self.assertIs(LocalRunner.open(TestContext(real)), runner)
+            self.assertEqual(runner.chart.snapshot_generation, 1)
+        finally:
+            _RUNNERS.pop(key, None)
+
     def test_concurrent_plugin_opens_share_one_chart_object(self):
         """Two simultaneous HERMES boots must not split one state directory."""
         import threading

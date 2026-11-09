@@ -113,6 +113,36 @@ class NativeHeadCheckpointFenceTests(unittest.TestCase):
         self.assertEqual((folder / SLOT_NAMES[0]).stat().st_size,
                          HEADER.size + len(page))
 
+    def test_fence_keeps_original_state_home_after_symlink_retarget(self):
+        """A redirected alias must never switch the native checkpoint source."""
+        original = self.path / "native-state-original"
+        decoy = self.path / "native-state-decoy"
+        original.mkdir()
+        decoy.mkdir()
+        alias = self.path / "native-state-alias"
+        alias.symlink_to(original, target_is_directory=True)
+        fence = SnapshotHeadBankFence(
+            state_dir=alias, parent_root_sha256=self.parent,
+            universe_id=self.universe,
+        )
+        self.assertEqual(fence._state_dir, original.resolve())
+        self.assertEqual(
+            save_chart_snapshot(original, self.parent, self.chart.bytes, 0), 1
+        )
+        # Another complete, hash-valid chart elsewhere is not this universe.
+        alternate = bytearray(self.chart.bytes)
+        alternate[BANK_OFFSET] ^= 0x01
+        self.assertEqual(
+            save_chart_snapshot(decoy, self.parent, alternate, 0), 1
+        )
+        alias.unlink()
+        alias.symlink_to(decoy, target_is_directory=True)
+        observed = fence(self.universe)
+        self.assertEqual(observed["chart_generation"], 1)
+        self.assertEqual(observed["bank_sha256"], sha(bytes(BANK_BYTES)))
+        self.assertEqual(observed["chart_sha256"], sha(self.chart.bytes))
+        self.assertNotEqual(observed["chart_sha256"], sha(alternate))
+
     def test_invalid_root_is_denied_even_with_valid_snapshot_sha(self):
         # N16SNAP1 validates page SHA, but a rootless valid chart MUST NOT be
         # accepted as authenticated NaN16 universe storage.

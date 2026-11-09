@@ -5,7 +5,9 @@ learning, explicit native training, durable mathematical memory, and approved
 CLOCKED evidence plans. Training and inference stay local; NANNET is the
 identity/authorization boundary and CLOCKED is an evidence service.
 
-**Version 1.5.0 — catalog submission pending.**
+
+**Version 1.5.1 — catalog-review maintenance merged; catalog PR pending.**
+
 
 ## What it does
 
@@ -204,13 +206,15 @@ Secrets are declared in `plugin.yaml` and read only through Hermes:
 | `/nanlm status` | state, memory, and native-run status |
 | `/nanlm help` | usage |
 
-The manifest and registered schemas are authoritative for all 79 tools.
+
+The manifest and registered schemas are authoritative for all 87 tools.
 [docs/TOOLS_REFERENCE.md](docs/TOOLS_REFERENCE.md) documents the main surfaces
 and lists the remaining registered tools with one-line purposes. The permanent
 session manifest is inspectable with `nanlm_session_context` and
 `nanlm_status`; no paired NANNET identity is needed to read the shipped
 architecture documents. Local chat/training without NANNET is reported as
 `local-unverified`.
+
 
 ## Training
 
@@ -241,6 +245,39 @@ The token must be a scoped participant credential (`clu_...`), not the
 privileged upstream CLOCKED API key. See
 [docs/CLOCKED_AUTONOMOUS_HEAD_CORTEX.md](docs/CLOCKED_AUTONOMOUS_HEAD_CORTEX.md).
 
+## Catalog security and human approvals
+
+The local native `nanlm-universal` process runs with an explicit, minimal
+environment (`PATH`, `HOME`, `LANG` and, when set, `LC_ALL` and
+`TMPDIR`). It does **not** inherit Hermes provider keys, profile credentials,
+NANNET/CLOCKED tokens, arbitrary `NANLM_*` variables or unrelated shell state.
+
+Model-issued tool calls to `nanlm_clocked_execute`,
+`nanlm_head_candidate`, `nanlm_head_learn_candidate` and
+`nanlm_head_candidate_evaluate` invoke Hermes's `pre_tool_call` **human
+approval gate**; a model-controlled `approved: true` input is not sufficient.
+The CLOCKED prompt names the saved plan's SHA-256 and endpoints, without
+showing source contents; Hermes controls denial/timeout and unattended
+execution. User-typed `/nanlm clocked ... --approved` is a separate explicit
+command path, not a model-initiated tool bypass.
+
+**Production recommendation:** install the reviewed optional
+`cryptography` backend, for example with
+`python -m pip install -e '.[auth]'` from the checked-out plugin source.
+The dependency-free Ed25519/AES compatibility implementation is primarily
+for constrained test environments and is **not audited for constant-time
+operation**. Do not rely on it for high-value credentials.
+
+This plugin's default state directory remains
+`~/.local/share/nanlmind-hermes`, not intrinsically profile-isolated.
+Configure a unique absolute `state_dir` for each Hermes profile to prevent
+cross-profile universe and credential-state sharing. For the model-visible
+`nanlm_train`, `nanlm_math_train` and `nanlm_evaluate` tools, a selected
+corpus path must resolve to a regular file under `state_dir/corpora`. External
+paths, traversal and symlinks escaping that tree are rejected. Import user-
+approved corpora there before calling those tools. See
+[Catalog admission](docs/HERMES_CATALOG_ADMISSION.md).
+
 ## Security boundaries
 
 - BS0:0 has one shared runner-ring NANNET port. Each HERMES guest universe must be explicitly leased and bound to its own NANNET identity; a hardware-node registration alone grants no model-state access. No implicit registration or environment credential reads.
@@ -255,6 +292,7 @@ privileged upstream CLOCKED API key. See
 Report security issues privately as described in [SECURITY.md](SECURITY.md).
 
 ## Verification
+
 
 - The full unit/integration suite passes locally; CI runs Python 3.10, 3.11, and 3.12.
 - Package verification builds and inspects wheel + sdist archives: 0 missing,
@@ -271,6 +309,9 @@ Report security issues privately as described in [SECURITY.md](SECURITY.md).
   creation, connect/add pairing, leaf verification, two free-chat turns and
   learning-status inspection. See
   [docs/GEMMA_TOOL_LEARNING_SESSION.md](docs/GEMMA_TOOL_LEARNING_SESSION.md).
+- Python unit/integration tests run in CI on Python 3.10, 3.11 and 3.12;
+  verify current results from the release commit, not historical test counts.
+
 - Hermes Agent v0.23.0 `plugins validate` and `plugins doctor` pass in CI.
 - Wheel and source distribution builds, metadata checks, installation/import,
   and SHA-256 checksums pass in CI.
@@ -287,10 +328,12 @@ Report security issues privately as described in [SECURITY.md](SECURITY.md).
   before training; rebinds to the trained chart). It links through `HW2:0`
   (NaN16DE) to `BS0:0::HW0:0` without using the RunnerRing for compute; see
   [docs/LOCAL_RUNNER.md](docs/LOCAL_RUNNER.md).
-- The historical exhaustive demo passed 38/38 calls across the then-registered
-  34 tools. New session-context, free-chat learning, MTH and WordNet tool tests
-  run separately; no claim is made that the historical demo covered all 79
-  current tools.
+
+- The historical exhaustive demo passed 38/38 calls across its then-registered
+  34 tools. New session-context, free-chat learning, MTH, WordNet and evidence
+  tool tests run separately; no claim is made that the historical demo covered
+  all 87 current tools.
+
 - A genuine held-out session asked unseen questions before and after new
   exposure, and a "No, that's incorrect" feedback turn triggered a fresh
   deliberation with the rejected answer suppressed; see

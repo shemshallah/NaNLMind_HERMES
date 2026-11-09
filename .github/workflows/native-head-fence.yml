@@ -3,18 +3,26 @@ on:
   push:
     paths:
       - 'nanlmind_hermes/native_head_fence.py'
+      - 'nanlmind_hermes/native_chart_reconstruction.py'
       - 'nanlmind_hermes/native_head_checkpoint.py'
       - 'nanlmind_hermes/chart_storage.py'
       - 'tests/test_native_head_fence.py'
+      - 'tests/test_native_snapshot_directory.py'
+      - 'tests/test_n16snap_dirfd_race.py'
+      - 'tests/test_native_head_reconstruction.py'
       - 'tests/test_native_head_checkpoint.py'
       - 'tests/test_local_runner_native_rebase.py'
       - '.github/workflows/native-head-fence.yml'
   pull_request:
     paths:
       - 'nanlmind_hermes/native_head_fence.py'
+      - 'nanlmind_hermes/native_chart_reconstruction.py'
       - 'nanlmind_hermes/native_head_checkpoint.py'
       - 'nanlmind_hermes/chart_storage.py'
       - 'tests/test_native_head_fence.py'
+      - 'tests/test_native_snapshot_directory.py'
+      - 'tests/test_n16snap_dirfd_race.py'
+      - 'tests/test_native_head_reconstruction.py'
       - 'tests/test_native_head_checkpoint.py'
       - 'tests/test_local_runner_native_rebase.py'
       - '.github/workflows/native-head-fence.yml'
@@ -35,6 +43,12 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Verify read-only SHA/generation/root fence
         run: python -m unittest discover -s tests -p 'test_native_head_fence.py' -v
+      - name: Refuse SHA-valid forged canonical chart reconstruction
+        run: python -m unittest discover -s tests -p 'test_native_head_reconstruction.py' -v
+      - name: Reject nested checkpoint path symlinks before native dispatch
+        run: python -m unittest discover -s tests -p 'test_native_snapshot_directory.py' -v
+      - name: Verify path-swap races against descriptor-pinned checkpoint IO
+        run: python -m unittest discover -s tests -p 'test_n16snap_dirfd_race.py' -v
       - name: Verify head journal to checkpoint full-page CAS and crash recovery
         run: python -m unittest discover -s tests -p 'test_native_head_checkpoint.py' -v
       - name: Verify single chart rebase of native learning with dirty rails

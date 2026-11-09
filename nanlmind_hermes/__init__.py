@@ -22,6 +22,37 @@ def register(ctx):
         session_context.open_session(ctx)
     except Exception:
         pass
+    # A model-supplied approved=true cannot authorize external operations.
+    # Hermes checks pre_tool_call on actual model tool dispatch and prompts
+    # the human (or fails closed in unattended runs).
+    from .catalog_approval import make_approval_hook
+    human_approval_available = callable(getattr(ctx, "register_hook", None))
+    if human_approval_available:
+        ctx.register_hook("pre_tool_call", make_approval_hook(ctx))
+
+    def _require_human_approval_route():
+        if not human_approval_available:
+            raise PermissionError(
+                "This protected tool requires Hermes pre_tool_call human approval"
+            )
+
+    _learning_cache: dict[str, object] = {}
+
+    def _learning_policy():
+        from .layered_learning import LearningPolicy
+        def setting(key, default):
+            try:
+                return ctx.get_config(key, default=default)
+            except Exception:
+                return default
+        return LearningPolicy(
+            min_support=int(setting("learning_min_support", 3)),
+            min_confidence=float(setting("learning_min_confidence", 0.6)),
+            max_candidates=int(setting("learning_max_candidates", 64)),
+            max_promoted_leaves=int(setting("learning_max_promoted_leaves", 100)),
+            require_explicit_approval=bool(setting("learning_require_approval", True)),
+            auto_sync=bool(setting("learning_auto_sync", False)),
+        )
 
     def _learning(ctx):
         from .layered_learning import coordinator_for_context
@@ -502,6 +533,9 @@ def register(ctx):
         if type(pages) is not list or not 1 <= len(pages) <= 128:
             raise RouterGraphPageError("requires 1..128 ordered graph pages")
         history_pages = params.get("history_pages")
+        attestation = params.get("attestation")
+        if attestation is not None and history_pages is None:
+            raise RouterGraphPageError("signed graph requires complete history pages")
         chart = LocalRunner.open(ctx).chart
         if history_pages is None:
             verifier = RouterGraphPageVerifier(chart)
@@ -523,6 +557,73 @@ def register(ctx):
         result = verifier.status()
         if not result["history_verified"]:
             raise RouterGraphPageError("incomplete graph history; no partial acceptance")
+        if attestation is not None:
+            # Public key and sender identity are independently pinned by the
+            # installed HERMES configuration. Never trust request-provided
+            # keys or caller claims as an identity/authority registry.
+            from .router_graph_attestation import verify_graph_sender_attestation
+            return verify_graph_sender_attestation(
+                verifier, attestation,
+                expected_router_id=ctx.get_config(
+                    "router_graph_sender_id", default=""),
+                expected_key_id=ctx.get_config(
+                    "router_graph_sender_key_id", default=""),
+                public_key_hex=ctx.get_config(
+                    "router_graph_sender_public_key_hex", default=""),
+            )
+        return result
+
+    def handle_router_graph_walk(params, **kwargs):
+        """Read-only bounded graph navigation gated by full chart/history replay.
+
+        Optional signature authentication reuses the operator-pinned router
+        identity, never caller-provided trust material. No head, chart or
+        graph write is exposed by this tool.
+        """
+        _require_scope("universe:read")
+        from .router_graph_history import RouterGraphHistoryVerifier
+        from .router_graph_page import RouterGraphPageError
+        from .router_graph_walk import verified_candidate_walk
+        from .universe_chart import LocalRunner
+        pages = params["pages"]
+        history_pages = params["history_pages"]
+        if (type(pages) is not list or not 1 <= len(pages) <= 128
+                or type(history_pages) is not list
+                or not 1 <= len(history_pages) <= 128):
+            raise RouterGraphPageError(
+                "complete bounded state and history pages required")
+        verifier = RouterGraphHistoryVerifier(LocalRunner.open(ctx).chart)
+        for page in pages:
+            verifier.add_state_page(page)
+        if not verifier.status()["state_verified"]:
+            raise RouterGraphPageError("incomplete graph state")
+        for page in history_pages:
+            verifier.add_history_page(page)
+        if not verifier.status()["history_verified"]:
+            raise RouterGraphPageError("incomplete graph history")
+        attestation = params.get("attestation")
+        auth = None
+        if attestation is not None:
+            from .router_graph_attestation import verify_graph_sender_attestation
+            auth = verify_graph_sender_attestation(
+                verifier, attestation,
+                expected_router_id=ctx.get_config(
+                    "router_graph_sender_id", default=""),
+                expected_key_id=ctx.get_config(
+                    "router_graph_sender_key_id", default=""),
+                public_key_hex=ctx.get_config(
+                    "router_graph_sender_public_key_hex", default=""))
+        result = verified_candidate_walk(
+            verifier, pages, start=params["start"],
+            target=params.get("target"), layer=params.get("layer"),
+            relation=params.get("relation"),
+            max_hops=params.get("max_hops", 4),
+            max_nodes=params.get("max_nodes", 256),
+            max_edges=params.get("max_edges", 1024))
+        if auth is not None:
+            result["sender_authenticated"] = auth["sender_authenticated"]
+            result["attestation_sha256"] = auth["attestation_sha256"]
+            result["nonce_replay_protected"] = False
         return result
 
     def handle_self_modify(params, **kwargs):
@@ -568,10 +669,11 @@ def register(ctx):
             params.get("sources", []), params.get("scratch_id", "default"))
 
     def handle_clocked_execute(params, **kwargs):
+        _require_human_approval_route()
         _require_scope("universe:read")
         return clocked_tools.clocked_execute(ctx, params["question"],
             params.get("sources", []), params.get("scratch_id", "default"),
-            params.get("approved", False), params.get("plan_sha256", ""),
+            True, params.get("plan_sha256", ""),
             params.get("max_requests", 16), params.get("max_bytes", 1048576))
 
     def handle_clocked_scratch(params, **kwargs):
@@ -591,22 +693,25 @@ def register(ctx):
             params.get("scratch_id", "default"), params.get("max_tokens", 2048))
 
     def handle_head_candidate(params, **kwargs):
+        _require_human_approval_route()
         _require_scope("training:execute")
         return clocked_tools.head_candidate(ctx, params["mutation_id"],
             params["head_index"], params["patch_mask"],
-            params["base_topology_digest"], params.get("approved", False),
+            params["base_topology_digest"], True,
             params.get("scratch_id", "default"))
 
     def handle_head_learn_candidate(params, **kwargs):
+        _require_human_approval_route()
         _require_scope("training:execute")
         return clocked_tools.head_learn_candidate(ctx, params["mutation_id"],
-            params.get("base_topology_digest"), params.get("approved", False),
+            params.get("base_topology_digest"), True,
             params.get("scratch_id", "default"), params.get("epochs", 1))
 
     def handle_head_candidate_evaluate(params, **kwargs):
+        _require_human_approval_route()
         _require_scope("training:execute")
         return clocked_tools.head_candidate_evaluate(ctx, params["mutation_id"],
-            params["records"], params.get("approved", False),
+            params["records"], True,
             params.get("scratch_id", "default"))
 
     def handle_status(params, **kwargs):
@@ -1175,11 +1280,11 @@ def register(ctx):
 
     def handle_train(params, **kwargs):
         _require_scope("training:execute")
-        return tools.train(ctx, params["corpus_path"], params.get("duration_minutes"))
+        return tools.train(ctx, tools.resolve_tool_corpus_path(ctx, params["corpus_path"]), params.get("duration_minutes"))
 
     def handle_math_train(params, **kwargs):
         _require_scope("training:execute")
-        return tools.math_train(ctx, params["corpus_path"], params.get("epochs", 3),
+        return tools.math_train(ctx, tools.resolve_tool_corpus_path(ctx, params["corpus_path"]), params.get("epochs", 3),
                                 params.get("max_samples_per_head", 4096))
 
     def handle_relation_train(params, **kwargs):
@@ -1188,7 +1293,7 @@ def register(ctx):
 
     def handle_evaluate(params, **kwargs):
         _require_scope("universe:read")
-        return tools.evaluate(ctx, params["corpus_path"])
+        return tools.evaluate(ctx, tools.resolve_tool_corpus_path(ctx, params["corpus_path"]))
 
     def handle_memory_ingest(params, **kwargs):
         _require_scope("training:execute")
@@ -1252,12 +1357,31 @@ def register(ctx):
           "layer": {"type": "integer", "minimum": 0, "maximum": 9}},
          [], handle_mirror_topology),
         ("nanlm_router_graph_verify",
-         "Read-only chart-bound NaNROUTER graph state verification. Optional ordered history_pages add full independent revision/tombstone replay; neither path authenticates the sender or admits learning.",
+         "Read-only chart-bound NaNROUTER state/history verification. Optional attestation cryptographically authenticates sender against operator-pinned Ed25519 public key; no native execution or learning admission.",
          {"pages": {"type": "array", "minItems": 1, "maxItems": 128,
                     "items": {"type": "object"}},
           "history_pages": {"type": "array", "minItems": 1, "maxItems": 128,
-                            "items": {"type": "object"}}},
+                            "items": {"type": "object"}},
+          "attestation": {"type": "object"}},
          ["pages"], handle_router_graph_verify),
+        ("nanlm_router_graph_walk",
+         "Read-only bounded candidate paths across verified NaNROUTER L0-L9 state and complete revision history in the ONE HERMES chart. Optional pinned Ed25519 sender authentication; no evidence truth, MTH execution or learning authority.",
+         {"pages": {"type": "array", "minItems": 1, "maxItems": 128,
+                    "items": {"type": "object"}},
+          "history_pages": {"type": "array", "minItems": 1, "maxItems": 128,
+                            "items": {"type": "object"}},
+          "start": {"type": "integer", "minimum": 0, "maximum": 32895},
+          "target": {"type": "integer", "minimum": 0, "maximum": 32895},
+          "layer": {"type": "integer", "minimum": 0, "maximum": 9},
+          "relation": {"type": "string", "enum": [
+              "isa", "part_of", "defines", "supports", "refutes",
+              "equivalent", "transforms", "causes", "depends_on",
+              "similar", "contradicts", "observes", "routes_to"]},
+          "max_hops": {"type": "integer", "minimum": 0, "maximum": 8},
+          "max_nodes": {"type": "integer", "minimum": 1, "maximum": 1024},
+          "max_edges": {"type": "integer", "minimum": 1, "maximum": 12800},
+          "attestation": {"type": "object"}},
+         ["pages", "history_pages", "start"], handle_router_graph_walk),
         ("nanlm_self_modify", "Boolean-gated self-modification of scratch leaves and MP relations: propose a relation, version a leaf, promote under the local approval gate, or inspect status.",
          {"action": {"type": "string", "enum": ["status", "relation", "leaf", "promote"]},
           "relation": {"type": "object"},
@@ -1333,17 +1457,16 @@ def register(ctx):
              "text": {"type": "string", "minLength": 1, "maxLength": 65536}}}},
           "scratch_id": {"type": "string", "maxLength": 80}},
          ["question"], handle_clocked_plan),
-        ("nanlm_clocked_execute", "Execute a reviewed multi-source CLOCKED task plan through the scoped CLOCKED gateway. Requires explicit approved=true.",
+        ("nanlm_clocked_execute", "Execute a reviewed multi-source CLOCKED task plan through the scoped CLOCKED gateway. Requires Hermes human tool approval.",
          {"question": {"type": "string", "minLength": 1, "maxLength": 65536},
           "sources": {"type": "array", "maxItems": 7, "items": {"type": "object",
              "required": ["text"], "properties": {"id": {"type": "string", "maxLength": 80},
              "text": {"type": "string", "minLength": 1, "maxLength": 65536}}}},
           "scratch_id": {"type": "string", "maxLength": 80},
-          "approved": {"type": "boolean", "default": False},
           "plan_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
           "max_requests": {"type": "integer", "minimum": 1, "maximum": 16, "default": 16},
           "max_bytes": {"type": "integer", "minimum": 1, "maximum": 1048576, "default": 1048576}},
-         ["question", "approved", "plan_sha256"], handle_clocked_execute),
+         ["question", "plan_sha256"], handle_clocked_execute),
         ("nanlm_clocked_scratch", "Inspect a revisioned HERMES scratch or one writer-owned lane.",
          {"scratch_id": {"type": "string", "maxLength": 80},
           "lane": {"type": "string", "enum": ["user", "hermes_plan", "clocked_request", "clocked_result", "evidence_atoms", "conflict_map", "nan16_package", "head_response", "hermes_synthesis", "head_validation", "final", "learning_proposal", "phone_user", "phone_hermes", "phone_nanlm", "phone_event"]}},
@@ -1359,28 +1482,26 @@ def register(ctx):
           "scratch_id": {"type": "string", "maxLength": 80},
           "max_tokens": {"type": "integer", "minimum": 1, "maximum": 8192, "default": 2048}},
          ["question"], handle_clocked_synthesize),
-        ("nanlm_head_candidate", "Create an isolated Boolean-mask mutation candidate for one NaNLMind head. Requires explicit approval and training:execute scope; never changes canonical state.",
+        ("nanlm_head_candidate", "Create an isolated Boolean-mask mutation candidate for one NaNLMind head. Requires Hermes human approval and training:execute scope; never changes canonical state.",
          {"mutation_id": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,64}$"},
           "head_index": {"type": "integer", "minimum": 0, "maximum": 255},
           "patch_mask": {"type": "integer", "minimum": 1, "maximum": 65535},
           "base_topology_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
-          "approved": {"type": "boolean", "default": False},
           "scratch_id": {"type": "string", "maxLength": 80}},
-         ["mutation_id", "head_index", "patch_mask", "base_topology_digest", "approved"],
+         ["mutation_id", "head_index", "patch_mask", "base_topology_digest"],
          handle_head_candidate),
-        ("nanlm_head_learn_candidate", "Transform CLOCKED observations in revisioned scratch into a weak-supervision training set and train an isolated NaNLMind candidate topology. Requires explicit approval and training:execute; CLOCKED is not ground truth and canonical state is never modified.",
+        ("nanlm_head_learn_candidate", "Transform CLOCKED observations in revisioned scratch into a weak-supervision training set and train an isolated NaNLMind candidate topology. Requires Hermes human approval and training:execute; CLOCKED is not ground truth and canonical state is never modified.",
          {"mutation_id": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,64}$"},
           "base_topology_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
           "scratch_id": {"type": "string", "maxLength": 80},
           "epochs": {"type": "integer", "minimum": 1, "maximum": 8, "default": 1},
-          "approved": {"type": "boolean", "default": False}},
-         ["mutation_id", "approved"], handle_head_learn_candidate),
-        ("nanlm_head_candidate_evaluate", "Evaluate an isolated Boolean-head candidate against explicit held-out N16REL rows and record baseline/candidate metrics. Requires approval and training:execute; never promotes.",
+         },
+         ["mutation_id"], handle_head_learn_candidate),
+        ("nanlm_head_candidate_evaluate", "Evaluate an isolated Boolean-head candidate against explicit held-out N16REL rows and record baseline/candidate metrics. Requires Hermes human approval and training:execute; never promotes.",
          {"mutation_id": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,64}$"},
           "records": {"type": "array", "minItems": 1, "maxItems": 512},
-          "approved": {"type": "boolean", "default": False},
           "scratch_id": {"type": "string", "maxLength": 80}},
-         ["mutation_id", "records", "approved"], handle_head_candidate_evaluate),
+         ["mutation_id", "records"], handle_head_candidate_evaluate),
         ("nanlm_status", "Inspect local NaNLMind universe, durable mathematical-memory status and permanent plugin-duration session context.", {}, [], handle_status),
         ("nanlm_session_context", "Inspect the permanent NANNET architecture/routing, WordNet HW4 and free-chat learning documents loaded at plugin start; optionally return one exact shipped document for re-intake.",
          {"document": {"type": "string", "enum": ["permanent-instructions", "nannet-architecture", "nannet-routing", "wordnet-hw4", "free-chat-learning", "mth-universal-runtime", "mth-data-leaves"]},
