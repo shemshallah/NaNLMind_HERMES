@@ -185,7 +185,7 @@ python scripts/live_smoke.py --nannet-url https://<authority> \
 | Area | Success signal |
 |---|---|
 | Manifest | `hermes plugins validate . --install-deps` passes |
-| Registration | `hermes plugins doctor . --ci` reports 79 tools, 0 hooks |
+| Registration | `hermes plugins doctor . --ci` reports 86 tools, 1 pre_tool_call hook |
 | Chat | reply plus transcript under `state_dir/transcripts` |
 | Training | Boolean gate 1,024/1,024 and a native run manifest |
 | NANNET | paired token valid, online scope authorization passes, revoke succeeds |

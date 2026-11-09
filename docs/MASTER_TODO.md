@@ -33,7 +33,7 @@ for the round-specific items are in `ROUNDS_023_036_TODO.md` and
 
 | ID | Task | Acceptance | State |
 |---|---|---|---|
-| A-01 | Finish the full test-suite run and record exact counts/failures | 1,459 tests, 1 skipped, OK on Termux (611 s) | done |
+| A-01 | Finish the full test-suite run and record exact counts/failures | 1,613 tests, 1 skipped, OK on Termux (971 s) | done |
 | A-02 | Re-run the targeted resident/field/cycle/retrieval groups after the latest agent merges | 178+ targeted tests pass; native full-cycle 7/7 | done |
 | A-03 | Verify full-cycle modules use all 32,385 coefficients and reject 256-only writes | 32,385/32,385; truncation denied | done |
 | A-04 | Verify full-cycle tools persist/reopen all 32,385 words | count/digest equal after reopen | done |
@@ -47,14 +47,14 @@ for the round-specific items are in `ROUNDS_023_036_TODO.md` and
 | A-12 | Verify Round 035 two/three-source composition | linked answer; broken abstention; cycle exact | done |
 | A-13 | Verify Round 036 contradiction rule and symbolic depth | `opposes` abstains; 4-hop symbolic only | done |
 | A-14 | Add `Round033/034/035/036` docs to the index and MANIFEST | paths present; package build includes archives | done |
-| A-15 | Re-run packaging tests after new binary/checkpoint archives | wheel 340 files / sdist 867 files; verifier pass; checkpoint/root binaries, corpus JSONL and BPE model excluded | done |
+| A-15 | Re-run packaging tests after new binary/checkpoint archives | wheel 347 files / sdist 899 files; verifier pass; checkpoint/root binaries, corpus JSONL and BPE model excluded | done |
 | A-16 | Re-run Alpine/proot suite | 1,459 tests, 1 skipped, OK (654 s) | done |
 | A-17 | Confirm no legacy branded filenames/strings remain | repository search for the retired label is empty | done |
 | A-18 | Confirm canonical merge stays disabled everywhere | all receipts/flags false | done |
-| A-19 | Merge all local feature branches into `main` without losing current integration | no unmerged local branch; conflicts documented | done locally |
+| A-19 | Merge all local feature branches into `main` without losing current integration | no unmerged local branch; single `main` remains; conflicts documented | done |
 | A-20 | Decide whether remote PR branches are in scope; do not merge 104 stale remote refs blindly | scope decision: local branches merged; remote-tracking PR refs require individual review and were not mass-merged | decided |
-| A-21 | Commit final docs/tests and merge the remaining worktree delta into main | main contains latest commits; primary worktree clean | done |
-| A-22 | Publish branch/remote only after tests and scope decision | explicit operator approval | held |
+| A-21 | Commit final docs/tests and merge the remaining worktree delta into main | main contains latest commits; primary worktree clean on `main` | done |
+| A-22 | Publish branch/remote only after tests and scope decision | unified `main` pushed; 56 stale merged/closed remote branches deleted; only `origin/main` remains | done |
 
 ### A-note on the branch merge
 

@@ -71,7 +71,7 @@ versions and are not automatic release validation.
 | Production NANNET / Koyeb cutover | NOT PERFORMED | The production Koyeb cutover, live lease/route and single-issuer migration remain outstanding. |
 | Native runner | PASS | Real `NaNLMind/build/nanlm-universal` run: `bootstrap` completed with a recorded corpus digest and metrics; `byte`, `kn`, and `ctx2` evaluations completed; the Boolean foundation gate passed **1,024/1,024** with all 16 distinct rules, composed gates and a persisted `boolean_foundation.nmg`. |
 | Hermes-managed secrets | PASS | Credential-policy tests scan every plugin module; live pairing and CLOCKED calls used the same secret-scope path as production. |
-| Historical full plugin demo | PASS (historical) | [DEMO_RESULTS.md](DEMO_RESULTS.md): all 38 calls across the then-registered 34 tools passed with the real native binary, a loopback NANNET authority, and local CLOCKED/head-cortex contract stubs. The current 79-tool surface is covered by `scripts/demo_run.py` (82 calls), but no 79-tool result report is recorded yet. |
+| Historical full plugin demo | PASS (historical) | [DEMO_RESULTS.md](DEMO_RESULTS.md): all 38 calls across the then-registered 34 tools passed with the real native binary, a loopback NANNET authority, and local CLOCKED/head-cortex contract stubs. The current 86-tool surface is covered by `scripts/demo_run.py`, but no 86-tool result report is recorded yet. |
 | Demo transcript | PASS (historical) | [HERMES_DEMO.md](HERMES_DEMO.md): native chat, three-way shared-scratch call, native training metrics, live CLOCKED, live head-cortex, and isolated candidate evaluation. |
 | Historical live smoke | PASS (historical) | [LIVE_SMOKE.md](LIVE_SMOKE.md): 11/11 checks passed on the single `nannet.apps.mistral.run` service at the recorded time, including head-cortex process and candidate endpoints. This is not evidence of the production Koyeb cutover. |
 
@@ -86,7 +86,7 @@ commands and the resulting artifacts are recorded in the release notes.
 | Maintainer-reviewed PR to `NousResearch/hermes-agent` | OPEN / CHANGES REQUESTED | Existing [#150755](https://github.com/NousResearch/hermes-agent/pull/150755) requires current source pin and responses to the native-environment + approval-hook review. Do not open a duplicate catalog PR. |
 | Exact 40-character source SHA pin | PENDING | After the HERMES security-fix PR merges and green release CI completes, pin the exact merged 1.5.1 commit in the existing upstream PR. |
 | Owner/maintainer-curated submission | READY | Submit from `shemshallah`, the repository owner. |
-| `capabilities:` declaration matches tools and environment variables | PREPARED | Update upstream entry to 64 tools, `pre_tool_call` hook and 3 declared secrets; the new pin must match `register(ctx)`. |
+| `capabilities:` declaration matches tools and environment variables | PREPARED | Update upstream entry to 86 tools, `pre_tool_call` hook and 3 declared secrets; the new pin must match `register(ctx)`. |
 | Scanner warnings reviewed | IN CI | Validate v1.5.1 at the final pin and review warnings from the Hermes scanner, especially subprocess and credential interactions. |
 | Human review and merge | PENDING | Requires upstream maintainer review; this repository cannot self-approve catalog admission. |
 

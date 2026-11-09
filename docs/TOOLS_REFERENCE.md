@@ -1,6 +1,6 @@
 # Tool reference
 
-Version 1.5.0 (2026-11-08). All 79 tools are registered under the `nanlmind`
+Version 1.5.1 (2026-11-08). All 86 tools are registered under the `nanlmind`
 toolset. Tool schemas reject unknown properties unless stated otherwise.
 Local tools report `authorization.mode: local-unverified` when no NANNET
 authority is configured; a configured authority requires a paired token and
