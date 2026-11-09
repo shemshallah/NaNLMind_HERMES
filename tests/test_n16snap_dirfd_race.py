@@ -105,6 +105,41 @@ class SnapshotDescriptorRaceTests(unittest.TestCase):
                     storage.save_chart_snapshot(self.real, self.parent,
                                                 self.original, 0)
 
+    def test_swapped_lock_inode_during_flock_refuses_chart_publication(self):
+        """A new lock pathname cannot supersede the already-open writer FD."""
+        from unittest.mock import patch
+        lock = self.real / "language" / "chart-checkpoints" / ".write.lock"
+        original_inode = lock.stat().st_ino
+        parked = lock.with_name(".write.lock-parked")
+        prior_flock = storage.fcntl.flock
+        swapped = [False]
+
+        def replacing_lock(fd, operation):
+            if not swapped[0]:
+                swapped[0] = True
+                lock.rename(parked)
+                lock.write_bytes(b"new lock is not the writer lock")
+            return prior_flock(fd, operation)
+
+        try:
+            with patch.object(storage.fcntl, "flock", side_effect=replacing_lock):
+                with self.assertRaisesRegex(
+                    storage.ChartStorageError, "lock identity changed"
+                ):
+                    storage.save_chart_snapshot(
+                        self.real, self.parent, self.updated, 1,
+                    )
+            self.assertTrue(swapped[0])
+            self.assertEqual(
+                storage.load_chart_snapshot(self.real, self.parent),
+                (1, self.original),
+            )
+        finally:
+            if swapped[0]:
+                lock.unlink()
+                parked.rename(lock)
+        self.assertEqual(lock.stat().st_ino, original_inode)
+
     def test_slot_replacement_with_symlink_just_before_open_fails_closed(self):
         slot = self.real / "language" / "chart-checkpoints" / storage.SLOT_NAMES[0]
         other = self.decoy / "language" / "chart-checkpoints" / storage.SLOT_NAMES[0]
