@@ -12,7 +12,7 @@
   trig/holonomy ablation is neutral-to-negative on byte LM.
   See `docs/NANLM_42_TRIGON.md`; no live NANNET route or canonical merge.
 - Replaced the raw NaN16 trig-cycle image with a 513-word pure 0xNaN image
-  (512-entry Q15 quarter-wave table) while preserving the `resident/trig_cycle`
+  (257-entry Q15 quarter-wave table) while preserving the `resident/trig_cycle`
   bridge contract. Added `tests/test_trig_cycle_nan.py` for pure-image format,
   triangle/holonomy gauge invariance and Q15 sin/cos parity, and
   `tests/test_trigon9.py` for the reference model and NANNET-P merge guard.
