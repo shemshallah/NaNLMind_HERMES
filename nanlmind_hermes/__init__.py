@@ -722,6 +722,23 @@ def register(ctx):
         merge_gate["merge_enabled"] = _merge_enabled()
         merge_gate["local_promotion_enabled"] = merge_gate["merge_enabled"]
         result["resident_universe"] = _resident_status_optional()
+        try:
+            from pathlib import Path
+            from . import unification
+            configured = str(_resident_config("nanlmind_root", "") or "").strip()
+            contract = (
+                Path(configured).expanduser() / unification.CONTRACT_RELATIVE
+                if configured else None
+            )
+            result["unified_build"] = unification.status(contract)
+        except Exception as exc:
+            result["unified_build"] = {
+                "schema": "nanlm.unified-build/1",
+                "status": "error",
+                "canonical_repository": "NaNLMind",
+                "error": str(exc),
+                "hermes_is_canonical": False,
+            }
         return result
 
     def handle_session_context(params, **kwargs):

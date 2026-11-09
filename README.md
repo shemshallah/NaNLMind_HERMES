@@ -8,6 +8,13 @@ identity/authorization boundary and CLOCKED is an evidence service.
 
 **Version 1.5.1 — catalog-review maintenance merged; catalog PR pending.**
 
+NaNLMind is the canonical native architecture. This plugin is a read-only
+adapter and candidate producer: it reads
+`NaNLMind/spec/unified-build.v1.json`, verifies the built
+`nanlm-universal unification` line when available, and never treats its local
+resident store, SQLite memory, caches or the bundled MTH snapshot as the
+canonical universe. See [docs/UNIFIED_BUILD_ADAPTER.md](docs/UNIFIED_BUILD_ADAPTER.md).
+
 
 ## What it does
 
@@ -90,8 +97,10 @@ identity/authorization boundary and CLOCKED is an evidence service.
   an authority URL and pinned issuer key are configured, a paired token is
   mandatory and every protected operation fails closed. Remote router, lease,
   merge and device operations always require NANNET.
-- **Universal native MTH runtime** — all 91 MTH NaN16 kernels and fixtures ship
-  with the plugin, together with a portable NaN0S C-core source snapshot. On
+- **Universal native MTH runtime** — a compatibility snapshot of all 91 MTH
+  NaN16 kernels and fixtures ships with the plugin, together with a portable
+  NaN0S C-core source snapshot. The canonical native build and topology remain
+  in NaNLMind; this bundle is not a second authority. On
   first use the plugin autodetects the host architecture/compiler, uses a
   configured external NaN0S CLI or compiles the bundled core into its state
   cache, assembles kernels with the bundled POSIX-awk emitter, and runs bounded
@@ -154,11 +163,13 @@ will use `hermes plugins install nanlmind-hermes` after admission.
 A complete local demo needs no NANNET or CLOCKED account:
 
 ```sh
-# Build the native learner once
+# Build the native learner and verify the canonical contract once
 git clone https://github.com/shemshallah/NaNLMind.git
 make -C NaNLMind -j2 nanlm-universal
+make -C NaNLMind unified-check
 
-# Configure runner_command to NaNLMind/build/nanlm-universal, then:
+# Configure runner_command to NaNLMind/build/nanlm-universal,
+# and nanlmind_root (or NANLMIND_ROOT) to the NaNLMind checkout, then:
 /nanlm logic Boolean foundations
 /nanlm status
 ```
@@ -178,6 +189,7 @@ Settings live under `plugins.entries.nanlmind-hermes.settings`.
 |---|---|---|---|
 | `state_dir` | str | `~/.local/share/nanlmind-hermes` | one canonical universe, transcripts, memory, scratch, runs |
 | `runner_command` | list[str] | `[]` | absolute argv for the local `nanlm-universal` binary |
+| `nanlmind_root` | str | `""` | optional NaNLMind checkout root for the canonical `spec/unified-build.v1.json`; `NANLMIND_ROOT` is used when unset |
 | `duration_minutes` | int | `30` | wall budget for native bootstrap runs, 1–360 |
 | `chat_learning` | bool | `true` | feed every chat turn into L0-L9 layered scratch and, when explicit supported/refuted triples exist, the native relation path |
 | `chat_mode` | str | `native` | `native` (NaNLMind parses/synthesizes), `auto` (use provider if present), or `provider` (LLM-authored reply) |
@@ -418,6 +430,7 @@ Report security issues privately as described in [SECURITY.md](SECURITY.md).
 | [Tools reference](docs/TOOLS_REFERENCE.md) | every tool, schema, scope, and approval gate |
 | [Walkthroughs](docs/WALKTHROUGHS.md) | chat, training, memory, CLOCKED, and recovery |
 | [Topology and layers](docs/UNIFIED_TOPOLOGY_AND_LAYERS.md) | HW0::BS0, L0–L9, M0–M9 contracts |
+| [Unified build adapter](docs/UNIFIED_BUILD_ADAPTER.md) | NaNLMind canonical contract, native verification, HERMES read-only boundary |
 | [CLOCKED integration](docs/CLOCKED_AUTONOMOUS_HEAD_CORTEX.md) | plans, scratch, head process, candidates |
 | [NANNET API](docs/NANNET_API_HERMES.md) | identity, pairing, signed requests, scopes |
 | [Plugin architecture](docs/PLUGIN_ARCHITECTURE.md) | components, boundaries, invariants |

@@ -197,6 +197,10 @@ config_schema:
     type: list
     default: []
     description: Local native executable argv, e.g. ["/path/to/NaNLMind/build/nanlm-universal"].
+  nanlmind_root:
+    type: str
+    default: ""
+    description: Optional NaNLMind checkout root containing spec/unified-build.v1.json and build/nanlm-universal. This is the canonical authority; HERMES only reads it.
   nan0s_root:
     type: str
     default: ""

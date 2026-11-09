@@ -3,6 +3,20 @@
 This is the Hermes-side integration contract for the single canonical NaNLMind
 universe. It supersedes assumptions that HW4–HW8 instantiate additional universes.
 
+## 0. Canonical build authority
+
+The native build and topology contract lives in NaNLMind:
+`spec/unified-build.v1.json`, exposed by `build/nanlm-universal unification` and
+`make unified-check`. NaNROUTER is the transport, point-0 ingress, routing and
+control plane; it does not instantiate or fork the native universe. HERMES is a
+read-only adapter and candidate producer.
+
+HERMES reads the contract through `nanlmind_hermes.unification` at
+`NANLMIND_ROOT`, a sibling `../NaNLMind` checkout, or the configured
+`nanlmind_root`; it never substitutes hardcoded constants as authority. When
+the canonical binary is available, HERMES also verifies its `unification` line.
+See [UNIFIED_BUILD_ADAPTER.md](UNIFIED_BUILD_ADAPTER.md).
+
 ## 1. One universe, links and workers
 
 ```text
@@ -165,6 +179,12 @@ overflow layer.
 9. Hermes, CLOCKED and endpoint clients cannot commit canonical topology.
    Only NaNLMind's existing BS0 generation barrier can promote candidate state.
 10. No new trainer or parallel runner lifecycle is introduced by this contract.
+11. NaNLMind owns the canonical build/topology contract and native binary;
+    NaNROUTER is transport/control-plane only; HERMES is a read-only adapter
+    and candidate producer.
+12. The router role overlay (250 curriculum heads, root/control reservations)
+    and the native triad field (255 members + field head 255) are views of the
+    same 256 physical heads. They do not create extra heads or universes.
 
 ## 6. Migration note
 
