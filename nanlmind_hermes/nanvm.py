@@ -1,33 +1,28 @@
-"""NaNVM0: a thin NaN16 v0.1 machine boundary.
+"""Python binding to the one canonical NaN0S VM.
 
-This module is deliberately small. It is the I/O shim that loads raw 0xNaN
-word images (the ``NNNN_PPPPPPPP_FFFF`` format frozen in the NaN16 v0.1
-spec) into 8192-word memory and executes them. All call logic lives in the
-raw NaN16 program under ``nanlmind_hermes/nan/``; nothing here knows about
-phone calls. The op subset mirrors the native nan0s core (``nan16.c``)
-exactly: same word layout, same head-class predication, same flag rules,
-same wrapping memory. Only the NaNVM0 op range (0x00-0x1B) is implemented;
-device ops are headless stubs (no screen, no keyboard, serial captured).
+There is no second opcode implementation here.  Raw 0xNaN images are executed
+by the portable C core from the pinned ``nanlmind_hermes/nan0s`` snapshot
+(itself a byte-identical mirror of canonical ``shemshallah/nan0s``).  This
+module only parses images, builds/loads the native shared object, and exposes
+memory/register access for tests and the resident kernels.
+
+Compiling the binding requires a C compiler; the canonical raw-NaN path is
+native.  A missing compiler is reported, never replaced by a Python VM.
 """
 from __future__ import annotations
 
-import math
-import struct
+import ctypes
+from functools import lru_cache
+import os
+from pathlib import Path
+import subprocess
+import tempfile
+import threading
 
 MASK32 = 0xFFFFFFFF
 MEM_WORDS = 8192
 MEM_MASK = MEM_WORDS - 1
-
-# Head classes: c = 2*Q + S for the four legal heads (+s, -s, +q, -q).
 NAN_HEADS = (0x7FF1, 0xFFF1, 0x7FF8, 0xFFF8)
-
-# NaNVM0 opcodes implemented here (NAN16_SPEC v0.1, 0x00-0x1B).
-_IMPLEMENTED = frozenset(
-    [*range(0x00, 0x0E), 0x0F,
-     0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
-     0x1A, 0x1B, 0x46, 0x47, 0x48]
-)
-HALT = 0xFF
 
 
 class NanVMError(ValueError):
@@ -56,7 +51,6 @@ def word_payload(word: int) -> int:
 
 
 def make_word(payload: int, n: int) -> int:
-    """Build a machine word exactly like ``nan_mkword`` in nan16.c."""
     far = NAN_HEADS[n & 3]
     near = NAN_HEADS[(n >> 2) & 3]
     return ((near << 48) | ((payload & MASK32) << 16)
@@ -64,12 +58,6 @@ def make_word(payload: int, n: int) -> int:
 
 
 def parse_nan_image(text: str) -> list[int]:
-    """Parse a raw .nan image into 64-bit machine words.
-
-    Source line: ``NNNN_PPPPPPPP_FFFF`` where NNNN is the near head,
-    PPPPPPPP the 32-bit payload and FFFF the far head as it sits in the
-    stored low word (byte-swapped; e.g. far head 7FF8 is written F87F).
-    """
     words: list[int] = []
     for number, line in enumerate(text.splitlines(), 1):
         code = line.split(";", 1)[0].strip()
@@ -87,155 +75,182 @@ def parse_nan_image(text: str) -> list[int]:
         far = ((far_le & 0xFF) << 8) | (far_le >> 8)
         if not head_valid(near) or not head_valid(far):
             raise NanVMError(f"illegal head on .nan line {number}")
-        words.append((near << 48) | ((payload & MASK32) << 16) | (far_le & 0xFFFF))
+        words.append((near << 48) | ((payload & MASK32) << 16)
+                     | (far_le & 0xFFFF))
     return words
 
 
+_LIB_LOCK = threading.Lock()
+
+
+def _source_root() -> Path:
+    return Path(__file__).resolve().with_name("nan0s")
+
+
+@lru_cache(maxsize=1)
+def _build_library() -> Path:
+    root = _source_root()
+    core = root / "core"
+    sources = [core / name for name in (
+        "nan16.c", "nan_dev.c", "nan_load.c", "nan_render.c", "nan_state.c")]
+    if any(not path.is_file() for path in sources):
+        raise NanVMError("pinned NaN0S core sources are missing")
+    from shutil import which
+    compiler = None
+    for name in ("cc", "clang", "gcc"):
+        compiler = which(name)
+        if compiler:
+            break
+    if compiler is None:
+        raise NanVMError(
+            "the one native NaN0S VM needs a C compiler; install cc")
+    target_dir = Path(tempfile.gettempdir()) / "nanlmind-nan0s"
+    target_dir.mkdir(parents=True, exist_ok=True)
+    target = target_dir / "libnan16_native.so"
+    if target.is_file():
+        return target
+    with _LIB_LOCK:
+        if target.is_file():
+            return target
+        tmp = target_dir / ("libnan16.%d.tmp" % os.getpid())
+        command = [
+            compiler, "-std=gnu99", "-O2", "-fPIC", "-shared",
+            "-ffp-contract=off", "-fno-fast-math",
+            "-DNAN_WORDS=8192",
+            *map(str, sources), "-lm", "-o", str(tmp),
+        ]
+        result = subprocess.run(command, capture_output=True, text=True)
+        if result.returncode != 0:
+            raise NanVMError("cannot build native NaN0S VM: " +
+                             (result.stderr or result.stdout).strip())
+        tmp.replace(target)
+        return target
+
+
+class _NativeMemory:
+    __slots__ = ("_vm",)
+
+    def __init__(self, vm: "NanVM"):
+        self._vm = vm
+
+    def __len__(self) -> int:
+        return MEM_WORDS
+
+    def __getitem__(self, index):
+        if isinstance(index, slice):
+            return [self[i] for i in range(*index.indices(MEM_WORDS))]
+        return int(self._vm._api.nan_word(self._vm._handle, int(index) & MEM_MASK))
+
+    def __setitem__(self, index, value) -> None:
+        if isinstance(index, slice):
+            raise NanVMError("native memory slice assignment is unsupported")
+        self._vm._api.nan_set_word(
+            self._vm._handle, int(index) & MEM_MASK, int(value) & 0xFFFFFFFFFFFFFFFF)
+
+
+class _NativeRegisters:
+    __slots__ = ("_vm",)
+
+    def __init__(self, vm: "NanVM"):
+        self._vm = vm
+
+    def __len__(self) -> int:
+        return 16
+
+    def __getitem__(self, index):
+        return int(self._vm._api.nan_reg(self._vm._handle, int(index) & 15))
+
+    def __setitem__(self, index, value) -> None:
+        self._vm._api.nan_set_reg(
+            self._vm._handle, int(index) & 15, int(value) & MASK32)
+
+
 class NanVM:
-    """One NaNVM0 machine: r0..r15, Z/L flags, 8192 wrapping words."""
+    """One native NaN0S machine: r0..r15, Z/L flags, 8192 wrapping words."""
 
     def __init__(self, image: list[int]):
         if len(image) > MEM_WORDS:
             raise NanVMError("image exceeds 8192 words")
-        self.mem = [0] * MEM_WORDS
+        api = _api()
+        self._api = api
+        self._handle = api.nan_create()
+        if not self._handle:
+            raise NanVMError("cannot allocate native NaNVM")
+        self.mem = _NativeMemory(self)
+        self.reg = _NativeRegisters(self)
+        self._output = ""
         for index, word in enumerate(image):
-            self.mem[index] = word & 0xFFFFFFFFFFFFFFFF
-        self.reg = [0] * 16
-        self.z = 0
-        self.l = 0
-        self.pc = 0
-        self.steps = 0
-        self.putc: list[str] = []
+            self.mem[index] = word
+
+    def __del__(self):
+        try:
+            if getattr(self, "_handle", None):
+                self._api.nan_destroy(self._handle)
+                self._handle = None
+        except Exception:
+            pass
 
     @property
     def output(self) -> str:
-        return "".join(self.putc)
+        # nan_serial_read drains the native ring.  Keep the collected serial
+        # text so repeated reads (nan_executable + output) are stable.
+        return self._output
 
-    def _set_flags(self, z: int, l: int) -> None:
-        self.z = 1 if z else 0
-        self.l = 1 if l else 0
+    @property
+    def steps(self) -> int:
+        return int(self._api.nan_steps(self._handle))
+
+    @property
+    def pc(self) -> int:
+        return int(self._api.nan_pc(self._handle))
+
+    @property
+    def z(self) -> int:
+        return 1 if (int(self._api.nan_flags(self._handle)) & 2) else 0
+
+    @property
+    def l(self) -> int:
+        return 1 if (int(self._api.nan_flags(self._handle)) & 1) else 0
 
     def run(self, max_steps: int = 1_000_000) -> None:
-        while self.steps < max_steps:
-            word = self.mem[self.pc & MEM_MASK]
-            near, far = near_head(word), far_head(word)
-            if not head_valid(near) or not head_valid(far):
-                raise NanVMError(f"!G gate trap at {self.pc & MEM_MASK}")
-            payload = word_payload(word)
-            op = payload >> 24
-            if op == HALT:
-                return
-            if op not in _IMPLEMENTED:
-                raise NanVMError(f"!O bad op 0x{op:02X} at {self.pc & MEM_MASK}")
-            n = (head_class(near) << 2) | head_class(far)
-            at = self.pc & MEM_MASK
-            self.pc = (at + 1) & MEM_MASK
-            self.steps += 1
-            if op != 0x00 and not ((n >> (2 * self.z + self.l)) & 1):
-                continue
-            self._execute(op, (payload >> 20) & 15, (payload >> 16) & 15,
-                          payload & 0xFFFF)
-        raise NanVMError("step limit exceeded")
+        rc = int(self._api.nan_run(self._handle, int(max_steps)))
+        trap = self._api.nan_trap_text(self._handle)
+        trap = trap.decode("ascii", "replace") if trap else ""
+        buf = ctypes.create_string_buffer(max(1, 1 << 16))
+        count = self._api.nan_serial_read(self._handle, buf, len(buf))
+        self._output += bytes(buf[:count]).decode("utf-8", "replace")
+        if trap:
+            raise NanVMError(trap)
+        # NAN_BUDGET=0, WAIT_KEY=1, VSYNC=2, HALTED=3.  Only a real halt is
+        # success here; a host wait/budget means the guest did not finish.
+        if rc != 3:
+            raise NanVMError("native NaNVM did not halt (rc=%d)" % rc)
 
-    def _execute(self, op: int, d: int, a: int, imm: int) -> None:
-        reg = self.reg
-        b = imm & 15
-        av, bv = reg[a], reg[b]
-        if op == 0x00:  # BOOL: truth table is this word's class nibble
-            word = self.mem[(self.pc - 1) & MEM_MASK]
-            n = (head_class(near_head(word)) << 2) | head_class(far_head(word))
-            res = 0
-            if n & 1:
-                res |= ~(av | bv)
-            if n & 2:
-                res |= ~av & bv
-            if n & 4:
-                res |= av & ~bv
-            if n & 8:
-                res |= av & bv
-            reg[d] = res & MASK32
-            self._set_flags(reg[d] == 0, 0)
-        elif op == 0x01:  # MOVI
-            reg[d] = imm
-        elif op == 0x02:  # MOVHI: keep low half, set high half
-            reg[d] = (reg[d] & 0xFFFF) | (imm << 16)
-        elif op == 0x03:  # ADD
-            total = av + bv
-            reg[d] = total & MASK32
-            self._set_flags(reg[d] == 0, total >> 32)
-        elif op == 0x04:  # SUB
-            res = (av - bv) & MASK32
-            reg[d] = res
-            self._set_flags(res == 0, av < bv)
-        elif op == 0x05:  # SHL
-            res = (av << (imm & 31)) & MASK32
-            reg[d] = res
-            self._set_flags(res == 0, 0)
-        elif op == 0x06:  # SHR
-            res = av >> (imm & 31)
-            reg[d] = res
-            self._set_flags(res == 0, 0)
-        elif op == 0x07:  # CMP a,b
-            self._set_flags(av == bv, av < bv)
-        elif op == 0x08:  # LD d,a,imm
-            reg[d] = word_payload(self.mem[(av + imm) & MEM_MASK])
-        elif op == 0x09:  # ST d,a,imm: +q/+q word, payload r[d]
-            self.mem[(av + imm) & MEM_MASK] = make_word(reg[d], 10)
-        elif op == 0x0A:  # JMP imm
-            self.pc = imm
-        elif op == 0x0B:  # CALL imm
-            reg[15] = self.pc
-            self.pc = imm
-        elif op == 0x0C:  # RET
-            self.pc = reg[15]
-        elif op == 0x0D:  # JMPR a
-            self.pc = av
-        elif op == 0x0F:  # NOP
-            pass
-        elif op == 0x10:  # VPOKE: headless, discarded
-            pass
-        elif op == 0x11:  # VPEEK: headless
-            reg[d] = 0
-        elif op == 0x12:  # KEY: headless boundary sees end of input
-            reg[d] = 0
-        elif op == 0x13:  # TICK
-            reg[d] = self.steps & MASK32
-        elif op == 0x14:  # BSWAPM a,imm
-            index = (av + imm) & MEM_MASK
-            self.mem[index] = int.from_bytes(
-                self.mem[index].to_bytes(8, "little")[::-1], "little")
-        elif op == 0x15:  # PUTC
-            self.putc.append(chr(reg[d] & 0xFF))
-        elif op == 0x16:  # STW d,a,b: word class r[b]&15, payload r[d]
-            self.mem[av & MEM_MASK] = make_word(reg[d], reg[b] & 15)
-        elif op == 0x17:  # LDN d,a,imm
-            q = self.mem[(av + imm) & MEM_MASK]
-            nh, fh = near_head(q), far_head(q)
-            reg[d] = ((head_class(nh) << 2) | head_class(fh)
-                      if head_valid(nh) and head_valid(fh) else MASK32)
-        elif op == 0x1A:  # KEYQ: headless
-            reg[d] = 0
-        elif op == 0x1B:  # NOP (reserved)
-            pass
-        elif op in (0x46, 0x47, 0x48):  # FEXP / FTANH / FLOG
-            bits = av & MASK32
-            if (bits & 0x7F800000) == 0x7F800000 and (bits & 0x007FFFFF):
-                reg[d] = (bits | 0x00400000) & MASK32
-            else:
-                value = struct.unpack("<f", struct.pack("<I", bits))[0]
-                if op == 0x46:
-                    out = math.exp(value)
-                elif op == 0x47:
-                    out = math.tanh(value)
-                else:
-                    if bits & 0x80000000 and (bits & 0x7FFFFFFF) != 0:
-                        out = float("nan")
-                    elif bits & 0x7FFFFFFF == 0:
-                        out = float("-inf")
-                    else:
-                        out = math.log(value)
-                if math.isnan(out):
-                    reg[d] = 0x7FC00000
-                else:
-                    reg[d] = struct.unpack("<I", struct.pack("<f", out))[0]
-            self._set_flags(0, 0)
+
+@lru_cache(maxsize=1)
+def _api():
+    path = _build_library()
+    lib = ctypes.CDLL(str(path))
+    lib.nan_create.restype = ctypes.c_void_p
+    lib.nan_destroy.argtypes = [ctypes.c_void_p]
+    lib.nan_run.argtypes = [ctypes.c_void_p, ctypes.c_uint32]
+    lib.nan_run.restype = ctypes.c_int
+    lib.nan_steps.argtypes = [ctypes.c_void_p]
+    lib.nan_steps.restype = ctypes.c_uint64
+    lib.nan_trap_text.argtypes = [ctypes.c_void_p]
+    lib.nan_trap_text.restype = ctypes.c_char_p
+    lib.nan_reg.argtypes = [ctypes.c_void_p, ctypes.c_int]
+    lib.nan_reg.restype = ctypes.c_uint32
+    lib.nan_pc.argtypes = [ctypes.c_void_p]
+    lib.nan_pc.restype = ctypes.c_uint32
+    lib.nan_flags.argtypes = [ctypes.c_void_p]
+    lib.nan_flags.restype = ctypes.c_int
+    lib.nan_word.argtypes = [ctypes.c_void_p, ctypes.c_uint32]
+    lib.nan_word.restype = ctypes.c_uint64
+    lib.nan_set_word.argtypes = [ctypes.c_void_p, ctypes.c_uint32,
+                                 ctypes.c_uint64]
+    lib.nan_set_reg.argtypes = [ctypes.c_void_p, ctypes.c_int, ctypes.c_uint32]
+    lib.nan_serial_read.argtypes = [ctypes.c_void_p, ctypes.c_char_p,
+                                    ctypes.c_size_t]
+    lib.nan_serial_read.restype = ctypes.c_size_t
+    return lib

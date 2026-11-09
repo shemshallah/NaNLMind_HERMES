@@ -115,11 +115,10 @@ def discover_core(ctx=None) -> dict[str, Any]:
     # NaN0S is the canonical dependency. The bundled snapshot is only a
     # last-resort wheel fallback, never preferred over a real checkout.
     configured = str(_setting(ctx, "nan0s_root", "") or "").strip()
-    prefer_bundled = bool(_setting(ctx, "nan0s_prefer_bundled", False))
     candidates: list[Path] = []
     if configured:
         candidates.append(Path(configured).expanduser())
-    if not (configured or prefer_bundled):
+    if True:
         candidates.extend([
             Path(__file__).resolve().parents[1].parent / "nan0s",
             Path.home() / "nan0s",
