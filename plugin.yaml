@@ -200,7 +200,7 @@ config_schema:
   nanlmind_root:
     type: str
     default: ""
-    description: Optional NaNLMind checkout root containing spec/unified-build.v1.json and build/nanlm-universal. This is the canonical authority; HERMES only reads it.
+    description: Optional NaNLMind checkout root containing spec/unified-build.v1.json and build/nanlm-universal. This is the canonical authority; HERMES only reads it. If empty, a sibling or home NaNLMind checkout is probed.
   nan0s_root:
     type: str
     default: ""

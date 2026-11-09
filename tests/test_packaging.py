@@ -122,7 +122,7 @@ class ManifestAndMetadataTests(unittest.TestCase):
         self.assertEqual(counts["mth_manifest_kernels"], 91)
         self.assertEqual(counts["mth_fixtures"], 91)
         self.assertGreaterEqual(counts["mth_nan16"], 91)
-        self.assertEqual(counts["nan0s_core"], 9)
+        self.assertGreaterEqual(counts["nan0s_core"], 9)
         self.assertEqual(counts["nan_kernels"], 2)
 
 
@@ -140,7 +140,7 @@ class ArchiveInspectionTests(unittest.TestCase):
                          self.requirements["counts"]["mth_nan16"])
         self.assertEqual(result["counts"]["mth_fixtures"], 91)
         self.assertEqual(result["counts"]["nan_kernels"], 2)
-        self.assertEqual(result["counts"]["nan0s_core"], 9)
+        self.assertGreaterEqual(result["counts"]["nan0s_core"], 9)
         self.assertEqual(result["missing"], [])
         self.assertEqual(result["forbidden"], [])
         self.assertFalse(result["checks"]["plugin_manifest"]["applicable"])

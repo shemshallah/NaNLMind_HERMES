@@ -169,7 +169,7 @@ make -C NaNLMind -j2 nanlm-universal
 make -C NaNLMind unified-check
 
 # Configure runner_command to NaNLMind/build/nanlm-universal,
-# and nanlmind_root (or NANLMIND_ROOT) to the NaNLMind checkout, then:
+# and nanlmind_root to the NaNLMind checkout, then:
 /nanlm logic Boolean foundations
 /nanlm status
 ```
@@ -189,7 +189,7 @@ Settings live under `plugins.entries.nanlmind-hermes.settings`.
 |---|---|---|---|
 | `state_dir` | str | `~/.local/share/nanlmind-hermes` | one canonical universe, transcripts, memory, scratch, runs |
 | `runner_command` | list[str] | `[]` | absolute argv for the local `nanlm-universal` binary |
-| `nanlmind_root` | str | `""` | optional NaNLMind checkout root for the canonical `spec/unified-build.v1.json`; `NANLMIND_ROOT` is used when unset |
+| `nanlmind_root` | str | `""` | optional NaNLMind checkout root for the canonical `spec/unified-build.v1.json` |
 | `duration_minutes` | int | `30` | wall budget for native bootstrap runs, 1–360 |
 | `chat_learning` | bool | `true` | feed every chat turn into L0-L9 layered scratch and, when explicit supported/refuted triples exist, the native relation path |
 | `chat_mode` | str | `native` | `native` (NaNLMind parses/synthesizes), `auto` (use provider if present), or `provider` (LLM-authored reply) |

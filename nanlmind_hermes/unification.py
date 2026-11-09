@@ -2,14 +2,13 @@
 
 NaNLMind owns the topology and the native build.  HERMES never embeds a second
 copy of the constants as authority: it reads ``spec/unified-build.v1.json`` from
-a NaNLMind checkout (``NANLMIND_ROOT``, a sibling checkout, or the current
-directory) and, when available, checks the native ``unification`` command.
+a configured NaNLMind checkout (sibling, current directory, or home fallback)
+and, when available, checks the native ``unification`` command.
 """
 from __future__ import annotations
 
 import hashlib
 import json
-import os
 import subprocess
 from pathlib import Path
 from typing import Any, Iterable
@@ -60,9 +59,6 @@ class UnificationError(ValueError):
 
 
 def _candidate_roots() -> Iterable[Path]:
-    configured = os.environ.get("NANLMIND_ROOT", "").strip()
-    if configured:
-        yield Path(configured).expanduser()
     here = Path(__file__).resolve()
     # repository root is .../NaNLMind_HERMES
     yield here.parents[1].parent / "NaNLMind"
@@ -76,7 +72,7 @@ def find_contract() -> Path:
         if path.is_file():
             return path
     raise UnificationError(
-        "canonical NaNLMind contract not found; set NANLMIND_ROOT to a NaNLMind checkout"
+        "canonical NaNLMind contract not found; configure nanlmind_root or install a sibling NaNLMind checkout"
     )
 
 
@@ -141,9 +137,9 @@ def native_status(root: Path, timeout: float = 3.0) -> dict[str, Any]:
             capture_output=True,
             timeout=timeout,
             env={
-                "PATH": os.environ.get("PATH", os.defpath),
-                "HOME": os.environ.get("HOME", str(Path.home())),
-                "LANG": os.environ.get("LANG", "C.UTF-8"),
+                "PATH": "/usr/bin:/bin",
+                "HOME": str(Path.home()),
+                "LANG": "C.UTF-8",
             },
         )
     except (OSError, subprocess.TimeoutExpired) as exc:

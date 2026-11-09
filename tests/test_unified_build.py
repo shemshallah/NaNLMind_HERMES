@@ -6,7 +6,6 @@ import os
 import tempfile
 import unittest
 from pathlib import Path
-from unittest import mock
 
 from nanlmind_hermes import unification
 
@@ -132,10 +131,6 @@ class LoadTests(ContractCase):
         self.write(document)
         with self.assertRaisesRegex(unification.UnificationError, "role_views"):
             unification.load(self.path)
-
-    def test_environment_root_finds_the_contract(self):
-        with mock.patch.dict(os.environ, {"NANLMIND_ROOT": str(self.root)}):
-            self.assertEqual(unification.find_contract(), self.path)
 
 
 @unittest.skipIf(os.name == "nt", "shell fixture is POSIX-only")

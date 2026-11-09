@@ -15,8 +15,7 @@ NaNLMind_HERMES/nanlmind_hermes/unification.py
 
 `unification.status()` looks for the contract at:
 
-1. `NANLMIND_ROOT/spec/unified-build.v1.json` when the environment variable is
-   set;
+1. the explicit `nanlmind_root` contract path supplied by the caller;
 2. the sibling checkout `../NaNLMind/spec/unified-build.v1.json` when present;
 3. `./NaNLMind/...` and `~/NaNLMind/...` as convenience fallbacks.
 

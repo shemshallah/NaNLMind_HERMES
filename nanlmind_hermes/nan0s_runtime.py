@@ -115,20 +115,21 @@ def discover_core(ctx=None) -> dict[str, Any]:
     # NaN0S is the canonical dependency. The bundled snapshot is only a
     # last-resort wheel fallback, never preferred over a real checkout.
     configured = str(_setting(ctx, "nan0s_root", "") or "").strip()
+    prefer_bundled = bool(_setting(ctx, "nan0s_prefer_bundled", False))
     candidates: list[Path] = []
     if configured:
         candidates.append(Path(configured).expanduser())
-    candidates.extend([
-        Path(__file__).resolve().parents[1].parent / "nan0s",
-        Path.home() / "nan0s",
-        Path.home() / "NaN0S",
-        Path("/data/data/com.termux/files/home/nan0s"),
-    ])
+    if not (configured or prefer_bundled):
+        candidates.extend([
+            Path(__file__).resolve().parents[1].parent / "nan0s",
+            Path.home() / "nan0s",
+            Path.home() / "NaN0S",
+            Path("/data/data/com.termux/files/home/nan0s"),
+        ])
     for root in candidates:
         found = _layout(root)
         if found is not None:
-            found["discovered_from"] = ("config" if root == Path(configured).expanduser()
-                                        else "auto")
+            found["discovered_from"] = "config"
             return found
     builtin = _layout(_BUNDLED)
     if builtin is not None:
