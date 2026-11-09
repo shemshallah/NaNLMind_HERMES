@@ -1,5 +1,6 @@
 # Changelog
 
+<<<<<<< HEAD
 ## 1.5.0 — 2026-11-08
 
 - Added seven permanent plugin-duration session documents (NANNET architecture,
@@ -209,6 +210,8 @@
 - Final verification: 132 tests, 35/35 full-feature demo calls, 7/7 live
   NANNET/CLOCKED checks, Hermes admission and package CI.
 
+=======
+>>>>>>> hermes-catalog-compliance
 ## 1.2.0 — 2026-11-07
 
 - Unified topology: HW0 is RunnerLink, BS0 is the six-worker RunnerRing, and
