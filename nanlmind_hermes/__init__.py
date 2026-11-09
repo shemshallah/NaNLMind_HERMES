@@ -599,10 +599,11 @@ def register(ctx):
 
     def handle_resident_evidence(params, **kwargs):
         action = params.get("action")
-        if action not in {"status", "state", "ask", "tell", "save", "load"}:
+        if action not in {"status", "state", "ask", "tell", "delete",
+                          "save", "load"}:
             raise ValueError(
-                "action must be status, state, ask, tell, save or load")
-        writes = action in {"tell", "load"}
+                "action must be status, state, ask, tell, delete, save or load")
+        writes = action in {"tell", "delete", "load"}
         if writes:
             _require_scope("training:execute")
             if params.get("approved") is not True:
@@ -616,11 +617,18 @@ def register(ctx):
                     "records": 0,
                     "canonical_merge": {"enabled": False, "attempted": False}}
         session = universe.evidence_session()
+        expected = params.get("expected_generation")
         if action == "status":
             result = session.status()
         elif action == "tell":
             result = session.tell(params["statement"],
-                                  params.get("polarity")).as_dict()
+                                  params.get("polarity"),
+                                  expected_generation=expected).as_dict()
+        elif action == "delete":
+            result = session.delete(
+                params["subject"], params.get("predicate", "is a"),
+                params["object"], params.get("polarity"),
+                expected_generation=expected)
         elif action == "ask":
             result = session.ask(params["question"]).as_dict()
         elif action == "state":
@@ -630,7 +638,8 @@ def register(ctx):
         elif action == "save":
             result = session.save()
         else:
-            result = session.load(params["snapshot"])
+            result = session.load(params["snapshot"],
+                                  expected_generation=expected)
         result["opened"] = True
         result["canonical_merge"] = {"enabled": False, "attempted": False}
         return result
@@ -1261,8 +1270,8 @@ def register(ctx):
           "limit": {"type": "integer", "minimum": 1, "maximum": 64, "default": 16},
           "mode": {"type": "string", "enum": ["dot", "cosine", "phase"], "default": "cosine"}},
          [], handle_resident_query),
-        ("nanlm_resident_evidence", "Inspect or explicitly append support/refute evidence in the full-cycle resident lanes; tell/load require training scope and approved=true, while status/state/ask/save are read-only. Returns the four-state unknown/supports/refutes/both result without cancellation.",
-         {"action": {"type": "string", "enum": ["status", "state", "ask", "tell", "save", "load"]},
+        ("nanlm_resident_evidence", "Inspect or explicitly append/delete/restore support and refute evidence in the full-cycle resident lanes; tell/delete/load require training scope and approved=true, while status/state/ask/save are read-only. Returns the four-state unknown/supports/refutes/both result without cancellation.",
+         {"action": {"type": "string", "enum": ["status", "state", "ask", "tell", "delete", "save", "load"]},
           "approved": {"type": "boolean", "const": True},
           "statement": {"type": "string", "minLength": 1, "maxLength": 512},
           "question": {"type": "string", "minLength": 1, "maxLength": 512},
@@ -1270,6 +1279,7 @@ def register(ctx):
           "predicate": {"type": "string", "minLength": 1, "maxLength": 64, "default": "is a"},
           "object": {"type": "string", "minLength": 1, "maxLength": 512},
           "polarity": {"type": "string", "enum": ["supports", "refutes"]},
+          "expected_generation": {"type": "integer", "minimum": 0},
           "snapshot": {"type": "object"}},
          ["action"], handle_resident_evidence),
         ("nanlm_head_field", "Inspect or explicitly operate the independent 256-head Boolean field: status/query are read-only; activate/propose/commit require training scope, with scratch-layer staging before an approved generation-CAS main write.",

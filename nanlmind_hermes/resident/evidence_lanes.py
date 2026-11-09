@@ -331,6 +331,8 @@ class EvidenceLanes(_LaneBase):
         self.memory = memory
         self.record_cycles = RECORD_CYCLES
         self.max_records = len(memory) // RECORD_CYCLES
+        self._cache: dict[int, EvidenceRecord] | None = None
+        self._cache_generation: int | None = None
 
     @property
     def generation(self) -> int:
@@ -370,21 +372,30 @@ class EvidenceLanes(_LaneBase):
             return None
         return EvidenceRecord(*decoded, slot=slot)
 
+    def _slots(self) -> dict[int, EvidenceRecord]:
+        generation = self.generation
+        if self._cache is None or self._cache_generation != generation:
+            cache = {}
+            for slot in range(self.max_records):
+                record = self._slot_record(slot)
+                if record is not None:
+                    cache[slot] = record
+            self._cache = cache
+            self._cache_generation = generation
+        return self._cache
+
     def records(self) -> tuple[EvidenceRecord, ...]:
-        result = []
-        for slot in range(self.max_records):
-            record = self._slot_record(slot)
-            if record is not None:
-                result.append(record)
-        return tuple(result)
+        cache = self._slots()
+        return tuple(cache[slot] for slot in sorted(cache))
 
     def contains(self, record: EvidenceRecord) -> bool:
         key = record.key()
-        return any(item.key() == key for item in self.records())
+        return any(item.key() == key for item in self._slots().values())
 
     def _free_slot(self) -> int:
+        used = self._slots()
         for slot in range(self.max_records):
-            if self._read_raw(slot) == EMPTY_RECORD:
+            if slot not in used:
                 return slot
         raise EvidenceError("evidence lanes are full (%d records)"
                             % self.max_records)
@@ -394,20 +405,24 @@ class EvidenceLanes(_LaneBase):
         self._write_raw(slot, encode_record(
             record.polarity, record.subject, record.relation,
             record.destination))
+        stamped = EvidenceRecord(record.polarity, record.subject,
+                                 record.relation, record.destination, slot)
+        cache = self._slots()
+        cache[slot] = stamped
+        self._cache_generation = self.generation
         return slot, self.generation
 
     def _remove(self, subject: str, relation: str, destination: str,
                 polarity: str | None) -> tuple[EvidenceRecord, ...]:
         removed = []
-        for slot in range(self.max_records):
-            record = self._slot_record(slot)
-            if record is None:
-                continue
+        for slot, record in sorted(self._slots().items()):
             if (record.subject == subject and record.relation == relation
                     and record.destination == destination
                     and (polarity is None or record.polarity == polarity)):
                 removed.append(record)
                 self._write_raw(slot, EMPTY_RECORD)
+        if removed:
+            self._cache = None
         return tuple(removed)
 
     def snapshot(self) -> dict[str, Any]:

@@ -74,9 +74,28 @@ class ResidentToolTests(unittest.TestCase):
         self.assertEqual(state["status"], "both")
         snapshot = self._call("nanlm_resident_evidence", {"action": "save"})
         self.assertEqual(len(snapshot["records"]), 2)
+        deleted = self._call("nanlm_resident_evidence", {
+            "action": "delete", "approved": True,
+            "subject": "quokka", "predicate": "is a kind of",
+            "object": "animal", "polarity": "supports",
+            "expected_generation": second["lane"]["generation"]})
+        self.assertEqual(deleted["deleted"], 1)
+        self.assertEqual(self._call("nanlm_resident_evidence", {
+            "action": "ask", "question": "is quokka a kind of animal?"
+        })["status"], "refutes")
+        with self.assertRaises(Exception):
+            self._call("nanlm_resident_evidence", {
+                "action": "delete", "approved": True,
+                "subject": "quokka", "predicate": "is a kind of",
+                "object": "animal", "polarity": "refutes",
+                "expected_generation": second["lane"]["generation"] - 1})
         loaded = self._call("nanlm_resident_evidence", {
-            "action": "load", "approved": True, "snapshot": snapshot})
-        self.assertEqual(loaded["restored"], 0)
+            "action": "load", "approved": True, "snapshot": snapshot,
+            "expected_generation": deleted["generation"]})
+        self.assertEqual(loaded["restored"], 1)
+        self.assertEqual(self._call("nanlm_resident_evidence", {
+            "action": "ask", "question": "is quokka a kind of animal?"
+        })["status"], "both")
         status = self._call("nanlm_resident_evidence", {"action": "status"})
         self.assertEqual(status["supports"], 1)
         self.assertEqual(status["refutes"], 1)

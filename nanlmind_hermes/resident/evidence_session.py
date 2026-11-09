@@ -144,7 +144,8 @@ class EvidenceSession:
             raise SessionError("lanes must be an EvidenceLanes")
         self.lanes = lanes
 
-    def tell(self, statement: str, polarity: str | None = None) -> TellResult:
+    def tell(self, statement: str, polarity: str | None = None, *,
+             expected_generation: int | None = None) -> TellResult:
         original = _bounded(statement, "statement")
         parsed = _match(_REFUTE_PATTERNS, original)
         inferred = "refutes" if parsed is not None else None
@@ -159,9 +160,17 @@ class EvidenceSession:
         if polarity not in ("supports", "refutes"):
             raise SessionError("polarity must be 'supports' or 'refutes'")
         subject, relation, destination = parsed
-        receipt = self.lanes.add(subject, relation, destination, polarity)
+        receipt = self.lanes.add(subject, relation, destination, polarity,
+                                 expected_generation=expected_generation)
         return TellResult(original, polarity, subject, relation, destination,
                           receipt.as_dict())
+
+    def delete(self, subject: str, relation: str, destination: str,
+               polarity: str | None = None, *,
+               expected_generation: int | None = None) -> dict[str, Any]:
+        return self.lanes.delete(
+            subject, relation, destination, polarity,
+            expected_generation=expected_generation).as_dict()
 
     def ask(self, question: str) -> AskResult:
         original = _bounded(question, "question")
@@ -196,8 +205,10 @@ class EvidenceSession:
     def save(self) -> dict[str, Any]:
         return self.lanes.snapshot()
 
-    def load(self, snapshot: Mapping[str, Any]) -> dict[str, Any]:
-        return self.lanes.restore(snapshot).as_dict()
+    def load(self, snapshot: Mapping[str, Any], *,
+             expected_generation: int | None = None) -> dict[str, Any]:
+        return self.lanes.restore(
+            snapshot, expected_generation=expected_generation).as_dict()
 
     def status(self) -> dict[str, Any]:
         records = self.lanes.records()
