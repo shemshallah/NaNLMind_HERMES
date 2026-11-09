@@ -2,7 +2,7 @@
 """Synchronize the vendored NaN0S snapshot from the canonical repository.
 
 HERMES does not own a NaN16 implementation.  ``nanlmind_hermes/nan0s`` is an
-exact, pinned snapshot of ``shemshallah/NaN0S`` (aarch64/android portable core
+exact, pinned snapshot of ``shemshallah/nan0s`` (aarch64/android portable core
 plus the N16I/interpreter sources); this tool copies and hashes it.
 
 Usage:
@@ -103,7 +103,7 @@ def main(argv=None) -> int:
         shutil.copy2(source / canonical, dest)
     manifest = {
         "schema": "nanlm.nan0s-dependency/1",
-        "canonical_repository": "https://github.com/shemshallah/NaN0S.git",
+        "canonical_repository": "https://github.com/shemshallah/nan0s.git",
         "canonical_commit": canonical_commit(source),
         "vendored_path": "nanlmind_hermes/nan0s",
         "note": ("Exact pinned snapshot. Do not edit locally; run "

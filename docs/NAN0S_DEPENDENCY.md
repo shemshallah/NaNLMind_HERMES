@@ -2,7 +2,7 @@
 
 `NaNLMind_HERMES` does **not** own a NaN16 VM implementation.
 
-The canonical machine is [`shemshallah/NaN0S`](https://github.com/shemshallah/NaN0S).
+The canonical machine is [`shemshallah/nan0s`](https://github.com/shemshallah/nan0s).
 HERMES uses it in this order:
 
 1. `nan0s_root` configuration;
