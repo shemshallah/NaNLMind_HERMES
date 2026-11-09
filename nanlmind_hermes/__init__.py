@@ -566,11 +566,11 @@ def register(ctx):
 
     def handle_train(params, **kwargs):
         _require_scope("training:execute")
-        return tools.train(ctx, params["corpus_path"], params.get("duration_minutes"))
+        return tools.train(ctx, tools.resolve_tool_corpus_path(ctx, params["corpus_path"]), params.get("duration_minutes"))
 
     def handle_math_train(params, **kwargs):
         _require_scope("training:execute")
-        return tools.math_train(ctx, params["corpus_path"], params.get("epochs", 3),
+        return tools.math_train(ctx, tools.resolve_tool_corpus_path(ctx, params["corpus_path"]), params.get("epochs", 3),
                                 params.get("max_samples_per_head", 4096))
 
     def handle_relation_train(params, **kwargs):
@@ -579,7 +579,7 @@ def register(ctx):
 
     def handle_evaluate(params, **kwargs):
         _require_scope("universe:read")
-        return tools.evaluate(ctx, params["corpus_path"])
+        return tools.evaluate(ctx, tools.resolve_tool_corpus_path(ctx, params["corpus_path"]))
 
     def handle_memory_ingest(params, **kwargs):
         _require_scope("training:execute")
