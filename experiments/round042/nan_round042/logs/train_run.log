@@ -1,0 +1,25 @@
+WordNet paths {'train': 4959, 'val': 317, 'test': 323}
+/mnt/data/nan_round042/dynamic_joint.py:301: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:836.)
+  history.append({'step':step,'train_loss':float(loss),'val_loss':float(v),**parts})
+seed 17 step 1 train 4.512 val 4.316 ce 3.983
+seed 17 step 100 train 0.193 val 0.201 ce 0.175
+seed 17 step 200 train 0.165 val 0.155 ce 0.16
+seed 17 step 300 train 0.149 val 0.149 ce 0.145
+seed 17 step 400 train 0.152 val 0.144 ce 0.148
+seed 17 step 500 train 0.139 val 0.15 ce 0.135
+seed 17 step 600 train 0.157 val 0.154 ce 0.154
+seed 17 step 700 train 0.151 val 0.145 ce 0.148
+seed 17 step 800 train 0.139 val 0.142 ce 0.137
+seed 17 step 900 train 0.15 val 0.143 ce 0.148
+seed 17 step 1000 train 0.159 val 0.145 ce 0.156
+seed 17 step 1100 train 0.148 val 0.152 ce 0.146
+RESULT 17 {"seed": 17, "duration_seconds": 19.021451473236084, "no_evidence_abstentions": 200, "no_evidence_total": 200, "parameters": 57547}
+seed 29 step 1 train 4.573 val 4.384 ce 4.03
+seed 29 step 100 train 0.23 val 0.223 ce 0.212
+seed 29 step 200 train 0.169 val 0.162 ce 0.162
+seed 29 step 300 train 0.148 val 0.171 ce 0.143
+seed 29 step 400 train 0.162 val 0.155 ce 0.159
+seed 29 step 500 train 0.143 val 0.163 ce 0.14
+seed 29 step 600 train 0.148 val 0.162 ce 0.145
+seed 29 step 700 train 0.144 val 0.159 ce 0.142

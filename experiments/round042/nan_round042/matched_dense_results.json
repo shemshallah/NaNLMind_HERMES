@@ -1,0 +1,26 @@
+{
+  "17": {
+    "test_correct": 180,
+    "test_total": 180,
+    "five_hop_correct": 177,
+    "five_hop_total": 180,
+    "best_step": 650,
+    "native_model_max_parameter_difference": 1.1920928955078125e-06
+  },
+  "29": {
+    "test_correct": 180,
+    "test_total": 180,
+    "five_hop_correct": 175,
+    "five_hop_total": 180,
+    "best_step": 520,
+    "native_model_max_parameter_difference": 0.03254370391368866
+  },
+  "43": {
+    "test_correct": 180,
+    "test_total": 180,
+    "five_hop_correct": 173,
+    "five_hop_total": 180,
+    "best_step": 650,
+    "native_model_max_parameter_difference": 0.008791029453277588
+  }
+}

@@ -1,0 +1,1449 @@
+{
+  "method": "Joint language CE + differentiable native-cycle + learned propagation + prose phrase writer",
+  "setup": {
+    "corpus": "/mnt/data/nan_round042/corpus.jsonl",
+    "seeds": [
+      17,
+      29,
+      43
+    ],
+    "steps": 1100,
+    "batch": 20,
+    "hidden": 80,
+    "lr": 0.003,
+    "evalevery": 100,
+    "test": 200
+  },
+  "paths": {
+    "train": 4959,
+    "val": 317,
+    "test": 323
+  },
+  "seeds": {
+    "17": {
+      "seed": 17,
+      "duration_seconds": 19.021451473236084,
+      "train_history": [
+        {
+          "step": 1,
+          "train_loss": 4.512459754943848,
+          "val_loss": 4.315940856933594,
+          "ce": 3.9830851554870605,
+          "proof": 0.7864919304847717,
+          "writer": 1.0630741119384766
+        },
+        {
+          "step": 100,
+          "train_loss": 0.19266335666179657,
+          "val_loss": 0.20056293904781342,
+          "ce": 0.17494770884513855,
+          "proof": 0.07600180804729462,
+          "writer": 0.007186536211520433
+        },
+        {
+          "step": 200,
+          "train_loss": 0.16498982906341553,
+          "val_loss": 0.15518926084041595,
+          "ce": 0.15963391959667206,
+          "proof": 0.021959228441119194,
+          "writer": 0.002754458924755454
+        },
+        {
+          "step": 300,
+          "train_loss": 0.14892281591892242,
+          "val_loss": 0.14938192069530487,
+          "ce": 0.14451520144939423,
+          "proof": 0.020151648670434952,
+          "writer": 0.001077932887710631
+        },
+        {
+          "step": 400,
+          "train_loss": 0.15200626850128174,
+          "val_loss": 0.1442262977361679,
+          "ce": 0.14814472198486328,
+          "proof": 0.017765212804079056,
+          "writer": 0.0008814415195956826
+        },
+        {
+          "step": 500,
+          "train_loss": 0.13871560990810394,
+          "val_loss": 0.149891197681427,
+          "ce": 0.1350676566362381,
+          "proof": 0.017248371616005898,
+          "writer": 0.000566510483622551
+        },
+        {
+          "step": 600,
+          "train_loss": 0.1570599228143692,
+          "val_loss": 0.153728187084198,
+          "ce": 0.15437571704387665,
+          "proof": 0.012946011498570442,
+          "writer": 0.0002714498550631106
+        },
+        {
+          "step": 700,
+          "train_loss": 0.15080994367599487,
+          "val_loss": 0.1451430320739746,
+          "ce": 0.14782127737998962,
+          "proof": 0.014361254870891571,
+          "writer": 0.00033260483178310096
+        },
+        {
+          "step": 800,
+          "train_loss": 0.13938722014427185,
+          "val_loss": 0.1421755701303482,
+          "ce": 0.13681308925151825,
+          "proof": 0.01243070513010025,
+          "writer": 0.0002514142543077469
+        },
+        {
+          "step": 900,
+          "train_loss": 0.1501474380493164,
+          "val_loss": 0.14317576587200165,
+          "ce": 0.14766034483909607,
+          "proof": 0.012066896073520184,
+          "writer": 0.00021059764549136162
+        },
+        {
+          "step": 1000,
+          "train_loss": 0.15851044654846191,
+          "val_loss": 0.1445866823196411,
+          "ce": 0.1560852974653244,
+          "proof": 0.011789839714765549,
+          "writer": 0.0001919157220982015
+        },
+        {
+          "step": 1100,
+          "train_loss": 0.14765769243240356,
+          "val_loss": 0.15166041254997253,
+          "ce": 0.14560706913471222,
+          "proof": 0.0099638095125556,
+          "writer": 0.00016530274297110736
+        }
+      ],
+      "validation": {
+        "accuracy": 1.0,
+        "correct": 200,
+        "total": 200,
+        "positive_correct": 100,
+        "negative_correct": 100,
+        "examples": [
+          {
+            "facts": [
+              [
+                "wash",
+                "contains the category",
+                "soak"
+              ],
+              [
+                "work",
+                "is a kind of",
+                "activity"
+              ],
+              [
+                "work",
+                "has as a member",
+                "wash"
+              ]
+            ],
+            "question": "Is soak a kind of activity?",
+            "expected": 1,
+            "generated": "the information shows that soak is a kind of activity.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "acrylic",
+                "is classified as",
+                "paint"
+              ],
+              [
+                "paint",
+                "falls under",
+                "coating"
+              ]
+            ],
+            "question": "Is acrylic a kind of covering?",
+            "expected": 0,
+            "generated": "the stated relations do not support that conclusion about acrylic and covering.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "venture",
+                "is a kind of",
+                "undertaking"
+              ],
+              [
+                "consumerism",
+                "is a type of",
+                "campaign"
+              ],
+              [
+                "campaign",
+                "falls under",
+                "venture"
+              ],
+              [
+                "undertaking",
+                "is an instance of",
+                "work"
+              ]
+            ],
+            "question": "Is consumerism a kind of work?",
+            "expected": 1,
+            "generated": "the information shows that consumerism is a kind of work.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "activity",
+                "has as a member",
+                "writing"
+              ]
+            ],
+            "question": "Is notation a kind of activity?",
+            "expected": 0,
+            "generated": "the stated relations do not support that conclusion about notation and activity.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "carnivore",
+                "is a type of",
+                "placental"
+              ],
+              [
+                "genet",
+                "is a type of",
+                "viverrine"
+              ],
+              [
+                "viverrine",
+                "is a type of",
+                "carnivore"
+              ]
+            ],
+            "question": "Is genet a kind of placental?",
+            "expected": 1,
+            "generated": "the information shows that genet is a kind of placental.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "restraint",
+                "encompasses",
+                "fastener"
+              ],
+              [
+                "pin",
+                "is unrelated to",
+                "restraint"
+              ],
+              [
+                "pin",
+                "is an instance of",
+                "fastener"
+              ]
+            ],
+            "question": "Is barrette a kind of restraint?",
+            "expected": 0,
+            "generated": "the stated relations do not support that conclusion about barrette and restraint.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "band",
+                "contains the category",
+                "hoop"
+              ],
+              [
+                "collar",
+                "is a kind of",
+                "hoop"
+              ],
+              [
+                "collar",
+                "is different from",
+                "hoop"
+              ],
+              [
+                "strip",
+                "contains the category",
+                "band"
+              ],
+              [
+                "band",
+                "is not a kind of",
+                "viper"
+              ]
+            ],
+            "question": "Is collar a kind of strip?",
+            "expected": 1,
+            "generated": "the information shows that collar is a kind of strip.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "marmot",
+                "is a kind of",
+                "rodent"
+              ],
+              [
+                "groundhog",
+                "is an instance of",
+                "marmot"
+              ],
+              [
+                "mammal",
+                "encompasses",
+                "placental"
+              ]
+            ],
+            "question": "Is groundhog a kind of mammal?",
+            "expected": 0,
+            "generated": "the stated relations do not support that conclusion about groundhog and mammal.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "container",
+                "contains the category",
+                "bin"
+              ],
+              [
+                "container",
+                "is unrelated to",
+                "bulla"
+              ],
+              [
+                "container",
+                "belongs to",
+                "instrumentality"
+              ],
+              [
+                "bin",
+                "includes",
+                "crib"
+              ]
+            ],
+            "question": "Is crib a kind of instrumentality?",
+            "expected": 1,
+            "generated": "the information shows that crib is a kind of instrumentality.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "diversion",
+                "is a special type of",
+                "activity"
+              ],
+              [
+                "diversion",
+                "includes",
+                "pastime"
+              ],
+              [
+                "act",
+                "has as a member",
+                "activity"
+              ],
+              [
+                "pastime",
+                "is unrelated to",
+                "activity"
+              ]
+            ],
+            "question": "Is pastime a kind of event?",
+            "expected": 0,
+            "generated": "the stated relations do not support that conclusion about pastime and event.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "hindrance",
+                "falls under",
+                "act"
+              ],
+              [
+                "save",
+                "falls under",
+                "prevention"
+              ],
+              [
+                "act",
+                "belongs to",
+                "event"
+              ],
+              [
+                "hindrance",
+                "includes",
+                "prevention"
+              ]
+            ],
+            "question": "Is save a kind of event?",
+            "expected": 1,
+            "generated": "the information shows that save is a kind of event.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "motion",
+                "has as a member",
+                "disturbance"
+              ],
+              [
+                "change",
+                "belongs to",
+                "action"
+              ],
+              [
+                "motion",
+                "is a kind of",
+                "change"
+              ]
+            ],
+            "question": "Is upset a kind of action?",
+            "expected": 0,
+            "generated": "the stated relations do not support that conclusion about upset and action.",
+            "valid": true
+          }
+        ]
+      },
+      "test": {
+        "accuracy": 1.0,
+        "correct": 200,
+        "total": 200,
+        "positive_correct": 100,
+        "negative_correct": 100,
+        "examples": [
+          {
+            "facts": [
+              [
+                "oscine",
+                "falls under",
+                "passerine"
+              ],
+              [
+                "thrush",
+                "has as a member",
+                "bluethroat"
+              ],
+              [
+                "bird",
+                "contains the category",
+                "passerine"
+              ],
+              [
+                "oscine",
+                "has as a member",
+                "thrush"
+              ]
+            ],
+            "question": "Is bluethroat a kind of bird?",
+            "expected": 1,
+            "generated": "the information shows that bluethroat is a kind of bird.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "occupation",
+                "includes",
+                "position"
+              ],
+              [
+                "apprenticeship",
+                "is unrelated to",
+                "occupation"
+              ]
+            ],
+            "question": "Is apprenticeship a kind of occupation?",
+            "expected": 0,
+            "generated": "the stated relations do not support that conclusion about apprenticeship and occupation.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "distribution",
+                "is a member of",
+                "act"
+              ],
+              [
+                "grant",
+                "is classified as",
+                "allotment"
+              ],
+              [
+                "award",
+                "is a type of",
+                "grant"
+              ],
+              [
+                "allotment",
+                "is a member of",
+                "distribution"
+              ]
+            ],
+            "question": "Is award a kind of act?",
+            "expected": 1,
+            "generated": "the information shows that award is a kind of act.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "substitution",
+                "is a type of",
+                "change"
+              ],
+              [
+                "change",
+                "is different from",
+                "substitution"
+              ],
+              [
+                "substitution",
+                "is not a kind of",
+                "cuscus"
+              ],
+              [
+                "replacement",
+                "is a type of",
+                "substitution"
+              ]
+            ],
+            "question": "Is replacement a kind of action?",
+            "expected": 0,
+            "generated": "the stated relations do not support that conclusion about replacement and action.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "flatworm",
+                "is a member of",
+                "worm"
+              ],
+              [
+                "animal",
+                "falls under",
+                "organism"
+              ],
+              [
+                "invertebrate",
+                "is a kind of",
+                "animal"
+              ],
+              [
+                "worm",
+                "falls under",
+                "invertebrate"
+              ]
+            ],
+            "question": "Is flatworm a kind of organism?",
+            "expected": 1,
+            "generated": "the information shows that flatworm is a kind of organism.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "change",
+                "is classified as",
+                "action"
+              ],
+              [
+                "agitation",
+                "is a special type of",
+                "motion"
+              ],
+              [
+                "agitation",
+                "contains the category",
+                "shaking"
+              ]
+            ],
+            "question": "Is shaking a kind of action?",
+            "expected": 0,
+            "generated": "the stated relations do not support that conclusion about shaking and action.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "break",
+                "is an instance of",
+                "delay"
+              ],
+              [
+                "cut-in",
+                "is a member of",
+                "break"
+              ],
+              [
+                "delay",
+                "is a special type of",
+                "inactivity"
+              ],
+              [
+                "inactivity",
+                "is unrelated to",
+                "act"
+              ],
+              [
+                "act",
+                "has as a member",
+                "inactivity"
+              ]
+            ],
+            "question": "Is cut-in a kind of act?",
+            "expected": 1,
+            "generated": "the information shows that cut-in is a kind of act.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "kick",
+                "opposes",
+                "recusation"
+              ],
+              [
+                "blow",
+                "is different from",
+                "punt"
+              ],
+              [
+                "blow",
+                "has as a member",
+                "kick"
+              ]
+            ],
+            "question": "Is punt a kind of blow?",
+            "expected": 0,
+            "generated": "the stated relations do not support that conclusion about punt and blow.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "spoil",
+                "opposes",
+                "aggravation"
+              ],
+              [
+                "spoil",
+                "is a kind of",
+                "plundering"
+              ],
+              [
+                "aggression",
+                "includes",
+                "plundering"
+              ],
+              [
+                "aggression",
+                "is not a kind of",
+                "plundering"
+              ]
+            ],
+            "question": "Is spoil a kind of aggression?",
+            "expected": 1,
+            "generated": "the information shows that spoil is a kind of aggression.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "event",
+                "contains the category",
+                "act"
+              ],
+              [
+                "wrongdoing",
+                "is a type of",
+                "activity"
+              ],
+              [
+                "activity",
+                "is a type of",
+                "act"
+              ]
+            ],
+            "question": "Is malpractice a kind of event?",
+            "expected": 0,
+            "generated": "the stated relations do not support that conclusion about malpractice and event.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "placental",
+                "is a type of",
+                "mammal"
+              ],
+              [
+                "placental",
+                "is unrelated to",
+                "primate"
+              ],
+              [
+                "primate",
+                "has as a member",
+                "anthropoid"
+              ],
+              [
+                "placental",
+                "opposes",
+                "vertebrate"
+              ],
+              [
+                "primate",
+                "is classified as",
+                "placental"
+              ],
+              [
+                "mammal",
+                "is a type of",
+                "vertebrate"
+              ]
+            ],
+            "question": "Is anthropoid a kind of vertebrate?",
+            "expected": 1,
+            "generated": "the information shows that anthropoid is a kind of vertebrate.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "hadrosaur",
+                "is a special type of",
+                "ornithischian"
+              ],
+              [
+                "ornithischian",
+                "is a type of",
+                "dinosaur"
+              ],
+              [
+                "archosaur",
+                "opposes",
+                "dinosaur"
+              ],
+              [
+                "edmontosaurus",
+                "is different from",
+                "hadrosaur"
+              ],
+              [
+                "dinosaur",
+                "falls under",
+                "archosaur"
+              ]
+            ],
+            "question": "Is edmontosaurus a kind of archosaur?",
+            "expected": 0,
+            "generated": "the stated relations do not support that conclusion about edmontosaurus and archosaur.",
+            "valid": true
+          }
+        ]
+      },
+      "same_parameters_conventional_bridge": {
+        "accuracy": 1.0,
+        "correct": 200,
+        "total": 200,
+        "positive_correct": 100,
+        "negative_correct": 100,
+        "examples": [
+          {
+            "facts": [
+              [
+                "oscine",
+                "falls under",
+                "passerine"
+              ],
+              [
+                "thrush",
+                "has as a member",
+                "bluethroat"
+              ],
+              [
+                "bird",
+                "contains the category",
+                "passerine"
+              ],
+              [
+                "oscine",
+                "has as a member",
+                "thrush"
+              ]
+            ],
+            "question": "Is bluethroat a kind of bird?",
+            "expected": 1,
+            "generated": "the information shows that bluethroat is a kind of bird.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "occupation",
+                "includes",
+                "position"
+              ],
+              [
+                "apprenticeship",
+                "is unrelated to",
+                "occupation"
+              ]
+            ],
+            "question": "Is apprenticeship a kind of occupation?",
+            "expected": 0,
+            "generated": "the stated relations do not support that conclusion about apprenticeship and occupation.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "distribution",
+                "is a member of",
+                "act"
+              ],
+              [
+                "grant",
+                "is classified as",
+                "allotment"
+              ],
+              [
+                "award",
+                "is a type of",
+                "grant"
+              ],
+              [
+                "allotment",
+                "is a member of",
+                "distribution"
+              ]
+            ],
+            "question": "Is award a kind of act?",
+            "expected": 1,
+            "generated": "the information shows that award is a kind of act.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "substitution",
+                "is a type of",
+                "change"
+              ],
+              [
+                "change",
+                "is different from",
+                "substitution"
+              ],
+              [
+                "substitution",
+                "is not a kind of",
+                "cuscus"
+              ],
+              [
+                "replacement",
+                "is a type of",
+                "substitution"
+              ]
+            ],
+            "question": "Is replacement a kind of action?",
+            "expected": 0,
+            "generated": "the stated relations do not support that conclusion about replacement and action.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "flatworm",
+                "is a member of",
+                "worm"
+              ],
+              [
+                "animal",
+                "falls under",
+                "organism"
+              ],
+              [
+                "invertebrate",
+                "is a kind of",
+                "animal"
+              ],
+              [
+                "worm",
+                "falls under",
+                "invertebrate"
+              ]
+            ],
+            "question": "Is flatworm a kind of organism?",
+            "expected": 1,
+            "generated": "the information shows that flatworm is a kind of organism.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "change",
+                "is classified as",
+                "action"
+              ],
+              [
+                "agitation",
+                "is a special type of",
+                "motion"
+              ],
+              [
+                "agitation",
+                "contains the category",
+                "shaking"
+              ]
+            ],
+            "question": "Is shaking a kind of action?",
+            "expected": 0,
+            "generated": "the stated relations do not support that conclusion about shaking and action.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "break",
+                "is an instance of",
+                "delay"
+              ],
+              [
+                "cut-in",
+                "is a member of",
+                "break"
+              ],
+              [
+                "delay",
+                "is a special type of",
+                "inactivity"
+              ],
+              [
+                "inactivity",
+                "is unrelated to",
+                "act"
+              ],
+              [
+                "act",
+                "has as a member",
+                "inactivity"
+              ]
+            ],
+            "question": "Is cut-in a kind of act?",
+            "expected": 1,
+            "generated": "the information shows that cut-in is a kind of act.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "kick",
+                "opposes",
+                "recusation"
+              ],
+              [
+                "blow",
+                "is different from",
+                "punt"
+              ],
+              [
+                "blow",
+                "has as a member",
+                "kick"
+              ]
+            ],
+            "question": "Is punt a kind of blow?",
+            "expected": 0,
+            "generated": "the stated relations do not support that conclusion about punt and blow.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "spoil",
+                "opposes",
+                "aggravation"
+              ],
+              [
+                "spoil",
+                "is a kind of",
+                "plundering"
+              ],
+              [
+                "aggression",
+                "includes",
+                "plundering"
+              ],
+              [
+                "aggression",
+                "is not a kind of",
+                "plundering"
+              ]
+            ],
+            "question": "Is spoil a kind of aggression?",
+            "expected": 1,
+            "generated": "the information shows that spoil is a kind of aggression.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "event",
+                "contains the category",
+                "act"
+              ],
+              [
+                "wrongdoing",
+                "is a type of",
+                "activity"
+              ],
+              [
+                "activity",
+                "is a type of",
+                "act"
+              ]
+            ],
+            "question": "Is malpractice a kind of event?",
+            "expected": 0,
+            "generated": "the stated relations do not support that conclusion about malpractice and event.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "placental",
+                "is a type of",
+                "mammal"
+              ],
+              [
+                "placental",
+                "is unrelated to",
+                "primate"
+              ],
+              [
+                "primate",
+                "has as a member",
+                "anthropoid"
+              ],
+              [
+                "placental",
+                "opposes",
+                "vertebrate"
+              ],
+              [
+                "primate",
+                "is classified as",
+                "placental"
+              ],
+              [
+                "mammal",
+                "is a type of",
+                "vertebrate"
+              ]
+            ],
+            "question": "Is anthropoid a kind of vertebrate?",
+            "expected": 1,
+            "generated": "the information shows that anthropoid is a kind of vertebrate.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "hadrosaur",
+                "is a special type of",
+                "ornithischian"
+              ],
+              [
+                "ornithischian",
+                "is a type of",
+                "dinosaur"
+              ],
+              [
+                "archosaur",
+                "opposes",
+                "dinosaur"
+              ],
+              [
+                "edmontosaurus",
+                "is different from",
+                "hadrosaur"
+              ],
+              [
+                "dinosaur",
+                "falls under",
+                "archosaur"
+              ]
+            ],
+            "question": "Is edmontosaurus a kind of archosaur?",
+            "expected": 0,
+            "generated": "the stated relations do not support that conclusion about edmontosaurus and archosaur.",
+            "valid": true
+          }
+        ]
+      },
+      "test_after_gauge": {
+        "accuracy": 1.0,
+        "correct": 200,
+        "total": 200,
+        "positive_correct": 100,
+        "negative_correct": 100,
+        "examples": [
+          {
+            "facts": [
+              [
+                "oscine",
+                "falls under",
+                "passerine"
+              ],
+              [
+                "thrush",
+                "has as a member",
+                "bluethroat"
+              ],
+              [
+                "bird",
+                "contains the category",
+                "passerine"
+              ],
+              [
+                "oscine",
+                "has as a member",
+                "thrush"
+              ]
+            ],
+            "question": "Is bluethroat a kind of bird?",
+            "expected": 1,
+            "generated": "the information shows that bluethroat is a kind of bird.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "occupation",
+                "includes",
+                "position"
+              ],
+              [
+                "apprenticeship",
+                "is unrelated to",
+                "occupation"
+              ]
+            ],
+            "question": "Is apprenticeship a kind of occupation?",
+            "expected": 0,
+            "generated": "the stated relations do not support that conclusion about apprenticeship and occupation.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "distribution",
+                "is a member of",
+                "act"
+              ],
+              [
+                "grant",
+                "is classified as",
+                "allotment"
+              ],
+              [
+                "award",
+                "is a type of",
+                "grant"
+              ],
+              [
+                "allotment",
+                "is a member of",
+                "distribution"
+              ]
+            ],
+            "question": "Is award a kind of act?",
+            "expected": 1,
+            "generated": "the information shows that award is a kind of act.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "substitution",
+                "is a type of",
+                "change"
+              ],
+              [
+                "change",
+                "is different from",
+                "substitution"
+              ],
+              [
+                "substitution",
+                "is not a kind of",
+                "cuscus"
+              ],
+              [
+                "replacement",
+                "is a type of",
+                "substitution"
+              ]
+            ],
+            "question": "Is replacement a kind of action?",
+            "expected": 0,
+            "generated": "the stated relations do not support that conclusion about replacement and action.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "flatworm",
+                "is a member of",
+                "worm"
+              ],
+              [
+                "animal",
+                "falls under",
+                "organism"
+              ],
+              [
+                "invertebrate",
+                "is a kind of",
+                "animal"
+              ],
+              [
+                "worm",
+                "falls under",
+                "invertebrate"
+              ]
+            ],
+            "question": "Is flatworm a kind of organism?",
+            "expected": 1,
+            "generated": "the information shows that flatworm is a kind of organism.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "change",
+                "is classified as",
+                "action"
+              ],
+              [
+                "agitation",
+                "is a special type of",
+                "motion"
+              ],
+              [
+                "agitation",
+                "contains the category",
+                "shaking"
+              ]
+            ],
+            "question": "Is shaking a kind of action?",
+            "expected": 0,
+            "generated": "the stated relations do not support that conclusion about shaking and action.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "break",
+                "is an instance of",
+                "delay"
+              ],
+              [
+                "cut-in",
+                "is a member of",
+                "break"
+              ],
+              [
+                "delay",
+                "is a special type of",
+                "inactivity"
+              ],
+              [
+                "inactivity",
+                "is unrelated to",
+                "act"
+              ],
+              [
+                "act",
+                "has as a member",
+                "inactivity"
+              ]
+            ],
+            "question": "Is cut-in a kind of act?",
+            "expected": 1,
+            "generated": "the information shows that cut-in is a kind of act.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "kick",
+                "opposes",
+                "recusation"
+              ],
+              [
+                "blow",
+                "is different from",
+                "punt"
+              ],
+              [
+                "blow",
+                "has as a member",
+                "kick"
+              ]
+            ],
+            "question": "Is punt a kind of blow?",
+            "expected": 0,
+            "generated": "the stated relations do not support that conclusion about punt and blow.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "spoil",
+                "opposes",
+                "aggravation"
+              ],
+              [
+                "spoil",
+                "is a kind of",
+                "plundering"
+              ],
+              [
+                "aggression",
+                "includes",
+                "plundering"
+              ],
+              [
+                "aggression",
+                "is not a kind of",
+                "plundering"
+              ]
+            ],
+            "question": "Is spoil a kind of aggression?",
+            "expected": 1,
+            "generated": "the information shows that spoil is a kind of aggression.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "event",
+                "contains the category",
+                "act"
+              ],
+              [
+                "wrongdoing",
+                "is a type of",
+                "activity"
+              ],
+              [
+                "activity",
+                "is a type of",
+                "act"
+              ]
+            ],
+            "question": "Is malpractice a kind of event?",
+            "expected": 0,
+            "generated": "the stated relations do not support that conclusion about malpractice and event.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "placental",
+                "is a type of",
+                "mammal"
+              ],
+              [
+                "placental",
+                "is unrelated to",
+                "primate"
+              ],
+              [
+                "primate",
+                "has as a member",
+                "anthropoid"
+              ],
+              [
+                "placental",
+                "opposes",
+                "vertebrate"
+              ],
+              [
+                "primate",
+                "is classified as",
+                "placental"
+              ],
+              [
+                "mammal",
+                "is a type of",
+                "vertebrate"
+              ]
+            ],
+            "question": "Is anthropoid a kind of vertebrate?",
+            "expected": 1,
+            "generated": "the information shows that anthropoid is a kind of vertebrate.",
+            "valid": true
+          },
+          {
+            "facts": [
+              [
+                "hadrosaur",
+                "is a special type of",
+                "ornithischian"
+              ],
+              [
+                "ornithischian",
+                "is a type of",
+                "dinosaur"
+              ],
+              [
+                "archosaur",
+                "opposes",
+                "dinosaur"
+              ],
+              [
+                "edmontosaurus",
+                "is different from",
+                "hadrosaur"
+              ],
+              [
+                "dinosaur",
+                "falls under",
+                "archosaur"
+              ]
+            ],
+            "question": "Is edmontosaurus a kind of archosaur?",
+            "expected": 0,
+            "generated": "the stated relations do not support that conclusion about edmontosaurus and archosaur.",
+            "valid": true
+          }
+        ]
+      },
+      "no_evidence_abstentions": 200,
+      "no_evidence_total": 200,
+      "parameters": 57547
+    }
+  }
+}

@@ -21,3 +21,4 @@ recursive-include experiments/round040 *.md *.py *.cpp *.json *.log *.bin *.pt *
 global-exclude *.pt
 global-exclude *.bin
 global-exclude *.model
+recursive-include experiments/round042 *.md *.py *.json *.jsonl *.cpp *.gz

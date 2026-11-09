@@ -1,0 +1,137 @@
+{
+  "17": {
+    "baseline_correct": 160,
+    "total": 160,
+    "node_relabel_output_unchanged": 160,
+    "conventional_output_unchanged": 160,
+    "gauge_output_unchanged": 160,
+    "native_indispensable_edge_deletion_abstentions": 80,
+    "native_deletion_total": 80,
+    "native_edge_restore_output_unchanged": 80,
+    "decoder_ce": 0.14439067244529724,
+    "writer_gradient_norm": 6.4509790718148e-06,
+    "propagator_gradient_magnitude": 7.763009489281103e-05,
+    "examples": [
+      {
+        "query": "Is moloch a kind of diapsid?",
+        "before": "the information shows that moloch is a kind of diapsid.",
+        "edge_deleted": "the available facts do not establish that moloch belongs to diapsid.",
+        "restored": "the information shows that moloch is a kind of diapsid."
+      },
+      {
+        "query": "Is clog a kind of covering?",
+        "before": "the information shows that clog is a kind of covering.",
+        "edge_deleted": "the available facts do not establish that clog belongs to covering.",
+        "restored": "the information shows that clog is a kind of covering."
+      },
+      {
+        "query": "Is soldier a kind of arthropod?",
+        "before": "the information shows that soldier is a kind of arthropod.",
+        "edge_deleted": "the available facts do not establish that soldier belongs to arthropod.",
+        "restored": "the information shows that soldier is a kind of arthropod."
+      },
+      {
+        "query": "Is gunrunning a kind of commerce?",
+        "before": "the information shows that gunrunning is a kind of commerce.",
+        "edge_deleted": "the available facts do not establish that gunrunning belongs to commerce.",
+        "restored": "the information shows that gunrunning is a kind of commerce."
+      },
+      {
+        "query": "Is maneuver a kind of action?",
+        "before": "the information shows that maneuver is a kind of action.",
+        "edge_deleted": "the available facts do not establish that maneuver belongs to action.",
+        "restored": "the information shows that maneuver is a kind of action."
+      }
+    ]
+  },
+  "29": {
+    "baseline_correct": 160,
+    "total": 160,
+    "node_relabel_output_unchanged": 160,
+    "conventional_output_unchanged": 160,
+    "gauge_output_unchanged": 160,
+    "native_indispensable_edge_deletion_abstentions": 80,
+    "native_deletion_total": 80,
+    "native_edge_restore_output_unchanged": 80,
+    "decoder_ce": 0.13989995419979095,
+    "writer_gradient_norm": 3.416823165025562e-05,
+    "propagator_gradient_magnitude": 0.00012147484085289761,
+    "examples": [
+      {
+        "query": "Is cat a kind of carnivore?",
+        "before": "the information shows that cat is a kind of carnivore.",
+        "edge_deleted": "the stated relations do not support that conclusion about cat and carnivore.",
+        "restored": "the information shows that cat is a kind of carnivore."
+      },
+      {
+        "query": "Is metatherian a kind of chordate?",
+        "before": "the information shows that metatherian is a kind of chordate.",
+        "edge_deleted": "the stated relations do not support that conclusion about metatherian and chordate.",
+        "restored": "the information shows that metatherian is a kind of chordate."
+      },
+      {
+        "query": "Is pseudomonad a kind of microorganism?",
+        "before": "the information shows that pseudomonad is a kind of microorganism.",
+        "edge_deleted": "the stated relations do not support that conclusion about pseudomonad and microorganism.",
+        "restored": "the information shows that pseudomonad is a kind of microorganism."
+      },
+      {
+        "query": "Is creeper a kind of vertebrate?",
+        "before": "the information shows that creeper is a kind of vertebrate.",
+        "edge_deleted": "the stated relations do not support that conclusion about creeper and vertebrate.",
+        "restored": "the information shows that creeper is a kind of vertebrate."
+      },
+      {
+        "query": "Is schlep a kind of change?",
+        "before": "the information shows that schlep is a kind of change.",
+        "edge_deleted": "the stated relations do not support that conclusion about schlep and change.",
+        "restored": "the information shows that schlep is a kind of change."
+      }
+    ]
+  },
+  "43": {
+    "baseline_correct": 160,
+    "total": 160,
+    "node_relabel_output_unchanged": 160,
+    "conventional_output_unchanged": 160,
+    "gauge_output_unchanged": 160,
+    "native_indispensable_edge_deletion_abstentions": 80,
+    "native_deletion_total": 80,
+    "native_edge_restore_output_unchanged": 80,
+    "decoder_ce": 0.1497291624546051,
+    "writer_gradient_norm": 1.1935335351154208e-05,
+    "propagator_gradient_magnitude": 5.074560613138601e-05,
+    "examples": [
+      {
+        "query": "Is impoundment a kind of acquiring?",
+        "before": "the recorded relationships imply that impoundment is an instance of acquiring.",
+        "edge_deleted": "the stated relations do not support that conclusion about impoundment and acquiring.",
+        "restored": "the recorded relationships imply that impoundment is an instance of acquiring."
+      },
+      {
+        "query": "Is solicitorship a kind of occupation?",
+        "before": "the recorded relationships imply that solicitorship is an instance of occupation.",
+        "edge_deleted": "the stated relations do not support that conclusion about solicitorship and occupation.",
+        "restored": "the recorded relationships imply that solicitorship is an instance of occupation."
+      },
+      {
+        "query": "Is leonberg a kind of placental?",
+        "before": "the recorded relationships imply that leonberg is an instance of placental.",
+        "edge_deleted": "the stated relations do not support that conclusion about leonberg and placental.",
+        "restored": "the recorded relationships imply that leonberg is an instance of placental."
+      },
+      {
+        "query": "Is ratite a kind of animal?",
+        "before": "the recorded relationships imply that ratite is an instance of animal.",
+        "edge_deleted": "the stated relations do not support that conclusion about ratite and animal.",
+        "restored": "the recorded relationships imply that ratite is an instance of animal."
+      },
+      {
+        "query": "Is utility a kind of work?",
+        "before": "the recorded relationships imply that utility is an instance of work.",
+        "edge_deleted": "the stated relations do not support that conclusion about utility and work.",
+        "restored": "the recorded relationships imply that utility is an instance of work."
+      }
+    ]
+  }
+}

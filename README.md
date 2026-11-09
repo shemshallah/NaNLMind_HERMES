@@ -34,6 +34,11 @@ identity/authorization boundary and CLOCKED is an evidence service.
   privacy, injection, and synthesis. Multi-source results are written to an
   append-only scratch journal; source text is not sent during planning, and
   execution requires explicit approval.
+- **Round 042 raw trig cycle** — `nanlmind_hermes/nan/trig_cycle.nan` is a
+  pure 0x-word NaN16 kernel for triangle phase and holonomy; the resident bridge
+  executes it through NaNVM0 and tests gauge cancellation. Dynamic dialogue,
+  four-state speaker and writer checkpoints remain explicit external/TODO
+  items in [ROUND042_TRIGON.md](docs/ROUND042_TRIGON.md).
 - **Round 038/040 architecture inputs** — order-sensitive SO(2)/SO(3)
   transport and holonomy trace algebra are in `resident/rotation_holonomy.py`;
   dynamic write/query/snapshot value is recorded in

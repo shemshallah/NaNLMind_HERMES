@@ -1,0 +1,121 @@
+{
+  "seed": 17,
+  "correct": 160,
+  "total": 160,
+  "gauge_output_stability": 160,
+  "gauge_total": 160,
+  "categories": {
+    "supports": {
+      "correct": 40,
+      "total": 40
+    },
+    "refutes": {
+      "correct": 40,
+      "total": 40
+    },
+    "both": {
+      "correct": 40,
+      "total": 40
+    },
+    "unknown": {
+      "correct": 40,
+      "total": 40
+    }
+  },
+  "history": [
+    {
+      "step": 1,
+      "train_ce": 4.237875461578369,
+      "val_ce": 4.064617156982422
+    },
+    {
+      "step": 120,
+      "train_ce": 0.1021011546254158,
+      "val_ce": 0.108334980905056
+    },
+    {
+      "step": 240,
+      "train_ce": 0.08894680440425873,
+      "val_ce": 0.08143628388643265
+    },
+    {
+      "step": 360,
+      "train_ce": 0.08490495383739471,
+      "val_ce": 0.09226775914430618
+    },
+    {
+      "step": 480,
+      "train_ce": 0.07822953164577484,
+      "val_ce": 0.07985388487577438
+    },
+    {
+      "step": 600,
+      "train_ce": 0.08197639137506485,
+      "val_ce": 0.08141110837459564
+    }
+  ],
+  "examples": [
+    {
+      "state": "supports",
+      "generated": "the relationships support that furor belongs to change.",
+      "correct": true
+    },
+    {
+      "state": "refutes",
+      "generated": "the explicit evidence refutes that cat is a kind of mammal.",
+      "correct": true
+    },
+    {
+      "state": "both",
+      "generated": "the evidence is conflicting: one path supports carbomycin as a kind of antibacterial, but another statement refutes it.",
+      "correct": true
+    },
+    {
+      "state": "unknown",
+      "generated": "there is not enough evidence to say that elimination belongs to termination.",
+      "correct": true
+    },
+    {
+      "state": "supports",
+      "generated": "the relationships support that opossum belongs to mammal.",
+      "correct": true
+    },
+    {
+      "state": "refutes",
+      "generated": "the explicit evidence refutes that creeper is a kind of vertebrate.",
+      "correct": true
+    },
+    {
+      "state": "both",
+      "generated": "the evidence is conflicting: one path supports adobe as a kind of artifact, but another statement refutes it.",
+      "correct": true
+    },
+    {
+      "state": "unknown",
+      "generated": "there is not enough evidence to say that mussel belongs to animal.",
+      "correct": true
+    },
+    {
+      "state": "supports",
+      "generated": "the relationships support that caress belongs to event.",
+      "correct": true
+    },
+    {
+      "state": "refutes",
+      "generated": "the explicit evidence refutes that maneuver is a kind of change.",
+      "correct": true
+    },
+    {
+      "state": "both",
+      "generated": "the evidence is conflicting: one path supports bagger as a kind of device, but another statement refutes it.",
+      "correct": true
+    },
+    {
+      "state": "unknown",
+      "generated": "there is not enough evidence to say that cut-in belongs to act.",
+      "correct": true
+    }
+  ],
+  "native_audit": true,
+  "parameter_count": 56628
+}

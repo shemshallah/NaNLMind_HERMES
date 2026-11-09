@@ -1,0 +1,205 @@
+{
+  "seed": 17,
+  "steps": 1000,
+  "test": {
+    "accuracy": 0.5,
+    "correct": 90,
+    "total": 180,
+    "positive_correct": 0,
+    "negative_correct": 90
+  },
+  "history": [
+    {
+      "step": 1,
+      "train_ce": 4.002431392669678,
+      "validation_accuracy": 0.5
+    },
+    {
+      "step": 250,
+      "train_ce": 0.2399359941482544,
+      "validation_accuracy": 0.5
+    },
+    {
+      "step": 500,
+      "train_ce": 0.2006826549768448,
+      "validation_accuracy": 0.5
+    },
+    {
+      "step": 1000,
+      "train_ce": 0.1997474581003189,
+      "validation_accuracy": 1.0
+    }
+  ],
+  "examples": [
+    {
+      "facts": [
+        [
+          "spread",
+          "belongs to",
+          "extension"
+        ],
+        [
+          "decentralization",
+          "belongs to",
+          "spread"
+        ]
+      ],
+      "question": "Is decentralization a kind of extension?",
+      "expected": 1,
+      "generated": "the stated relations do not support that conclusion about decentralization and extension.",
+      "valid": false
+    },
+    {
+      "facts": [
+        [
+          "arthropod",
+          "is classified as",
+          "invertebrate"
+        ],
+        [
+          "arachnid",
+          "is unrelated to",
+          "chamberpot"
+        ],
+        [
+          "arthropod",
+          "is not a kind of",
+          "invertebrate"
+        ],
+        [
+          "spider",
+          "belongs to",
+          "chamberpot"
+        ],
+        [
+          "arachnid",
+          "is classified as",
+          "arthropod"
+        ]
+      ],
+      "question": "Is spider a kind of invertebrate?",
+      "expected": 0,
+      "generated": "the stated relations do not support that conclusion about spider and invertebrate.",
+      "valid": true
+    },
+    {
+      "facts": [
+        [
+          "turn",
+          "opposes",
+          "innings"
+        ],
+        [
+          "funambulism",
+          "is different from",
+          "turn"
+        ],
+        [
+          "activity",
+          "has as a member",
+          "turn"
+        ],
+        [
+          "turn",
+          "encompasses",
+          "innings"
+        ]
+      ],
+      "question": "Is innings a kind of activity?",
+      "expected": 1,
+      "generated": "the stated relations do not support that conclusion about innings and activity.",
+      "valid": false
+    },
+    {
+      "facts": [
+        [
+          "buskin",
+          "is a kind of",
+          "boot"
+        ],
+        [
+          "boot",
+          "belongs to",
+          "polyp"
+        ],
+        [
+          "footwear",
+          "is different from",
+          "covering"
+        ],
+        [
+          "footwear",
+          "is a kind of",
+          "covering"
+        ]
+      ],
+      "question": "Is buskin a kind of covering?",
+      "expected": 0,
+      "generated": "the stated relations do not support that conclusion about buskin and covering.",
+      "valid": true
+    },
+    {
+      "facts": [
+        [
+          "treatment",
+          "encompasses",
+          "massage"
+        ],
+        [
+          "massage",
+          "includes",
+          "petrissage"
+        ],
+        [
+          "treatment",
+          "is an instance of",
+          "care"
+        ],
+        [
+          "petrissage",
+          "is different from",
+          "backing"
+        ],
+        [
+          "petrissage",
+          "opposes",
+          "care"
+        ]
+      ],
+      "question": "Is petrissage a kind of care?",
+      "expected": 1,
+      "generated": "the stated relations do not support that conclusion about petrissage and care.",
+      "valid": false
+    },
+    {
+      "facts": [
+        [
+          "instrumentality",
+          "is an instance of",
+          "ouster"
+        ],
+        [
+          "armament",
+          "belongs to",
+          "weaponry"
+        ],
+        [
+          "instrumentality",
+          "contains the category",
+          "weaponry"
+        ],
+        [
+          "arsenal",
+          "is classified as",
+          "armament"
+        ]
+      ],
+      "question": "Is arsenal a kind of artifact?",
+      "expected": 0,
+      "generated": "the stated relations do not support that conclusion about arsenal and artifact.",
+      "valid": true
+    }
+  ],
+  "root_audit": true,
+  "correction": "FIX: Earlier evaluator marked an abstention containing the word conclusion as correct for a positive example. Corrected exact semantic classification: 90/180 (all positives failed; all negatives passed)."
+}
