@@ -8,7 +8,11 @@ addressed sparsely at HW4; it is not a dense matrix per word.
 - typed pointer edges: **378,203**
 - hypernym/instance edges: **97,761**
 - gloss characters: **8,873,693**
-- route: `nan://HW4:BS0:MC0:SC0:GM0` via `HW4:0` (upstream `HW2:0`, NaN16DE)
+- canonical route: `nan://GM0:SC0:MC0:BS0:0:HW4:0` via `HW4:0`
+  (upstream `HW2:0`, NANNET port `BS0:0`, NaN16DE).
+- legacy compatibility envelope: `nan://HW4:BS0:MC0:SC0:GM0` (translation
+  required; not a second authority). Historical JSON snapshots below may show
+  the legacy form.
 
 ## Positions
 

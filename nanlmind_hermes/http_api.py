@@ -3,7 +3,11 @@ from __future__ import annotations
 import json, ipaddress, ssl
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from .auth import AuthError
-from .devices import DeviceRegistry
+from .devices import (
+    DeviceRegistry, FIXED_HW2_ALT_SCOPE, FIXED_HW2_BIND_PATH,
+    FIXED_HW2_REPORT_PATH, FIXED_HW2_REVOKE_PATH, FIXED_HW2_SCOPE,
+    FIXED_HW2_STATUS_PATH,
+)
 from .pairing import PairingAuthority
 
 def make_server(authority: PairingAuthority, host="127.0.0.1", port=8765, tls_cert=None, tls_key=None):
@@ -57,6 +61,53 @@ def make_server(authority: PairingAuthority, host="127.0.0.1", port=8765, tls_ce
                     return self._reply(200,result)
                 except (ValueError,TypeError,json.JSONDecodeError) as exc:
                     return self._reply(401 if "token" in str(exc) or "bearer" in str(exc) else 400,{"error":str(exc)[:160]})
+            if self.path in (FIXED_HW2_STATUS_PATH, FIXED_HW2_REPORT_PATH):
+                token=self._bearer()
+                if not token: return self._reply(401,{"error":"bearer_required"})
+                try:
+                    if self.path==FIXED_HW2_STATUS_PATH:
+                        size=int(self.headers.get("Content-Length","0"))
+                        if size:
+                            self._body(1024)
+                        result=devices.fixed_hw2_status(token=token)
+                    else:
+                        result=devices.report_fixed_hw2(token,self._body(8192))
+                    return self._reply(200,result)
+                except (ValueError,TypeError,json.JSONDecodeError) as exc:
+                    return self._reply(401 if "token" in str(exc) or "bearer" in str(exc) else 400,{"error":str(exc)[:160]})
+            if self.path in (FIXED_HW2_BIND_PATH, FIXED_HW2_REVOKE_PATH):
+                token = self._bearer()
+                if not token: return self._reply(401, {"error": "bearer_required"})
+                try:
+                    claims = authority.verify_access_token(token)
+                except AuthError:
+                    return self._reply(401, {"error": "token_invalid_or_scope_denied"})
+                if (claims.get("role") != "admin"
+                        or not ({FIXED_HW2_SCOPE, FIXED_HW2_ALT_SCOPE}
+                                & set(claims.get("scope", [])))):
+                    return self._reply(403, {"error": "fixed_hw2_admin_scope_required"})
+                if not authority.is_paired_installation(claims["sub"]):
+                    return self._reply(403, {"error": "paired_installation_required"})
+                try:
+                    raw = self._raw_body(4096)
+                    authority.verify_signed_request(token, "POST", self.path, raw,
+                                                   self._request_signature())
+                    payload = json.loads(raw)
+                    if not isinstance(payload, dict):
+                        return self._reply(400, {"error": "invalid_request"})
+                    if self.path == FIXED_HW2_BIND_PATH:
+                        result = devices.bind_fixed_hw2(claims["sub"], payload)
+                    else:
+                        result = devices.revoke_fixed_hw2(
+                            installation_id=payload.get("installation_id"),
+                            lease_id=payload.get("lease_id"),
+                            revoked_by=claims["sub"],
+                            reason=payload.get("reason"))
+                    return self._reply(200, result)
+                except AuthError:
+                    return self._reply(401, {"error": "token_invalid_scope_or_signature"})
+                except (ValueError, TypeError, json.JSONDecodeError) as exc:
+                    return self._reply(400, {"error": str(exc)[:160]})
             if self.path == "/v1/authorize":
                 token = self._bearer()
                 if not token: return self._reply(401, {"error": "bearer_required"})
@@ -108,6 +159,12 @@ def make_server(authority: PairingAuthority, host="127.0.0.1", port=8765, tls_ce
                 self._reply(400,{"error":"pairing_rejected","message":str(exc)[:200]})
         def do_GET(self):
             if self.path=="/health": return self._reply(200,{"service":"nannet-api-hermes","status":"ready"})
+            if self.path==FIXED_HW2_STATUS_PATH:
+                token=self._bearer()
+                if not token: return self._reply(401,{"error":"bearer_required"})
+                try: return self._reply(200,devices.fixed_hw2_status(token=token))
+                except (ValueError,TypeError) as exc:
+                    return self._reply(401 if "token" in str(exc) or "bearer" in str(exc) else 400,{"error":str(exc)[:160]})
             return self._reply(404,{"error":"not_found"})
     server=ThreadingHTTPServer((host,port),Handler)
     if tls_cert or tls_key:

@@ -171,12 +171,18 @@ class PhoneCall:
         llm = self._llm()
         if llm is None or not callable(getattr(llm, "complete", None)):
             return fallback
+        try:
+            from .session_context import attached_context
+            permanent = attached_context(self.ctx, full=False)
+        except Exception:
+            permanent = ""
         system = (
             "You are Hermes, the language bridge in a three-way call with the User and NaNLM. "
             "NaNLM is a native relation learner, not a language model. Never answer factual "
             "questions on NaNLM's behalf and never claim NaNLM learned something it did not. "
             "Your job is to relay and, when the user addresses you directly, speak briefly. "
             "Keep every message to one or two short sentences. Output only the message."
+            + permanent
         )
         messages = [{"role": "system", "content": system}]
         for row in transcript[-12:]:

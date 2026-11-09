@@ -1,0 +1,1 @@
+{"facts":50268,"root_bytes":8388608,"root_locked":1,"pair_map_pass":true,"membership_count":50268,"ingest_ms":31.4373,"queries":250000,"posting_found":250000,"hash_found":250000,"posting_ms":9.77183,"hash_ms":2.29752,"cycle_before":0.0116667,"cycle_after_update":1.01167,"cycle_after_gauge":1.01167,"twohop_queries":2000,"twohop_found":2000,"direct_found":0}

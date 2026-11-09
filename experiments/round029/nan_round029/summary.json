@@ -1,0 +1,47 @@
+{
+  "seed_count": 3,
+  "sample_count_per_seed": 1152,
+  "means": {
+    "cycle": {
+      "accuracy": 0.5269097222222222,
+      "ce": 1.638588680678777
+    },
+    "raw": {
+      "accuracy": 0.10966435185185185,
+      "ce": 11.675426924929143
+    },
+    "wrong_triangle": {
+      "accuracy": 0.10706018518518519,
+      "ce": 11.629960212764543
+    },
+    "correct_conventional": {
+      "accuracy": 0.5269097222222222,
+      "ce": 1.638588680678777
+    },
+    "raw_clean": {
+      "accuracy": 0.5269097222222222,
+      "ce": 1.6385887773970957
+    },
+    "learned_raw_all_edges": {
+      "accuracy": 0.2682291666666667,
+      "ce": 2.653669265315381
+    },
+    "cycle_same_gauge": {
+      "accuracy": 0.5269097222222222,
+      "ce": 1.63858875069472
+    }
+  },
+  "native": {
+    "root_bytes": 8388608,
+    "mirror_pairs": 32640,
+    "max_gauge_error": 1.86265e-06,
+    "max_reverse_error": 0,
+    "finite_difference_error": 6.01865e-05,
+    "loss_before_step": 0.0658141,
+    "loss_after_step": 0.0322489,
+    "reads": 500000,
+    "read_milliseconds": 1.40741,
+    "mlock_status": 0,
+    "passed": true
+  }
+}

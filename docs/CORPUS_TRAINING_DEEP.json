@@ -1,0 +1,342 @@
+{
+  "before": {
+    "heldout": {
+      "by_source": {
+        "bit_language252.jsonl": {
+          "mean_negative_log_likelihood": 13.815511,
+          "perplexity": 1000000.0,
+          "tokens": 1839
+        },
+        "curriculum.jsonl": {
+          "mean_negative_log_likelihood": 13.815511,
+          "perplexity": 1000000.0,
+          "tokens": 963
+        },
+        "emotions.jsonl": {
+          "mean_negative_log_likelihood": 13.815511,
+          "perplexity": 1000000.0,
+          "tokens": 3843
+        },
+        "hierarchy_curriculum.jsonl": {
+          "mean_negative_log_likelihood": 13.815511,
+          "perplexity": 1000000.0,
+          "tokens": 11499
+        },
+        "perspectives.jsonl": {
+          "mean_negative_log_likelihood": 13.815511,
+          "perplexity": 1000000.0,
+          "tokens": 6001
+        },
+        "self_cultivation.jsonl": {
+          "mean_negative_log_likelihood": 13.815511,
+          "perplexity": 1000000.0,
+          "tokens": 3609
+        },
+        "short_sentences.jsonl": {
+          "mean_negative_log_likelihood": 13.815511,
+          "perplexity": 1000000.0,
+          "tokens": 754
+        },
+        "wordnet_active.jsonl": {
+          "mean_negative_log_likelihood": 13.815511,
+          "perplexity": 1000000.0,
+          "tokens": 13
+        }
+      },
+      "mean_negative_log_likelihood": 13.815511,
+      "perplexity": 1000000.0,
+      "records": 1000,
+      "sentences_scored": 1000,
+      "tokens_scored": 28521
+    },
+    "model": {
+      "bigram_contexts": 0,
+      "exposed_sentences": 0,
+      "mirror_address_cells": 0,
+      "schema": "nanlm.temporal-mirror-lm/1",
+      "trigram_contexts": 0,
+      "vocabulary": 0
+    }
+  },
+  "best_epoch": 1,
+  "best_nll": 2.513986,
+  "boundaries": {
+    "canonical_commit": false,
+    "derived_local_state": true,
+    "merge": false,
+    "nannet_route": false,
+    "proof_claim": false
+  },
+  "corpus": "experiments/corpus/trainable",
+  "epochs": 4,
+  "epochs_run": [
+    {
+      "best_so_far": true,
+      "epoch": 1,
+      "heldout": {
+        "by_source": {
+          "bit_language252.jsonl": {
+            "mean_negative_log_likelihood": 6.799121,
+            "perplexity": 897.0588,
+            "tokens": 1839
+          },
+          "curriculum.jsonl": {
+            "mean_negative_log_likelihood": 3.676029,
+            "perplexity": 39.4893,
+            "tokens": 963
+          },
+          "emotions.jsonl": {
+            "mean_negative_log_likelihood": 1.821899,
+            "perplexity": 6.1836,
+            "tokens": 3843
+          },
+          "hierarchy_curriculum.jsonl": {
+            "mean_negative_log_likelihood": 3.004365,
+            "perplexity": 20.1734,
+            "tokens": 11499
+          },
+          "perspectives.jsonl": {
+            "mean_negative_log_likelihood": 1.188688,
+            "perplexity": 3.2828,
+            "tokens": 6001
+          },
+          "self_cultivation.jsonl": {
+            "mean_negative_log_likelihood": 1.457274,
+            "perplexity": 4.2942,
+            "tokens": 3609
+          },
+          "short_sentences.jsonl": {
+            "mean_negative_log_likelihood": 2.226226,
+            "perplexity": 9.2648,
+            "tokens": 754
+          },
+          "wordnet_active.jsonl": {
+            "mean_negative_log_likelihood": 2.91136,
+            "perplexity": 18.3818,
+            "tokens": 13
+          }
+        },
+        "mean_negative_log_likelihood": 2.513986,
+        "perplexity": 12.3541,
+        "records": 1000,
+        "sentences_scored": 1000,
+        "tokens_scored": 28521
+      },
+      "mean_nll_delta_from_before": -11.301525,
+      "model": {
+        "bigram_contexts": 17963,
+        "exposed_sentences": 13655,
+        "mirror_address_cells": 512,
+        "schema": "nanlm.temporal-mirror-lm/1",
+        "trigram_contexts": 60299,
+        "vocabulary": 17962
+      },
+      "observed": 13655,
+      "rejected": 384,
+      "saved_checkpoint": true,
+      "seconds": 42.72,
+      "train_records": 14039
+    },
+    {
+      "best_so_far": false,
+      "epoch": 2,
+      "heldout": {
+        "by_source": {
+          "bit_language252.jsonl": {
+            "mean_negative_log_likelihood": 6.820704,
+            "perplexity": 916.6297,
+            "tokens": 1839
+          },
+          "curriculum.jsonl": {
+            "mean_negative_log_likelihood": 3.676024,
+            "perplexity": 39.4891,
+            "tokens": 963
+          },
+          "emotions.jsonl": {
+            "mean_negative_log_likelihood": 1.826974,
+            "perplexity": 6.2151,
+            "tokens": 3843
+          },
+          "hierarchy_curriculum.jsonl": {
+            "mean_negative_log_likelihood": 3.032006,
+            "perplexity": 20.7388,
+            "tokens": 11499
+          },
+          "perspectives.jsonl": {
+            "mean_negative_log_likelihood": 1.1887,
+            "perplexity": 3.2828,
+            "tokens": 6001
+          },
+          "self_cultivation.jsonl": {
+            "mean_negative_log_likelihood": 1.459567,
+            "perplexity": 4.3041,
+            "tokens": 3609
+          },
+          "short_sentences.jsonl": {
+            "mean_negative_log_likelihood": 2.226219,
+            "perplexity": 9.2648,
+            "tokens": 754
+          },
+          "wordnet_active.jsonl": {
+            "mean_negative_log_likelihood": 2.911342,
+            "perplexity": 18.3815,
+            "tokens": 13
+          }
+        },
+        "mean_negative_log_likelihood": 2.527498,
+        "perplexity": 12.5221,
+        "records": 1000,
+        "sentences_scored": 1000,
+        "tokens_scored": 28521
+      },
+      "mean_nll_delta_from_before": -11.288013,
+      "model": {
+        "bigram_contexts": 17963,
+        "exposed_sentences": 13655,
+        "mirror_address_cells": 512,
+        "schema": "nanlm.temporal-mirror-lm/1",
+        "trigram_contexts": 60299,
+        "vocabulary": 17962
+      },
+      "observed": 13655,
+      "rejected": 384,
+      "saved_checkpoint": false,
+      "seconds": 39.38,
+      "train_records": 14039
+    },
+    {
+      "best_so_far": false,
+      "epoch": 3,
+      "heldout": {
+        "by_source": {
+          "bit_language252.jsonl": {
+            "mean_negative_log_likelihood": 6.83153,
+            "perplexity": 926.607,
+            "tokens": 1839
+          },
+          "curriculum.jsonl": {
+            "mean_negative_log_likelihood": 3.676022,
+            "perplexity": 39.489,
+            "tokens": 963
+          },
+          "emotions.jsonl": {
+            "mean_negative_log_likelihood": 1.829519,
+            "perplexity": 6.2309,
+            "tokens": 3843
+          },
+          "hierarchy_curriculum.jsonl": {
+            "mean_negative_log_likelihood": 3.045887,
+            "perplexity": 21.0287,
+            "tokens": 11499
+          },
+          "perspectives.jsonl": {
+            "mean_negative_log_likelihood": 1.188704,
+            "perplexity": 3.2828,
+            "tokens": 6001
+          },
+          "self_cultivation.jsonl": {
+            "mean_negative_log_likelihood": 1.460722,
+            "perplexity": 4.3091,
+            "tokens": 3609
+          },
+          "short_sentences.jsonl": {
+            "mean_negative_log_likelihood": 2.226216,
+            "perplexity": 9.2647,
+            "tokens": 754
+          },
+          "wordnet_active.jsonl": {
+            "mean_negative_log_likelihood": 2.911337,
+            "perplexity": 18.3814,
+            "tokens": 13
+          }
+        },
+        "mean_negative_log_likelihood": 2.534282,
+        "perplexity": 12.6074,
+        "records": 1000,
+        "sentences_scored": 1000,
+        "tokens_scored": 28521
+      },
+      "mean_nll_delta_from_before": -11.281229,
+      "model": {
+        "bigram_contexts": 17963,
+        "exposed_sentences": 13655,
+        "mirror_address_cells": 512,
+        "schema": "nanlm.temporal-mirror-lm/1",
+        "trigram_contexts": 60299,
+        "vocabulary": 17962
+      },
+      "observed": 13655,
+      "rejected": 384,
+      "saved_checkpoint": false,
+      "seconds": 39.48,
+      "train_records": 14039
+    }
+  ],
+  "files": 9,
+  "heldout_records": 1449,
+  "patience": 2,
+  "schema": "nanlm.corpus-training/1",
+  "selected": {
+    "epoch": 1,
+    "heldout": {
+      "by_source": {
+        "bit_language252.jsonl": {
+          "mean_negative_log_likelihood": 6.799121,
+          "perplexity": 897.0588,
+          "tokens": 1839
+        },
+        "curriculum.jsonl": {
+          "mean_negative_log_likelihood": 3.676029,
+          "perplexity": 39.4893,
+          "tokens": 963
+        },
+        "emotions.jsonl": {
+          "mean_negative_log_likelihood": 1.821899,
+          "perplexity": 6.1836,
+          "tokens": 3843
+        },
+        "hierarchy_curriculum.jsonl": {
+          "mean_negative_log_likelihood": 3.004365,
+          "perplexity": 20.1734,
+          "tokens": 11499
+        },
+        "perspectives.jsonl": {
+          "mean_negative_log_likelihood": 1.188688,
+          "perplexity": 3.2828,
+          "tokens": 6001
+        },
+        "self_cultivation.jsonl": {
+          "mean_negative_log_likelihood": 1.457274,
+          "perplexity": 4.2942,
+          "tokens": 3609
+        },
+        "short_sentences.jsonl": {
+          "mean_negative_log_likelihood": 2.226226,
+          "perplexity": 9.2648,
+          "tokens": 754
+        },
+        "wordnet_active.jsonl": {
+          "mean_negative_log_likelihood": 2.91136,
+          "perplexity": 18.3818,
+          "tokens": 13
+        }
+      },
+      "mean_negative_log_likelihood": 2.513986,
+      "perplexity": 12.3541,
+      "records": 1000,
+      "sentences_scored": 1000,
+      "tokens_scored": 28521
+    },
+    "model": {
+      "bigram_contexts": 17963,
+      "exposed_sentences": 13655,
+      "mirror_address_cells": 512,
+      "schema": "nanlm.temporal-mirror-lm/1",
+      "trigram_contexts": 60299,
+      "vocabulary": 17962
+    }
+  },
+  "state_dir": "/data/data/com.termux/files/usr/tmp/nanlm-corpus-deep-strat",
+  "stopped_early": true,
+  "train_records": 14039
+}

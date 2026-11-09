@@ -342,6 +342,180 @@ def _norm_phrase(text: str) -> str:
     return " ".join(words)
 
 
+# Relation matching canonicalizes inflection, not meaning.  The table is
+# deliberately bounded: these are the action/change forms the native parser
+# can teach.  It lets "water freezes" address a learned "Frozen water is ice"
+# row without introducing a general-purpose stemmer.
+_TERM_FORMS = {
+    "barks": "bark", "barked": "bark", "barking": "bark",
+    "meows": "meow", "meowed": "meow", "meowing": "meow",
+    "flies": "fly", "flew": "fly", "flown": "fly", "flying": "fly",
+    "flows": "flow", "flowed": "flow", "flowing": "flow",
+    "freezes": "freeze", "froze": "freeze", "frozen": "freeze",
+    "freezing": "freeze",
+    "melts": "melt", "melted": "melt", "melting": "melt",
+    "swims": "swim", "swam": "swim", "swum": "swim", "swimming": "swim",
+    "runs": "run", "ran": "run", "running": "run",
+    "sings": "sing", "sang": "sing", "sung": "sing", "singing": "sing",
+    "shines": "shine", "shone": "shine", "shining": "shine",
+    "orbits": "orbit", "orbited": "orbit", "orbiting": "orbit",
+    "makes": "make", "made": "make", "making": "make",
+    "creates": "create", "created": "create", "creating": "create",
+    "produces": "produce", "produced": "produce", "producing": "produce",
+    "becomes": "become", "became": "become", "becoming": "become",
+    "turns": "turn", "turned": "turn", "turning": "turn",
+    "causes": "cause", "caused": "cause", "causing": "cause",
+}
+_CONNECTORS = frozenset({
+    "a", "an", "the", "and", "or", "of", "to", "with", "that", "which",
+    "who", "in", "on", "for", "from", "as", "at", "by",
+})
+# Extra words in a learned subject that do not change which subject it is.
+# This keeps "red paint and blue paint" addressable by "red and blue" while
+# still rejecting yellow+blue for a red+blue question.
+_SUBJECT_MODIFIERS = frozenset({
+    "paint", "color", "colour", "light", "pigment", "shade", "mix", "mixes",
+    "mixed", "combine", "combines", "combined", "blend", "blends", "blended",
+    "together",
+})
+_ACTION_BASE = frozenset({
+    "bark", "meow", "fly", "flow", "freeze", "melt", "swim", "run", "sing",
+    "shine", "orbit",
+})
+_ACTION_FORMS = _ACTION_BASE | {
+    form for form, base in _TERM_FORMS.items() if base in _ACTION_BASE
+}
+_ACTION_WORD_RE = re.compile(
+    r"\b(" + "|".join(sorted(_ACTION_FORMS, key=len, reverse=True)) + r")\b",
+    re.I)
+_CAUSAL_PREDICATES = frozenset({
+    "causes", "cause", "makes", "make", "creates", "create", "produces",
+    "produce", "becomes", "become", "turns", "turn", "freezes", "freeze",
+    "melts", "melt",
+})
+_MAKE_PREDICATES = _CAUSAL_PREDICATES | frozenset({"mixes", "mix"})
+_ACTION_PREDICATES = frozenset({
+    "can", "could", "does", "do", "did", "action", "acts",
+})
+_STATE_PREDICATES = frozenset({
+    "is", "are", "was", "were", "has", "have", "had",
+})
+# When a change verb (becomes/turns/causes) omits the event word itself, the
+# learned result state still has to name the expected outcome.  This keeps
+# "water becomes ice" addressable by "water freezes" without letting
+# "water becomes ice" answer "water boils".
+_EVENT_RESULT_TERMS = {
+    "freeze": frozenset({"ice", "freeze", "solid"}),
+    "melt": frozenset({"water", "liquid", "melt"}),
+}
+
+
+def _canonical_term(word: str) -> str:
+    word = str(word).casefold()
+    if word in _TERM_FORMS:
+        return _TERM_FORMS[word]
+    if len(word) > 3 and word.endswith("ies"):
+        return word[:-3] + "y"
+    if len(word) > 3 and word.endswith(("ches", "shes", "sses", "xes", "zes")):
+        return word[:-2]
+    if len(word) > 3 and word.endswith("s") and not word.endswith("ss"):
+        return word[:-1]
+    return word
+
+
+def _norm_terms(text: str) -> set[str]:
+    terms = set()
+    for word in tokens(text):
+        if word in _CONNECTORS or len(word) <= 1:
+            continue
+        terms.add(_canonical_term(word))
+    return terms
+
+
+def _terms_match(query: set[str], learned: set[str],
+                 modifiers: frozenset[str] = frozenset()) -> bool:
+    """Exact term-set equality, with known modifier words allowed on one side."""
+    if not query or not learned:
+        return False
+    if query == learned:
+        return True
+    if query <= learned and (learned - query) <= modifiers:
+        return True
+    if learned <= query and (query - learned) <= modifiers:
+        return True
+    return False
+
+
+def _subject_matches(query: str, learned_subject: str) -> bool:
+    return _terms_match(_norm_terms(query), _norm_terms(learned_subject),
+                        _SUBJECT_MODIFIERS)
+
+
+def _is_plural_subject(subject: str) -> bool:
+    words = tokens(subject)
+    if "and" in words:
+        return True
+    return bool(words and words[-1].endswith("s")
+                and not words[-1].endswith("ss"))
+
+
+def _verb_for_subject(subject: str, singular: str, plural: str) -> str:
+    return plural if _is_plural_subject(subject) else singular
+
+
+def _action_phrase(edge: dict) -> str | None:
+    """Extract the action named by a learned relation, if it names one."""
+    predicate = str(edge["predicate"]).strip().casefold()
+    obj = str(edge["object"]).strip()
+    if predicate in _ACTION_PREDICATES:
+        text = obj
+    elif predicate in _STATE_PREDICATES:
+        embedded = re.search(r"\b(?:that|which|who)\s+(.+)$", obj, re.I)
+        ability = re.match(r"^(?:the\s+)?(?:ability|capacity)\s+to\s+(.+)$",
+                           obj, re.I)
+        if embedded:
+            text = embedded.group(1)
+        elif ability:
+            text = ability.group(1)
+        else:
+            return None
+    elif predicate in _CAUSAL_PREDICATES:
+        embedded = re.search(r"\b(?:that|which|who)\s+(.+)$", obj, re.I)
+        ability = re.match(r"^(?:the\s+)?(?:ability|capacity)\s+to\s+(.+)$",
+                           obj, re.I)
+        if embedded:
+            text = embedded.group(1)
+        elif ability:
+            text = ability.group(1)
+        elif _ACTION_WORD_RE.search(obj):
+            text = obj
+        else:
+            return None
+    else:
+        action = _canonical_term(predicate)
+        return action if action in _ACTION_BASE else None
+    text = re.sub(r"^to\s+", "", text.strip(" \t\"'"), flags=re.I)
+    text = text.strip(" .!?")
+    if not text:
+        return None
+    action = _ACTION_WORD_RE.search(text)
+    if action:
+        verb = _canonical_term(action.group(1))
+        if predicate in _CAUSAL_PREDICATES:
+            return verb
+        if text.casefold() == action.group(1).casefold():
+            return verb
+    return text
+
+
+def _make_verb(subject: str) -> str:
+    return _verb_for_subject(subject, "makes", "make")
+
+
+def _has_verb(subject: str) -> str:
+    return _verb_for_subject(subject, "has", "have")
+
+
 def structured_candidates(query: str, rows: list[dict]) -> list[dict]:
     """Answer a factual question from learned relation edges, not n-grams.
 
@@ -366,22 +540,25 @@ def structured_candidates(query: str, rows: list[dict]) -> list[dict]:
     lowered = query.strip().casefold()
     candidates = []
 
-    def add(subject, predicate, obj, edge):
-        if predicate in {"is", "are", "was", "were"}:
-            verb = "is"
-        elif predicate in {"has", "have", "had"}:
-            verb = "has"
-        elif predicate in {"can", "may", "will"}:
-            verb = "can"
-        elif predicate in {"causes", "cause"}:
-            verb = "causes"
-        else:
-            verb = predicate
-        text = f"{subject} {verb} {obj}"
+    def add(subject, predicate, obj, edge, verb=None, text=None, priority=0):
+        if text is None:
+            if verb is None:
+                if predicate in {"is", "are", "was", "were"}:
+                    verb = "is"
+                elif predicate in {"has", "have", "had"}:
+                    verb = "has"
+                elif predicate in {"can", "may", "will"}:
+                    verb = "can"
+                elif predicate in {"causes", "cause"}:
+                    verb = "causes"
+                else:
+                    verb = predicate
+            text = f"{subject} {verb} {obj}"
         if not text.endswith((".", "!", "?")):
             text += "."
         text = text[0].upper() + text[1:]
         candidates.append({"text": text, "truth": edge["degree"],
+                           "priority": priority,
                            "role": edge["role"],
                            "source": "learned_relation",
                            "subject": edge["subject"],
@@ -407,8 +584,117 @@ def structured_candidates(query: str, rows: list[dict]) -> list[dict]:
         for edge in edges:
             if edge["predicate"] in {"causes", "cause"} and                     obj in _norm_phrase(edge["object"]):
                 add(edge["subject"], edge["predicate"], edge["object"], edge)
-    candidates.sort(key=lambda item: -item["truth"])
-    return candidates
+
+    # What do/does <subject> do?  -> the exact subject's action relation.
+    action_q = re.match(r"^what\s+(?:do|does|did)\s+(.+?)\s+do\s*\?$", lowered)
+    if action_q:
+        subject = action_q.group(1)
+        for edge in edges:
+            if not _subject_matches(subject, edge["subject"]):
+                continue
+            action = _action_phrase(edge)
+            if not action:
+                continue
+            add(edge["subject"], "can", action, edge,
+                text=f"{edge['subject']} can {action}")
+
+    # What do/does <subject> make/create? -> that subject's make/causes row.
+    make_q = re.match(
+        r"^what\s+(?:do|does|did)\s+(.+?)\s+"
+        r"(?:make|makes|create|creates|produce|produces)\s*\?$", lowered)
+    if make_q:
+        subject = make_q.group(1)
+        for edge in edges:
+            predicate = edge["predicate"].strip().casefold()
+            if predicate not in _MAKE_PREDICATES:
+                continue
+            if not _subject_matches(subject, edge["subject"]):
+                continue
+            add(edge["subject"], predicate, edge["object"], edge,
+                verb=_make_verb(edge["subject"]))
+
+    # What (shape) has <object>? -> reverse exact-object lookup.
+    reverse_q = re.match(
+        r"^(?:what|which)\s+(?:shape\s+|object\s+|thing\s+)?"
+        r"(?:has|have)\s+(.+?)\s*\?$", lowered)
+    if reverse_q:
+        obj = _norm_terms(reverse_q.group(1))
+        for edge in edges:
+            predicate = edge["predicate"].strip().casefold()
+            if predicate in {"has", "have", "had"}:
+                if _terms_match(obj, _norm_terms(edge["object"])):
+                    add(edge["subject"], predicate, edge["object"], edge,
+                        verb=_has_verb(edge["subject"]))
+            elif predicate in {"is", "are", "was", "were"}:
+                # "A square is a shape with four sides" is also a reverse row.
+                description = re.search(r"\b(?:with|having)\s+(.+)$",
+                                        edge["object"], re.I)
+                if description and _terms_match(
+                        obj, _norm_terms(description.group(1))):
+                    add(edge["subject"], predicate, edge["object"], edge)
+
+    # What happens when <event>? -> learned causal/state row scoped to event.
+    happens_q = re.match(r"^what\s+happens\s+(?:when|if)\s+(.+?)\s*\?$",
+                         lowered)
+    if happens_q:
+        event = _norm_terms(happens_q.group(1))
+        event_actions = event & _ACTION_BASE
+        event_entities = event - _ACTION_BASE
+        if event:
+            for edge in edges:
+                predicate = edge["predicate"].strip().casefold()
+                if predicate in _ACTION_PREDICATES:
+                    continue
+                subject_terms = _norm_terms(edge["subject"])
+                object_terms = _norm_terms(edge["object"])
+                predicate_terms = {_canonical_term(predicate)}
+                combined = subject_terms | object_terms | predicate_terms
+                exact = event <= combined
+                subject_hit = exact and event <= (subject_terms | predicate_terms)
+                object_hit = exact and event <= (object_terms | predicate_terms)
+                if not exact:
+                    result_terms = set()
+                    for action in event_actions:
+                        result_terms |= _EVENT_RESULT_TERMS.get(action, set())
+                    if not (event_entities and event_entities <= subject_terms
+                            and predicate in _CAUSAL_PREDICATES
+                            and result_terms
+                            and object_terms & result_terms):
+                        continue
+                    subject_hit = True
+                elif not (subject_hit or object_hit):
+                    continue
+                if subject_hit and predicate in {"freezes", "freeze",
+                                                 "melts", "melt"}:
+                    text = f"{edge['subject']} {predicate} into {edge['object']}"
+                else:
+                    text = (f"{edge['subject']} {predicate} "
+                            f"{edge['object']}")
+                # Prefer a learned outcome ("Frozen water is ice") over a
+                # restatement of the cause ("Cold causes water to freeze").
+                state_change = predicate in {
+                    "is", "are", "was", "were", "freezes", "freeze",
+                    "melts", "melt", "becomes", "become", "turns", "turn",
+                }
+                if subject_hit:
+                    priority = 3 if state_change else 2
+                elif object_hit and predicate in _STATE_PREDICATES:
+                    priority = 2
+                else:
+                    priority = 0
+                add(edge["subject"], predicate, edge["object"], edge,
+                    text=text, priority=priority)
+
+    candidates.sort(key=lambda item: (-item.get("priority", 0), -item["truth"]))
+    seen = set()
+    unique = []
+    for item in candidates:
+        key = (item["text"].casefold(), item["role"])
+        if key in seen:
+            continue
+        seen.add(key)
+        unique.append(item)
+    return unique
 
 
 class MTHScorer:

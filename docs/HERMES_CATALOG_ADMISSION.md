@@ -29,16 +29,16 @@ prove from steps that only the upstream catalog maintainer can complete.
 
 ### Plugin checks
 
-- Plugin version: **1.3.2** in `plugin.yaml` and `pyproject.toml`; license
+- Plugin version: **1.5.0** in `plugin.yaml` and `pyproject.toml`; license
   **Apache-2.0** in both.
-- Unit/integration suite: **272 tests passed** locally and in CI on Python
-  3.10, 3.11 and 3.12 (816 successful test executions).
+- Unit/integration suite: the current suite passes locally and in CI on Python
+  3.10, 3.11 and 3.12 (at least 369 test methods at the current snapshot).
 - Hermes Agent v0.23.0 `hermes plugins validate . --install-deps`: **PASS**.
   Manifest, compatibility floor, config schema, required secret names,
   tool/hook/middleware parity, collision scan, security scan and no-core-override
   checks pass.
 - Hermes Plugin Doctor `hermes plugins doctor . --ci`: **PASS**. Runtime
-  discovery, manifest parsing, import and registration pass; **34 tools, 0 hooks**.
+  discovery, manifest parsing, import and registration pass; **79 tools, 0 hooks**.
 - Release package: wheel and sdist build; Twine metadata checks pass; required
   plugin source/docs are present in the sdist; both distributions install and
   import; SHA-256 checksums generate and verify.
@@ -52,22 +52,24 @@ prove from steps that only the upstream catalog maintainer can complete.
 - Phone-call routing kernel: raw NaN16 (`nan/phone_call.nan`), run on the
   NaNVM0 boundary with headless device stubs, verified word-for-word against
   the native nan0s C VM core across an eight-case routing matrix; 12
-  NaN16 boundary/kernel tests are part of the 272-test suite.
+  NaN16 boundary/kernel tests are part of the current suite.
 
 ### Live integration checks
 
 | Check | Result | Evidence |
 |---|---|---|
 | Production CLOCKED gateway | PASS | A scoped `clu_...` participant token executed a versioned `pii` task plan through `ClockedGatewayClient`; the full plan → execute → scratch → evidence-atom flow passed and wrote the expected `hermes_plan`, `clocked_request`, `clocked_result` and `evidence_atoms` lanes. |
-| Production NANNET authority | PASS | `nanlm_auth_init` → `nanlm_auth_pair` → `nanlm_auth_status` → online `training:execute` authorization → `nanlm_auth_revoke` all passed. The issuer key was pinned from the authority's `GET /v1/issuer`; the authority deployment includes the stable pairing contract and operator code issuance at commit `8aaa3df`. |
+| Local loopback NANNET pairing | PASS (local) | `nanlm_auth_init` → `nanlm_auth_pair` → `nanlm_auth_status` → online `training:execute` authorization → `nanlm_auth_revoke` passed against a real loopback authority with `universe:read` and `training:execute`. The issuer key was pinned from `GET /v1/issuer`; canonical merge stayed false. |
+| Production NANNET / Koyeb cutover | NOT PERFORMED | The production Koyeb cutover, live lease/route and single-issuer migration remain outstanding. |
 | Native runner | PASS | Real `NaNLMind/build/nanlm-universal` run: `bootstrap` completed with a recorded corpus digest and metrics; `byte`, `kn`, and `ctx2` evaluations completed; the Boolean foundation gate passed **1,024/1,024** with all 16 distinct rules, composed gates and a persisted `boolean_foundation.nmg`. |
 | Hermes-managed secrets | PASS | Credential-policy tests scan every plugin module; live pairing and CLOCKED calls used the same secret-scope path as production. |
-| Full plugin demo | PASS | [DEMO_RESULTS.md](DEMO_RESULTS.md): all 38 calls across 34 registered tools passed with the real native binary, a loopback NANNET authority, and local CLOCKED/head-cortex contract stubs. |
-| Demo transcript | PASS | [HERMES_DEMO.md](HERMES_DEMO.md): native chat, three-way shared-scratch call, native training metrics, live CLOCKED, live head-cortex, and isolated candidate evaluation. |
-| Live deployed services | PASS | [LIVE_SMOKE.md](LIVE_SMOKE.md): 11/11 checks passed on the single `nannet.apps.mistral.run` service, including head-cortex process and candidate endpoints. |
+| Historical full plugin demo | PASS (historical) | [DEMO_RESULTS.md](DEMO_RESULTS.md): all 38 calls across the then-registered 34 tools passed with the real native binary, a loopback NANNET authority, and local CLOCKED/head-cortex contract stubs. The current 79-tool surface is covered by `scripts/demo_run.py` (82 calls), but no 79-tool result report is recorded yet. |
+| Demo transcript | PASS (historical) | [HERMES_DEMO.md](HERMES_DEMO.md): native chat, three-way shared-scratch call, native training metrics, live CLOCKED, live head-cortex, and isolated candidate evaluation. |
+| Historical live smoke | PASS (historical) | [LIVE_SMOKE.md](LIVE_SMOKE.md): 11/11 checks passed on the single `nannet.apps.mistral.run` service at the recorded time, including head-cortex process and candidate endpoints. This is not evidence of the production Koyeb cutover. |
 
-Live checks are deployment smoke tests, not CI claims. Exact commands and the
-resulting artifacts are recorded in the release notes.
+Live checks are deployment smoke tests, not CI claims. Rows marked historical
+record past runs; they are not claims about the current working tree. Exact
+commands and the resulting artifacts are recorded in the release notes.
 
 ## Upstream catalog submission gates
 
@@ -90,6 +92,13 @@ synchronized with `plugin.yaml` and `register(ctx)` at the pinned SHA.
 capabilities:
   provides_tools:
     - nanlm_status
+    - nanlm_session_context
+    - nanlm_learning_cycle
+    - nanlm_learning_status
+    - nanlm_learning_sync
+    - nanlm_wordnet_ingest
+    - nanlm_scratch_register
+    - nanlm_chart_storage
     - nanlm_chat
     - nanlm_chat_history
     - nanlm_phone_call
@@ -97,6 +106,37 @@ capabilities:
     - nanlm_auth_status
     - nanlm_auth_pair
     - nanlm_auth_revoke
+    - nanlm_hw_register
+    - nanlm_hw_status
+    - nanlm_hw_heartbeat
+    - nanlm_hw_release
+    - nanlm_hw_report
+    - nanlm_universe_status
+    - nanlm_universe_open
+    - nanlm_universe_resolve
+    - nanlm_universe_renew
+    - nanlm_universe_release
+    - nanlm_universe_dispatch
+    - nanlm_universe_ack
+    - nanlm_universe_inspect
+    - nanlm_native_mth_u32
+    - nanlm_mth_catalog
+    - nanlm_mth_inspect
+    - nanlm_mth_runtime
+    - nanlm_mth_verify
+    - nanlm_mth_execute
+    - nanlm_mth_n16i_selftest
+    - nanlm_mth_dispatch
+    - nanlm_mth_hub
+    - nanlm_mth_tree
+    - nanlm_mth_leaf_create
+    - nanlm_mth_leaf_get
+    - nanlm_mth_pair
+    - nanlm_mth_leaf_verify
+    - nanlm_chat_train
+    - nanlm_tree_inspect
+    - nanlm_tree_mutate
+    - nanlm_tree_audit
     - nanlm_generate_curriculum
     - nanlm_curriculum_experiment
     - nanlm_logic_session
@@ -133,6 +173,6 @@ capabilities:
 
 The upstream entry must also set `name: nanlmind-hermes`,
 `repo: https://github.com/shemshallah/NaNLMind_HERMES`,
-`requires_hermes: ">=0.23.0"`, `version: "1.3.2"`, `maintainer: shemshallah`,
+`requires_hermes: ">=0.23.0"`, `version: "1.5.0"`, `maintainer: shemshallah`,
 `tier: community`, `category: tools`, and a full 40-character SHA for the
 reviewed release commit.

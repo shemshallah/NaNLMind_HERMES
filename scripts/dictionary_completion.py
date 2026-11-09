@@ -20,7 +20,7 @@ from nanlmind_hermes.head_population import (  # noqa: E402
 )
 
 ARCHIVE = "/storage/emulated/0/Download/NaNLMind/wn3.1.dict.zip"
-FALLBACK = "/storage/emulated/0/Download/hyperllm/builder/wn3.1.dict.zip"
+FALLBACK = "/storage/emulated/0/Download/NaNLMind/wn3.1.dict.zip"
 MAX_WORDS = 20_000
 
 

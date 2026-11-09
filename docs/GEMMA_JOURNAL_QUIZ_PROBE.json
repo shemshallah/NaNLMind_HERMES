@@ -1,0 +1,274 @@
+{
+  "answers": {
+    "chat_status": {
+      "chat_tool": "nanlm_chat",
+      "scratch_tool": "nanlm_scratch_register",
+      "status_tool": "nanlm_learning_status"
+    },
+    "leaf_create_fill": {
+      "kind": "vector",
+      "payload_key": "fill",
+      "tool": "nanlm_mth_leaf_create"
+    },
+    "leaf_verify": {
+      "leaf_id": "leaf_id",
+      "success_field": "nan_executable",
+      "tool": "nanlm_mth_leaf_verify"
+    },
+    "mth_tree": {
+      "audit_action": "audit",
+      "map_action": "map",
+      "tool": "nanlm_mth_tree"
+    },
+    "pair_add": {
+      "alias": "alias",
+      "left": "left",
+      "operator": "add",
+      "right": "right",
+      "tool": "nanlm_mth_pair"
+    },
+    "session_context": {
+      "argument": "document",
+      "document": "permanent-instructions",
+      "tool": "nanlm_session_context"
+    }
+  },
+  "experience": {
+    "chat": {
+      "concepts": 34,
+      "leaves": 148,
+      "occupied_pairs": 436,
+      "rows": 1,
+      "scratch_records": 20,
+      "tools": [
+        "nanlm_chat",
+        "nanlm_learning_status",
+        "nanlm_scratch_register"
+      ],
+      "turns": 2
+    },
+    "failed_calls": 0,
+    "function_tree": {
+      "complete": true,
+      "images_verified": 91,
+      "linked_kernels": 91
+    },
+    "leaf_creation": {
+      "element_count": 256,
+      "kind": "vector",
+      "payload_key": "fill",
+      "tool": "nanlm_mth_leaf_create"
+    },
+    "leaf_verify": {
+      "argument": "leaf_id",
+      "observed": true,
+      "success_field": "nan_executable",
+      "tool": "nanlm_mth_leaf_verify"
+    },
+    "observed_session_experience": "This is the actual tool experience from the completed series. Use exact names and observed values.",
+    "pairing": {
+      "operators": [
+        "connect",
+        "add"
+      ],
+      "result": "new immutable hash leaf",
+      "tool": "nanlm_mth_pair"
+    },
+    "successful_calls": 15,
+    "tool_names": [
+      "nanlm_chat",
+      "nanlm_learning_status",
+      "nanlm_mth_catalog",
+      "nanlm_mth_leaf_create",
+      "nanlm_mth_leaf_verify",
+      "nanlm_mth_pair",
+      "nanlm_mth_runtime",
+      "nanlm_mth_tree",
+      "nanlm_mth_verify",
+      "nanlm_scratch_register",
+      "nanlm_session_context",
+      "nanlm_status"
+    ],
+    "tools_used": 12,
+    "vector_execution": {
+      "execution_mode": "n16i_guest_interpreter",
+      "n16i_used": true
+    }
+  },
+  "model": "gemma4:31b",
+  "raw_text": "{\n  \"session_context\": {\n    \"tool\": \"nanlm_session_context\",\n    \"argument\": \"document\",\n    \"document\": \"permanent-instructions\"\n  },\n  \"mth_tree\": {\n    \"tool\": \"nanlm_mth_tree\",\n    \"map_action\": \"map\",\n    \"audit_action\": \"audit\"\n  },\n  \"leaf_create_fill\": {\n    \"tool\": \"nanlm_mth_leaf_create\",\n    \"kind\": \"vector\",\n    \"payload_key\": \"fill\"\n  },\n  \"pair_add\": {\n    \"tool\": \"nanlm_mth_pair\",\n    \"operator\": \"add\",\n    \"left\": \"left\",\n    \"right\": \"right\",\n    \"alias\": \"alias\"\n  },\n  \"leaf_verify\": {\n    \"tool\": \"nanlm_mth_leaf_verify\",\n    \"leaf_id\": \"leaf_id\",\n    \"success_field\": \"nan_executable\"\n  },\n  \"chat_status\": {\n    \"chat_tool\": \"nanlm_chat\",\n    \"status_tool\": \"nanlm_learning_status\",\n    \"scratch_tool\": \"nanlm_scratch_register\"\n  }\n}",
+  "schema": "nanlm.gemma-journal-quiz-probe/1",
+  "score": {
+    "answered_questions": 6,
+    "max_points": 6.0,
+    "percent": 100.0,
+    "questions": [
+      {
+        "answered": true,
+        "area": "permanent session context",
+        "id": "session_context",
+        "key_fraction": 1.0,
+        "keys_missing": [],
+        "keys_present": [
+          "tool",
+          "argument",
+          "document"
+        ],
+        "keyword_fraction": 1.0,
+        "keyword_groups_matched": [
+          [
+            "nanlm_session_context"
+          ],
+          [
+            "document"
+          ],
+          [
+            "permanent-instructions"
+          ]
+        ],
+        "keyword_groups_missing": [],
+        "points": 1.0
+      },
+      {
+        "answered": true,
+        "area": "MTH function tree",
+        "id": "mth_tree",
+        "key_fraction": 1.0,
+        "keys_missing": [],
+        "keys_present": [
+          "tool",
+          "map_action",
+          "audit_action"
+        ],
+        "keyword_fraction": 1.0,
+        "keyword_groups_matched": [
+          [
+            "nanlm_mth_tree"
+          ],
+          [
+            "map"
+          ],
+          [
+            "audit"
+          ]
+        ],
+        "keyword_groups_missing": [],
+        "points": 1.0
+      },
+      {
+        "answered": true,
+        "area": "MTH leaf create with fill",
+        "id": "leaf_create_fill",
+        "key_fraction": 1.0,
+        "keys_missing": [],
+        "keys_present": [
+          "tool",
+          "kind",
+          "payload_key"
+        ],
+        "keyword_fraction": 1.0,
+        "keyword_groups_matched": [
+          [
+            "nanlm_mth_leaf_create"
+          ],
+          [
+            "vector"
+          ],
+          [
+            "fill"
+          ]
+        ],
+        "keyword_groups_missing": [],
+        "points": 1.0
+      },
+      {
+        "answered": true,
+        "area": "MTH pair add",
+        "id": "pair_add",
+        "key_fraction": 1.0,
+        "keys_missing": [],
+        "keys_present": [
+          "tool",
+          "operator",
+          "left",
+          "right",
+          "alias"
+        ],
+        "keyword_fraction": 1.0,
+        "keyword_groups_matched": [
+          [
+            "nanlm_mth_pair"
+          ],
+          [
+            "add"
+          ],
+          [
+            "left"
+          ],
+          [
+            "right"
+          ],
+          [
+            "alias"
+          ]
+        ],
+        "keyword_groups_missing": [],
+        "points": 1.0
+      },
+      {
+        "answered": true,
+        "area": "MTH leaf verify",
+        "id": "leaf_verify",
+        "key_fraction": 1.0,
+        "keys_missing": [],
+        "keys_present": [
+          "tool",
+          "leaf_id",
+          "success_field"
+        ],
+        "keyword_fraction": 1.0,
+        "keyword_groups_matched": [
+          [
+            "nanlm_mth_leaf_verify"
+          ],
+          [
+            "leaf_id"
+          ],
+          [
+            "nan_executable"
+          ]
+        ],
+        "keyword_groups_missing": [],
+        "points": 1.0
+      },
+      {
+        "answered": true,
+        "area": "free chat and learning status",
+        "id": "chat_status",
+        "key_fraction": 1.0,
+        "keys_missing": [],
+        "keys_present": [
+          "chat_tool",
+          "status_tool",
+          "scratch_tool"
+        ],
+        "keyword_fraction": 1.0,
+        "keyword_groups_matched": [
+          [
+            "nanlm_chat"
+          ],
+          [
+            "nanlm_learning_status"
+          ],
+          [
+            "nanlm_scratch_register"
+          ]
+        ],
+        "keyword_groups_missing": [],
+        "points": 1.0
+      }
+    ],
+    "schema": "nanlm.gemma-tool-use-quiz-score/1",
+    "total_points": 6.0
+  }
+}

@@ -1,0 +1,695 @@
+.org 0
+JMP @mth_energy_test_main
+.include "../nan16/mth_graph_energy_weighted_u8_q32_32.nas"
+
+mth_energy_test_main:
+  MOVI r13,1
+  ; Weights [2,3,5], state [0,1/4,1/2,3/4]: E=0.625 => 0x00000000A0000000.
+  MOVI r1,@mth_energy_offsets
+  MOVI r2,@mth_energy_neighbors
+  MOVI r3,@mth_energy_weights_a
+  MOVI r4,@mth_energy_x
+  MOVI r5,@mth_energy_output
+  MOVI r6,6
+  MOVI r7,@mth_energy_scratch
+  CALL @mth_graph_energy_weighted_u8_q32_32
+  CMP r1,r13
+  JMP[NE] @mth_energy_fail
+  MOVI r6,@mth_energy_output
+  LD r7,r6,0
+  MOVI r8,0
+  MOVHI r8,0xA000
+  CMP r7,r8
+  JMP[NE] @mth_energy_fail
+  LD r7,r6,1
+  CMP r7,r0
+  JMP[NE] @mth_energy_fail
+
+  ; Weights [1,7,2], state [0,1/4,3/4,1]: E=1.9375 => 0x00000001F0000000.
+  MOVI r6,@mth_energy_x
+  MOVI r7,49152
+  ST r7,r6,2
+  MOVI r7,0
+  MOVHI r7,1
+  ST r7,r6,3
+  MOVI r1,@mth_energy_offsets
+  MOVI r2,@mth_energy_neighbors
+  MOVI r3,@mth_energy_weights_b
+  MOVI r4,@mth_energy_x
+  MOVI r5,@mth_energy_output
+  MOVI r6,6
+  MOVI r7,@mth_energy_scratch
+  CALL @mth_graph_energy_weighted_u8_q32_32
+  CMP r1,r13
+  JMP[NE] @mth_energy_fail
+  MOVI r6,@mth_energy_output
+  LD r7,r6,0
+  MOVI r8,0
+  MOVHI r8,0xF000
+  CMP r7,r8
+  JMP[NE] @mth_energy_fail
+  LD r7,r6,1
+  MOVI r8,1
+  CMP r7,r8
+  JMP[NE] @mth_energy_fail
+
+  ; Constant state on the path has exactly zero energy.
+  MOVI r6,@mth_energy_x
+  MOVI r7,32768
+  ST r7,r6,0
+  ST r7,r6,1
+  ST r7,r6,2
+  ST r7,r6,3
+  MOVI r1,@mth_energy_offsets
+  MOVI r2,@mth_energy_neighbors
+  MOVI r3,@mth_energy_weights_a
+  MOVI r4,@mth_energy_x
+  MOVI r5,@mth_energy_output
+  MOVI r6,6
+  MOVI r7,@mth_energy_scratch
+  CALL @mth_graph_energy_weighted_u8_q32_32
+  CMP r1,r13
+  JMP[NE] @mth_energy_fail
+  MOVI r6,@mth_energy_output
+  LD r7,r6,0
+  CMP r7,r0
+  JMP[NE] @mth_energy_fail
+  LD r7,r6,1
+  CMP r7,r0
+  JMP[NE] @mth_energy_fail
+
+  ; Invalid zero weight rejects before changing the output scalar.
+  MOVI r6,@mth_energy_weights_a
+  ST r0,r6,0
+  MOVI r6,@mth_energy_output
+  MOVI r7,77
+  ST r7,r6,0
+  MOVI r1,@mth_energy_offsets
+  MOVI r2,@mth_energy_neighbors
+  MOVI r3,@mth_energy_weights_a
+  MOVI r4,@mth_energy_x
+  MOVI r5,@mth_energy_output
+  MOVI r6,6
+  MOVI r7,@mth_energy_scratch
+  CALL @mth_graph_energy_weighted_u8_q32_32
+  CMP r1,r0
+  JMP[NE] @mth_energy_fail
+  MOVI r6,@mth_energy_output
+  LD r7,r6,0
+  MOVI r8,77
+  CMP r7,r8
+  JMP[NE] @mth_energy_fail
+
+  MOVI r1,@mth_energy_pass
+  CALL @mth_energy_puts
+  HALT
+
+mth_energy_fail:
+  MOVI r1,@mth_energy_bad
+  CALL @mth_energy_puts
+  HALT
+
+mth_energy_puts:
+  MOVI r4,255
+mth_energy_puts_word:
+  LD r2,r1,0
+  MOVI r3,4
+mth_energy_puts_byte:
+  BOOL.8 r5,r2,r4
+  CMP r5,r0
+  RET[EQ]
+  PUTC r5
+  SHR r2,r2,8
+  SUB r3,r3,r13
+  JMP[NE] @mth_energy_puts_byte
+  ADD r1,r1,r13
+  JMP @mth_energy_puts_word
+
+.org 512
+mth_energy_offsets:
+.word 0
+.word 1
+.word 3
+.word 5
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.org 1024
+mth_energy_neighbors:
+.word 1
+.word 0
+.word 2
+.word 1
+.word 3
+.word 2
+.org 1040
+mth_energy_weights_a:
+.word 2
+.word 2
+.word 3
+.word 3
+.word 5
+.word 5
+.org 1056
+mth_energy_weights_b:
+.word 1
+.word 1
+.word 7
+.word 7
+.word 2
+.word 2
+.org 1072
+mth_energy_x:
+.word 0
+.word 16384
+.word 32768
+.word 49152
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.org 2048
+mth_energy_output:
+.word 77
+.word 77
+.org 2064
+mth_energy_scratch:
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.org 2100
+mth_energy_pass:
+.str "MTH WEIGHTED GRAPH ENERGY PASS\n"
+mth_energy_bad:
+.str "MTH WEIGHTED GRAPH ENERGY FAIL\n"

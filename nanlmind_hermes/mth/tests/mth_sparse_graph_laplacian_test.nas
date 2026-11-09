@@ -1,0 +1,1206 @@
+.org 0
+JMP @mth_sparse_test_main
+.include "../nan16/mth_sparse_graph_laplacian.nas"
+
+mth_sparse_test_main:
+  MOVI r13,1
+
+  ; Path 0--1--2--3 with x=[0,1,4,9], Q16.16.
+  MOVI r1,@mth_sparse_path_offsets
+  MOVI r2,@mth_sparse_path_neighbors
+  MOVI r3,@mth_sparse_x
+  MOVI r4,@mth_sparse_output
+  MOVI r5,6
+  CALL @mth_sparse_graph_laplacian_q16_16
+  CMP r1,r13
+  JMP[EQ] @mth_sparse_path_kernel_success
+  CMP r1,r0
+  JMP[EQ] @mth_sparse_path_state_error
+  MOVI r6,2
+  CMP r1,r6
+  JMP[EQ] @mth_sparse_path_offsets_error
+  MOVI r1,@mth_sparse_path_neighbors_error
+  CALL @mth_sparse_test_puts
+  JMP @mth_sparse_test_fail
+mth_sparse_path_state_error:
+  MOVI r1,@mth_sparse_path_state_error_text
+  CALL @mth_sparse_test_puts
+  JMP @mth_sparse_test_fail
+mth_sparse_path_offsets_error:
+  MOVI r1,@mth_sparse_path_offsets_error_text
+  CALL @mth_sparse_test_puts
+  JMP @mth_sparse_test_fail
+mth_sparse_path_kernel_success:
+  MOVI r1,@mth_sparse_path_kernel_ok
+  CALL @mth_sparse_test_puts
+  MOVI r6,@mth_sparse_output
+  LD r7,r6,0
+  MOVI r8,0
+  MOVHI r8,0xFFFF
+  CMP r7,r8
+  JMP[NE] @mth_sparse_test_fail
+  LD r7,r6,1
+  MOVI r8,0
+  MOVHI r8,0xFFFE
+  CMP r7,r8
+  JMP[NE] @mth_sparse_test_fail
+  LD r7,r6,2
+  CMP r7,r8
+  JMP[NE] @mth_sparse_test_fail
+  LD r7,r6,3
+  MOVI r8,0
+  MOVHI r8,0x0005
+  CMP r7,r8
+  JMP[NE] @mth_sparse_test_fail
+  MOVI r1,@mth_sparse_path_values_ok
+  CALL @mth_sparse_test_puts
+
+  ; Disconnected graph (0--1) + (2--3); isolated vertices 4..255.
+  MOVI r1,@mth_sparse_disc_offsets
+  MOVI r2,@mth_sparse_disc_neighbors
+  MOVI r3,@mth_sparse_x
+  MOVI r4,@mth_sparse_output
+  MOVI r5,4
+  CALL @mth_sparse_graph_laplacian_q16_16
+  CMP r1,r13
+  JMP[NE] @mth_sparse_test_fail
+  MOVI r1,@mth_sparse_disc_kernel_ok
+  CALL @mth_sparse_test_puts
+  MOVI r6,@mth_sparse_output
+  LD r7,r6,0
+  MOVI r8,0
+  MOVHI r8,0xFFFF
+  CMP r7,r8
+  JMP[NE] @mth_sparse_test_fail
+  LD r7,r6,1
+  MOVI r8,0
+  MOVHI r8,0x0001
+  CMP r7,r8
+  JMP[NE] @mth_sparse_test_fail
+  LD r7,r6,2
+  MOVI r8,0
+  MOVHI r8,0xFFFB
+  CMP r7,r8
+  JMP[NE] @mth_sparse_test_fail
+  LD r7,r6,3
+  MOVI r8,0
+  MOVHI r8,0x0005
+  CMP r7,r8
+  JMP[NE] @mth_sparse_test_fail
+  MOVI r1,@mth_sparse_disc_values_ok
+  CALL @mth_sparse_test_puts
+
+  ; Invalid state must be rejected before any output write.
+  MOVI r6,@mth_sparse_x
+  MOVI r7,1
+  MOVHI r7,0x0040
+  ST r7,r6,0
+  MOVI r6,@mth_sparse_output
+  MOVI r7,77
+  ST r7,r6,0
+  MOVI r1,@mth_sparse_path_offsets
+  MOVI r2,@mth_sparse_path_neighbors
+  MOVI r3,@mth_sparse_x
+  MOVI r4,@mth_sparse_output
+  MOVI r5,6
+  CALL @mth_sparse_graph_laplacian_q16_16
+  CMP r1,r0
+  JMP[NE] @mth_sparse_test_fail
+  MOVI r6,@mth_sparse_output
+  LD r7,r6,0
+  MOVI r8,77
+  CMP r7,r8
+  JMP[NE] @mth_sparse_test_fail
+
+  MOVI r1,@mth_sparse_test_pass
+  CALL @mth_sparse_test_puts
+  HALT
+
+mth_sparse_test_fail:
+  MOVI r1,@mth_sparse_test_bad
+  CALL @mth_sparse_test_puts
+  HALT
+
+mth_sparse_test_puts:
+  MOVI r4,255
+mth_sparse_test_puts_word:
+  LD r2,r1,0
+  MOVI r3,4
+mth_sparse_test_puts_byte:
+  BOOL.8 r5,r2,r4
+  CMP r5,r0
+  RET[EQ]
+  PUTC r5
+  SHR r2,r2,8
+  SUB r3,r3,r13
+  JMP[NE] @mth_sparse_test_puts_byte
+  ADD r1,r1,r13
+  JMP @mth_sparse_test_puts_word
+
+.org 512
+mth_sparse_path_offsets:
+.word 0
+.word 1
+.word 3
+.word 5
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.org 1024
+mth_sparse_path_neighbors:
+.word 1
+.word 0
+.word 2
+.word 1
+.word 3
+.word 2
+.org 1040
+mth_sparse_disc_offsets:
+.word 0
+.word 1
+.word 2
+.word 3
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.word 4
+.org 1536
+mth_sparse_disc_neighbors:
+.word 1
+.word 0
+.word 3
+.word 2
+.org 1552
+mth_sparse_x:
+.word 0
+.word 65536
+.word 262144
+.word 589824
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.org 2048
+mth_sparse_output:
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.org 3072
+mth_sparse_test_pass:
+.str "MTH SPARSE GRAPH LAPLACIAN PASS\n"
+mth_sparse_test_bad:
+.str "MTH SPARSE GRAPH LAPLACIAN FAIL\n"
+mth_sparse_path_kernel_ok:
+.str "PATH KERNEL OK\n"
+mth_sparse_path_values_ok:
+.str "PATH VALUES OK\n"
+mth_sparse_disc_kernel_ok:
+.str "DISCONNECTED KERNEL OK\n"
+mth_sparse_disc_values_ok:
+.str "DISCONNECTED VALUES OK\n"
+mth_sparse_path_state_error_text:
+.str "PATH STATE PREFLIGHT ERROR\n"
+mth_sparse_path_offsets_error_text:
+.str "PATH CSR OFFSET PREFLIGHT ERROR\n"
+mth_sparse_path_neighbors_error:
+.str "PATH CSR NEIGHBOR PREFLIGHT ERROR\n"

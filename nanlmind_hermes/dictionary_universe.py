@@ -8,9 +8,15 @@ from __future__ import annotations
 
 from urllib.parse import quote
 
-HW4_ROUTE = "nan://HW4:BS0:MC0:SC0:GM0"
+# Canonical versioned address for the permanently reserved WordNet universe
+# inside Bootstrap BS0. The older HW-first form is a compatibility envelope
+# only and must be translated explicitly by the router.
+HW4_ROUTE = "nan://GM0:SC0:MC0:BS0:0:HW4:0"
+HW4_LEGACY_ROUTE = "nan://HW4:BS0:MC0:SC0:GM0"
 HW4_LINK = "HW4:0"
+UPSTREAM_ROUTE = "nan://GM0:SC0:MC0:BS0:0:HW2:0"
 UPSTREAM_LINK = "HW2:0"
+NANNET_PORT = "BS0:0"
 BINARY_TRANSLATION = "NaN16DE"
 
 
@@ -51,8 +57,8 @@ class DictionaryUniverse:
                 break
         return found
 
-    def inherit(self, offset: int) -> list[str]:
-        closure = self.ancestors(offset)
+    def inherit(self, offset: int, depth: int = 8) -> list[str]:
+        closure = self.ancestors(offset, depth=depth)
         return sorted({prop for parent, prop in self.properties.items()
                        if parent in closure})
 
@@ -81,7 +87,7 @@ class DictionaryUniverse:
             })
         return result
 
-    def define(self, offset: int) -> dict:
+    def define(self, offset: int, depth: int = 8) -> dict:
         """Structured definition record; this is a graph readout, not generated prose."""
         data = self.synsets.get(offset, {})
         gloss = data.get("gloss", "")
@@ -94,7 +100,7 @@ class DictionaryUniverse:
             "lexname": data.get("lexname"),
             "definition": definition,
             "examples": data.get("examples", []),
-            "inherited": self.inherit(offset),
+            "inherited": self.inherit(offset, depth=depth),
             "hypernyms": self.relations(offset, "hypernym")
                           + self.relations(offset, "instance_hypernym"),
             "relations": self.relations(offset),
@@ -103,13 +109,13 @@ class DictionaryUniverse:
     def hypernym_chain(self, offset: int, depth: int = 8) -> list[dict]:
         chain = []
         current = offset
-        for _ in range(depth):
+        for level in range(depth):
             parents = self.relations(current, "hypernym")
             parents += self.relations(current, "instance_hypernym")
             if not parents:
                 break
             current = parents[0]["target_offset"]
-            chain.append(self.define(current))
+            chain.append(self.define(current, depth=max(1, depth - level)))
         return chain
 
     def learn_word(self, word: str, offset: int) -> str:
@@ -120,7 +126,7 @@ class DictionaryUniverse:
             offsets.append(offset)
         return self.word_address(word, offset)
 
-    def query(self, word: str) -> dict:
+    def query(self, word: str, depth: int = 8) -> dict:
         offsets = self.index.get(str(word).casefold(), [])
         results = []
         for offset in offsets:
@@ -130,17 +136,28 @@ class DictionaryUniverse:
                 "address": self.synset_address(offset),
                 "lemmas": data.get("lemmas", []),
                 "definition": data.get("definition", data.get("gloss", "")),
-                "inherited": self.inherit(offset),
+                "inherited": self.inherit(offset, depth=depth),
             })
         return {"word": word, "synsets": results}
 
     def interface(self) -> dict:
         return {
             "route": HW4_ROUTE,
+            "legacy_route": HW4_LEGACY_ROUTE,
             "link": HW4_LINK,
             "upstream": UPSTREAM_LINK,
+            "upstream_route": UPSTREAM_ROUTE,
+            "nannet_port": NANNET_PORT,
             "binary_translation": BINARY_TRANSLATION,
             "bidirectional": True,
-            "note": ("Hermes HW2 -> NaNNet -> HW4:0 dictionary universe and back; "
+            "object_refs": {
+                "synset": HW4_ROUTE + "::synset/<offset>",
+                "word": HW4_ROUTE + "::word/<lemma>/<offset>",
+                "relation": HW4_ROUTE + "::relation/<type>/<source>/<target>",
+                "grammar_status": ("plugin-side typed extension; NaNROUTER v1 "
+                                   "must register these object kinds before a "
+                                   "live canonical resolution"),
+            },
+            "note": ("HERMES HW2:0 -> NANNET BS0:0 -> WordNet HW4:0 and back; "
                      "sparse synset/word addressing, no dense per-word matrix"),
         }

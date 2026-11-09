@@ -1,0 +1,165 @@
+{
+  "boundaries": {
+    "canonical_commit": false,
+    "measured_training_result": false,
+    "nannet_route_executed": false,
+    "teacher_review": true
+  },
+  "model": "gemma4:31b-cloud",
+  "prompt_sha256": "4ab554bff29e18326216eeaa2b266952580878a8c29ef5850cddd10b6e1d1b16",
+  "raw_response": "{\n  \"reasoning\": \"Review of local learning architecture against permanent session contracts, focusing on the boundary between symbolic evidence, native execution, and canonical state.\",\n  \"architecture_assessment\": [\n    \"Strict separation between HERMES derived state and BS0 canonical state is maintained.\",\n    \"MTH immutable leaf model prevents accidental state mutation during mathematical operations.\",\n    \"WordNet HW4:0 is correctly positioned as read-only lexical evidence, not execution authority.\",\n    \"The L0-L9 scratch space provides a necessary buffer for evidence before promotion.\",\n    \"Native execution is correctly limited to 4 admitted kernels for arbitrary operands.\",\n    \"The merge gate is a critical, non-bypassable boundary for canonical updates.\"\n  ],\n  \"free_chat_learning_plan\": [\n    \"Online: User/Assistant turns trigger L0-L9 projections into 1 GiB paged scratch.\",\n    \"Online: Populate concept matrix and relation rows as symbolic evidence.\",\n    \"Online: Store contradictions as distinct events without coercion.\",\n    \"Behind Approval: Conservative promotion based on support >= 3 and confidence >= 0.6.\",\n    \"Behind Approval: Explicit call to nanlm_learning_sync for approved candidates.\",\n    \"Behind Approval: Native relation-train only for supported/refuted triples.\",\n    \"Final Gate: Separate canonical merge gate for any BS0/MC0 state change.\"\n  ],\n  \"wordnet_hw4_plan\": [\n    \"Sequence: Word -> Lemma Index -> Synset Offset -> Typed Relation/Gloss.\",\n    \"Integration: Project WordNet relations into L0-L9 scratch as lexical evidence.\",\n    \"Constraint: Use WordNet as a source for 'subject/predicate/object' triples, not as a dense matrix.\",\n    \"Constraint: Treat glosses as graph edges, not as parsed prose understanding.\",\n    \"Failure: Unknown words must return an honest absence, not an LLM-fabricated synset.\",\n    \"Failure: Missing wordnet_archive must render HW4 unavailable, not fallback to LLM memory.\"\n  ],\n  \"data_leaf_plan\": [\n    \"Leaf Identity: Every MTH tool must operate on content-addressed SHA-256 leaves.\",\n    \"Execution: Use NaN16 images for metadata/payload; no in-place mutation.\",\n    \"Pairing Logic: 'connect' for relation leaves; 'dot/cosine/add/sub' for mathematical pairing.\",\n    \"Validation: Check hub ancestry (e.g., hub:mth.vector) before admitting pairing.\",\n    \"Constraint Check: Verify symmetry/antisymmetry identities before creating result leaf.\",\n    \"Denial: Illegal pairings (e.g., vector::scalar for dot) must return ERROR without execution.\",\n    \"Output: Every successful pairing must yield a new immutable hash leaf.\"\n  ],\n  \"missing_architecture\": [\n    \"Lack of a live, authenticated NaNROUTER instance to provide real lease/generation IDs.\",\n    \"Absence of a verified merge-gate implementation for moving HERMES state to BS0.\",\n    \"Missing differential test results for N16I guest images beyond the basic self-test.\",\n    \"Undefined mapping between L0-L9 scratch indices and specific 255-head ensemble slots.\"\n  ],\n  \"test_plan\": [\n    \"Local: Verify MTH leaf creation and illegal pairing denial (no NANNET needed).\",\n    \"Local: Run nanlm_mth_verify on 87 fixture kernels to confirm marker matches.\",\n    \"Local: Simulate L0-L9 projection and conservative promotion logic with mock data.\",\n    \"Fail Closed: Attempt to route to HW4:0 without a valid router context; must fail.\",\n    \"Fail Closed: Attempt to mutate a hub leaf; must return error.\",\n    \"Assertion: Verify that support < 3 prevents promotion to HERMES derived state.\"\n  ],\n  \"first_experiment\": {\n    \"name\": \"MTH Pairing Constraint Validation\",\n    \"command_or_api\": \"nanlm_mth_execute(left=vector_leaf_A, right=illegal_leaf_B, op='dot')\",\n    \"assertions\": [\n      \"Return value is ERROR\",\n      \"No new leaf_id is generated\",\n      \"No mutation of vector_leaf_A occurs\"\n    ],\n    \"what_it_would_prove\": \"The hub-based pairing constraints and immutability of leaves are enforced.\",\n    \"what_it_would_not_prove\": \"That the native float32 kernel is mathematically accurate or that NANNET routing is active.\"\n  }\n}",
+  "review": {
+    "architecture_assessment": [
+      "Strict separation between HERMES derived state and BS0 canonical state is maintained.",
+      "MTH immutable leaf model prevents accidental state mutation during mathematical operations.",
+      "WordNet HW4:0 is correctly positioned as read-only lexical evidence, not execution authority.",
+      "The L0-L9 scratch space provides a necessary buffer for evidence before promotion.",
+      "Native execution is correctly limited to 4 admitted kernels for arbitrary operands.",
+      "The merge gate is a critical, non-bypassable boundary for canonical updates."
+    ],
+    "data_leaf_plan": [
+      "Leaf Identity: Every MTH tool must operate on content-addressed SHA-256 leaves.",
+      "Execution: Use NaN16 images for metadata/payload; no in-place mutation.",
+      "Pairing Logic: 'connect' for relation leaves; 'dot/cosine/add/sub' for mathematical pairing.",
+      "Validation: Check hub ancestry (e.g., hub:mth.vector) before admitting pairing.",
+      "Constraint Check: Verify symmetry/antisymmetry identities before creating result leaf.",
+      "Denial: Illegal pairings (e.g., vector::scalar for dot) must return ERROR without execution.",
+      "Output: Every successful pairing must yield a new immutable hash leaf."
+    ],
+    "first_experiment": {
+      "assertions": [
+        "Return value is ERROR",
+        "No new leaf_id is generated",
+        "No mutation of vector_leaf_A occurs"
+      ],
+      "command_or_api": "nanlm_mth_execute(left=vector_leaf_A, right=illegal_leaf_B, op='dot')",
+      "name": "MTH Pairing Constraint Validation",
+      "what_it_would_not_prove": "That the native float32 kernel is mathematically accurate or that NANNET routing is active.",
+      "what_it_would_prove": "The hub-based pairing constraints and immutability of leaves are enforced."
+    },
+    "free_chat_learning_plan": [
+      "Online: User/Assistant turns trigger L0-L9 projections into 1 GiB paged scratch.",
+      "Online: Populate concept matrix and relation rows as symbolic evidence.",
+      "Online: Store contradictions as distinct events without coercion.",
+      "Behind Approval: Conservative promotion based on support >= 3 and confidence >= 0.6.",
+      "Behind Approval: Explicit call to nanlm_learning_sync for approved candidates.",
+      "Behind Approval: Native relation-train only for supported/refuted triples.",
+      "Final Gate: Separate canonical merge gate for any BS0/MC0 state change."
+    ],
+    "missing_architecture": [
+      "Lack of a live, authenticated NaNROUTER instance to provide real lease/generation IDs.",
+      "Absence of a verified merge-gate implementation for moving HERMES state to BS0.",
+      "Missing differential test results for N16I guest images beyond the basic self-test.",
+      "Undefined mapping between L0-L9 scratch indices and specific 255-head ensemble slots."
+    ],
+    "reasoning": "Review of local learning architecture against permanent session contracts, focusing on the boundary between symbolic evidence, native execution, and canonical state.",
+    "test_plan": [
+      "Local: Verify MTH leaf creation and illegal pairing denial (no NANNET needed).",
+      "Local: Run nanlm_mth_verify on 87 fixture kernels to confirm marker matches.",
+      "Local: Simulate L0-L9 projection and conservative promotion logic with mock data.",
+      "Fail Closed: Attempt to route to HW4:0 without a valid router context; must fail.",
+      "Fail Closed: Attempt to mutate a hub leaf; must return error.",
+      "Assertion: Verify that support < 3 prevents promotion to HERMES derived state."
+    ],
+    "wordnet_hw4_plan": [
+      "Sequence: Word -> Lemma Index -> Synset Offset -> Typed Relation/Gloss.",
+      "Integration: Project WordNet relations into L0-L9 scratch as lexical evidence.",
+      "Constraint: Use WordNet as a source for 'subject/predicate/object' triples, not as a dense matrix.",
+      "Constraint: Treat glosses as graph edges, not as parsed prose understanding.",
+      "Failure: Unknown words must return an honest absence, not an LLM-fabricated synset.",
+      "Failure: Missing wordnet_archive must render HW4 unavailable, not fallback to LLM memory."
+    ]
+  },
+  "schema": "nanlm.gemma-architecture-review/1",
+  "session_context": {
+    "authority": {
+      "process_lifetime": true,
+      "reload": "new plugin registration or changed document digest",
+      "source": "packaged plugin data",
+      "user_mutable": false
+    },
+    "context_schema": "nanlm.plugin-session-context/1",
+    "document_ids": [
+      "permanent-instructions",
+      "nannet-architecture",
+      "nannet-routing",
+      "wordnet-hw4",
+      "free-chat-learning",
+      "mth-universal-runtime",
+      "mth-data-leaves"
+    ],
+    "documents": [
+      {
+        "bytes": 2548,
+        "file": "PERMANENT_INSTRUCTIONS.md",
+        "id": "permanent-instructions",
+        "role": "instruction",
+        "sha256": "f001253d1f8e87e58b4023d9ebcd6c4ceb930b399ebe6f0ce89c8efd1c448696",
+        "title": "Permanent plugin-duration instructions"
+      },
+      {
+        "bytes": 3416,
+        "file": "NANNET_ARCHITECTURE.md",
+        "id": "nannet-architecture",
+        "role": "architecture",
+        "sha256": "7816502712e4a951c1bd1f809817462ec3f715985ece14d9064f7ca7a8591d85",
+        "title": "NANNET architecture"
+      },
+      {
+        "bytes": 3847,
+        "file": "NANNET_ROUTING.md",
+        "id": "nannet-routing",
+        "role": "routing",
+        "sha256": "afc9102bf336dc50cf2ada423d4ee572e62d2a17562e2bd9180a079534ac1878",
+        "title": "NANNET routing and canonical addresses"
+      },
+      {
+        "bytes": 2312,
+        "file": "WORDNET_HW4.md",
+        "id": "wordnet-hw4",
+        "role": "wordnet",
+        "sha256": "fb8c841518756d832e545fca113b20bb167a0e764517537b74de44e9ff6686ec",
+        "title": "WordNet universe at HW4:0"
+      },
+      {
+        "bytes": 3972,
+        "file": "FREE_CHAT_LEARNING.md",
+        "id": "free-chat-learning",
+        "role": "learning",
+        "sha256": "d4ab5182366a01c833cc4d703bf05f7b3c64fde855a1c1ab6f7675050e2fafbd",
+        "title": "Free-chat learning contract"
+      },
+      {
+        "bytes": 2712,
+        "file": "MTH_UNIVERSAL_RUNTIME.md",
+        "id": "mth-universal-runtime",
+        "role": "mth",
+        "sha256": "663a110077a8db3850e078de76a25602dee9dba8c5b8c43bf46bfb6b175edb5b",
+        "title": "MTH universal native runtime"
+      },
+      {
+        "bytes": 3197,
+        "file": "MTH_DATA_LEAVES.md",
+        "id": "mth-data-leaves",
+        "role": "mth-leaves",
+        "sha256": "03082e9522f7dc4e7699cb627cc5f36c6a7a9bbe3b7bdbb21b7173ee8ea1ff55",
+        "title": "MTH data leaves, hubs and constrained pairing"
+      }
+    ],
+    "generation": "17c3f242c35ef88a7e7b7b9e85417dc53104d1ec52c79eadf6653f88308459ea",
+    "manifest_path": null,
+    "permanent": true,
+    "schema": "nanlm.plugin-session-manifest/1",
+    "scope": "plugin-duration",
+    "session_id": "psc_17c3f242c35ef88a7e7b7b9e",
+    "started_at": "2026-11-08T22:30:56.386939+00:00"
+  },
+  "usage": {
+    "completion_tokens": 1011,
+    "prompt_tokens": 7373,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 8384
+  }
+}

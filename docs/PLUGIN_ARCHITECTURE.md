@@ -108,6 +108,73 @@ not substituted for native head or mirror-pair state.
 - NANNET authorizes and coordinates; it is not the local trainer or corpus store.
 
 
+## Permanent plugin-duration session context
+
+At `register(ctx)` the plugin loads seven packaged documents from
+`nanlmind_hermes/session_docs/`:
+
+1. permanent instructions;
+2. NANNET architecture;
+3. NANNET routing/canonical addresses;
+4. WordNet HW4:0;
+5. free-chat learning;
+6. MTH universal native runtime;
+7. MTH data leaves, hubs and constrained pairing.
+
+They are hashed, cached for the plugin process, and persisted under
+`state_dir/session/plugin_session_context.json` with a stable generation. The
+full block is injected into attached-provider chat; the instruction/routing
+block is injected into reflection, curriculum, CLOCKED planning/synthesis and
+other provider calls. A caller-supplied `system_prompt` may shape the task but
+cannot remove the permanent block. `nanlm_session_context` exposes the exact
+shipped text; `nanlm_status` exposes the manifest.
+
+## Authority mode
+
+When no `nannet_auth_url` + pinned issuer key are configured, local chat,
+training, memory, layered learning and native MTH tools run in
+`local-unverified` mode. This is an offline fallback, not the intended
+connected pipeline. Once NANNET is configured, the paired installation token is
+mandatory for protected tools and every missing, stale, revoked or unverifiable
+token fails closed. The mode is returned in the tool result; it is never a
+hidden bypass.
+
+The live tool-learning harness starts a loopback NANNET authority and pairs
+with `universe:read` + `training:execute`, so the whole scoped pipeline is
+intact. Canonical merge/promotion is explicitly disabled for that session;
+`merge_enabled` and `canonical_merge_enabled` default to false. NANNET
+authorization is not blocked, only the merge gate is closed. Production Koyeb
+cutover, live lease/route and single-issuer migration remain outstanding.
+
+## Universal native MTH runtime
+
+The plugin bundles the 91-kernel NaN16 MTH manifest (44 families) and sources
+plus a portable NaN0S C-core snapshot. `nan0s_runtime` autodetects the host
+architecture and compiler, uses an external/prebuilt NaN0S CLI when available,
+or compiles the bundled core into the plugin state cache. It assembles fixtures
+with POSIX awk and runs them through `nan_cli`. `nanlm_mth_execute` runs the
+four admitted float32 vector kernels through the unified N16I general-operand
+path; direct native execution is a diagnostic/parity helper only. The other 87
+are native-fixture verifiable only.
+`nanlm_mth_n16i_selftest` runs the native-vs-N16I differential gate.
+`nanlm_mth_dispatch` adds generic N16 guest-image dispatch. Catalog membership
+and fixture PASS are not mathematical proofs, general operand ABIs or canonical
+commits. See [MTH_UNIVERSAL_RUNTIME.md](MTH_UNIVERSAL_RUNTIME.md).
+
+## MTH data leaves and constrained pairing
+
+`mth_leaves` adds immutable content-addressed data leaves with a real NaN16
+executable image, function definition, action relations, identities,
+constraints/constants and a hub ancestry. The vector/scalar/matrix/relation
+hubs link to `hub:mth.root`; the vector hub links to the WordNet HW4 definition
+route. `left::right` pairing is deny-by-default: `connect` creates a relation
+leaf; dot/cosine/add/sub execute the admitted native vector kernel, check
+dimension/finiteness and symmetry/antisymmetry identities, and create a new
+hash leaf. Illegal kinds, hub pairing, unknown operators, failed execution or
+violated invariants deny without execution or mutation. There is no in-place
+mutation API; self-modification is limited to appending new immutable leaves.
+See [MTH_DATA_LEAVES.md](MTH_DATA_LEAVES.md).
+
 ## 3. Autonomous CLOCKED mode and NaN head cortex
 
 CLOCKED by Rezolve.ai is an external structured-reasoning service. Its upstream

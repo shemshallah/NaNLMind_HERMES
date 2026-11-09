@@ -1,0 +1,3968 @@
+{
+  "boundaries": {
+    "canonical_commit": false,
+    "judge_is_not_ground_truth": true,
+    "llm_generated_the_reply": false,
+    "native_temporal_student": true,
+    "proof_claim": false
+  },
+  "prompts": [
+    "Explain why a river can carry water.",
+    "Compare a cat and a bird.",
+    "Why does ice melt when it gets hot?",
+    "Describe what happens when snow falls on a warm day.",
+    "What would happen if a bird could not fly?",
+    "Tell a short story about a river, a bird, and the sun.",
+    "Explain how water can become ice and then water again.",
+    "Why is the sky blue but grass green?"
+  ],
+  "rows": [
+    {
+      "judge": {
+        "answers_prompt": 0,
+        "coherent": 0,
+        "copied_training_sentence": 1,
+        "notes": "The reply is incoherent and fails to explain 'why'. It contains a copied sentence and a grammatically broken phrase.",
+        "novel_combination": 0,
+        "unsupported_claim": 0
+      },
+      "model": "temporal-mirror/1",
+      "prompt": "Explain why a river can carry water.",
+      "provider": "nanlm-native",
+      "response": "River consists of water. Carry water has the ability to flow.",
+      "surface": {
+        "characters": 61,
+        "copied_training_sentence": false,
+        "empty": false,
+        "max_token_repetition": 2,
+        "novel_3gram_ratio": 0.3333,
+        "novel_3grams": 3,
+        "tokens": 11,
+        "unique_tokens": 10
+      },
+      "synthesis": {
+        "heads": {
+          "head_count": 25,
+          "head_scratchpads": 25,
+          "layers": [
+            "lexical"
+          ],
+          "leaf_count": 35,
+          "leaves": [
+            {
+              "boolean": "B",
+              "digest": "bd33f9b5def72734",
+              "head": 28,
+              "layer": "lexical",
+              "mask": 10,
+              "mirror": 56,
+              "object": "bark",
+              "pair": [
+                10,
+                28
+              ],
+              "predicate": "can",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "can",
+              "subject": "dogs",
+              "tags": {
+                "DESCRIPTION": "dogs",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "can",
+                  "description": "dogs",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "bd33f9b5def72734::assert",
+                "OBJECT:REALM": {
+                  "object": "dogs",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "dogs",
+                  "space": "general",
+                  "system": "can"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "bark",
+                  "predicate": "can",
+                  "relation": "can",
+                  "unit": "dogs"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "dogs",
+                  "query": "can",
+                  "whole": "bark"
+                }
+              },
+              "value": 1837578,
+              "whole": "bark"
+            },
+            {
+              "boolean": "NAND",
+              "digest": "42bd65d0b820c318",
+              "head": 7,
+              "layer": "lexical",
+              "mask": 7,
+              "mirror": 224,
+              "object": "animals",
+              "pair": [
+                7,
+                105
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s+",
+              "reverse_rail": "s-",
+              "role": "is",
+              "subject": "dogs",
+              "tags": {
+                "DESCRIPTION": "dogs",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "dogs",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "42bd65d0b820c318::assert",
+                "OBJECT:REALM": {
+                  "object": "dogs",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "dogs",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "animals",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "dogs"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "dogs",
+                  "query": "is",
+                  "whole": "animals"
+                }
+              },
+              "value": 485737,
+              "whole": "animals"
+            },
+            {
+              "boolean": "NAND",
+              "digest": "903a8650bd99fd67",
+              "head": 35,
+              "layer": "lexical",
+              "mask": 7,
+              "mirror": 196,
+              "object": "blue",
+              "pair": [
+                5,
+                35
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "is",
+              "subject": "the sky",
+              "tags": {
+                "DESCRIPTION": "the sky",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "the sky",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "903a8650bd99fd67::assert",
+                "OBJECT:REALM": {
+                  "object": "the sky",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "the sky",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "blue",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "the sky"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "the sky",
+                  "query": "is",
+                  "whole": "blue"
+                }
+              },
+              "value": 2295045,
+              "whole": "blue"
+            },
+            {
+              "boolean": "A_OR_NOT_B",
+              "digest": "47e6b11440745429",
+              "head": 109,
+              "layer": "lexical",
+              "mask": 11,
+              "mirror": 182,
+              "object": "frozen water",
+              "pair": [
+                4,
+                109
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "is",
+              "subject": "ice",
+              "tags": {
+                "DESCRIPTION": "ice",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "ice",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "47e6b11440745429::assert",
+                "OBJECT:REALM": {
+                  "object": "ice",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "ice",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "frozen water",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "ice"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "ice",
+                  "query": "is",
+                  "whole": "frozen water"
+                }
+              },
+              "value": 7144452,
+              "whole": "frozen water"
+            },
+            {
+              "boolean": "A_OR_NOT_B",
+              "digest": "35c6529499df8a77",
+              "head": 139,
+              "layer": "lexical",
+              "mask": 11,
+              "mirror": 209,
+              "object": "flow",
+              "pair": [
+                10,
+                139
+              ],
+              "predicate": "can",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "can",
+              "subject": "water",
+              "tags": {
+                "DESCRIPTION": "water",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "can",
+                  "description": "water",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "35c6529499df8a77::assert",
+                "OBJECT:REALM": {
+                  "object": "water",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "water",
+                  "space": "general",
+                  "system": "can"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "flow",
+                  "predicate": "can",
+                  "relation": "can",
+                  "unit": "water"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "water",
+                  "query": "can",
+                  "whole": "flow"
+                }
+              },
+              "value": 9112074,
+              "whole": "flow"
+            },
+            {
+              "boolean": "ONE",
+              "digest": "bfd2d048b6c9e63e",
+              "head": 255,
+              "layer": "lexical",
+              "mask": 15,
+              "mirror": 255,
+              "object": "green",
+              "pair": [
+                255,
+                255
+              ],
+              "predicate": "causes",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "causes",
+              "subject": "yellow mixed with blue",
+              "tags": {
+                "DESCRIPTION": "yellow mixed with blue",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "causes",
+                  "description": "yellow mixed with blue",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "bfd2d048b6c9e63e::assert",
+                "OBJECT:REALM": {
+                  "object": "yellow mixed with blue",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "yellow mixed with blue",
+                  "space": "general",
+                  "system": "causes"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "green",
+                  "predicate": "causes",
+                  "relation": "causes",
+                  "unit": "yellow mixed with blue"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "yellow mixed with blue",
+                  "query": "causes",
+                  "whole": "green"
+                }
+              },
+              "value": 16777215,
+              "whole": "green"
+            },
+            {
+              "boolean": "ZERO",
+              "digest": "a35ec35d9f785f19",
+              "head": 0,
+              "layer": "lexical",
+              "mask": 0,
+              "mirror": 0,
+              "object": "carry water",
+              "pair": [
+                0,
+                0
+              ],
+              "predicate": "can",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "can",
+              "subject": "explain why a river",
+              "tags": {
+                "DESCRIPTION": "explain why a river",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "can",
+                  "description": "explain why a river",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "a35ec35d9f785f19::assert",
+                "OBJECT:REALM": {
+                  "object": "explain why a river",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "explain why a river",
+                  "space": "general",
+                  "system": "can"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "carry water",
+                  "predicate": "can",
+                  "relation": "can",
+                  "unit": "explain why a river"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "explain why a river",
+                  "query": "can",
+                  "whole": "carry water"
+                }
+              },
+              "value": 0,
+              "whole": "carry water"
+            },
+            {
+              "boolean": "NOT_B",
+              "digest": "fcb9133979197f7b",
+              "head": 11,
+              "layer": "lexical",
+              "mask": 5,
+              "mirror": 208,
+              "object": "things freeze",
+              "pair": [
+                11,
+                243
+              ],
+              "predicate": "causes",
+              "qualifier": "",
+              "rail": "s+",
+              "reverse_rail": "s-",
+              "role": "causes",
+              "subject": "cold",
+              "tags": {
+                "DESCRIPTION": "cold",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "causes",
+                  "description": "cold",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "fcb9133979197f7b::assert",
+                "OBJECT:REALM": {
+                  "object": "cold",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "cold",
+                  "space": "general",
+                  "system": "causes"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "things freeze",
+                  "predicate": "causes",
+                  "relation": "causes",
+                  "unit": "cold"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "cold",
+                  "query": "causes",
+                  "whole": "things freeze"
+                }
+              },
+              "value": 783347,
+              "whole": "things freeze"
+            }
+          ],
+          "magic": "NLMHEAD1",
+          "mapped": true,
+          "masks": [
+            0,
+            1,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            13,
+            14,
+            15
+          ],
+          "register_offset": 6539792
+        },
+        "learned_records": 1,
+        "response_templates": 0,
+        "retrieval": 0,
+        "synthesis": "temporal_mirror_lm/1",
+        "temporal_frame": {
+          "anchor": "river",
+          "coverage": 1.0,
+          "mirror_state": true,
+          "output_drive": 1.0,
+          "score": 0.1492,
+          "steps": 11
+        },
+        "vocabulary": {
+          "bigram_contexts": 71,
+          "exposed_sentences": 38,
+          "mirror_address_cells": 122,
+          "schema": "nanlm.temporal-mirror-lm/1",
+          "trigram_contexts": 137,
+          "vocabulary": 70
+        }
+      }
+    },
+    {
+      "judge": {
+        "answers_prompt": 0,
+        "coherent": 1,
+        "copied_training_sentence": 0,
+        "notes": "The reply identifies a commonality but does not 'compare' (analyze similarities and differences) as requested. It is a simplistic statement rather than a comparison.",
+        "novel_combination": 0,
+        "unsupported_claim": 0
+      },
+      "model": "temporal-mirror/1",
+      "prompt": "Compare a cat and a bird.",
+      "provider": "nanlm-native",
+      "response": "Cat and a bird is an animal.",
+      "surface": {
+        "characters": 28,
+        "copied_training_sentence": false,
+        "empty": false,
+        "max_token_repetition": 1,
+        "novel_3gram_ratio": 0.4,
+        "novel_3grams": 2,
+        "tokens": 7,
+        "unique_tokens": 7
+      },
+      "synthesis": {
+        "heads": {
+          "head_count": 25,
+          "head_scratchpads": 25,
+          "layers": [
+            "lexical"
+          ],
+          "leaf_count": 35,
+          "leaves": [
+            {
+              "boolean": "B",
+              "digest": "bd33f9b5def72734",
+              "head": 28,
+              "layer": "lexical",
+              "mask": 10,
+              "mirror": 56,
+              "object": "bark",
+              "pair": [
+                10,
+                28
+              ],
+              "predicate": "can",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "can",
+              "subject": "dogs",
+              "tags": {
+                "DESCRIPTION": "dogs",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "can",
+                  "description": "dogs",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "bd33f9b5def72734::assert",
+                "OBJECT:REALM": {
+                  "object": "dogs",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "dogs",
+                  "space": "general",
+                  "system": "can"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "bark",
+                  "predicate": "can",
+                  "relation": "can",
+                  "unit": "dogs"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "dogs",
+                  "query": "can",
+                  "whole": "bark"
+                }
+              },
+              "value": 1837578,
+              "whole": "bark"
+            },
+            {
+              "boolean": "NAND",
+              "digest": "42bd65d0b820c318",
+              "head": 7,
+              "layer": "lexical",
+              "mask": 7,
+              "mirror": 224,
+              "object": "animals",
+              "pair": [
+                7,
+                105
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s+",
+              "reverse_rail": "s-",
+              "role": "is",
+              "subject": "dogs",
+              "tags": {
+                "DESCRIPTION": "dogs",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "dogs",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "42bd65d0b820c318::assert",
+                "OBJECT:REALM": {
+                  "object": "dogs",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "dogs",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "animals",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "dogs"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "dogs",
+                  "query": "is",
+                  "whole": "animals"
+                }
+              },
+              "value": 485737,
+              "whole": "animals"
+            },
+            {
+              "boolean": "NAND",
+              "digest": "903a8650bd99fd67",
+              "head": 35,
+              "layer": "lexical",
+              "mask": 7,
+              "mirror": 196,
+              "object": "blue",
+              "pair": [
+                5,
+                35
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "is",
+              "subject": "the sky",
+              "tags": {
+                "DESCRIPTION": "the sky",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "the sky",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "903a8650bd99fd67::assert",
+                "OBJECT:REALM": {
+                  "object": "the sky",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "the sky",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "blue",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "the sky"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "the sky",
+                  "query": "is",
+                  "whole": "blue"
+                }
+              },
+              "value": 2295045,
+              "whole": "blue"
+            },
+            {
+              "boolean": "A_OR_NOT_B",
+              "digest": "47e6b11440745429",
+              "head": 109,
+              "layer": "lexical",
+              "mask": 11,
+              "mirror": 182,
+              "object": "frozen water",
+              "pair": [
+                4,
+                109
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "is",
+              "subject": "ice",
+              "tags": {
+                "DESCRIPTION": "ice",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "ice",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "47e6b11440745429::assert",
+                "OBJECT:REALM": {
+                  "object": "ice",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "ice",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "frozen water",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "ice"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "ice",
+                  "query": "is",
+                  "whole": "frozen water"
+                }
+              },
+              "value": 7144452,
+              "whole": "frozen water"
+            },
+            {
+              "boolean": "A_OR_NOT_B",
+              "digest": "35c6529499df8a77",
+              "head": 139,
+              "layer": "lexical",
+              "mask": 11,
+              "mirror": 209,
+              "object": "flow",
+              "pair": [
+                10,
+                139
+              ],
+              "predicate": "can",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "can",
+              "subject": "water",
+              "tags": {
+                "DESCRIPTION": "water",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "can",
+                  "description": "water",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "35c6529499df8a77::assert",
+                "OBJECT:REALM": {
+                  "object": "water",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "water",
+                  "space": "general",
+                  "system": "can"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "flow",
+                  "predicate": "can",
+                  "relation": "can",
+                  "unit": "water"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "water",
+                  "query": "can",
+                  "whole": "flow"
+                }
+              },
+              "value": 9112074,
+              "whole": "flow"
+            },
+            {
+              "boolean": "ONE",
+              "digest": "bfd2d048b6c9e63e",
+              "head": 255,
+              "layer": "lexical",
+              "mask": 15,
+              "mirror": 255,
+              "object": "green",
+              "pair": [
+                255,
+                255
+              ],
+              "predicate": "causes",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "causes",
+              "subject": "yellow mixed with blue",
+              "tags": {
+                "DESCRIPTION": "yellow mixed with blue",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "causes",
+                  "description": "yellow mixed with blue",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "bfd2d048b6c9e63e::assert",
+                "OBJECT:REALM": {
+                  "object": "yellow mixed with blue",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "yellow mixed with blue",
+                  "space": "general",
+                  "system": "causes"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "green",
+                  "predicate": "causes",
+                  "relation": "causes",
+                  "unit": "yellow mixed with blue"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "yellow mixed with blue",
+                  "query": "causes",
+                  "whole": "green"
+                }
+              },
+              "value": 16777215,
+              "whole": "green"
+            },
+            {
+              "boolean": "ZERO",
+              "digest": "a35ec35d9f785f19",
+              "head": 0,
+              "layer": "lexical",
+              "mask": 0,
+              "mirror": 0,
+              "object": "carry water",
+              "pair": [
+                0,
+                0
+              ],
+              "predicate": "can",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "can",
+              "subject": "explain why a river",
+              "tags": {
+                "DESCRIPTION": "explain why a river",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "can",
+                  "description": "explain why a river",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "a35ec35d9f785f19::assert",
+                "OBJECT:REALM": {
+                  "object": "explain why a river",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "explain why a river",
+                  "space": "general",
+                  "system": "can"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "carry water",
+                  "predicate": "can",
+                  "relation": "can",
+                  "unit": "explain why a river"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "explain why a river",
+                  "query": "can",
+                  "whole": "carry water"
+                }
+              },
+              "value": 0,
+              "whole": "carry water"
+            },
+            {
+              "boolean": "NOT_B",
+              "digest": "fcb9133979197f7b",
+              "head": 11,
+              "layer": "lexical",
+              "mask": 5,
+              "mirror": 208,
+              "object": "things freeze",
+              "pair": [
+                11,
+                243
+              ],
+              "predicate": "causes",
+              "qualifier": "",
+              "rail": "s+",
+              "reverse_rail": "s-",
+              "role": "causes",
+              "subject": "cold",
+              "tags": {
+                "DESCRIPTION": "cold",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "causes",
+                  "description": "cold",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "fcb9133979197f7b::assert",
+                "OBJECT:REALM": {
+                  "object": "cold",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "cold",
+                  "space": "general",
+                  "system": "causes"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "things freeze",
+                  "predicate": "causes",
+                  "relation": "causes",
+                  "unit": "cold"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "cold",
+                  "query": "causes",
+                  "whole": "things freeze"
+                }
+              },
+              "value": 783347,
+              "whole": "things freeze"
+            }
+          ],
+          "magic": "NLMHEAD1",
+          "mapped": true,
+          "masks": [
+            0,
+            1,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            13,
+            14,
+            15
+          ],
+          "register_offset": 6539792
+        },
+        "learned_records": 0,
+        "response_templates": 0,
+        "retrieval": 0,
+        "synthesis": "temporal_mirror_lm/1",
+        "temporal_frame": {
+          "anchor": "cat",
+          "coverage": 1.0,
+          "mirror_state": true,
+          "output_drive": 1.0,
+          "score": 0.947,
+          "steps": 7
+        },
+        "vocabulary": {
+          "bigram_contexts": 73,
+          "exposed_sentences": 39,
+          "mirror_address_cells": 126,
+          "schema": "nanlm.temporal-mirror-lm/1",
+          "trigram_contexts": 142,
+          "vocabulary": 72
+        }
+      }
+    },
+    {
+      "judge": {
+        "answers_prompt": 0,
+        "coherent": 0,
+        "copied_training_sentence": 1,
+        "notes": "The reply is incoherent, claims water can fly, and incorrectly states the sun causes water to freeze.",
+        "novel_combination": 0,
+        "unsupported_claim": 1
+      },
+      "model": "temporal-mirror/1",
+      "prompt": "Why does ice melt when it gets hot?",
+      "provider": "nanlm-native",
+      "response": "Ice is water that is frozen water has the ability to fly. Melt the sun causes water to freeze. Gets the sun causes water to freeze.",
+      "surface": {
+        "characters": 131,
+        "copied_training_sentence": false,
+        "empty": false,
+        "max_token_repetition": 4,
+        "novel_3gram_ratio": 0.4,
+        "novel_3grams": 8,
+        "tokens": 26,
+        "unique_tokens": 15
+      },
+      "synthesis": {
+        "heads": {
+          "head_count": 25,
+          "head_scratchpads": 25,
+          "layers": [
+            "lexical"
+          ],
+          "leaf_count": 35,
+          "leaves": [
+            {
+              "boolean": "B",
+              "digest": "bd33f9b5def72734",
+              "head": 28,
+              "layer": "lexical",
+              "mask": 10,
+              "mirror": 56,
+              "object": "bark",
+              "pair": [
+                10,
+                28
+              ],
+              "predicate": "can",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "can",
+              "subject": "dogs",
+              "tags": {
+                "DESCRIPTION": "dogs",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "can",
+                  "description": "dogs",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "bd33f9b5def72734::assert",
+                "OBJECT:REALM": {
+                  "object": "dogs",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "dogs",
+                  "space": "general",
+                  "system": "can"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "bark",
+                  "predicate": "can",
+                  "relation": "can",
+                  "unit": "dogs"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "dogs",
+                  "query": "can",
+                  "whole": "bark"
+                }
+              },
+              "value": 1837578,
+              "whole": "bark"
+            },
+            {
+              "boolean": "NAND",
+              "digest": "42bd65d0b820c318",
+              "head": 7,
+              "layer": "lexical",
+              "mask": 7,
+              "mirror": 224,
+              "object": "animals",
+              "pair": [
+                7,
+                105
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s+",
+              "reverse_rail": "s-",
+              "role": "is",
+              "subject": "dogs",
+              "tags": {
+                "DESCRIPTION": "dogs",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "dogs",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "42bd65d0b820c318::assert",
+                "OBJECT:REALM": {
+                  "object": "dogs",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "dogs",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "animals",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "dogs"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "dogs",
+                  "query": "is",
+                  "whole": "animals"
+                }
+              },
+              "value": 485737,
+              "whole": "animals"
+            },
+            {
+              "boolean": "NAND",
+              "digest": "903a8650bd99fd67",
+              "head": 35,
+              "layer": "lexical",
+              "mask": 7,
+              "mirror": 196,
+              "object": "blue",
+              "pair": [
+                5,
+                35
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "is",
+              "subject": "the sky",
+              "tags": {
+                "DESCRIPTION": "the sky",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "the sky",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "903a8650bd99fd67::assert",
+                "OBJECT:REALM": {
+                  "object": "the sky",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "the sky",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "blue",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "the sky"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "the sky",
+                  "query": "is",
+                  "whole": "blue"
+                }
+              },
+              "value": 2295045,
+              "whole": "blue"
+            },
+            {
+              "boolean": "A_OR_NOT_B",
+              "digest": "47e6b11440745429",
+              "head": 109,
+              "layer": "lexical",
+              "mask": 11,
+              "mirror": 182,
+              "object": "frozen water",
+              "pair": [
+                4,
+                109
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "is",
+              "subject": "ice",
+              "tags": {
+                "DESCRIPTION": "ice",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "ice",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "47e6b11440745429::assert",
+                "OBJECT:REALM": {
+                  "object": "ice",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "ice",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "frozen water",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "ice"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "ice",
+                  "query": "is",
+                  "whole": "frozen water"
+                }
+              },
+              "value": 7144452,
+              "whole": "frozen water"
+            },
+            {
+              "boolean": "A_OR_NOT_B",
+              "digest": "35c6529499df8a77",
+              "head": 139,
+              "layer": "lexical",
+              "mask": 11,
+              "mirror": 209,
+              "object": "flow",
+              "pair": [
+                10,
+                139
+              ],
+              "predicate": "can",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "can",
+              "subject": "water",
+              "tags": {
+                "DESCRIPTION": "water",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "can",
+                  "description": "water",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "35c6529499df8a77::assert",
+                "OBJECT:REALM": {
+                  "object": "water",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "water",
+                  "space": "general",
+                  "system": "can"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "flow",
+                  "predicate": "can",
+                  "relation": "can",
+                  "unit": "water"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "water",
+                  "query": "can",
+                  "whole": "flow"
+                }
+              },
+              "value": 9112074,
+              "whole": "flow"
+            },
+            {
+              "boolean": "ONE",
+              "digest": "bfd2d048b6c9e63e",
+              "head": 255,
+              "layer": "lexical",
+              "mask": 15,
+              "mirror": 255,
+              "object": "green",
+              "pair": [
+                255,
+                255
+              ],
+              "predicate": "causes",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "causes",
+              "subject": "yellow mixed with blue",
+              "tags": {
+                "DESCRIPTION": "yellow mixed with blue",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "causes",
+                  "description": "yellow mixed with blue",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "bfd2d048b6c9e63e::assert",
+                "OBJECT:REALM": {
+                  "object": "yellow mixed with blue",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "yellow mixed with blue",
+                  "space": "general",
+                  "system": "causes"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "green",
+                  "predicate": "causes",
+                  "relation": "causes",
+                  "unit": "yellow mixed with blue"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "yellow mixed with blue",
+                  "query": "causes",
+                  "whole": "green"
+                }
+              },
+              "value": 16777215,
+              "whole": "green"
+            },
+            {
+              "boolean": "ZERO",
+              "digest": "a35ec35d9f785f19",
+              "head": 0,
+              "layer": "lexical",
+              "mask": 0,
+              "mirror": 0,
+              "object": "carry water",
+              "pair": [
+                0,
+                0
+              ],
+              "predicate": "can",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "can",
+              "subject": "explain why a river",
+              "tags": {
+                "DESCRIPTION": "explain why a river",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "can",
+                  "description": "explain why a river",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "a35ec35d9f785f19::assert",
+                "OBJECT:REALM": {
+                  "object": "explain why a river",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "explain why a river",
+                  "space": "general",
+                  "system": "can"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "carry water",
+                  "predicate": "can",
+                  "relation": "can",
+                  "unit": "explain why a river"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "explain why a river",
+                  "query": "can",
+                  "whole": "carry water"
+                }
+              },
+              "value": 0,
+              "whole": "carry water"
+            },
+            {
+              "boolean": "NOT_B",
+              "digest": "fcb9133979197f7b",
+              "head": 11,
+              "layer": "lexical",
+              "mask": 5,
+              "mirror": 208,
+              "object": "things freeze",
+              "pair": [
+                11,
+                243
+              ],
+              "predicate": "causes",
+              "qualifier": "",
+              "rail": "s+",
+              "reverse_rail": "s-",
+              "role": "causes",
+              "subject": "cold",
+              "tags": {
+                "DESCRIPTION": "cold",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "causes",
+                  "description": "cold",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "fcb9133979197f7b::assert",
+                "OBJECT:REALM": {
+                  "object": "cold",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "cold",
+                  "space": "general",
+                  "system": "causes"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "things freeze",
+                  "predicate": "causes",
+                  "relation": "causes",
+                  "unit": "cold"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "cold",
+                  "query": "causes",
+                  "whole": "things freeze"
+                }
+              },
+              "value": 783347,
+              "whole": "things freeze"
+            }
+          ],
+          "magic": "NLMHEAD1",
+          "mapped": true,
+          "masks": [
+            0,
+            1,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            13,
+            14,
+            15
+          ],
+          "register_offset": 6539792
+        },
+        "learned_records": 0,
+        "response_templates": 0,
+        "retrieval": 0,
+        "synthesis": "temporal_mirror_lm/1",
+        "temporal_frame": {
+          "anchor": "ice",
+          "coverage": 0.75,
+          "mirror_state": true,
+          "output_drive": 1.0,
+          "score": -1.0968,
+          "steps": 26
+        },
+        "vocabulary": {
+          "bigram_contexts": 73,
+          "exposed_sentences": 39,
+          "mirror_address_cells": 126,
+          "schema": "nanlm.temporal-mirror-lm/1",
+          "trigram_contexts": 142,
+          "vocabulary": 73
+        }
+      }
+    },
+    {
+      "judge": {
+        "answers_prompt": 0,
+        "coherent": 0,
+        "copied_training_sentence": 1,
+        "notes": "The reply is a factually true statement from the training set, but it does not answer the prompt regarding what happens when snow falls on a warm day.",
+        "novel_combination": 0,
+        "unsupported_claim": 0
+      },
+      "model": "temporal-mirror/1",
+      "prompt": "Describe what happens when snow falls on a warm day.",
+      "provider": "nanlm-native",
+      "response": "Snow is white.",
+      "surface": {
+        "characters": 14,
+        "copied_training_sentence": true,
+        "empty": false,
+        "max_token_repetition": 1,
+        "novel_3gram_ratio": 0.0,
+        "novel_3grams": 0,
+        "tokens": 3,
+        "unique_tokens": 3
+      },
+      "synthesis": {
+        "heads": {
+          "head_count": 25,
+          "head_scratchpads": 25,
+          "layers": [
+            "lexical"
+          ],
+          "leaf_count": 35,
+          "leaves": [
+            {
+              "boolean": "B",
+              "digest": "bd33f9b5def72734",
+              "head": 28,
+              "layer": "lexical",
+              "mask": 10,
+              "mirror": 56,
+              "object": "bark",
+              "pair": [
+                10,
+                28
+              ],
+              "predicate": "can",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "can",
+              "subject": "dogs",
+              "tags": {
+                "DESCRIPTION": "dogs",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "can",
+                  "description": "dogs",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "bd33f9b5def72734::assert",
+                "OBJECT:REALM": {
+                  "object": "dogs",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "dogs",
+                  "space": "general",
+                  "system": "can"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "bark",
+                  "predicate": "can",
+                  "relation": "can",
+                  "unit": "dogs"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "dogs",
+                  "query": "can",
+                  "whole": "bark"
+                }
+              },
+              "value": 1837578,
+              "whole": "bark"
+            },
+            {
+              "boolean": "NAND",
+              "digest": "42bd65d0b820c318",
+              "head": 7,
+              "layer": "lexical",
+              "mask": 7,
+              "mirror": 224,
+              "object": "animals",
+              "pair": [
+                7,
+                105
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s+",
+              "reverse_rail": "s-",
+              "role": "is",
+              "subject": "dogs",
+              "tags": {
+                "DESCRIPTION": "dogs",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "dogs",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "42bd65d0b820c318::assert",
+                "OBJECT:REALM": {
+                  "object": "dogs",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "dogs",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "animals",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "dogs"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "dogs",
+                  "query": "is",
+                  "whole": "animals"
+                }
+              },
+              "value": 485737,
+              "whole": "animals"
+            },
+            {
+              "boolean": "NAND",
+              "digest": "903a8650bd99fd67",
+              "head": 35,
+              "layer": "lexical",
+              "mask": 7,
+              "mirror": 196,
+              "object": "blue",
+              "pair": [
+                5,
+                35
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "is",
+              "subject": "the sky",
+              "tags": {
+                "DESCRIPTION": "the sky",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "the sky",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "903a8650bd99fd67::assert",
+                "OBJECT:REALM": {
+                  "object": "the sky",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "the sky",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "blue",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "the sky"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "the sky",
+                  "query": "is",
+                  "whole": "blue"
+                }
+              },
+              "value": 2295045,
+              "whole": "blue"
+            },
+            {
+              "boolean": "A_OR_NOT_B",
+              "digest": "47e6b11440745429",
+              "head": 109,
+              "layer": "lexical",
+              "mask": 11,
+              "mirror": 182,
+              "object": "frozen water",
+              "pair": [
+                4,
+                109
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "is",
+              "subject": "ice",
+              "tags": {
+                "DESCRIPTION": "ice",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "ice",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "47e6b11440745429::assert",
+                "OBJECT:REALM": {
+                  "object": "ice",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "ice",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "frozen water",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "ice"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "ice",
+                  "query": "is",
+                  "whole": "frozen water"
+                }
+              },
+              "value": 7144452,
+              "whole": "frozen water"
+            },
+            {
+              "boolean": "A_OR_NOT_B",
+              "digest": "35c6529499df8a77",
+              "head": 139,
+              "layer": "lexical",
+              "mask": 11,
+              "mirror": 209,
+              "object": "flow",
+              "pair": [
+                10,
+                139
+              ],
+              "predicate": "can",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "can",
+              "subject": "water",
+              "tags": {
+                "DESCRIPTION": "water",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "can",
+                  "description": "water",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "35c6529499df8a77::assert",
+                "OBJECT:REALM": {
+                  "object": "water",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "water",
+                  "space": "general",
+                  "system": "can"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "flow",
+                  "predicate": "can",
+                  "relation": "can",
+                  "unit": "water"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "water",
+                  "query": "can",
+                  "whole": "flow"
+                }
+              },
+              "value": 9112074,
+              "whole": "flow"
+            },
+            {
+              "boolean": "ONE",
+              "digest": "bfd2d048b6c9e63e",
+              "head": 255,
+              "layer": "lexical",
+              "mask": 15,
+              "mirror": 255,
+              "object": "green",
+              "pair": [
+                255,
+                255
+              ],
+              "predicate": "causes",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "causes",
+              "subject": "yellow mixed with blue",
+              "tags": {
+                "DESCRIPTION": "yellow mixed with blue",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "causes",
+                  "description": "yellow mixed with blue",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "bfd2d048b6c9e63e::assert",
+                "OBJECT:REALM": {
+                  "object": "yellow mixed with blue",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "yellow mixed with blue",
+                  "space": "general",
+                  "system": "causes"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "green",
+                  "predicate": "causes",
+                  "relation": "causes",
+                  "unit": "yellow mixed with blue"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "yellow mixed with blue",
+                  "query": "causes",
+                  "whole": "green"
+                }
+              },
+              "value": 16777215,
+              "whole": "green"
+            },
+            {
+              "boolean": "ZERO",
+              "digest": "a35ec35d9f785f19",
+              "head": 0,
+              "layer": "lexical",
+              "mask": 0,
+              "mirror": 0,
+              "object": "carry water",
+              "pair": [
+                0,
+                0
+              ],
+              "predicate": "can",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "can",
+              "subject": "explain why a river",
+              "tags": {
+                "DESCRIPTION": "explain why a river",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "can",
+                  "description": "explain why a river",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "a35ec35d9f785f19::assert",
+                "OBJECT:REALM": {
+                  "object": "explain why a river",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "explain why a river",
+                  "space": "general",
+                  "system": "can"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "carry water",
+                  "predicate": "can",
+                  "relation": "can",
+                  "unit": "explain why a river"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "explain why a river",
+                  "query": "can",
+                  "whole": "carry water"
+                }
+              },
+              "value": 0,
+              "whole": "carry water"
+            },
+            {
+              "boolean": "NOT_B",
+              "digest": "fcb9133979197f7b",
+              "head": 11,
+              "layer": "lexical",
+              "mask": 5,
+              "mirror": 208,
+              "object": "things freeze",
+              "pair": [
+                11,
+                243
+              ],
+              "predicate": "causes",
+              "qualifier": "",
+              "rail": "s+",
+              "reverse_rail": "s-",
+              "role": "causes",
+              "subject": "cold",
+              "tags": {
+                "DESCRIPTION": "cold",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "causes",
+                  "description": "cold",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "fcb9133979197f7b::assert",
+                "OBJECT:REALM": {
+                  "object": "cold",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "cold",
+                  "space": "general",
+                  "system": "causes"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "things freeze",
+                  "predicate": "causes",
+                  "relation": "causes",
+                  "unit": "cold"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "cold",
+                  "query": "causes",
+                  "whole": "things freeze"
+                }
+              },
+              "value": 783347,
+              "whole": "things freeze"
+            }
+          ],
+          "magic": "NLMHEAD1",
+          "mapped": true,
+          "masks": [
+            0,
+            1,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            13,
+            14,
+            15
+          ],
+          "register_offset": 6539792
+        },
+        "learned_records": 0,
+        "response_templates": 0,
+        "retrieval": 0,
+        "synthesis": "temporal_mirror_lm/1",
+        "temporal_frame": {
+          "anchor": "snow",
+          "coverage": 1.0,
+          "mirror_state": true,
+          "output_drive": 1.0,
+          "score": 1.0255,
+          "steps": 3
+        },
+        "vocabulary": {
+          "bigram_contexts": 73,
+          "exposed_sentences": 39,
+          "mirror_address_cells": 126,
+          "schema": "nanlm.temporal-mirror-lm/1",
+          "trigram_contexts": 142,
+          "vocabulary": 73
+        }
+      }
+    },
+    {
+      "judge": {
+        "answers_prompt": 0,
+        "coherent": 0,
+        "copied_training_sentence": 1,
+        "notes": "The reply is a factual statement from the training data but does not answer the hypothetical question asked in the prompt.",
+        "novel_combination": 0,
+        "unsupported_claim": 0
+      },
+      "model": "temporal-mirror/1",
+      "prompt": "What would happen if a bird could not fly?",
+      "provider": "nanlm-native",
+      "response": "Bird is an animal.",
+      "surface": {
+        "characters": 18,
+        "copied_training_sentence": false,
+        "empty": false,
+        "max_token_repetition": 1,
+        "novel_3gram_ratio": 0.0,
+        "novel_3grams": 0,
+        "tokens": 4,
+        "unique_tokens": 4
+      },
+      "synthesis": {
+        "heads": {
+          "head_count": 25,
+          "head_scratchpads": 25,
+          "layers": [
+            "lexical"
+          ],
+          "leaf_count": 35,
+          "leaves": [
+            {
+              "boolean": "B",
+              "digest": "bd33f9b5def72734",
+              "head": 28,
+              "layer": "lexical",
+              "mask": 10,
+              "mirror": 56,
+              "object": "bark",
+              "pair": [
+                10,
+                28
+              ],
+              "predicate": "can",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "can",
+              "subject": "dogs",
+              "tags": {
+                "DESCRIPTION": "dogs",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "can",
+                  "description": "dogs",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "bd33f9b5def72734::assert",
+                "OBJECT:REALM": {
+                  "object": "dogs",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "dogs",
+                  "space": "general",
+                  "system": "can"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "bark",
+                  "predicate": "can",
+                  "relation": "can",
+                  "unit": "dogs"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "dogs",
+                  "query": "can",
+                  "whole": "bark"
+                }
+              },
+              "value": 1837578,
+              "whole": "bark"
+            },
+            {
+              "boolean": "NAND",
+              "digest": "42bd65d0b820c318",
+              "head": 7,
+              "layer": "lexical",
+              "mask": 7,
+              "mirror": 224,
+              "object": "animals",
+              "pair": [
+                7,
+                105
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s+",
+              "reverse_rail": "s-",
+              "role": "is",
+              "subject": "dogs",
+              "tags": {
+                "DESCRIPTION": "dogs",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "dogs",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "42bd65d0b820c318::assert",
+                "OBJECT:REALM": {
+                  "object": "dogs",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "dogs",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "animals",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "dogs"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "dogs",
+                  "query": "is",
+                  "whole": "animals"
+                }
+              },
+              "value": 485737,
+              "whole": "animals"
+            },
+            {
+              "boolean": "NAND",
+              "digest": "903a8650bd99fd67",
+              "head": 35,
+              "layer": "lexical",
+              "mask": 7,
+              "mirror": 196,
+              "object": "blue",
+              "pair": [
+                5,
+                35
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "is",
+              "subject": "the sky",
+              "tags": {
+                "DESCRIPTION": "the sky",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "the sky",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "903a8650bd99fd67::assert",
+                "OBJECT:REALM": {
+                  "object": "the sky",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "the sky",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "blue",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "the sky"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "the sky",
+                  "query": "is",
+                  "whole": "blue"
+                }
+              },
+              "value": 2295045,
+              "whole": "blue"
+            },
+            {
+              "boolean": "A_OR_NOT_B",
+              "digest": "47e6b11440745429",
+              "head": 109,
+              "layer": "lexical",
+              "mask": 11,
+              "mirror": 182,
+              "object": "frozen water",
+              "pair": [
+                4,
+                109
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "is",
+              "subject": "ice",
+              "tags": {
+                "DESCRIPTION": "ice",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "ice",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "47e6b11440745429::assert",
+                "OBJECT:REALM": {
+                  "object": "ice",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "ice",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "frozen water",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "ice"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "ice",
+                  "query": "is",
+                  "whole": "frozen water"
+                }
+              },
+              "value": 7144452,
+              "whole": "frozen water"
+            },
+            {
+              "boolean": "A_OR_NOT_B",
+              "digest": "35c6529499df8a77",
+              "head": 139,
+              "layer": "lexical",
+              "mask": 11,
+              "mirror": 209,
+              "object": "flow",
+              "pair": [
+                10,
+                139
+              ],
+              "predicate": "can",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "can",
+              "subject": "water",
+              "tags": {
+                "DESCRIPTION": "water",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "can",
+                  "description": "water",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "35c6529499df8a77::assert",
+                "OBJECT:REALM": {
+                  "object": "water",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "water",
+                  "space": "general",
+                  "system": "can"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "flow",
+                  "predicate": "can",
+                  "relation": "can",
+                  "unit": "water"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "water",
+                  "query": "can",
+                  "whole": "flow"
+                }
+              },
+              "value": 9112074,
+              "whole": "flow"
+            },
+            {
+              "boolean": "ONE",
+              "digest": "bfd2d048b6c9e63e",
+              "head": 255,
+              "layer": "lexical",
+              "mask": 15,
+              "mirror": 255,
+              "object": "green",
+              "pair": [
+                255,
+                255
+              ],
+              "predicate": "causes",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "causes",
+              "subject": "yellow mixed with blue",
+              "tags": {
+                "DESCRIPTION": "yellow mixed with blue",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "causes",
+                  "description": "yellow mixed with blue",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "bfd2d048b6c9e63e::assert",
+                "OBJECT:REALM": {
+                  "object": "yellow mixed with blue",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "yellow mixed with blue",
+                  "space": "general",
+                  "system": "causes"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "green",
+                  "predicate": "causes",
+                  "relation": "causes",
+                  "unit": "yellow mixed with blue"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "yellow mixed with blue",
+                  "query": "causes",
+                  "whole": "green"
+                }
+              },
+              "value": 16777215,
+              "whole": "green"
+            },
+            {
+              "boolean": "ZERO",
+              "digest": "a35ec35d9f785f19",
+              "head": 0,
+              "layer": "lexical",
+              "mask": 0,
+              "mirror": 0,
+              "object": "carry water",
+              "pair": [
+                0,
+                0
+              ],
+              "predicate": "can",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "can",
+              "subject": "explain why a river",
+              "tags": {
+                "DESCRIPTION": "explain why a river",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "can",
+                  "description": "explain why a river",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "a35ec35d9f785f19::assert",
+                "OBJECT:REALM": {
+                  "object": "explain why a river",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "explain why a river",
+                  "space": "general",
+                  "system": "can"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "carry water",
+                  "predicate": "can",
+                  "relation": "can",
+                  "unit": "explain why a river"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "explain why a river",
+                  "query": "can",
+                  "whole": "carry water"
+                }
+              },
+              "value": 0,
+              "whole": "carry water"
+            },
+            {
+              "boolean": "NOT_B",
+              "digest": "fcb9133979197f7b",
+              "head": 11,
+              "layer": "lexical",
+              "mask": 5,
+              "mirror": 208,
+              "object": "things freeze",
+              "pair": [
+                11,
+                243
+              ],
+              "predicate": "causes",
+              "qualifier": "",
+              "rail": "s+",
+              "reverse_rail": "s-",
+              "role": "causes",
+              "subject": "cold",
+              "tags": {
+                "DESCRIPTION": "cold",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "causes",
+                  "description": "cold",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "fcb9133979197f7b::assert",
+                "OBJECT:REALM": {
+                  "object": "cold",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "cold",
+                  "space": "general",
+                  "system": "causes"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "things freeze",
+                  "predicate": "causes",
+                  "relation": "causes",
+                  "unit": "cold"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "cold",
+                  "query": "causes",
+                  "whole": "things freeze"
+                }
+              },
+              "value": 783347,
+              "whole": "things freeze"
+            }
+          ],
+          "magic": "NLMHEAD1",
+          "mapped": true,
+          "masks": [
+            0,
+            1,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            13,
+            14,
+            15
+          ],
+          "register_offset": 6539792
+        },
+        "learned_records": 0,
+        "response_templates": 0,
+        "retrieval": 0,
+        "synthesis": "temporal_mirror_lm/1",
+        "temporal_frame": {
+          "anchor": "bird",
+          "coverage": 0.25,
+          "mirror_state": true,
+          "output_drive": 1.0,
+          "score": 0.3347,
+          "steps": 4
+        },
+        "vocabulary": {
+          "bigram_contexts": 73,
+          "exposed_sentences": 39,
+          "mirror_address_cells": 126,
+          "schema": "nanlm.temporal-mirror-lm/1",
+          "trigram_contexts": 142,
+          "vocabulary": 75
+        }
+      }
+    },
+    {
+      "judge": {
+        "answers_prompt": 0,
+        "coherent": 0,
+        "copied_training_sentence": 1,
+        "notes": "The reply is not a story and ignores two of the three required elements (bird, sun). It is a concatenation of training statements.",
+        "novel_combination": 0,
+        "unsupported_claim": 0
+      },
+      "model": "temporal-mirror/1",
+      "prompt": "Tell a short story about a river, a bird, and the sun.",
+      "provider": "nanlm-native",
+      "response": "River consists of water has the ability to flow.",
+      "surface": {
+        "characters": 48,
+        "copied_training_sentence": false,
+        "empty": false,
+        "max_token_repetition": 1,
+        "novel_3gram_ratio": 0.1429,
+        "novel_3grams": 1,
+        "tokens": 9,
+        "unique_tokens": 9
+      },
+      "synthesis": {
+        "heads": {
+          "head_count": 25,
+          "head_scratchpads": 25,
+          "layers": [
+            "lexical"
+          ],
+          "leaf_count": 35,
+          "leaves": [
+            {
+              "boolean": "B",
+              "digest": "bd33f9b5def72734",
+              "head": 28,
+              "layer": "lexical",
+              "mask": 10,
+              "mirror": 56,
+              "object": "bark",
+              "pair": [
+                10,
+                28
+              ],
+              "predicate": "can",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "can",
+              "subject": "dogs",
+              "tags": {
+                "DESCRIPTION": "dogs",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "can",
+                  "description": "dogs",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "bd33f9b5def72734::assert",
+                "OBJECT:REALM": {
+                  "object": "dogs",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "dogs",
+                  "space": "general",
+                  "system": "can"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "bark",
+                  "predicate": "can",
+                  "relation": "can",
+                  "unit": "dogs"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "dogs",
+                  "query": "can",
+                  "whole": "bark"
+                }
+              },
+              "value": 1837578,
+              "whole": "bark"
+            },
+            {
+              "boolean": "NAND",
+              "digest": "42bd65d0b820c318",
+              "head": 7,
+              "layer": "lexical",
+              "mask": 7,
+              "mirror": 224,
+              "object": "animals",
+              "pair": [
+                7,
+                105
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s+",
+              "reverse_rail": "s-",
+              "role": "is",
+              "subject": "dogs",
+              "tags": {
+                "DESCRIPTION": "dogs",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "dogs",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "42bd65d0b820c318::assert",
+                "OBJECT:REALM": {
+                  "object": "dogs",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "dogs",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "animals",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "dogs"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "dogs",
+                  "query": "is",
+                  "whole": "animals"
+                }
+              },
+              "value": 485737,
+              "whole": "animals"
+            },
+            {
+              "boolean": "NAND",
+              "digest": "903a8650bd99fd67",
+              "head": 35,
+              "layer": "lexical",
+              "mask": 7,
+              "mirror": 196,
+              "object": "blue",
+              "pair": [
+                5,
+                35
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "is",
+              "subject": "the sky",
+              "tags": {
+                "DESCRIPTION": "the sky",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "the sky",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "903a8650bd99fd67::assert",
+                "OBJECT:REALM": {
+                  "object": "the sky",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "the sky",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "blue",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "the sky"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "the sky",
+                  "query": "is",
+                  "whole": "blue"
+                }
+              },
+              "value": 2295045,
+              "whole": "blue"
+            },
+            {
+              "boolean": "A_OR_NOT_B",
+              "digest": "47e6b11440745429",
+              "head": 109,
+              "layer": "lexical",
+              "mask": 11,
+              "mirror": 182,
+              "object": "frozen water",
+              "pair": [
+                4,
+                109
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "is",
+              "subject": "ice",
+              "tags": {
+                "DESCRIPTION": "ice",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "ice",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "47e6b11440745429::assert",
+                "OBJECT:REALM": {
+                  "object": "ice",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "ice",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "frozen water",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "ice"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "ice",
+                  "query": "is",
+                  "whole": "frozen water"
+                }
+              },
+              "value": 7144452,
+              "whole": "frozen water"
+            },
+            {
+              "boolean": "A_OR_NOT_B",
+              "digest": "35c6529499df8a77",
+              "head": 139,
+              "layer": "lexical",
+              "mask": 11,
+              "mirror": 209,
+              "object": "flow",
+              "pair": [
+                10,
+                139
+              ],
+              "predicate": "can",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "can",
+              "subject": "water",
+              "tags": {
+                "DESCRIPTION": "water",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "can",
+                  "description": "water",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "35c6529499df8a77::assert",
+                "OBJECT:REALM": {
+                  "object": "water",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "water",
+                  "space": "general",
+                  "system": "can"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "flow",
+                  "predicate": "can",
+                  "relation": "can",
+                  "unit": "water"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "water",
+                  "query": "can",
+                  "whole": "flow"
+                }
+              },
+              "value": 9112074,
+              "whole": "flow"
+            },
+            {
+              "boolean": "ONE",
+              "digest": "bfd2d048b6c9e63e",
+              "head": 255,
+              "layer": "lexical",
+              "mask": 15,
+              "mirror": 255,
+              "object": "green",
+              "pair": [
+                255,
+                255
+              ],
+              "predicate": "causes",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "causes",
+              "subject": "yellow mixed with blue",
+              "tags": {
+                "DESCRIPTION": "yellow mixed with blue",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "causes",
+                  "description": "yellow mixed with blue",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "bfd2d048b6c9e63e::assert",
+                "OBJECT:REALM": {
+                  "object": "yellow mixed with blue",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "yellow mixed with blue",
+                  "space": "general",
+                  "system": "causes"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "green",
+                  "predicate": "causes",
+                  "relation": "causes",
+                  "unit": "yellow mixed with blue"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "yellow mixed with blue",
+                  "query": "causes",
+                  "whole": "green"
+                }
+              },
+              "value": 16777215,
+              "whole": "green"
+            },
+            {
+              "boolean": "ZERO",
+              "digest": "a35ec35d9f785f19",
+              "head": 0,
+              "layer": "lexical",
+              "mask": 0,
+              "mirror": 0,
+              "object": "carry water",
+              "pair": [
+                0,
+                0
+              ],
+              "predicate": "can",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "can",
+              "subject": "explain why a river",
+              "tags": {
+                "DESCRIPTION": "explain why a river",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "can",
+                  "description": "explain why a river",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "a35ec35d9f785f19::assert",
+                "OBJECT:REALM": {
+                  "object": "explain why a river",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "explain why a river",
+                  "space": "general",
+                  "system": "can"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "carry water",
+                  "predicate": "can",
+                  "relation": "can",
+                  "unit": "explain why a river"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "explain why a river",
+                  "query": "can",
+                  "whole": "carry water"
+                }
+              },
+              "value": 0,
+              "whole": "carry water"
+            },
+            {
+              "boolean": "NOT_B",
+              "digest": "fcb9133979197f7b",
+              "head": 11,
+              "layer": "lexical",
+              "mask": 5,
+              "mirror": 208,
+              "object": "things freeze",
+              "pair": [
+                11,
+                243
+              ],
+              "predicate": "causes",
+              "qualifier": "",
+              "rail": "s+",
+              "reverse_rail": "s-",
+              "role": "causes",
+              "subject": "cold",
+              "tags": {
+                "DESCRIPTION": "cold",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "causes",
+                  "description": "cold",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "fcb9133979197f7b::assert",
+                "OBJECT:REALM": {
+                  "object": "cold",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "cold",
+                  "space": "general",
+                  "system": "causes"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "things freeze",
+                  "predicate": "causes",
+                  "relation": "causes",
+                  "unit": "cold"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "cold",
+                  "query": "causes",
+                  "whole": "things freeze"
+                }
+              },
+              "value": 783347,
+              "whole": "things freeze"
+            }
+          ],
+          "magic": "NLMHEAD1",
+          "mapped": true,
+          "masks": [
+            0,
+            1,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            13,
+            14,
+            15
+          ],
+          "register_offset": 6539792
+        },
+        "learned_records": 0,
+        "response_templates": 0,
+        "retrieval": 0,
+        "synthesis": "temporal_mirror_lm/1",
+        "temporal_frame": {
+          "anchor": "river",
+          "coverage": 0.3333,
+          "mirror_state": true,
+          "output_drive": 1.0,
+          "score": 0.3854,
+          "steps": 9
+        },
+        "vocabulary": {
+          "bigram_contexts": 73,
+          "exposed_sentences": 39,
+          "mirror_address_cells": 126,
+          "schema": "nanlm.temporal-mirror-lm/1",
+          "trigram_contexts": 142,
+          "vocabulary": 75
+        }
+      }
+    },
+    {
+      "judge": {
+        "answers_prompt": 0,
+        "coherent": 0,
+        "copied_training_sentence": 1,
+        "notes": "The reply fails to explain the process of water becoming ice and then water again. It provides two unrelated statements, both of which are copied directly from the training set.",
+        "novel_combination": 0,
+        "unsupported_claim": 0
+      },
+      "model": "temporal-mirror/1",
+      "prompt": "Explain how water can become ice and then water again.",
+      "provider": "nanlm-native",
+      "response": "Water has the ability to flow. Ice is water that is frozen.",
+      "surface": {
+        "characters": 59,
+        "copied_training_sentence": false,
+        "empty": false,
+        "max_token_repetition": 2,
+        "novel_3gram_ratio": 0.2,
+        "novel_3grams": 2,
+        "tokens": 12,
+        "unique_tokens": 10
+      },
+      "synthesis": {
+        "heads": {
+          "head_count": 26,
+          "head_scratchpads": 26,
+          "layers": [
+            "lexical"
+          ],
+          "leaf_count": 36,
+          "leaves": [
+            {
+              "boolean": "NAND",
+              "digest": "42bd65d0b820c318",
+              "head": 7,
+              "layer": "lexical",
+              "mask": 7,
+              "mirror": 224,
+              "object": "animals",
+              "pair": [
+                7,
+                105
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s+",
+              "reverse_rail": "s-",
+              "role": "is",
+              "subject": "dogs",
+              "tags": {
+                "DESCRIPTION": "dogs",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "dogs",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "42bd65d0b820c318::assert",
+                "OBJECT:REALM": {
+                  "object": "dogs",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "dogs",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "animals",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "dogs"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "dogs",
+                  "query": "is",
+                  "whole": "animals"
+                }
+              },
+              "value": 485737,
+              "whole": "animals"
+            },
+            {
+              "boolean": "NAND",
+              "digest": "903a8650bd99fd67",
+              "head": 35,
+              "layer": "lexical",
+              "mask": 7,
+              "mirror": 196,
+              "object": "blue",
+              "pair": [
+                5,
+                35
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "is",
+              "subject": "the sky",
+              "tags": {
+                "DESCRIPTION": "the sky",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "the sky",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "903a8650bd99fd67::assert",
+                "OBJECT:REALM": {
+                  "object": "the sky",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "the sky",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "blue",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "the sky"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "the sky",
+                  "query": "is",
+                  "whole": "blue"
+                }
+              },
+              "value": 2295045,
+              "whole": "blue"
+            },
+            {
+              "boolean": "A_OR_NOT_B",
+              "digest": "47e6b11440745429",
+              "head": 109,
+              "layer": "lexical",
+              "mask": 11,
+              "mirror": 182,
+              "object": "frozen water",
+              "pair": [
+                4,
+                109
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "is",
+              "subject": "ice",
+              "tags": {
+                "DESCRIPTION": "ice",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "ice",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "47e6b11440745429::assert",
+                "OBJECT:REALM": {
+                  "object": "ice",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "ice",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "frozen water",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "ice"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "ice",
+                  "query": "is",
+                  "whole": "frozen water"
+                }
+              },
+              "value": 7144452,
+              "whole": "frozen water"
+            },
+            {
+              "boolean": "A_OR_NOT_B",
+              "digest": "35c6529499df8a77",
+              "head": 139,
+              "layer": "lexical",
+              "mask": 11,
+              "mirror": 209,
+              "object": "flow",
+              "pair": [
+                10,
+                139
+              ],
+              "predicate": "can",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "can",
+              "subject": "water",
+              "tags": {
+                "DESCRIPTION": "water",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "can",
+                  "description": "water",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "35c6529499df8a77::assert",
+                "OBJECT:REALM": {
+                  "object": "water",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "water",
+                  "space": "general",
+                  "system": "can"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "flow",
+                  "predicate": "can",
+                  "relation": "can",
+                  "unit": "water"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "water",
+                  "query": "can",
+                  "whole": "flow"
+                }
+              },
+              "value": 9112074,
+              "whole": "flow"
+            },
+            {
+              "boolean": "ONE",
+              "digest": "bfd2d048b6c9e63e",
+              "head": 255,
+              "layer": "lexical",
+              "mask": 15,
+              "mirror": 255,
+              "object": "green",
+              "pair": [
+                255,
+                255
+              ],
+              "predicate": "causes",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "causes",
+              "subject": "yellow mixed with blue",
+              "tags": {
+                "DESCRIPTION": "yellow mixed with blue",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "causes",
+                  "description": "yellow mixed with blue",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "bfd2d048b6c9e63e::assert",
+                "OBJECT:REALM": {
+                  "object": "yellow mixed with blue",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "yellow mixed with blue",
+                  "space": "general",
+                  "system": "causes"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "green",
+                  "predicate": "causes",
+                  "relation": "causes",
+                  "unit": "yellow mixed with blue"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "yellow mixed with blue",
+                  "query": "causes",
+                  "whole": "green"
+                }
+              },
+              "value": 16777215,
+              "whole": "green"
+            },
+            {
+              "boolean": "ZERO",
+              "digest": "a35ec35d9f785f19",
+              "head": 0,
+              "layer": "lexical",
+              "mask": 0,
+              "mirror": 0,
+              "object": "carry water",
+              "pair": [
+                0,
+                0
+              ],
+              "predicate": "can",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "can",
+              "subject": "explain why a river",
+              "tags": {
+                "DESCRIPTION": "explain why a river",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "can",
+                  "description": "explain why a river",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "a35ec35d9f785f19::assert",
+                "OBJECT:REALM": {
+                  "object": "explain why a river",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "explain why a river",
+                  "space": "general",
+                  "system": "can"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "carry water",
+                  "predicate": "can",
+                  "relation": "can",
+                  "unit": "explain why a river"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "explain why a river",
+                  "query": "can",
+                  "whole": "carry water"
+                }
+              },
+              "value": 0,
+              "whole": "carry water"
+            },
+            {
+              "boolean": "NOT_B",
+              "digest": "fcb9133979197f7b",
+              "head": 11,
+              "layer": "lexical",
+              "mask": 5,
+              "mirror": 208,
+              "object": "things freeze",
+              "pair": [
+                11,
+                243
+              ],
+              "predicate": "causes",
+              "qualifier": "",
+              "rail": "s+",
+              "reverse_rail": "s-",
+              "role": "causes",
+              "subject": "cold",
+              "tags": {
+                "DESCRIPTION": "cold",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "causes",
+                  "description": "cold",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "fcb9133979197f7b::assert",
+                "OBJECT:REALM": {
+                  "object": "cold",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "cold",
+                  "space": "general",
+                  "system": "causes"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "things freeze",
+                  "predicate": "causes",
+                  "relation": "causes",
+                  "unit": "cold"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "cold",
+                  "query": "causes",
+                  "whole": "things freeze"
+                }
+              },
+              "value": 783347,
+              "whole": "things freeze"
+            },
+            {
+              "boolean": "NOT_A_AND_B",
+              "digest": "81305dbd1095432e",
+              "head": 26,
+              "layer": "lexical",
+              "mask": 2,
+              "mirror": 88,
+              "object": "become ice and then water again",
+              "pair": [
+                26,
+                91
+              ],
+              "predicate": "can",
+              "qualifier": "",
+              "rail": "s+",
+              "reverse_rail": "s-",
+              "role": "can",
+              "subject": "explain how water",
+              "tags": {
+                "DESCRIPTION": "explain how water",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "can",
+                  "description": "explain how water",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "81305dbd1095432e::assert",
+                "OBJECT:REALM": {
+                  "object": "explain how water",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "explain how water",
+                  "space": "general",
+                  "system": "can"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "become ice and then water again",
+                  "predicate": "can",
+                  "relation": "can",
+                  "unit": "explain how water"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "explain how water",
+                  "query": "can",
+                  "whole": "become ice and then water again"
+                }
+              },
+              "value": 1727323,
+              "whole": "become ice and then water again"
+            }
+          ],
+          "magic": "NLMHEAD1",
+          "mapped": true,
+          "masks": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            13,
+            14,
+            15
+          ],
+          "register_offset": 6539792
+        },
+        "learned_records": 1,
+        "response_templates": 0,
+        "retrieval": 0,
+        "synthesis": "temporal_mirror_lm/1",
+        "temporal_frame": {
+          "anchor": "water",
+          "coverage": 1.0,
+          "mirror_state": true,
+          "output_drive": 1.0,
+          "score": 0.6463,
+          "steps": 12
+        },
+        "vocabulary": {
+          "bigram_contexts": 73,
+          "exposed_sentences": 39,
+          "mirror_address_cells": 126,
+          "schema": "nanlm.temporal-mirror-lm/1",
+          "trigram_contexts": 142,
+          "vocabulary": 75
+        }
+      }
+    },
+    {
+      "judge": {
+        "answers_prompt": 0,
+        "coherent": 1,
+        "copied_training_sentence": 1,
+        "notes": "The reply states the facts but fails to answer the 'Why' part of the prompt.",
+        "novel_combination": 0,
+        "unsupported_claim": 0
+      },
+      "model": "temporal-mirror/1",
+      "prompt": "Why is the sky blue but grass green?",
+      "provider": "nanlm-native",
+      "response": "Grass is green. Sky is blue.",
+      "surface": {
+        "characters": 28,
+        "copied_training_sentence": false,
+        "empty": false,
+        "max_token_repetition": 2,
+        "novel_3gram_ratio": 0.5,
+        "novel_3grams": 2,
+        "tokens": 6,
+        "unique_tokens": 5
+      },
+      "synthesis": {
+        "heads": {
+          "head_count": 26,
+          "head_scratchpads": 26,
+          "layers": [
+            "lexical"
+          ],
+          "leaf_count": 36,
+          "leaves": [
+            {
+              "boolean": "NAND",
+              "digest": "42bd65d0b820c318",
+              "head": 7,
+              "layer": "lexical",
+              "mask": 7,
+              "mirror": 224,
+              "object": "animals",
+              "pair": [
+                7,
+                105
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s+",
+              "reverse_rail": "s-",
+              "role": "is",
+              "subject": "dogs",
+              "tags": {
+                "DESCRIPTION": "dogs",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "dogs",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "42bd65d0b820c318::assert",
+                "OBJECT:REALM": {
+                  "object": "dogs",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "dogs",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "animals",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "dogs"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "dogs",
+                  "query": "is",
+                  "whole": "animals"
+                }
+              },
+              "value": 485737,
+              "whole": "animals"
+            },
+            {
+              "boolean": "NAND",
+              "digest": "903a8650bd99fd67",
+              "head": 35,
+              "layer": "lexical",
+              "mask": 7,
+              "mirror": 196,
+              "object": "blue",
+              "pair": [
+                5,
+                35
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "is",
+              "subject": "the sky",
+              "tags": {
+                "DESCRIPTION": "the sky",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "the sky",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "903a8650bd99fd67::assert",
+                "OBJECT:REALM": {
+                  "object": "the sky",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "the sky",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "blue",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "the sky"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "the sky",
+                  "query": "is",
+                  "whole": "blue"
+                }
+              },
+              "value": 2295045,
+              "whole": "blue"
+            },
+            {
+              "boolean": "A_OR_NOT_B",
+              "digest": "47e6b11440745429",
+              "head": 109,
+              "layer": "lexical",
+              "mask": 11,
+              "mirror": 182,
+              "object": "frozen water",
+              "pair": [
+                4,
+                109
+              ],
+              "predicate": "is",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "is",
+              "subject": "ice",
+              "tags": {
+                "DESCRIPTION": "ice",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "is",
+                  "description": "ice",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "47e6b11440745429::assert",
+                "OBJECT:REALM": {
+                  "object": "ice",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "ice",
+                  "space": "general",
+                  "system": "is"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "frozen water",
+                  "predicate": "is",
+                  "relation": "is",
+                  "unit": "ice"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "ice",
+                  "query": "is",
+                  "whole": "frozen water"
+                }
+              },
+              "value": 7144452,
+              "whole": "frozen water"
+            },
+            {
+              "boolean": "A_OR_NOT_B",
+              "digest": "35c6529499df8a77",
+              "head": 139,
+              "layer": "lexical",
+              "mask": 11,
+              "mirror": 209,
+              "object": "flow",
+              "pair": [
+                10,
+                139
+              ],
+              "predicate": "can",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "can",
+              "subject": "water",
+              "tags": {
+                "DESCRIPTION": "water",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "can",
+                  "description": "water",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "35c6529499df8a77::assert",
+                "OBJECT:REALM": {
+                  "object": "water",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "water",
+                  "space": "general",
+                  "system": "can"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "flow",
+                  "predicate": "can",
+                  "relation": "can",
+                  "unit": "water"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "water",
+                  "query": "can",
+                  "whole": "flow"
+                }
+              },
+              "value": 9112074,
+              "whole": "flow"
+            },
+            {
+              "boolean": "ONE",
+              "digest": "bfd2d048b6c9e63e",
+              "head": 255,
+              "layer": "lexical",
+              "mask": 15,
+              "mirror": 255,
+              "object": "green",
+              "pair": [
+                255,
+                255
+              ],
+              "predicate": "causes",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "causes",
+              "subject": "yellow mixed with blue",
+              "tags": {
+                "DESCRIPTION": "yellow mixed with blue",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "causes",
+                  "description": "yellow mixed with blue",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "bfd2d048b6c9e63e::assert",
+                "OBJECT:REALM": {
+                  "object": "yellow mixed with blue",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "yellow mixed with blue",
+                  "space": "general",
+                  "system": "causes"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "green",
+                  "predicate": "causes",
+                  "relation": "causes",
+                  "unit": "yellow mixed with blue"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "yellow mixed with blue",
+                  "query": "causes",
+                  "whole": "green"
+                }
+              },
+              "value": 16777215,
+              "whole": "green"
+            },
+            {
+              "boolean": "ZERO",
+              "digest": "a35ec35d9f785f19",
+              "head": 0,
+              "layer": "lexical",
+              "mask": 0,
+              "mirror": 0,
+              "object": "carry water",
+              "pair": [
+                0,
+                0
+              ],
+              "predicate": "can",
+              "qualifier": "",
+              "rail": "s-",
+              "reverse_rail": "s+",
+              "role": "can",
+              "subject": "explain why a river",
+              "tags": {
+                "DESCRIPTION": "explain why a river",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "can",
+                  "description": "explain why a river",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "a35ec35d9f785f19::assert",
+                "OBJECT:REALM": {
+                  "object": "explain why a river",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "explain why a river",
+                  "space": "general",
+                  "system": "can"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "carry water",
+                  "predicate": "can",
+                  "relation": "can",
+                  "unit": "explain why a river"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "explain why a river",
+                  "query": "can",
+                  "whole": "carry water"
+                }
+              },
+              "value": 0,
+              "whole": "carry water"
+            },
+            {
+              "boolean": "NOT_B",
+              "digest": "fcb9133979197f7b",
+              "head": 11,
+              "layer": "lexical",
+              "mask": 5,
+              "mirror": 208,
+              "object": "things freeze",
+              "pair": [
+                11,
+                243
+              ],
+              "predicate": "causes",
+              "qualifier": "",
+              "rail": "s+",
+              "reverse_rail": "s-",
+              "role": "causes",
+              "subject": "cold",
+              "tags": {
+                "DESCRIPTION": "cold",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "causes",
+                  "description": "cold",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "fcb9133979197f7b::assert",
+                "OBJECT:REALM": {
+                  "object": "cold",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "cold",
+                  "space": "general",
+                  "system": "causes"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "things freeze",
+                  "predicate": "causes",
+                  "relation": "causes",
+                  "unit": "cold"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "cold",
+                  "query": "causes",
+                  "whole": "things freeze"
+                }
+              },
+              "value": 783347,
+              "whole": "things freeze"
+            },
+            {
+              "boolean": "NOT_A_AND_B",
+              "digest": "81305dbd1095432e",
+              "head": 26,
+              "layer": "lexical",
+              "mask": 2,
+              "mirror": 88,
+              "object": "become ice and then water again",
+              "pair": [
+                26,
+                91
+              ],
+              "predicate": "can",
+              "qualifier": "",
+              "rail": "s+",
+              "reverse_rail": "s-",
+              "role": "can",
+              "subject": "explain how water",
+              "tags": {
+                "DESCRIPTION": "explain how water",
+                "DESCRIPTION:DIRECTOR:ABSTRACT": {
+                  "abstract": "can",
+                  "description": "explain how water",
+                  "director": "assert"
+                },
+                "FORMAL:ID:LABEL::DIRECTIVE": "81305dbd1095432e::assert",
+                "OBJECT:REALM": {
+                  "object": "explain how water",
+                  "realm": "physical"
+                },
+                "SPACE:BODY:COMPONENT:SYSTEM": {
+                  "body": "general",
+                  "component": "explain how water",
+                  "space": "general",
+                  "system": "can"
+                },
+                "UNIT:DIVISION:RELATION": {
+                  "division": "relation",
+                  "object": "become ice and then water again",
+                  "predicate": "can",
+                  "relation": "can",
+                  "unit": "explain how water"
+                },
+                "UNIT:WHOLE:COMPONENT:QUERY": {
+                  "component": "explain how water",
+                  "query": "can",
+                  "whole": "become ice and then water again"
+                }
+              },
+              "value": 1727323,
+              "whole": "become ice and then water again"
+            }
+          ],
+          "magic": "NLMHEAD1",
+          "mapped": true,
+          "masks": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            13,
+            14,
+            15
+          ],
+          "register_offset": 6539792
+        },
+        "learned_records": 0,
+        "response_templates": 0,
+        "retrieval": 0,
+        "synthesis": "temporal_mirror_lm/1",
+        "temporal_frame": {
+          "anchor": "grass",
+          "coverage": 1.0,
+          "mirror_state": true,
+          "output_drive": 1.0,
+          "score": 0.4563,
+          "steps": 6
+        },
+        "vocabulary": {
+          "bigram_contexts": 73,
+          "exposed_sentences": 39,
+          "mirror_address_cells": 126,
+          "schema": "nanlm.temporal-mirror-lm/1",
+          "trigram_contexts": 142,
+          "vocabulary": 75
+        }
+      }
+    }
+  ],
+  "schema": "nanlm.novel-generation-probe/1",
+  "state_dir": "/data/data/com.termux/files/usr/tmp/nanlm-train-v2",
+  "summary": {
+    "copied_training_sentences": 1,
+    "empty_responses": 0,
+    "judge": {
+      "answers_prompt": 0,
+      "coherent": 2,
+      "errors": 0,
+      "novel_combination": 0,
+      "unsupported_claim": 1
+    },
+    "mean_novel_3gram_ratio": 0.247,
+    "mean_tokens": 9.75,
+    "prompts": 8
+  },
+  "training_results": "docs/NANLM_GEMMA_LEARNING_OVER_TIME_V2.json"
+}

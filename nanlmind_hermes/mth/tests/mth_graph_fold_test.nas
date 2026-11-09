@@ -1,0 +1,727 @@
+; MTH graph fold/unfold vector fixture — NaN16 only.
+; Fixed .org arrays; 256-word even input and 255-word odd input.
+.org 0
+JMP @mth_fold_test_main
+.include "../nan16/mth_graph_fold.nas"
+
+mth_fold_test_main:
+  MOVI r13,1
+
+  ; ---- even 256-position fold ----
+  MOVI r1,@mth_fold_x256
+  MOVI r2,@mth_fold_p256
+  MOVI r3,@mth_fold_m256
+  CALL @mth_graph_fold_256_vector
+  CMP r1,r13
+  JMP[NE] @mth_fold_test_fail
+
+  ; plus[0]=3.0 from x[0]=1.0, x[255]=2.0.
+  MOVI r2,@mth_fold_p256
+  LD r4,r2,0
+  MOVI r5,0
+  MOVHI r5,0x4040
+  CMP r4,r5
+  JMP[NE] @mth_fold_test_fail
+
+  ; minus[0]=-1.0.
+  MOVI r2,@mth_fold_m256
+  LD r4,r2,0
+  MOVI r5,0
+  MOVHI r5,0xBF80
+  CMP r4,r5
+  JMP[NE] @mth_fold_test_fail
+
+  ; plus[1]=10.0 from x[1]=4.0, x[254]=6.0.
+  MOVI r2,@mth_fold_p256
+  ADD r2,r2,r13
+  LD r4,r2,0
+  MOVI r5,0
+  MOVHI r5,0x4120
+  CMP r4,r5
+  JMP[NE] @mth_fold_test_fail
+
+  ; minus[1]=-2.0.
+  MOVI r2,@mth_fold_m256
+  ADD r2,r2,r13
+  LD r4,r2,0
+  MOVI r5,0
+  MOVHI r5,0xC000
+  CMP r4,r5
+  JMP[NE] @mth_fold_test_fail
+
+  ; Last even pair i=127: x[127]=1.0, x[128]=2.0.
+  MOVI r6,127
+  MOVI r2,@mth_fold_p256
+  ADD r2,r2,r6
+  LD r4,r2,0
+  MOVI r5,0
+  MOVHI r5,0x4040
+  CMP r4,r5
+  JMP[NE] @mth_fold_test_fail
+
+  MOVI r2,@mth_fold_m256
+  ADD r2,r2,r6
+  LD r4,r2,0
+  MOVI r5,0
+  MOVHI r5,0xBF80
+  CMP r4,r5
+  JMP[NE] @mth_fold_test_fail
+
+  ; Count checks: plus[128] and minus[128] are untouched 77 sentinels.
+  MOVI r2,@mth_fold_p256
+  ADD r2,r2,r6
+  ADD r2,r2,r13
+  LD r4,r2,0
+  MOVI r5,77
+  CMP r4,r5
+  JMP[NE] @mth_fold_test_fail
+
+  MOVI r2,@mth_fold_m256
+  ADD r2,r2,r6
+  ADD r2,r2,r13
+  LD r4,r2,0
+  MOVI r5,77
+  CMP r4,r5
+  JMP[NE] @mth_fold_test_fail
+
+  ; ---- exact unnormalized unfold round trip over all 256 words ----
+  MOVI r1,@mth_fold_p256
+  MOVI r2,@mth_fold_m256
+  MOVI r3,@mth_fold_y256
+  CALL @mth_graph_fold_256_unfold
+  CMP r1,r13
+  JMP[NE] @mth_fold_test_fail
+
+  MOVI r4,@mth_fold_y256
+  MOVI r5,@mth_fold_x256
+  MOVI r6,256
+mth_fold_test_roundtrip_loop:
+  LD r7,r4,0
+  LD r8,r5,0
+  CMP r7,r8
+  JMP[NE] @mth_fold_test_fail
+  ADD r4,r4,r13
+  ADD r5,r5,r13
+  SUB r6,r6,r13
+  CMP r6,r0
+  JMP[NE] @mth_fold_test_roundtrip_loop
+
+  ; ---- odd 255-head fold ----
+  MOVI r1,@mth_fold_x255
+  MOVI r2,@mth_fold_p255
+  MOVI r3,@mth_fold_m255
+  CALL @mth_graph_fold_255_vector
+  CMP r1,r13
+  JMP[NE] @mth_fold_test_fail
+
+  ; All 127 pairs: plus=3.0, minus=-1.0. The first pass checks [0].
+  MOVI r4,@mth_fold_p255
+  MOVI r5,@mth_fold_m255
+  MOVI r6,127
+  MOVI r9,0
+  MOVHI r9,0x4040
+  MOVI r10,0
+  MOVHI r10,0xBF80
+mth_fold_test_255_pair_loop:
+  LD r7,r4,0
+  CMP r7,r9
+  JMP[NE] @mth_fold_test_fail
+  LD r8,r5,0
+  CMP r8,r10
+  JMP[NE] @mth_fold_test_fail
+  ADD r4,r4,r13
+  ADD r5,r5,r13
+  SUB r6,r6,r13
+  CMP r6,r0
+  JMP[NE] @mth_fold_test_255_pair_loop
+
+  ; The loop leaves r4=plus[127], r5=minus[127] sentinel.
+  ; Middle plus[127]=7.0 exactly, not a pair sum.
+  LD r7,r4,0
+  MOVI r8,0
+  MOVHI r8,0x40E0
+  CMP r7,r8
+  JMP[NE] @mth_fold_test_fail
+
+  ; Count checks: plus stops at 128 words, minus at 127 words.
+  ADD r4,r4,r13
+  LD r7,r4,0
+  MOVI r8,77
+  CMP r7,r8
+  JMP[NE] @mth_fold_test_fail
+
+  LD r7,r5,0
+  MOVI r8,77
+  CMP r7,r8
+  JMP[NE] @mth_fold_test_fail
+
+  MOVI r1,@mth_fold_test_pass
+  CALL @mth_fold_test_puts
+  HALT
+
+mth_fold_test_fail:
+  MOVI r1,@mth_fold_test_bad
+  CALL @mth_fold_test_puts
+  HALT
+
+mth_fold_test_puts:
+  MOVI r4,255
+mth_fold_test_puts_word:
+  LD r2,r1,0
+  MOVI r3,4
+mth_fold_test_puts_byte:
+  BOOL.8 r5,r2,r4
+  CMP r5,r0
+  RET[EQ]
+  PUTC r5
+  SHR r2,r2,8
+  SUB r3,r3,r13
+  JMP[NE] @mth_fold_test_puts_byte
+  ADD r1,r1,r13
+  JMP @mth_fold_test_puts_word
+
+; Fixed non-overlapping fixture regions.
+.org 512
+mth_fold_x256:
+.word 0x3F800000
+.word 0x40800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40C00000
+.word 0x40000000
+
+.org 768
+mth_fold_p256:
+.org 896
+.word 77
+
+.org 1024
+mth_fold_m256:
+.org 1152
+.word 77
+
+.org 1280
+mth_fold_y256:
+.org 1536
+mth_fold_x255:
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x3F800000
+.word 0x40E00000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+.word 0x40000000
+
+.org 1792
+mth_fold_p255:
+.org 1920
+.word 77
+
+.org 2048
+mth_fold_m255:
+.org 2175
+.word 77
+
+.org 2304
+mth_fold_test_pass:
+.str "MTH GRAPH FOLD VECTOR PASS\n"
+mth_fold_test_bad:
+.str "MTH GRAPH FOLD VECTOR FAIL\n"

@@ -8,6 +8,9 @@ On an Android/Termux host with `proot-distro`, use a disposable Alpine rootfs.
 ```sh
 proot-distro install alpine:3.20
 proot-distro login alpine -- /sbin/apk add --no-cache python3 sqlite-libs
+# Native MTH tests additionally need a portable-C compiler and a compatible awk.
+# Without these, the MTH runtime tests skip and the status reports the setup gap.
+proot-distro login alpine -- /sbin/apk add --no-cache build-base gawk
 ```
 
 The Alpine image may already contain a Python, but the Termux `python3` can
@@ -33,16 +36,26 @@ profile fails on `fchdir`/`getcwd` with `Function not implemented`.
 
 ## Result
 
-On the Termux/Android test host:
+On the Termux/Android test host, the full current suite passes:
 
 ```text
-Ran 65 tests in 22.230s
-OK
+OK (0 skipped with build-base + gawk)
 ```
+
+The suite currently contains at least 369 test methods; the exact count is not
+pinned here because it changes as tests are added.
+
+With only `python3 sqlite-libs`, the six compiler-backed MTH runtime tests skip
+and the native-build-unavailable test still verifies the fail-closed setup
+message.
 
 This includes the cryptography-backed and compatibility crypto paths, chat loop,
 memory, native runner harness, pairing, auth, HW4+ lease migration, device
-routes, and HTTP API tests. The production manifest declares
+routes, HTTP API tests, permanent session-context loading, free-chat layered
+learning, canonical WordNet HW4:0 ingestion, the seven permanent session
+documents, the bundled 91-kernel MTH catalog (44 families), MTH data leaves and
+function-tree audit, portable NaN0S native fixture execution, the four vector
+N16I operand dispatchers, and the N16I differential self-test. The production manifest declares
 `cryptography>=42,<47`; the compatibility fallback remains available for
 isolated constrained-host tests.
 

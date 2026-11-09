@@ -13,54 +13,406 @@ def register(ctx):
     from .universe_chart import LocalRunner
     LocalRunner.open(ctx)
 
-    _learning_cache: dict[str, object] = {}
-
-    def _learning_policy():
-        from .layered_learning import LearningPolicy
-        def setting(key, default):
-            try:
-                return ctx.get_config(key, default=default)
-            except Exception:
-                return default
-        return LearningPolicy(
-            min_support=int(setting("learning_min_support", 3)),
-            min_confidence=float(setting("learning_min_confidence", 0.6)),
-            max_candidates=int(setting("learning_max_candidates", 64)),
-            max_promoted_leaves=int(setting("learning_max_promoted_leaves", 100)),
-            require_explicit_approval=bool(setting("learning_require_approval", True)),
-            auto_sync=bool(setting("learning_auto_sync", False)),
-        )
+    # Ship the NANNET/WordNet architecture contract with the plugin and load it
+    # once at registration. The attached LLM receives this same permanent
+    # session data on every provider turn; it is not reconstructed from user
+    # text or from an external documentation fetch.
+    try:
+        from . import session_context
+        session_context.open_session(ctx)
+    except Exception:
+        pass
 
     def _learning(ctx):
-        from .layered_learning import LayeredLearningCoordinator
+        from .layered_learning import coordinator_for_context
         from .universe_chart import LocalRunner
-        root, _corpora, _universe = tools._paths(ctx)
-        key = str(root)
-        coordinator = _learning_cache.get(key)
-        if coordinator is not None:
-            return coordinator
         runner = LocalRunner.open(ctx)
-        dictionary = None
-        try:
-            archive = ctx.get_config("wordnet_archive", default="")
-        except Exception:
-            archive = ""
-        if archive:
-            try:
-                from .wordnet_store import WordNetStore
-                store = WordNetStore.discover(archive)
-                dictionary = store.universe
-            except Exception:
-                dictionary = None
-        coordinator = LayeredLearningCoordinator(
-            root, chart=runner.chart, dictionary=dictionary,
-            policy=_learning_policy())
-        _learning_cache[key] = coordinator
+        coordinator = coordinator_for_context(ctx)
+        # The local runner's chart is process-lifetime state. Keep the
+        # coordinator bound to it without opening a second scratch view.
+        if coordinator.chart is None:
+            coordinator.bind_chart(runner.chart)
         return coordinator
+
+    _resident_cache = {}
+    _resident_field_cache = {}
+    _resident_scratch_cache = {}
+    _head_field_tool_cache = {}
+
+    def _resident_logic_ok():
+        try:
+            from .head_boolean_field import logic_base_preserved
+            return bool(logic_base_preserved())
+        except Exception:
+            return False
+
+    def _resident_field_learner(universe, temporal):
+        from .resident.field_learning import FieldLearner
+        key = str(universe.path)
+        cached = _resident_field_cache.get(key)
+        if cached is None:
+            cached = FieldLearner.from_cells(
+                temporal, universe.cells,
+                max_active_heads=64, max_couplings=128,
+                max_writes_per_sentence=512,
+                total_write_budget=1_000_000)
+            _resident_field_cache.clear()
+            _resident_field_cache[key] = cached
+        return cached
+
+    def _resident_scratch(universe):
+        from .resident.scratch_layers import ScratchLayers
+        key = str(universe.path)
+        cached = _resident_scratch_cache.get(key)
+        if cached is None:
+            cached = ScratchLayers()
+            _resident_scratch_cache.clear()
+            _resident_scratch_cache[key] = cached
+        return cached
+
+    def _resident_config(key, default):
+        try:
+            return ctx.get_config(key, default=default)
+        except TypeError:
+            try:
+                return ctx.get_config(key, default)
+            except Exception:
+                return default
+        except Exception:
+            return default
+
+    def _resident_size():
+        try:
+            value = int(_resident_config(
+                "resident_size_bytes", 256 * 1024 * 1024))
+        except Exception:
+            value = 256 * 1024 * 1024
+        return max(16 * 1024 * 1024, min(value, 1024 * 1024 * 1024))
+
+    def _resident_path():
+        from pathlib import Path
+        try:
+            root = Path(str(_resident_config(
+                "state_dir", "~/.local/share/nanlmind-hermes"))).expanduser()
+        except Exception:
+            root = Path("~/.local/share/nanlmind-hermes").expanduser()
+        return root / "resident" / "universe.nlmres"
+
+    def _resident_universe(create=False):
+        from .resident.universe import ResidentUniverse
+        path = _resident_path()
+        key = str(path)
+        cached = _resident_cache.get(key)
+        if cached is not None:
+            return cached
+        if not create and not path.exists():
+            return None
+        universe = ResidentUniverse.open_or_create(path, size=_resident_size())
+        _resident_cache.clear()
+        _resident_cache[key] = universe
+        return universe
+
+    def _resident_status_optional():
+        try:
+            universe = _resident_universe(create=False)
+            if universe is None:
+                return {"opened": False, "path": str(_resident_path()),
+                        "schema": "nanlm.resident-universe/1",
+                        "canonical_merge": {"enabled": False, "attempted": False}}
+            result = universe.status()
+            result["opened"] = True
+            try:
+                from .resident.head_field import ResidentHeadField
+                field = ResidentHeadField(
+                    universe.cells, generation=universe.generation)
+                result["head_field"] = field.snapshot()
+            except Exception as exc:
+                result["head_field"] = {
+                    "status": "unavailable",
+                    "error": type(exc).__name__ + ": " + str(exc)[:300],
+                }
+            scratch = _resident_scratch_cache.get(str(universe.path))
+            if scratch is not None:
+                try:
+                    result["scratch_layers"] = scratch.stats()
+                except Exception:
+                    pass
+            return result
+        except Exception as exc:
+            return {"opened": False, "path": str(_resident_path()),
+                    "error": type(exc).__name__ + ": " + str(exc)[:300],
+                    "canonical_merge": {"enabled": False, "attempted": False}}
+
+    class _HeadFieldToolBackend:
+        """Plugin adapter for field_tools over the resident head cells."""
+
+        def __init__(self, universe):
+            from .resident.head_field import ResidentHeadField
+            from .resident.scratch_layers import ScratchLayers
+            self.universe = universe
+            self.field = ResidentHeadField(
+                universe.cells, generation=universe.generation,
+                commit=universe._commit, flush=universe.flush)
+            self.scratch = ScratchLayers()
+            self.layers = {}
+
+        @property
+        def generation(self):
+            return int(self.universe.generation)
+
+        def snapshot(self):
+            activation = self.field.field_activation()
+            heads = self.field.read_all()
+            active = [item["head"] for item in heads if item.get("active")]
+            status = self.universe.status()
+            return {
+                "schema": "nanlm.resident-head-field/1",
+                "opened": True,
+                "generation": self.universe.generation,
+                "digest": self.universe.digest,
+                "heads": heads,
+                "active_heads": active,
+                "field": {
+                    "head_count": 256,
+                    "active_heads": active,
+                    "active_count": len(active),
+                    "entropy_bits": activation.get("entropy_bits"),
+                    "peak_head": activation.get("peak_head"),
+                },
+                "budget": {
+                    "current_bytes": status.get("file_bytes"),
+                    "used_bytes": status.get("committed_bytes"),
+                    "hard_limit_bytes": status.get("hard_ceiling_bytes"),
+                    "exceeded": False,
+                },
+                "canonical_merge": {"enabled": False, "attempted": False},
+            }
+
+        def activate(self, head, delta):
+            result = self.field.activate(int(head), float(delta))
+            return {
+                "accepted": True,
+                "generation": self.universe.generation,
+                "score": result.get("score"),
+                "state": result.get("state"),
+                "active": True,
+            }
+
+        def propose(self, head, delta, reason=""):
+            head = int(head)
+            layer = head % 10
+            self.layers[head] = layer
+            try:
+                self.scratch.write_layer(
+                    head, layer,
+                    {"delta": float(delta), "reason": str(reason)[:240]},
+                    approved=False)
+            except Exception:
+                pass
+            proposal = self.field.propose(head, float(delta))
+            return {
+                "token": proposal.get("token"),
+                "generation": self.universe.generation,
+                "reasons": ["scratch_layer_L%d" % layer],
+                "head": head,
+                "delta": float(delta),
+            }
+
+        def commit(self, token, expected_generation):
+            if int(expected_generation) != int(self.universe.generation):
+                return {"accepted": False,
+                        "reasons": ["generation_mismatch"],
+                        "generation": self.universe.generation}
+            proposal = self.field.apply_proposal(token, approved=True)
+            head = int(proposal["head"])
+            layer = self.layers.get(head, head % 10)
+            try:
+                self.scratch.write_layer(
+                    head, layer,
+                    {"applied_token": token, "score": proposal.get("score")},
+                    approved=True)
+            except Exception:
+                pass
+            return {
+                "accepted": True,
+                "generation": self.universe.generation,
+                "score": proposal.get("score"),
+                "state": proposal.get("state"),
+                "layer": layer,
+            }
+
+        def head_metrics(self, head):
+            return self.field.read(int(head))
+
+        def field_metrics(self):
+            activation = self.field.field_activation()
+            return {
+                "active_heads": activation.get("active_heads"),
+                "active_count": activation.get("active_heads"),
+                "entropy_bits": activation.get("entropy_bits"),
+                "peak_head": activation.get("peak_head"),
+                "total": activation.get("total"),
+                "generation": self.universe.generation,
+            }
+
+        def resonance(self, text, top_k):
+            return list(self.universe.query(text, top_k=int(top_k)))
+
+    def _head_field_backend():
+        universe = _resident_universe(create=True)
+        key = str(universe.path)
+        cached = _head_field_tool_cache.get(key)
+        if cached is None:
+            cached = _HeadFieldToolBackend(universe)
+            _head_field_tool_cache.clear()
+            _head_field_tool_cache[key] = cached
+        return cached
+
+    def _observe_resident(message, answer, probe=False):
+        """Online free-chat exposure into the resident pair geometry.
+
+        Probe reads never mutate the resident file. If a chat turn explicitly
+        reports state_mutated=False, it is also skipped. The canonical merge
+        gate remains off.
+        """
+        if probe or not isinstance(message, str) or len(message.strip()) < 2:
+            return None
+        try:
+            if not _resident_config("chat_learning", True):
+                return None
+            if not _resident_config("resident_learning_enabled", True):
+                return None
+            if isinstance(answer, dict) and answer.get("state_mutated") is False:
+                return None
+            from .temporal_lm import TemporalMirrorLM, fnv_head, tokens
+            guard = TemporalMirrorLM()
+            if not guard.observe(message):
+                return None  # a question/request/duplicate is not exposure
+            universe = _resident_universe(create=True)
+            scratch = _resident_scratch(universe)
+            for token in tokens(message)[:512]:
+                head = fnv_head(token)
+                try:
+                    scratch.write_layer(
+                        head, head % 10,
+                        {"token": token, "source": "free-chat",
+                         "stage": "before-main"},
+                        approved=False)
+                except Exception:
+                    pass
+            sequence = ["<s>"] + tokens(message) + ["</s>"]
+            for index in range(1, len(sequence)):
+                if sequence[index] == "<s>":
+                    continue
+                try:
+                    universe.cells.observe_pair(
+                        fnv_head(sequence[index - 1]),
+                        fnv_head(sequence[index]), weight=1.0)
+                except Exception:
+                    pass
+            result = universe.ingest_rows([{
+                "text": message, "kind": "observation", "source": "free-chat",
+            }])
+            import hashlib as _hashlib
+            source_digest = _hashlib.sha256(
+                message.casefold().encode("utf-8")).hexdigest()
+            # Reuse the deterministic, inspectable free-chat parser for explicit
+            # X is Y / X has Y / X can Y evidence.  It is local parser output,
+            # never a claim of independent fact verification.
+            try:
+                from .chat import _native_parse
+                parsed = _native_parse(message, "resident", source_digest)
+                relations = [row["item"] for row in parsed
+                             if isinstance(row, dict)
+                             and isinstance(row.get("item"), dict)
+                             and row["item"].get("kind") == "relation"]
+                if relations:
+                    relation_result = universe.ingest_rows(
+                        relations, source_digest=source_digest)
+                    result["relations"] = relation_result.get("accepted", 0)
+            except Exception:
+                pass
+            try:
+                if not _resident_logic_ok():
+                    raise RuntimeError("Boolean logic base is not preserved")
+                field = _resident_field_learner(universe, guard)
+                field_result = field.observe(message)
+                result["field_learning"] = {
+                    key: field_result.get(key)
+                    for key in (
+                        "active_heads", "active_head_count", "entropy",
+                        "entropy_bits", "collisions", "writes",
+                        "field_activation",
+                    )
+                }
+                try:
+                    field_stats = field.stats()
+                    for key in ("accepted_proposals", "rejected_proposals",
+                                "proposal_acceptance_rate", "writes",
+                                "budget_rejections"):
+                        result["field_learning"][key] = field_stats.get(key)
+                except Exception:
+                    pass
+                try:
+                    scratch_stats = scratch.stats()
+                    result["field_learning"]["scratch"] = {
+                        "records": scratch_stats.get("scratch_records"),
+                        "writes": scratch_stats.get("scratch_writes"),
+                        "generation": scratch_stats.get("scratch_generation"),
+                        "allocated_layers": scratch_stats.get("allocated_layers"),
+                    }
+                except Exception:
+                    pass
+            except Exception as exc:
+                result["field_learning"] = {
+                    "status": "unavailable",
+                    "error": type(exc).__name__ + ": " + str(exc)[:300],
+                }
+            universe._commit("chat", source_digest)
+            universe.flush()
+            return {"generation": universe.generation,
+                    "accepted": result.get("accepted", 0),
+                    "duplicates": result.get("duplicates", 0),
+                    "field_learning": result.get("field_learning")}
+        except Exception as exc:
+            # Chat must survive resident-layer failure; report the boundary.
+            return {"error": type(exc).__name__ + ": " + str(exc)[:300],
+                    "canonical_commit": False}
+
+    def _merge_enabled():
+        """Local promotion/merge is opt-in and off unless the operator enables it."""
+        try:
+            value = ctx.get_config("merge_enabled", default=False)
+        except Exception:
+            return False
+        if isinstance(value, str):
+            return value.strip().lower() in {"1", "true", "yes", "on"}
+        return bool(value)
+
+    def _merge_disabled(reason):
+        from .layered_learning import SYNC_SCHEMA
+        return {
+            "schema": SYNC_SCHEMA,
+            "status": "merge_disabled",
+            "merge_enabled": False,
+            "approved": False,
+            "candidates": 0,
+            "promoted": 0,
+            "note": reason,
+        }
 
     def handle_learning_cycle(params, **kwargs):
         _require_scope("training:execute")
         coordinator = _learning(ctx)
+        if not _merge_enabled():
+            observation = coordinator.observe(
+                params["message"], source=params.get("source", "chat"),
+                relations=params.get("relations"), tick=params.get("tick"))
+            return {
+                "observation": observation,
+                "sync": _merge_disabled(
+                    "merge_enabled is false; approved=true cannot promote"),
+            }
         result = coordinator.cycle(
             params["message"], source=params.get("source", "chat"),
             relations=params.get("relations"), tick=params.get("tick"),
@@ -73,6 +425,9 @@ def register(ctx):
 
     def handle_learning_sync(params, **kwargs):
         _require_scope("training:execute")
+        if not _merge_enabled():
+            return _merge_disabled(
+                "merge_enabled is false; local promotion is disabled")
         return _learning(ctx).synchronize(approved=params.get("approved", False))
 
     def handle_wordnet_ingest(params, **kwargs):
@@ -81,7 +436,11 @@ def register(ctx):
         result = coordinator.ingest_word(
             params["word"], depth=params.get("depth", 2))
         if params.get("approved", False):
-            result["sync"] = coordinator.synchronize(approved=True)
+            if not _merge_enabled():
+                result["sync"] = _merge_disabled(
+                    "merge_enabled is false; WordNet ingest cannot promote")
+            else:
+                result["sync"] = coordinator.synchronize(approved=True)
         return result
 
     def handle_scratch_register(params, **kwargs):
@@ -222,6 +581,26 @@ def register(ctx):
     def handle_status(params, **kwargs):
         result = tools.status(ctx)
         result["mathematical_memory"] = tools.memory_status(ctx)
+        merge_gate = result.setdefault("merge_gate", {})
+        merge_gate["canonical_merge_enabled"] = False
+        merge_gate["merge_enabled"] = _merge_enabled()
+        merge_gate["local_promotion_enabled"] = merge_gate["merge_enabled"]
+        result["resident_universe"] = _resident_status_optional()
+        return result
+
+    def handle_session_context(params, **kwargs):
+        from . import session_context
+        result = session_context.status(ctx)
+        document = params.get("document")
+        if document:
+            result["document"] = session_context.document_text(
+                ctx, document, max_bytes=params.get("max_bytes", 16384))
+        elif params.get("include_text", False):
+            result["documents_text"] = [
+                session_context.document_text(
+                    ctx, item, max_bytes=params.get("max_bytes", 16384))
+                for item in session_context.DOCUMENT_IDS
+            ]
         return result
 
     def handle_chart_storage(params, **kwargs):
@@ -230,10 +609,74 @@ def register(ctx):
             _require_scope("training:execute")
         return tools.chart_storage_tool(ctx, action, params.get("approved", False))
 
+    def handle_resident_status(params, **kwargs):
+        _require_scope("universe:read")
+        result = _resident_status_optional()
+        result["canonical_merge"] = {"enabled": False, "attempted": False}
+        return result
+
+    def handle_resident_ingest(params, **kwargs):
+        _require_scope("training:execute")
+        if params.get("approved") is not True:
+            raise RuntimeError("resident ingest requires explicit approved=true")
+        universe = _resident_universe(create=True)
+        rows = params.get("rows")
+        if not isinstance(rows, list) or not rows:
+            rows = [{
+                "text": params.get("message") or params.get("text"),
+                "kind": params.get("kind", "observation"),
+                "source": params.get("source", "tool"),
+                "head": params.get("head"),
+            }]
+        result = universe.ingest_rows(rows)
+        result["generation"] = universe.generation
+        result["digest"] = universe.digest
+        result["canonical_merge"] = {"enabled": False, "attempted": False}
+        return result
+
+    def handle_head_field(params, **kwargs):
+        from .resident import field_tools
+        action = params.get("action")
+        if action not in field_tools.HANDLERS:
+            raise ValueError("action must be status, activate, propose, commit or query")
+        if action in {"status", "query"}:
+            _require_scope("universe:read")
+        else:
+            _require_scope("training:execute")
+            if not _resident_logic_ok():
+                raise RuntimeError(
+                    "Boolean logic base is not preserved; head-field writes are disabled")
+        body = {key: value for key, value in params.items() if key != "action"}
+        return field_tools.HANDLERS[action](
+            body, backend=_head_field_backend())
+
+    def handle_resident_query(params, **kwargs):
+        _require_scope("universe:read")
+        universe = _resident_universe(create=False)
+        if universe is None:
+            return {"opened": False, "hits": [], "leaves": [],
+                    "relations": [],
+                    "canonical_merge": {"enabled": False, "attempted": False}}
+        text = params.get("text") or params.get("message")
+        if text:
+            result = universe.query(text, top_k=params.get("top_k", 8),
+                                    mode=params.get("mode", "cosine"))
+            rendered = {key: value for key, value in result.items()}
+            rendered["hits"] = list(result)
+            rendered["lookup"] = universe.lookup(
+                text=text, limit=params.get("limit", 8))
+            return rendered
+        return universe.lookup(
+            subject=params.get("subject"), predicate=params.get("predicate"),
+            object=params.get("object"), head=params.get("head"),
+            limit=params.get("limit", 16))
+
     def handle_curriculum(params, **kwargs):
+        _require_scope("training:execute")
         return tools.generate_curriculum(ctx, params["topic"], params.get("records_per_stage", 12))
 
     def handle_curriculum_experiment(params, **kwargs):
+        _require_scope("training:execute")
         return tools.run_curriculum_experiment(
             ctx, params["topic"], params.get("records_per_stage", 12),
             params.get("epochs", 3), params.get("max_samples_per_head", 4096))
@@ -278,21 +721,59 @@ def register(ctx):
             params.get("epochs", 3),
             params.get("max_samples_per_head", 4096))
 
-    def handle_chat(params, **kwargs):
-        _require_scope("universe:read")
+    def _observe_chat(ctx, message, answer):
+        """Compatibility observer for chat paths that did not already observe.
+
+        ``tools.chat`` now performs the layered observation internally so that
+        direct/script callers get the same behavior as plugin tools. Do not
+        observe the same turn twice when a layered receipt is present.
+        """
         try:
-            learning_enabled = ctx.get_config("chat_learning", default=True)
+            if isinstance(answer, dict) and (answer.get("probe") is True
+                                             or answer.get("state_mutated") is False):
+                return None
+            layered = answer.get("layered_learning") if isinstance(answer, dict) else None
+            if isinstance(layered, dict) and layered.get("layers") == 10:
+                return layered
+            coordinator = _learning(ctx)
+            records = []
+            for key in ("learning", "native_learning", "reflection"):
+                value = answer.get(key) if isinstance(answer, dict) else None
+                if isinstance(value, dict) and isinstance(value.get("records"), list):
+                    records.extend(item for item in value["records"] if isinstance(item, dict))
+            return coordinator.observe(message, source="chat", relations=records)
         except Exception:
-            learning_enabled = True
+            # Best effort: canonical chat output must survive a scratch failure.
+            return None
+
+    def handle_chat(params, **kwargs):
+        probe = bool(params.get("probe", False))
+        read_authority = _require_scope("universe:read")
+        try:
+            learning_enabled = ctx.get_config("chat_learning", default=True) and not probe
+        except Exception:
+            learning_enabled = not probe
+        learning_authority = None
         if learning_enabled:
-            _require_scope("training:execute")
-        return tools.chat(ctx, params["message"], params.get("session_id", "default"),
-                          params.get("system_prompt"), params.get("temperature", 0.7),
-                          params.get("max_tokens", 2048), params.get("sources"))
+            learning_authority = _require_scope("training:execute")
+        answer = tools.chat(ctx, params["message"], params.get("session_id", "default"),
+                            params.get("system_prompt"), params.get("temperature", 0.7),
+                            params.get("max_tokens", 2048), params.get("sources"),
+                            probe=probe)
+        _observe_chat(ctx, params["message"], answer)
+        resident_receipt = _observe_resident(
+            params["message"], answer, probe=probe)
+        if resident_receipt is not None:
+            answer["resident_learning"] = resident_receipt
+        answer["authorization"] = {
+            "read": read_authority, "learning": learning_authority,
+            "local_only": read_authority.get("mode") == "local-unverified",
+        }
+        return answer
 
     def handle_chat_train(params, **kwargs):
         """Mandatory Boolean foundation, then unrestricted dialogue and proposals."""
-        _require_scope("training:execute")
+        authority = _require_scope("training:execute")
         foundation = tools.ensure_boolean_foundation(ctx)
         if foundation.get("status") != "passed":
             raise RuntimeError("free-chat learning blocked until native logic foundation passes")
@@ -306,6 +787,12 @@ def register(ctx):
         answer["training_boundary"] = (
             "Conversation reflection is provisional; canonical head updates "
             "require the separate candidate evaluation and merge gates.")
+        answer["authorization"] = authority
+        _observe_chat(ctx, params["message"], answer)
+        resident_receipt = _observe_resident(params["message"], answer,
+                                             probe=False)
+        if resident_receipt is not None:
+            answer["resident_learning"] = resident_receipt
         return answer
 
     def handle_chat_history(params, **kwargs):
@@ -313,15 +800,21 @@ def register(ctx):
                                   params.get("limit", 40))
 
     def handle_phone_call(params, **kwargs):
-        _require_scope("universe:read")
+        read_authority = _require_scope("universe:read")
         try:
             learning_enabled = ctx.get_config("chat_learning", default=True)
         except Exception:
             learning_enabled = True
-        if learning_enabled:
-            _require_scope("training:execute")
+        learning_authority = (_require_scope("training:execute")
+                              if learning_enabled else None)
         from . import phone_call
-        return phone_call.handle(ctx, params)
+        result = phone_call.handle(ctx, params)
+        if isinstance(result, dict):
+            result["authorization"] = {
+                "read": read_authority, "learning": learning_authority,
+                "local_only": read_authority.get("mode") == "local-unverified",
+            }
+        return result
 
     # Load cryptography-backed NANNET handlers only when one is invoked.
     # This keeps ordinary Hermes chat/training importable on Android/Termux.
@@ -338,10 +831,26 @@ def register(ctx):
                 ) from exc
             raise
 
+    def _nannet_configured():
+        try:
+            url = str(ctx.get_config("nannet_auth_url", default="") or "").strip()
+            issuer = str(ctx.get_config("nannet_issuer_public_key", default="") or "").strip()
+            return bool(url and issuer)
+        except Exception:
+            return False
+
     def _require_scope(scope):
-        # Every protected action requires an encrypted paired installation token.
-        # There is no environment-variable test bypass or implicit hardware registration.
-        return _auth_tools().require_scope(ctx, scope)
+        # Local-only operation is allowed when no NANNET authority is
+        # configured at all. It is explicitly reported as unverified and can
+        # never authorize a remote router/lease/merge action. Once a NANNET
+        # authority is configured, the paired installation token is mandatory
+        # and fails closed. There is no environment-variable test bypass.
+        if not _nannet_configured():
+            return {"mode": "local-unverified", "scope": scope,
+                    "remote": False, "nannet_configured": False}
+        _auth_tools().require_scope(ctx, scope)
+        return {"mode": "nannet", "scope": scope,
+                "remote": True, "nannet_configured": True}
 
     def handle_auth_init(params, **kwargs): return _auth_tools().auth_init(ctx)
     def handle_auth_status(params, **kwargs): return _auth_tools().auth_status(ctx)
@@ -367,6 +876,28 @@ def register(ctx):
     def handle_hw_report(params, **kwargs):
         from . import nannet_device_client
         return nannet_device_client.report(
+            ctx, params["report_type"], params["summary"],
+            params.get("details", ""))
+
+    def handle_hw2_bind(params, **kwargs):
+        if not _nannet_configured():
+            raise RuntimeError("NANNET authority is required for fixed HW2 binding")
+        _require_scope("hermes:lease")
+        from . import nannet_device_client
+        return nannet_device_client.register_fixed_hw2(
+            ctx, consent=params.get("consent", False))
+
+    def handle_hw2_status(params, **kwargs):
+        from . import nannet_device_client
+        local = nannet_device_client.fixed_hw2_status(ctx)
+        if params.get("remote", False):
+            local = {"local": local,
+                     "remote": nannet_device_client.fixed_hw2_remote_status(ctx)}
+        return local
+
+    def handle_hw2_report(params, **kwargs):
+        from . import nannet_device_client
+        return nannet_device_client.report_fixed_hw2(
             ctx, params["report_type"], params["summary"],
             params.get("details", ""))
 
@@ -418,6 +949,125 @@ def register(ctx):
             ctx, params.get("alias", "primary"), params.get("head_index", 0),
             params.get("kernel_id", "mth.u32.add_checked"),
             params["a"], params["b"])
+
+    def handle_mth_catalog(params, **kwargs):
+        from . import mth_catalog
+        return mth_catalog.list_kernels(
+            family=params.get("family"), tags=params.get("tags"),
+            offset=params.get("offset", 0), limit=params.get("limit", 32),
+            require_ci=params.get("require_ci", False))
+
+    def handle_mth_inspect(params, **kwargs):
+        from . import mth_catalog
+        return mth_catalog.inspect(params["kernel_id"])
+
+    def handle_mth_runtime(params, **kwargs):
+        from . import nan0s_runtime
+        return nan0s_runtime.runtime_status(
+            ctx, build=params.get("build", False))
+
+    def handle_mth_verify(params, **kwargs):
+        authority = _require_scope("training:execute")
+        from . import nan0s_runtime
+        result = nan0s_runtime.verify_kernel(
+            ctx, params["kernel_id"], max_steps=params.get("max_steps"),
+            timeout=params.get("timeout", 120))
+        result["authorization"] = authority
+        return result
+
+    def handle_mth_execute(params, **kwargs):
+        authority = _require_scope("training:execute")
+        from . import nan0s_runtime
+        result = nan0s_runtime.execute_vector_kernel(
+            ctx, params["kernel_id"], params["x"], params["y"],
+            timeout=params.get("timeout", 120))
+        result["authorization"] = authority
+        return result
+
+    def handle_mth_n16i_selftest(params, **kwargs):
+        authority = _require_scope("training:execute")
+        from . import nan0s_runtime
+        result = nan0s_runtime.n16i_self_test(
+            ctx, timeout=params.get("timeout", 120))
+        result["authorization"] = authority
+        return result
+
+    def handle_mth_dispatch(params, **kwargs):
+        authority = _require_scope("training:execute")
+        from . import nan0s_runtime
+        result = nan0s_runtime.verify_kernel_n16i(
+            ctx, params["kernel_id"],
+            use_fixture=params.get("use_fixture", True),
+            entry=params.get("entry", 0),
+            max_steps=params.get("max_steps", 100_000_000),
+            timeout=params.get("timeout", 120))
+        result["authorization"] = authority
+        return result
+
+    def handle_mth_hub(params, **kwargs):
+        from . import mth_leaves
+        return mth_leaves.store_for_context(ctx).status()
+
+    def handle_mth_tree(params, **kwargs):
+        action = params.get("action", "status")
+        authority = (_require_scope("universe:read") if action == "status"
+                     else _require_scope("training:execute"))
+        from . import mth_leaves
+        store = mth_leaves.store_for_context(ctx)
+        if action == "map":
+            result = store.ensure_function_tree()
+        elif action == "audit":
+            if store.status()["function_tree"]["linked_kernels"] < 91:
+                store.ensure_function_tree()
+            result = store.function_tree_audit(
+                verify_images=params.get("verify_images", True))
+        else:
+            result = store.status()
+        result["authorization"] = authority
+        return result
+
+    def handle_mth_leaf_create(params, **kwargs):
+        authority = _require_scope("training:execute")
+        from . import mth_leaves
+        store = mth_leaves.store_for_context(ctx)
+        leaf = store.create(
+            kind=params["kind"], payload=params.get("payload"),
+            function_definition=params.get("function_definition"),
+            action_relations=params.get("action_relations"),
+            identities=params.get("identities"),
+            constraints=params.get("constraints"),
+            constants=params.get("constants"),
+            wordnet=params.get("wordnet"),
+            parent=params.get("parent"), alias=params.get("alias"))
+        return {"status": "ok", "leaf": leaf, "authorization": authority}
+
+    def handle_mth_leaf_get(params, **kwargs):
+        from . import mth_leaves
+        return mth_leaves.store_for_context(ctx).get(
+            params["leaf_id"], include_image=params.get("include_image", False))
+
+    def handle_mth_pair(params, **kwargs):
+        authority = _require_scope("training:execute")
+        from . import mth_leaves
+        store = mth_leaves.store_for_context(ctx)
+        result = store.pair(
+            params["left"], params["right"], operator=params.get("operator"),
+            alias=params.get("alias"),
+            check_identities=params.get("check_identities", True), ctx=ctx)
+        payload = {
+            "schema": mth_leaves.PAIR_SCHEMA,
+            "status": result.status,
+            "hashleaf": result.hashleaf,
+            "leaf": result.leaf,
+            "error": result.error,
+            "authorization": authority,
+        }
+        return payload
+
+    def handle_mth_leaf_verify(params, **kwargs):
+        from . import mth_leaves
+        leaf = mth_leaves.store_for_context(ctx).resolve(params["leaf_id"])
+        return mth_leaves.verify_leaf(leaf)
 
     def handle_nan16de_route(params, **kwargs):
         _require_scope("universe:read")
@@ -477,6 +1127,14 @@ def register(ctx):
 
     def handle_memory_merge(params, **kwargs):
         _require_scope("training:execute")
+        if not _merge_enabled():
+            return {
+                "schema": "nanlm.hermes-memory-merge/1",
+                "status": "merge_disabled",
+                "merge_enabled": False,
+                "merge": {"accepted": 0, "duplicates": 0},
+                "note": "merge_enabled is false; peer memory merge is disabled",
+            }
         return tools.memory_merge(ctx, params["records"])
 
     def handle_memory_query(params, **kwargs):
@@ -638,16 +1296,56 @@ def register(ctx):
           "approved": {"type": "boolean", "default": False},
           "scratch_id": {"type": "string", "maxLength": 80}},
          ["mutation_id", "records", "approved"], handle_head_candidate_evaluate),
-        ("nanlm_status", "Inspect local NaNLMind universe and durable mathematical-memory status.", {}, [], handle_status),
+        ("nanlm_status", "Inspect local NaNLMind universe, durable mathematical-memory status and permanent plugin-duration session context.", {}, [], handle_status),
+        ("nanlm_session_context", "Inspect the permanent NANNET architecture/routing, WordNet HW4 and free-chat learning documents loaded at plugin start; optionally return one exact shipped document for re-intake.",
+         {"document": {"type": "string", "enum": ["permanent-instructions", "nannet-architecture", "nannet-routing", "wordnet-hw4", "free-chat-learning", "mth-universal-runtime", "mth-data-leaves"]},
+          "include_text": {"type": "boolean", "default": False},
+          "max_bytes": {"type": "integer", "minimum": 1, "maximum": 16384}},
+         [], handle_session_context),
         ("nanlm_chart_storage", "Inspect the SHA-verified local 8 MiB NaN16 chart snapshot or explicitly checkpoint it; this is never a canonical training or NANNET merge commit.",
          {"action": {"type": "string", "enum": ["inspect", "checkpoint"], "default": "inspect"},
           "approved": {"type": "boolean", "default": False}},
          [], handle_chart_storage),
+        ("nanlm_resident_status", "Inspect the bounded one-file resident universe: mmap budget, generation/digest, leaves, relations, hyperedges, features, pair cells and the disabled canonical merge gate.",
+         {}, [], handle_resident_status),
+        ("nanlm_resident_ingest", "Explicitly ingest bounded local evidence rows into the resident universe. Requires approved=true; never performs canonical merge or promotion.",
+         {"approved": {"type": "boolean", "const": True},
+          "message": {"type": "string", "minLength": 1, "maxLength": 65536},
+          "text": {"type": "string", "minLength": 1, "maxLength": 65536},
+          "kind": {"type": "string", "maxLength": 32},
+          "source": {"type": "string", "maxLength": 128},
+          "head": {"type": "integer", "minimum": 0, "maximum": 255},
+          "rows": {"type": "array", "maxItems": 64, "items": {"type": "object"}}},
+         ["approved"], handle_resident_ingest),
+        ("nanlm_resident_query", "Read-only resonance/superposition and exact-link query over the resident universe; probe reads do not mutate state.",
+         {"text": {"type": "string", "maxLength": 65536},
+          "subject": {"type": "string", "maxLength": 512},
+          "predicate": {"type": "string", "maxLength": 512},
+          "object": {"type": "string", "maxLength": 512},
+          "head": {"type": "integer", "minimum": 0, "maximum": 255},
+          "top_k": {"type": "integer", "minimum": 1, "maximum": 64, "default": 8},
+          "limit": {"type": "integer", "minimum": 1, "maximum": 64, "default": 16},
+          "mode": {"type": "string", "enum": ["dot", "cosine", "phase"], "default": "cosine"}},
+         [], handle_resident_query),
+        ("nanlm_head_field", "Inspect or explicitly operate the independent 256-head Boolean field: status/query are read-only; activate/propose/commit require training scope, with scratch-layer staging before an approved generation-CAS main write.",
+         {"action": {"type": "string", "enum": ["status", "activate", "propose", "commit", "query"]},
+          "approved": {"type": "boolean", "const": True},
+          "head": {"type": "integer", "minimum": 0, "maximum": 255},
+          "delta": {"type": "number", "minimum": -1.0, "maximum": 1.0},
+          "reason": {"type": "string", "maxLength": 240},
+          "token": {"type": "string", "maxLength": 256},
+          "expected_generation": {"type": "integer", "minimum": 0},
+          "text": {"type": "string", "maxLength": 4096},
+          "top_k": {"type": "integer", "minimum": 1, "maximum": 32},
+          "limit": {"type": "integer", "minimum": 1, "maximum": 256}},
+         ["action"], handle_head_field),
         ("nanlm_chat", "Open-ended Hermes conversation; reflect evidence and, when explicit supervised relations are present, update native heads, mirror pairs and hyperedges in the shared universe.",
          {"message": {"type": "string", "minLength": 1, "maxLength": 1048576},
           "session_id": {"type": "string", "maxLength": 80}, "system_prompt": {"type": "string"},
           "temperature": {"type": "number", "minimum": 0, "maximum": 2},
           "max_tokens": {"type": "integer", "minimum": 1, "maximum": 8192},
+          "probe": {"type": "boolean", "default": False,
+                    "description": "Read-only evaluation probe: do not update memory, transcripts, native topology or layered scratch."},
           "sources": {"type": "array", "maxItems": 7, "items": {"type": "object",
               "required": ["text"], "properties": {"id": {"type": "string", "maxLength": 80},
               "text": {"type": "string", "minLength": 1, "maxLength": 65536}}}}},
@@ -679,6 +1377,17 @@ def register(ctx):
           "summary": {"type": "string", "minLength": 1, "maxLength": 240},
           "details": {"type": "string", "maxLength": 4000}},
          ["report_type", "summary"], handle_hw_report),
+        ("nanlm_hw2_bind", "Bind the permanent fixed HERMES HW2/node-point-3 identity through the NANNET authority; requires explicit consent and an admin/fixed-binding scope. Never allocates HW5-HW255 and never returns the bearer.",
+         {"consent": {"type": "boolean", "const": True}},
+         ["consent"], handle_hw2_bind),
+        ("nanlm_hw2_status", "Inspect sanitized local (and optionally remote) fixed HW2 binding metadata without revealing the guest bearer.",
+         {"remote": {"type": "boolean", "default": False}},
+         [], handle_hw2_status),
+        ("nanlm_hw2_report", "Send a bounded report as the fixed HW2 HERMES identity through NANNET.",
+         {"report_type": {"type": "string", "enum": ["device_error", "system_error", "network_error", "security_concern", "other"]},
+          "summary": {"type": "string", "minLength": 1, "maxLength": 240},
+          "details": {"type": "string", "maxLength": 4000}},
+         ["report_type", "summary"], handle_hw2_report),
         ("nanlm_universe_status", "Inspect encrypted local HERMES router leases without returning bearer credentials or receipt MACs.", {}, [], handle_universe_status),
         ("nanlm_universe_open", "Request a distinct router-issued universe via NANNET's hermes:lease signed installation scope; never local allocation.",
          {"alias": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,40}$", "default": "primary"},
@@ -715,6 +1424,81 @@ def register(ctx):
           "a": {"type": "integer", "minimum": 0, "maximum": 4294967295},
           "b": {"type": "integer", "minimum": 0, "maximum": 4294967295}},
          ["a", "b"], handle_native_mth_u32),
+        ("nanlm_mth_catalog", "Browse the 91 bundled native NaN16 MTH kernels by family, tags or CI status. Catalog discovery does not claim a general operand ABI.",
+         {"family": {"type": "string", "maxLength": 48},
+          "tags": {"type": "array", "maxItems": 8, "items": {"type": "string", "maxLength": 80}},
+          "offset": {"type": "integer", "minimum": 0, "maximum": 1000000, "default": 0},
+          "limit": {"type": "integer", "minimum": 1, "maximum": 100, "default": 32},
+          "require_ci": {"type": "boolean", "default": False}},
+         [], handle_mth_catalog),
+        ("nanlm_mth_inspect", "Inspect one bundled MTH kernel's source/fixture digests, shape, precision, workspace, native execution mode and exact paths.",
+         {"kernel_id": {"type": "string", "minLength": 5, "maxLength": 160,
+                        "pattern": "^mth\\.[a-z0-9_.-]+$"}},
+         ["kernel_id"], handle_mth_inspect),
+        ("nanlm_mth_runtime", "Autodetect the host architecture, compiler, bundled/external NaN0S core, native CLI build state and N16I availability for the universal MTH runtime.",
+         {"build": {"type": "boolean", "default": False}},
+         [], handle_mth_runtime),
+        ("nanlm_mth_verify", "Assemble and run one bundled MTH kernel's native NaN16 fixture on the host-built portable NaN0S core; returns the exact marker, steps, trap and honest non-claims.",
+         {"kernel_id": {"type": "string", "minLength": 5, "maxLength": 160,
+                        "pattern": "^mth\\.[a-z0-9_.-]+$"},
+          "max_steps": {"type": "integer", "minimum": 1, "maximum": 500000000},
+          "timeout": {"type": "integer", "minimum": 1, "maximum": 900, "default": 120}},
+         ["kernel_id"], handle_mth_verify),
+        ("nanlm_mth_execute", "Run one of the four admitted float32 vector kernels (dot, cosine, add, sub) with exactly 256 numeric x and y operands on the host-built native NaN0S core; no host Python math.",
+         {"kernel_id": {"type": "string", "enum": ["mth.vector.dot256.f32", "mth.vector.cosine256.f32", "mth.vector.add256.f32", "mth.vector.sub256.f32"]},
+          "x": {"type": "array", "minItems": 256, "maxItems": 256, "items": {"type": "number"}},
+          "y": {"type": "array", "minItems": 256, "maxItems": 256, "items": {"type": "number"}},
+          "timeout": {"type": "integer", "minimum": 1, "maximum": 900, "default": 120}},
+         ["kernel_id", "x", "y"], handle_mth_execute),
+        ("nanlm_mth_n16i_selftest", "Run the nan0s differential gate: the same NaN16 test image natively and under the raw-NaN N16I interpreter-in-NaN16; serial bytes must be identical.",
+         {"timeout": {"type": "integer", "minimum": 1, "maximum": 900, "default": 120}},
+         [], handle_mth_n16i_selftest),
+        ("nanlm_mth_dispatch", "Assemble any bundled MTH kernel/fixture and dispatch the arbitrary NaN16 guest image under N16I, with bounded step budget and exact serial/output receipt.",
+         {"kernel_id": {"type": "string", "minLength": 5, "maxLength": 160,
+                        "pattern": "^mth\\.[a-z0-9_.-]+$"},
+          "use_fixture": {"type": "boolean", "default": True},
+          "entry": {"type": "integer", "minimum": 0, "default": 0},
+          "max_steps": {"type": "integer", "minimum": 1, "maximum": 500000000, "default": 100000000},
+          "timeout": {"type": "integer", "minimum": 1, "maximum": 900, "default": 120}},
+         ["kernel_id"], handle_mth_dispatch),
+        ("nanlm_mth_hub", "Inspect the immutable MTH data-leaf hub tree, vector root, WordNet HW4 link, constraints, invariants and pair rules.",
+         {}, [], handle_mth_hub),
+        ("nanlm_mth_tree", "Map or audit every one of the 91 bundled MTH kernels into immutable function leaves under family hubs, with source/fixture digests, hub ancestry and NaN-executable image verification.",
+         {"action": {"type": "string", "enum": ["status", "map", "audit"], "default": "status"},
+          "verify_images": {"type": "boolean", "default": True}},
+         [], handle_mth_tree),
+        ("nanlm_mth_leaf_create", "Create an immutable NaN-executable MTH data leaf with function definition, action relations, identities, constraints, constants and hub ancestry.",
+         {"kind": {"type": "string", "enum": ["vector", "scalar", "matrix", "relation"]},
+          "payload": {"type": "object", "properties": {
+              "values": {"type": "array", "minItems": 256, "maxItems": 256,
+                         "items": {"type": "number"}},
+              "fill": {"type": "number",
+                       "description": "vector convenience: repeat this finite value across all 256 elements"},
+              "value": {"type": "number"},
+              "dimension": {"type": "integer", "const": 256}}},
+          "function_definition": {"type": "object"},
+          "action_relations": {"type": "array", "maxItems": 64, "items": {"type": "object"}},
+          "identities": {"type": "array", "maxItems": 64, "items": {"type": "string", "maxLength": 240}},
+          "constraints": {"type": "array", "maxItems": 64, "items": {"type": "string", "maxLength": 240}},
+          "constants": {"type": "object"},
+          "wordnet": {"type": "object"},
+          "parent": {"type": "string", "maxLength": 80},
+          "alias": {"type": "string", "pattern": "^[A-Za-z0-9_.:-]{1,80}$"}},
+         ["kind"], handle_mth_leaf_create),
+        ("nanlm_mth_leaf_get", "Read one immutable MTH data leaf and its NaN16 image metadata; optionally include the exact .nan text.",
+         {"leaf_id": {"type": "string", "minLength": 3, "maxLength": 80},
+          "include_image": {"type": "boolean", "default": False}},
+         ["leaf_id"], handle_mth_leaf_get),
+        ("nanlm_mth_pair", "Resolve left::right through the hub rules. connect creates a relation leaf; dot/cosine/add/sub execute the native kernel, check identities and create a new immutable hash leaf. Illegal pairings deny without execution.",
+         {"left": {"type": "string", "minLength": 1, "maxLength": 80},
+          "right": {"type": "string", "minLength": 1, "maxLength": 80},
+          "operator": {"type": "string", "enum": ["connect", "dot", "cosine", "add", "sub"], "default": "connect"},
+          "alias": {"type": "string", "pattern": "^[A-Za-z0-9_.:-]{1,80}$"},
+          "check_identities": {"type": "boolean", "default": True}},
+         ["left", "right"], handle_mth_pair),
+        ("nanlm_mth_leaf_verify", "Execute a leaf's real NaN16 image on the Python NaNVM0 boundary and verify its magic/output; no canonical commit.",
+         {"leaf_id": {"type": "string", "minLength": 3, "maxLength": 80}},
+         ["leaf_id"], handle_mth_leaf_verify),
         ("nanlm_generate_curriculum", "Generate a balanced 12-stage logic-to-language curriculum corpus, including Boolean inverses, deep relations, exceptions, word choice, sentences, paragraphs and stories.",
          {"topic": {"type": "string", "minLength": 1, "maxLength": 500},
           "records_per_stage": {"type": "integer", "minimum": 3, "maximum": 64, "default": 12}},

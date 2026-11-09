@@ -1,0 +1,1 @@
+{"root_bytes":8388608,"mirror_pairs":32640,"max_gauge_error":1.86265e-06,"max_reverse_error":0,"finite_difference_error":6.01865e-05,"loss_before_step":0.0658141,"loss_after_step":0.0322489,"reads":500000,"read_milliseconds":1.40741,"mlock_status":0,"passed":true}

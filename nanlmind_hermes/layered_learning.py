@@ -19,6 +19,7 @@ import json
 import os
 from pathlib import Path
 import re
+import threading
 import time
 from typing import Any, Iterable
 
@@ -44,11 +45,19 @@ MAX_TEXT_BYTES = 1_048_576
 MAX_RELATIONS = 512
 MAX_ROWS = 4096
 
+# One coordinator per state directory per process. Free chat and explicit
+# learning tools must observe the same scratch/ensemble state rather than
+# opening independent views over the same files.
+_COORDINATORS: dict[str, "LayeredLearningCoordinator"] = {}
+_COORDINATOR_LOCK = threading.RLock()
+
 _CAUSAL = frozenset({
     "because", "therefore", "thus", "so", "cause", "causes", "caused",
     "before", "after", "then", "while", "when", "until", "since",
 })
 _VOWELS = frozenset("aeiou")
+VALID_POLARITIES = frozenset({"supports", "refutes", "neutral"})
+DEFAULT_CONFIDENCE = 0.5
 
 
 class LayeredLearningError(ValueError):
@@ -224,7 +233,75 @@ class LearningPolicy:
         }
 
 
-def _relation(value: Any) -> dict[str, str] | None:
+def policy_for_context(ctx) -> LearningPolicy:
+    """Build the conservative promotion policy from plugin configuration."""
+    def setting(key, default):
+        try:
+            return ctx.get_config(key, default=default)
+        except Exception:
+            return default
+
+    return LearningPolicy(
+        min_support=int(setting("learning_min_support", 3)),
+        min_confidence=float(setting("learning_min_confidence", 0.6)),
+        max_candidates=int(setting("learning_max_candidates", 64)),
+        max_promoted_leaves=int(setting("learning_max_promoted_leaves", 100)),
+        require_explicit_approval=bool(setting("learning_require_approval", True)),
+        auto_sync=bool(setting("learning_auto_sync", False)),
+    )
+
+
+def coordinator_for_context(ctx, *, state_dir: str | Path | None = None,
+                            dictionary: DictionaryUniverse | None = None,
+                            ) -> "LayeredLearningCoordinator":
+    """Return the one process-wide coordinator for this state directory.
+
+    Free chat, ``nanlm_learning_cycle`` and ``nanlm_wordnet_ingest`` must share
+    the same ensemble/scratch view. Opening a second coordinator over the same
+    files would overwrite the persisted ensemble with a stale copy.
+    """
+    if state_dir is None:
+        try:
+            configured = ctx.get_config(
+                "state_dir", default="~/.local/share/nanlmind-hermes")
+        except Exception:
+            configured = "~/.local/share/nanlmind-hermes"
+        state_dir = configured or "~/.local/share/nanlmind-hermes"
+    root = Path(str(state_dir)).expanduser()
+    key = str(root.resolve())
+    with _COORDINATOR_LOCK:
+        existing = _COORDINATORS.get(key)
+        if existing is not None:
+            return existing
+        if dictionary is None:
+            try:
+                archive = str(ctx.get_config("wordnet_archive", default="") or "")
+            except Exception:
+                archive = ""
+            if archive:
+                try:
+                    from .wordnet_store import WordNetStore
+                    dictionary = WordNetStore.discover(archive).universe
+                except Exception:
+                    dictionary = None
+        coordinator = LayeredLearningCoordinator(
+            root, dictionary=dictionary, policy=policy_for_context(ctx))
+        _COORDINATORS[key] = coordinator
+        return coordinator
+
+
+def reset_coordinator_cache() -> None:
+    """Testing helper: close and clear process-wide coordinators."""
+    with _COORDINATOR_LOCK:
+        for coordinator in _COORDINATORS.values():
+            try:
+                coordinator.close()
+            except Exception:
+                pass
+        _COORDINATORS.clear()
+
+
+def _relation(value: Any) -> dict[str, Any] | None:
     if value is None:
         return None
     if not isinstance(value, dict):
@@ -236,7 +313,42 @@ def _relation(value: Any) -> dict[str, str] | None:
         return None
     if any(len(part) > 256 for part in (subject, predicate, obj)):
         raise LayeredLearningError("relation part exceeds 256 characters")
-    return {"subject": subject, "predicate": predicate, "object": obj}
+    polarity = value.get("polarity", "neutral")
+    if polarity is None:
+        polarity = "neutral"
+    if (not isinstance(polarity, str)
+            or polarity.strip().casefold() not in VALID_POLARITIES):
+        raise LayeredLearningError("polarity must be supports, refutes or neutral")
+    confidence = value.get("confidence", DEFAULT_CONFIDENCE)
+    if confidence is None:
+        confidence = DEFAULT_CONFIDENCE
+    if isinstance(confidence, bool) or not isinstance(confidence, (int, float)):
+        raise LayeredLearningError("confidence must be a number in [0, 1]")
+    confidence = float(confidence)
+    if not 0.0 <= confidence <= 1.0:
+        raise LayeredLearningError("confidence must be a number in [0, 1]")
+    return {
+        "subject": subject,
+        "predicate": predicate,
+        "object": obj,
+        "polarity": polarity.strip().casefold(),
+        "confidence": confidence,
+    }
+
+
+def _candidate_key(row: dict[str, Any]) -> tuple[str, str, str, str, float]:
+    """Group evidence by the full relation claim, not just its surface triple."""
+    try:
+        confidence = float(row.get("confidence", DEFAULT_CONFIDENCE))
+    except (TypeError, ValueError):
+        confidence = DEFAULT_CONFIDENCE
+    return (
+        str(row.get("subject") or "").strip().casefold(),
+        str(row.get("predicate") or row.get("role") or "").strip().casefold(),
+        str(row.get("object") or "").strip().casefold(),
+        str(row.get("polarity") or "neutral").strip().casefold(),
+        round(confidence, 6),
+    )
 
 
 class LayeredLearningCoordinator:
@@ -266,6 +378,13 @@ class LayeredLearningCoordinator:
         self.turns = 0
         self._load()
 
+    def bind_chart(self, chart: Chart8MiB | None) -> None:
+        """Bind the process-lifetime local runner chart to this coordinator."""
+        if chart is None:
+            return
+        self.chart = chart
+        self.head_register = HeadScratchRegister(chart, self.state_dir)
+
     # -- persistence -----------------------------------------------------
     def _state_path(self) -> Path:
         return self.state_dir / "language" / "layered_learning.json"
@@ -281,11 +400,32 @@ class LayeredLearningCoordinator:
         if not isinstance(data, dict):
             return
         self.turns = int(data.get("turns", 0))
-        self.rows = [row for row in data.get("rows", []) if isinstance(row, dict)][-MAX_ROWS:]
-        self.promoted = [row for row in data.get("promoted", []) if isinstance(row, dict)]
+        loaded_rows = []
+        for row in data.get("rows", []):
+            if not isinstance(row, dict):
+                continue
+            try:
+                relation = _relation(row)
+            except LayeredLearningError:
+                relation = None
+            loaded_rows.append({**row, **relation} if relation else row)
+        self.rows = loaded_rows[-MAX_ROWS:]
+        loaded_promoted = []
+        for row in data.get("promoted", []):
+            if not isinstance(row, dict):
+                continue
+            try:
+                relation = _relation(row)
+            except LayeredLearningError:
+                relation = None
+            loaded_promoted.append({**row, **relation} if relation else row)
+        self.promoted = loaded_promoted
         self.ensemble = HeadEnsemble.from_dict(data.get("ensemble", {}))
         for row in self.rows:
-            relation = _relation(row)
+            try:
+                relation = _relation(row)
+            except LayeredLearningError:
+                relation = None
             if relation:
                 self.concepts.observe(
                     " ".join((relation["subject"], relation["predicate"], relation["object"])),
@@ -314,7 +454,7 @@ class LayeredLearningCoordinator:
 
     # -- layer projections ----------------------------------------------
     def _layer_features(self, layer: str, text: str, words: list[str],
-                        relation: dict[str, str] | None) -> dict[str, Any]:
+                        relation: dict[str, Any] | None) -> dict[str, Any]:
         if layer in ("bit", "nibble", "byte"):
             return {"signature": self.stack.signature_of(text)}
         if layer == "phonetic":
@@ -366,9 +506,10 @@ class LayeredLearningCoordinator:
             if relation:
                 relation_list.append(relation)
         self.turns += 1
+        first_relation = relation_list[0] if relation_list else None
         layer_results = []
         for layer in LAYER_NAMES:
-            features = self._layer_features(layer, text, words, relation_list[0] if relation_list else None)
+            features = self._layer_features(layer, text, words, first_relation)
             distribution = self.ensemble.observe(layer, words or [text[:64]])
             leaf = self.space.append(
                 layer=layer,
@@ -379,7 +520,8 @@ class LayeredLearningCoordinator:
                     "features": features,
                     "head_top": [{"head": head, "weight": round(weight, 8)}
                                  for head, weight in distribution.items()],
-                    "relation": relation_list[0] if relation_list else None,
+                    "relation": first_relation,
+                    "relations": relation_list[:MAX_RELATIONS],
                     "source": source,
                     "nanclock_tick": tick,
                 },
@@ -421,7 +563,6 @@ class LayeredLearningCoordinator:
                 "source": source,
                 "nanclock_tick": tick,
                 "support": 1,
-                "confidence": 1.0,
             }
             self.rows.append(row)
             row_records.append(row)
@@ -443,7 +584,7 @@ class LayeredLearningCoordinator:
         }
 
     @staticmethod
-    def _resolution_for(relation: dict[str, str]) -> str:
+    def _resolution_for(relation: dict[str, Any]) -> str:
         predicate = relation["predicate"]
         if predicate in {"causes", "cause", "then", "before", "after"}:
             return "narrative"
@@ -459,21 +600,32 @@ class LayeredLearningCoordinator:
             raise LayeredLearningError("word is required")
         if not 1 <= depth <= 8:
             raise LayeredLearningError("depth must be in 1..8")
-        query = self.dictionary.query(word)
-        relations = []
-        definitions = []
+        query = self.dictionary.query(word, depth=depth)
+        relations: list[dict[str, Any]] = []
+        definitions: list[dict[str, Any]] = []
+        ancestry: list[dict[str, Any]] = []
         for synset in query.get("synsets", []):
             offset = synset.get("offset")
             if offset is None:
                 continue
-            definition = self.dictionary.define(offset)
+            definition = self.dictionary.define(offset, depth=depth)
             lemma = (definition.get("lemmas") or [word])[0]
+            chain = self.dictionary.hypernym_chain(offset, depth=depth)
+            direct_targets = {
+                str(target).strip().casefold()
+                for hypernym in definition.get("hypernyms", [])
+                for target in (hypernym.get("target_lemmas") or [])[:1]
+                if target
+            }
             definitions.append({
                 "offset": offset,
                 "address": definition["address"],
                 "definition": definition.get("definition", ""),
                 "pos": definition.get("pos"),
                 "lemmas": definition.get("lemmas", []),
+                "inherited": definition.get("inherited", []),
+                "ancestry": [ancestor.get("offset") for ancestor in chain],
+                "depth_used": depth,
             })
             if definition.get("definition"):
                 relations.append({
@@ -494,6 +646,27 @@ class LayeredLearningCoordinator:
                         "predicate": edge.get("relation", "related_to"),
                         "object": target[0],
                     })
+            for level, ancestor in enumerate(chain, start=1):
+                ancestor_lemmas = ancestor.get("lemmas") or []
+                ancestor_lemma = ancestor_lemmas[0] if ancestor_lemmas else None
+                ancestry.append({
+                    "source_offset": offset,
+                    "depth": level,
+                    "offset": ancestor.get("offset"),
+                    "lemmas": ancestor_lemmas,
+                    "definition": ancestor.get("definition", ""),
+                })
+                # Level 1 is the direct hypernym already carried as kind_of
+                # evidence above; deeper levels make the requested depth
+                # observable without replacing the direct relation.
+                if level == 1 or not ancestor_lemma:
+                    continue
+                if ancestor_lemma.strip().casefold() in direct_targets:
+                    continue
+                relations.append({
+                    "subject": lemma, "predicate": "kind_of",
+                    "object": ancestor_lemma,
+                })
             for ancestor in definition.get("inherited", []):
                 relations.append({
                     "subject": lemma, "predicate": "inherits", "object": str(ancestor),
@@ -503,33 +676,50 @@ class LayeredLearningCoordinator:
             source=source,
             relations=relations,
         )
+        interface = self.dictionary.interface()
         observation["wordnet"] = {
             "word": word,
             "synsets": definitions,
             "relations": relations,
-            "hw4_route": self.dictionary.interface()["route"],
+            "ancestry": ancestry,
+            "hw4_route": interface["route"],
+            "hw4_legacy_route": interface.get("legacy_route"),
+            "hw4_link": interface.get("link"),
+            "nannet_port": interface.get("nannet_port"),
             "depth": depth,
+            "depth_used": depth,
         }
         return observation
 
     # -- promotion -------------------------------------------------------
     def _candidate_rows(self) -> list[dict[str, Any]]:
-        grouped: dict[tuple[str, str, str], dict[str, Any]] = {}
+        grouped: dict[tuple[str, str, str, str, float], dict[str, Any]] = {}
         for row in self.rows:
-            key = (row["subject"], row["predicate"], row["object"])
+            key = _candidate_key(row)
             if key not in grouped:
-                grouped[key] = {**row, "support": 0}
+                grouped[key] = {**row, "support": 0, "_confidence_total": 0.0}
             grouped[key]["support"] += 1
+            grouped[key]["_confidence_total"] += float(
+                row.get("confidence", DEFAULT_CONFIDENCE))
         candidates = []
         for row in grouped.values():
             support = int(row["support"])
             if support < self.policy.min_support:
                 continue
-            confidence = min(1.0, support / (support + 1))
-            if confidence < self.policy.min_confidence:
+            evidence_confidence = row.pop("_confidence_total") / support
+            support_confidence = min(1.0, support / (support + 1))
+            # Preserve the supplied evidence confidence while retaining the
+            # historical support-based gate for callers that do not label it.
+            if max(evidence_confidence, support_confidence) < self.policy.min_confidence:
                 continue
-            candidates.append({**row, "support": support, "confidence": round(confidence, 6)})
-        candidates.sort(key=lambda item: (-item["support"], -item["confidence"], item["subject"]))
+            candidates.append({
+                **row,
+                "support": support,
+                "confidence": round(evidence_confidence, 6),
+                "support_confidence": round(support_confidence, 6),
+            })
+        candidates.sort(key=lambda item: (-item["support"], -item["confidence"],
+                                          item["subject"], item["polarity"]))
         return candidates[:self.policy.max_candidates]
 
     def synchronize(self, *, approved: bool = False) -> dict[str, Any]:
@@ -546,11 +736,9 @@ class LayeredLearningCoordinator:
                 "approved": False, "candidates": len(candidates),
                 "policy": self.policy.to_dict(),
             }
-        seen = {(row["subject"], row["predicate"], row["object"]): row
-                for row in self.promoted}
+        seen = {_candidate_key(row): row for row in self.promoted}
         for row in candidates:
-            key = (row["subject"], row["predicate"], row["object"])
-            seen[key] = row
+            seen[_candidate_key(row)] = row
         promoted = list(seen.values())[-self.policy.max_promoted_leaves:]
         rows = [{
             **row,

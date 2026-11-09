@@ -5,7 +5,7 @@ learning, explicit native training, durable mathematical memory, and approved
 CLOCKED evidence plans. Training and inference stay local; NANNET is the
 identity/authorization boundary and CLOCKED is an evidence service.
 
-**Version 1.3.2 — catalog submission pending.**
+**Version 1.5.0 — catalog submission pending.**
 
 ## What it does
 
@@ -26,14 +26,47 @@ identity/authorization boundary and CLOCKED is an evidence service.
 - **Training** — native `logic`, `words`, `sentences`, and ordered `pipeline`
   sessions. A full 256-head Boolean foundation gate must pass before language
   training. Training runs through the local `nanlm-universal` binary.
+  Corpus training uses a deterministic split, best-checkpoint early stop and
+  per-source held-out NLL/perplexity; `scripts/resident_learning.py` feeds the
+  same corpus through the resident pair/leaf store and reports the temporal and
+  resident channels separately.
 - **CLOCKED** — versioned, scoped task plans for extract, grounding, compare,
   privacy, injection, and synthesis. Multi-source results are written to an
   append-only scratch journal; source text is not sent during planning, and
   execution requires explicit approval.
+- **Resident universe** — one bounded sparse memory-mapped file per local
+  state directory, holding 256 heads, 32,640 mirror-pair cells, stable leaf
+  trees, typed relations/hyperedges, 256-D superposition rows and a chained
+  state journal. Default 256 MiB, hard 1 GiB, no 2 GiB overbootstrap copy.
+  `nanlm_resident_status`, `nanlm_resident_ingest` and `nanlm_resident_query`
+  expose it; accepted free-chat exposure feeds it when
+  `resident_learning_enabled` is true. Candidate export/intake is bounded and
+  generation-CAS checked; canonical merge stays disabled.
 - **Memory** — additive mathematical memory with evidence assessments,
   cross-resolution relations, and merge support.
 - **NANNET** — one encrypted installation identity, a pinned issuer key,
   short-lived scoped tokens, signed requests, and fail-closed authorization.
+- **Permanent session context** — the NANNET architecture, NANNET routing,
+  WordNet HW4:0 and free-chat learning documents ship inside the package. They
+  are loaded once at plugin registration, hashed, persisted as a
+  plugin-duration session manifest, and injected into attached-provider chat,
+  reflection, curriculum, CLOCKED and synthesis calls. A user system prompt
+  cannot remove them.
+- **Local-first learning** — when no NANNET authority is configured, local
+  chat/training tools run in explicitly reported `local-unverified` mode. Once
+  an authority URL and pinned issuer key are configured, a paired token is
+  mandatory and every protected operation fails closed. Remote router, lease,
+  merge and device operations always require NANNET.
+- **Universal native MTH runtime** — all 91 MTH NaN16 kernels and fixtures ship
+  with the plugin, together with a portable NaN0S C-core source snapshot. On
+  first use the plugin autodetects the host architecture/compiler, uses a
+  configured external NaN0S CLI or compiles the bundled core into its state
+  cache, assembles kernels with the bundled POSIX-awk emitter, and runs bounded
+  native fixtures. The four admitted float32 vector kernels (dot, cosine, add,
+  sub) accept real 256-element operands. The N16I interpreter-in-NaN16
+  differential self-test is available, and `nanlm_mth_dispatch` relocates and
+  runs arbitrary assembled guest images under N16I. That is generic dispatch,
+  not a typed operand ABI for every kernel.
 - **Hermes secrets** — NANNET, CLOCKED, and head-cortex credentials are read
   through `agent.secret_scope.get_secret()`.
 
@@ -113,8 +146,13 @@ Settings live under `plugins.entries.nanlmind-hermes.settings`.
 | `state_dir` | str | `~/.local/share/nanlmind-hermes` | one canonical universe, transcripts, memory, scratch, runs |
 | `runner_command` | list[str] | `[]` | absolute argv for the local `nanlm-universal` binary |
 | `duration_minutes` | int | `30` | wall budget for native bootstrap runs, 1–360 |
-| `chat_learning` | bool | `true` | allow explicit supervised claims to update native heads |
+| `chat_learning` | bool | `true` | feed every chat turn into L0-L9 layered scratch and, when explicit supported/refuted triples exist, the native relation path |
 | `chat_mode` | str | `native` | `native` (NaNLMind parses/synthesizes), `auto` (use provider if present), or `provider` (LLM-authored reply) |
+| `wordnet_archive` | str | `""` | optional WordNet 3.1 zip for the sparse HW4:0 dictionary universe; when absent, HW4 ingest fails closed instead of inventing a word |
+| `nan0s_root` | str | `""` | optional NaN0S checkout; auto-detected sibling/prebuilt or the bundled portable core is used |
+| `nan0s_cc` | str | `""` | optional C compiler for the portable NaN0S core |
+| `nan0s_prefer_bundled` | bool | `false` | prefer the bundled portable core over an external NaN0S checkout |
+| `merge_enabled` | bool | `false` | explicit promotion/merge option; false returns `merge_disabled` and never promotes or merges until the generation-checked gate exists |
 | `nannet_auth_url` | str | `""` | HTTPS NANNET authority (HTTP only for loopback) |
 | `nannet_issuer_public_key` | str | `""` | pinned base64url Ed25519 issuer key |
 | `clocked_gateway_url` | str | `""` | HTTPS CLOCKED participant gateway |
@@ -135,8 +173,13 @@ Secrets are declared in `plugin.yaml` and read only through Hermes:
 | `/nanlm status` | state, memory, and native-run status |
 | `/nanlm help` | usage |
 
-All 34 registered tools, their schemas, and their approval/scope requirements
-are listed in [docs/TOOLS_REFERENCE.md](docs/TOOLS_REFERENCE.md).
+The manifest and registered schemas are authoritative for all 79 tools.
+[docs/TOOLS_REFERENCE.md](docs/TOOLS_REFERENCE.md) documents the main surfaces
+and lists the remaining registered tools with one-line purposes. The permanent
+session manifest is inspectable with `nanlm_session_context` and
+`nanlm_status`; no paired NANNET identity is needed to read the shipped
+architecture documents. Local chat/training without NANNET is reported as
+`local-unverified`.
 
 ## Training
 
@@ -182,7 +225,21 @@ Report security issues privately as described in [SECURITY.md](SECURITY.md).
 
 ## Verification
 
-- 272 unit/integration tests pass locally; CI runs Python 3.10, 3.11, and 3.12.
+- The full unit/integration suite passes locally; CI runs Python 3.10, 3.11, and 3.12.
+- Package verification builds and inspects wheel + sdist archives: 0 missing,
+  0 forbidden and 0 oversized members; includes all 91 MTH sources/fixtures,
+  the 7 session documents, the NaN0S portable core and both `nan/*.nan` and
+  `nan/*.nas` payloads. See `scripts/verify_package.py`.
+- `nanlm_mth_tree action=audit` links all **91/91** MTH kernels across 44 family
+  hubs with 0 missing/orphans/digest mismatches and 91/91 NaN-executable leaf
+  images verified. Alpine native-MTH tests use `build-base` + `gawk`.
+- The initial Gemma tool-learning session ran over a **local loopback NANNET
+  authority** with a real paired installation (`universe:read`,
+  `training:execute`) and canonical merge disabled: **12/12 tool calls
+  succeeded, 9 distinct tools used**, including tree audit, vector leaf
+  creation, connect/add pairing, leaf verification, two free-chat turns and
+  learning-status inspection. See
+  [docs/GEMMA_TOOL_LEARNING_SESSION.md](docs/GEMMA_TOOL_LEARNING_SESSION.md).
 - Hermes Agent v0.23.0 `plugins validate` and `plugins doctor` pass in CI.
 - Wheel and source distribution builds, metadata checks, installation/import,
   and SHA-256 checksums pass in CI.
@@ -194,7 +251,10 @@ Report security issues privately as described in [SECURITY.md](SECURITY.md).
   before training; rebinds to the trained chart). It links through `HW2:0`
   (NaN16DE) to `BS0:0::HW0:0` without using the RunnerRing for compute; see
   [docs/LOCAL_RUNNER.md](docs/LOCAL_RUNNER.md).
-- The exhaustive demo passed 38/38 calls across all 34 registered tools.
+- The historical exhaustive demo passed 38/38 calls across the then-registered
+  34 tools. New session-context, free-chat learning, MTH and WordNet tool tests
+  run separately; no claim is made that the historical demo covered all 79
+  current tools.
 - A genuine held-out session asked unseen questions before and after new
   exposure, and a "No, that's incorrect" feedback turn triggered a fresh
   deliberation with the rejected answer suppressed; see
@@ -217,6 +277,27 @@ Report security issues privately as described in [SECURITY.md](SECURITY.md).
 | [Local runner](docs/LOCAL_RUNNER.md) | boot-time 8 MiB chart, mapped temporal register, real rails, HW2:0 link |
 | [MTH layers](docs/MTH_LAYERS.md) | root 4x4 Boolean table, L0–L9 curriculum, truth/frame scoring, concept matrix |
 | [Free chat baseline](docs/FREE_CHAT.md) | cold direct address, self-contemplation, unknown questions |
+| [Universal MTH runtime](docs/MTH_UNIVERSAL_RUNTIME.md) | bundled 91-kernel catalog, architecture autodetect, portable NaN0S core, N16I self-test and arbitrary guest dispatch |
+| [MTH data leaves](docs/MTH_DATA_LEAVES.md) | immutable NaN-executable leaves, vector/WordNet hubs, constrained `left::right` pairing and self-modification guards |
+| [MTH function tree map](docs/MTH_FUNCTION_TREE.md) | all 91 kernels mapped to family hubs with audit and executable-image evidence |
+| [Gemma tool-learning session](docs/GEMMA_TOOL_LEARNING_SESSION.md) | live NANNET-paired open-ended tool-use test with merge disabled |
+| [Gemma initial training report](docs/GEMMA_INITIAL_TRAINING_REPORT.md) | aggregated live results, system-state deltas, failure recovery and boundaries |
+| [Gemma training series](docs/GEMMA_TRAINING_SERIES.md) | multi-session before/after quiz, tool-use metrics and system-learning deltas |
+| [Gemma training series results](docs/GEMMA_TRAINING_SERIES_RESULTS.md) | journaled 3-session result: 15/15 calls, 100% coverage, quiz 76.1% → 100.0% (+23.9), system-state growth |
+| [Gemma journal quiz probe](docs/GEMMA_JOURNAL_QUIZ_PROBE.md) | isolates the zero-delta bug: same quiz goes 76.1% → 100% when observed session journal is included |
+| [Gemma training diagnostic](docs/GEMMA_TRAINING_DIAGNOSTIC.md) | why the original after-quiz was flat and the corrected journal/discovery design |
+| [N16I unification](docs/N16I_UNIFICATION.md) | four vector kernels share the N16I general-operand path; native direct is diagnostic only |
+| [NANNET HW2 production](docs/NANNET_HW2_PRODUCTION.md) | operator credential/pairing/signing flow for the permanent HW2/node-point-3 identity |
+| [Production readiness TODO](docs/PRODUCTION_READINESS_TODO.md) | 106 point-by-point P0/P1/P2 production and integration gates |
+| [Quantum/math integration matrix](docs/QUANTUM_MATH_INTEGRATION_MATRIX.md) | 25-row map of gauge, cycle, phase, spectral, pair-quantum, MTH, WordNet and learning wiring |
+| [Quantum bridge](docs/QUANTUM_BRIDGE.md) | deterministic gauge/cycle/phase/pair-spectral/robust-recovery bridge with bounded input |
+| [NaNLM learning over time](docs/NANLM_GEMMA_LEARNING_OVER_TIME.md) | Gemma-teacher/native-student held-out probe curve and exact hit vectors |
+| [NaNLM novel generation](docs/NANLM_NOVEL_GENERATION.md) | post-training explanation/comparison/counterfactual/story probe with judge |
+| [NaNLM accuracy audit](docs/NANLM_ACCURACY_AUDIT.md) | exact per-probe flips; why the denominator-14 decimals look like digit rotations |
+| [NaNLM plateau diagnostic](docs/NANLM_PLATEAU_DIAGNOSTIC.md) | per-probe cause categories and curriculum/code ablation plan |
+| [Probe immutability](docs/PROBE_IMMUTABILITY.md) | read-only probe fingerprint contract and state-mutation tests |
+| [Resident universe](docs/RESIDENT_UNIVERSE.md) | what is actually in RAM today, proposed resident typed universe and primitive/adaptor boundaries |
+| [Architecture gaps](docs/ARCHITECTURE_GAPS.md) | what the Alpine/Gemma test round found and what remains |
 | [Gemma bootstrap](docs/GEMMA_BOOTSTRAP.md) | teacher-designed exposure, abstention and known/unknown probes |
 | [Saturation session](docs/GEMMA_CORPUS.md) | concept-matrix saturation and organization by chatting |
 | [Binary bootstrap](docs/BINARY_BOOTSTRAP.md) | bits → Boolean functions → bytes → letters → words → vectors |
@@ -225,7 +306,7 @@ Report security issues privately as described in [SECURITY.md](SECURITY.md).
 | [Head population](docs/HEAD_POPULATION.md) | routing sparsity, void head, rank/specialization diagnostics |
 | [Boolean→wave](docs/BOOLEAN_WAVE.md) | multilinear Boolean embedding, atomic word-leaf update, payload packing |
 | [Spectral word write](docs/SPECTRAL_WORD.md) | native-J Fiedler cut, word leaf write, eigen/mirror/void measurements |
-| [Temporal spine](docs/SPINE.md) | true rank mirror, B/F local update, mirror convergence |
+| [Temporal register](docs/LOCAL_RUNNER.md) | true rank mirror, B/F local update, mirror convergence |
 | [Concept spectral](docs/CONCEPT_SPECTRAL.md) | concept-graph matrix, multi-head mapping, normalized cut |
 | [Cycle space](docs/CYCLE_SPACE.md) | gradient/cycle split, 32,385 fundamental fluxes, nonuniform mirror resonance |
 | [Gauge memory](docs/GAUGE_MEMORY.md) | gauge-aware cycle retrieval, strong baseline, erasure robustness |

@@ -1,0 +1,176 @@
+{
+  "runs": [
+    {
+      "seed": 17,
+      "samples": {
+        "categories": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          17,
+          18,
+          19,
+          20
+        ],
+        "train": 2400,
+        "val": 560,
+        "test": 560,
+        "train_ids_sha256": "fda9363491adc4340da64ac4550fc685760c06803e6ecbc8f1ada3c8661b1dfd",
+        "test_ids_sha256": "024974c4846342a50f480cdb46f334da79c878089048f35c0638871780f982cc"
+      },
+      "native_training_seconds": 0.11912420599946927,
+      "train_loss_start": 2.2080759490530464,
+      "train_loss_end": 1.9091753627701344,
+      "cycle_before": {
+        "accuracy": 0.375,
+        "cross_entropy": 2.3173213939029056
+      },
+      "cycle_after_large_gauge": {
+        "accuracy": 0.375,
+        "cross_entropy": 2.3173213982944123
+      },
+      "raw_before": {
+        "accuracy": 0.375,
+        "cross_entropy": 2.2535103727935217
+      },
+      "raw_after_large_gauge": {
+        "accuracy": 0.08928571428571429,
+        "cross_entropy": 14.80116764025366
+      },
+      "conventional_same_features": {
+        "accuracy": 0.3875,
+        "cross_entropy": 2.2499243762606986
+      },
+      "native_vs_real_linear_max_logit_error": 1.1444091796875e-05,
+      "cycle_max_drift_from_gauge": 1.2218952178955078e-06,
+      "max_cycle_logits_change": 1.811981201171875e-05,
+      "restore_max_logit_error": 0.0,
+      "mirror_audit": true,
+      "root_bytes": 8388608
+    },
+    {
+      "seed": 29,
+      "samples": {
+        "categories": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          17,
+          18,
+          19,
+          20
+        ],
+        "train": 2400,
+        "val": 560,
+        "test": 560,
+        "train_ids_sha256": "a0a963022e8ee60b49e6dcc366eeb1a3cd87e40a9123d8f44887cbe6fe093229",
+        "test_ids_sha256": "ca7db3373acec07bf317fd9d1579dd2b7d3ecb1f16628a254656eb1b6d0025f3"
+      },
+      "native_training_seconds": 0.11681522300023062,
+      "train_loss_start": 2.160002273345757,
+      "train_loss_end": 1.904809106607793,
+      "cycle_before": {
+        "accuracy": 0.41964285714285715,
+        "cross_entropy": 2.1862882495163936
+      },
+      "cycle_after_large_gauge": {
+        "accuracy": 0.41964285714285715,
+        "cross_entropy": 2.186288319975575
+      },
+      "raw_before": {
+        "accuracy": 0.41964285714285715,
+        "cross_entropy": 2.2122646770722816
+      },
+      "raw_after_large_gauge": {
+        "accuracy": 0.06607142857142857,
+        "cross_entropy": 17.19527302830616
+      },
+      "conventional_same_features": {
+        "accuracy": 0.44107142857142856,
+        "cross_entropy": 2.100887188830821
+      },
+      "native_vs_real_linear_max_logit_error": 5.7220458984375e-06,
+      "cycle_max_drift_from_gauge": 1.2069940567016602e-06,
+      "max_cycle_logits_change": 1.430511474609375e-05,
+      "restore_max_logit_error": 0.0,
+      "mirror_audit": true,
+      "root_bytes": 8388608
+    },
+    {
+      "seed": 41,
+      "samples": {
+        "categories": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          17,
+          18,
+          19,
+          20
+        ],
+        "train": 2400,
+        "val": 560,
+        "test": 560,
+        "train_ids_sha256": "75ef92f1469cf86a1c298a44b2bb3af768417a32013c5ec5837982b6ac3a7e90",
+        "test_ids_sha256": "057f92cdd39fb4ca8856503cabec4f691f61292e6be932991a7786f73951f847"
+      },
+      "native_training_seconds": 0.12129920499955915,
+      "train_loss_start": 2.1713036292957284,
+      "train_loss_end": 1.859757247667734,
+      "cycle_before": {
+        "accuracy": 0.4232142857142857,
+        "cross_entropy": 1.9636650964373403
+      },
+      "cycle_after_large_gauge": {
+        "accuracy": 0.4232142857142857,
+        "cross_entropy": 1.9636650616586024
+      },
+      "raw_before": {
+        "accuracy": 0.4232142857142857,
+        "cross_entropy": 2.0956539247629578
+      },
+      "raw_after_large_gauge": {
+        "accuracy": 0.10178571428571428,
+        "cross_entropy": 15.69042639514176
+      },
+      "conventional_same_features": {
+        "accuracy": 0.44107142857142856,
+        "cross_entropy": 1.9196915808717343
+      },
+      "native_vs_real_linear_max_logit_error": 5.7220458984375e-06,
+      "cycle_max_drift_from_gauge": 1.6838312149047852e-06,
+      "max_cycle_logits_change": 1.6927719116210938e-05,
+      "restore_max_logit_error": 0.0,
+      "mirror_audit": true,
+      "root_bytes": 8388608
+    }
+  ],
+  "elapsed_seconds": 2.640310764312744
+}

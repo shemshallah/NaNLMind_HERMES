@@ -14,9 +14,10 @@ hermes tools
 ```
 
 The plugin must register the tools declared in `plugin.yaml`. The manifest
-declares all **33** tools, including chat, native training, mathematical
-memory, NANNET auth, NaN16DE routing, CLOCKED plans, head processing, and
-isolated candidate learning. See [TOOLS_REFERENCE.md](TOOLS_REFERENCE.md).
+declares all **75** tools, including chat, native training, mathematical
+memory, NANNET auth and lease/universe operations, NaN16DE routing, MTH
+catalog/runtime/leaves, CLOCKED plans, head processing, and isolated candidate
+learning. See [TOOLS_REFERENCE.md](TOOLS_REFERENCE.md).
 
 Free-form chat learning is enabled by default through `chat_learning: true`.
 It requires the `training:execute` scope when enabled. Set it to false for

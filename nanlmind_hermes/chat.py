@@ -10,6 +10,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import sqlite3
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
@@ -212,9 +213,16 @@ def _reflect(ctx, user_text: str, assistant_text: str, source_digest: str,
         "user_text": user_text,
         "assistant_text": assistant_text,
     }
+    try:
+        from .session_context import attached_context
+        permanent = attached_context(ctx, full=False)
+    except Exception:
+        permanent = ""
     result = ctx.llm.complete(
         messages=[
-            {"role": "system", "content": "You are Hermes' structured linguistic reflection worker. Return valid JSON only."},
+            {"role": "system", "content": (
+                "You are Hermes' structured linguistic reflection worker. "
+                "Return valid JSON only." + permanent)},
             {"role": "user", "content": json.dumps(prompt, ensure_ascii=False)},
         ],
         temperature=0.1, max_tokens=6000, timeout=120,
@@ -269,9 +277,24 @@ _NATIVE_PATTERNS = (
     (re.compile(r"^(?P<s>.+?)\s+(?:has|have|had)\s+(?P<o>.+?)[.!]?$", re.I), "has", "supports"),
     (re.compile(r"^(?P<s>.+?)\s+(?:cannot|can't)\s+(?P<o>.+?)[.!]?$", re.I), "can", "refutes"),
     (re.compile(r"^(?P<s>.+?)\s+(?:can|may|will)\s+(?P<o>.+?)[.!]?$", re.I), "can", "supports"),
-    (re.compile(r"^(?P<s>.+?)\s+(?:causes|leads to|makes)\s+(?P<o>.+?)[.!]?$", re.I), "causes", "supports"),
+    (re.compile(r"^(?P<s>.+?)\s+(?:causes?|leads? to|makes?|creates?|produces?|becomes?|turns? into)\s+(?P<o>.+?)[.!]?$", re.I), "causes", "supports"),
+    (re.compile(r"^(?P<s>.+?)\s+freezes?\s+into\s+(?P<o>.+?)[.!]?$", re.I), "freezes", "supports"),
+    (re.compile(r"^(?P<s>.+?)\s+melts?\s+into\s+(?P<o>.+?)[.!]?$", re.I), "melts", "supports"),
 )
 
+# Bounded intransitive-action vocabulary.  The small curriculum teaches
+# "Dogs bark." / "Cats meow." / "Birds fly."; those are action relations, not
+# generic observations, so a later "What do dogs do?" can be answered from the
+# learned row rather than from an unrelated subject that happened to be nearby.
+_NATIVE_INTRANSITIVE = re.compile(
+    r"^(?P<s>.+?)\s+(?P<v>bark|barks|meow|meows|fly|flies|flow|flows|"
+    r"freeze|freezes|melt|melts|swim|swims|run|runs|sing|sings|shine|shines|"
+    r"orbit|orbits)[.!]?$", re.I)
+_NATIVE_INTRANSITIVE_BASE = {
+    "barks": "bark", "meows": "meow", "flies": "fly", "flows": "flow",
+    "freezes": "freeze", "melts": "melt", "swims": "swim", "runs": "run",
+    "sings": "sing", "shines": "shine", "orbits": "orbit",
+}
 _NATIVE_STOPWORDS = frozenset({
     "a", "an", "the", "and", "or", "but", "if", "then", "than", "that", "this",
     "these", "those", "is", "are", "was", "were", "be", "been", "being", "to",
@@ -286,8 +309,9 @@ def _native_parse(message: str, session_id: str, source_digest: str) -> list[dic
     """Extract simple supervised relations without an LLM provider.
 
     This is deliberately a small, inspectable parser. It covers explicit
-    ``X is Y`` / ``X has Y`` / ``X can Y`` / ``X causes Y`` forms and stores
-    every other sentence as neutral evidence, never as a fabricated label.
+    ``X is Y`` / ``X has Y`` / ``X can Y`` / ``X causes Y`` forms plus the
+    bounded intransitive actions (``Dogs bark``) and stores every other
+    sentence as neutral evidence, never as a fabricated label.
     """
     records = []
     sentences = [part.strip() for part in re.split(r"(?<=[.!?])\s+|\n+", message) if part.strip()]
@@ -321,6 +345,30 @@ def _native_parse(message: str, session_id: str, source_digest: str) -> list[dic
             })
             matched = True
             break
+        if not matched and not is_question:
+            action = _NATIVE_INTRANSITIVE.match(sentence)
+            if action:
+                subject = action.group("s").strip(" \t\"'")[:240]
+                verb = action.group("v").casefold()
+                obj = _NATIVE_INTRANSITIVE_BASE.get(verb, verb)
+                if subject and subject.casefold() not in _NATIVE_STOPWORDS:
+                    records.append({
+                        "item": {
+                            "kind": "relation", "subject": subject,
+                            "predicate": "can", "object": obj,
+                            "polarity": "supports", "confidence": 0.55,
+                            "evidence": {"source": "native_chat_parser",
+                                         "sentence": sentence},
+                            "provenance": {
+                                "resolution": "lexical",
+                                "source_type": "native_chat_parser",
+                                "independently_fact_verified": False,
+                            },
+                        },
+                        "source_digest": hashlib.sha256(
+                            (source_digest + "\0" + str(index)).encode("utf-8")).hexdigest(),
+                    })
+                    matched = True
         if not matched and len(sentence) >= 3:
             records.append({
                 "item": {
@@ -338,7 +386,32 @@ def _native_parse(message: str, session_id: str, source_digest: str) -> list[dic
     return records
 
 
-def _native_synthesize(ctx, message: str, parsed: list[dict]) -> dict:
+def _read_only_memory_rows(ctx, limit: int = 1000) -> list[dict]:
+    """Read the memory ledger without creating WAL/SHM or mutating projections."""
+    try:
+        root = Path(str(ctx.get_config(
+            "state_dir", "~/.local/share/nanlmind-hermes"))).expanduser()
+    except Exception:
+        root = Path("~/.local/share/nanlmind-hermes").expanduser()
+    path = root / "universe" / "mathematical_memory.sqlite3"
+    if not path.is_file():
+        return []
+    connection = sqlite3.connect(
+        "file:" + str(path) + "?mode=ro", uri=True, timeout=10)
+    connection.row_factory = sqlite3.Row
+    try:
+        sql = ("SELECT e.event_id,e.payload,p.head,p.layer FROM events e "
+               "JOIN projections p ON p.event_id=e.event_id "
+               "WHERE p.active=1 ORDER BY e.event_id LIMIT ?")
+        return [{"event_id": row["event_id"], "head": row["head"],
+                 "layer": row["layer"], **json.loads(row["payload"])}
+                for row in connection.execute(sql, (limit,))]
+    finally:
+        connection.close()
+
+
+def _native_synthesize(ctx, message: str, parsed: list[dict],
+                       probe: bool = False) -> dict:
     """Predict the reply word by word with the temporal mirror model.
 
     No retrieval and no response templates: the model scores every word it
@@ -349,8 +422,11 @@ def _native_synthesize(ctx, message: str, parsed: list[dict]) -> dict:
     """
     from .temporal_lm import TemporalMirrorLM
     from .tools import _memory_store
-    store = _memory_store(ctx)
-    rows = store.query(limit=1000)
+    if probe:
+        rows = _read_only_memory_rows(ctx, limit=1000)
+    else:
+        store = _memory_store(ctx)
+        rows = store.query(limit=1000)
     from .mth_layers import (MTHHeadMapper, MTHLayerStack, MTHScorer,
                              structured_candidates)
     stack = MTHLayerStack()
@@ -367,12 +443,17 @@ def _native_synthesize(ctx, message: str, parsed: list[dict]) -> dict:
     model = TemporalMirrorLM.load(ctx)
     model.mth = MTHScorer(stack)
     structured = structured_candidates(message, rows)
-    if model.runner is not None:
+    if model.runner is not None and not probe:
         heads_summary = model.runner.organize(rows, MTHHeadMapper(stack))
     prior_words = set(model.vocab)
     excluded = {str(message).strip().casefold()}
-    bootstrapped = model.observe_memory_rows(rows, exclude=excluded)
-    prior_words |= set(model.vocab)
+    if probe:
+        # Read-only probe: no memory/bootstrap mutation and no save. Temporary
+        # vocabulary additions are in-memory only.
+        bootstrapped = 0
+    else:
+        bootstrapped = model.observe_memory_rows(rows, exclude=excluded)
+        prior_words |= set(model.vocab)
     correction = False
     try:
         from .temporal_lm import is_correction
@@ -391,10 +472,14 @@ def _native_synthesize(ctx, message: str, parsed: list[dict]) -> dict:
             allowed = set(prior_words)
             allowed |= set(model.question_terms(message)) & set(model.vocab)
             allowed |= set(context_terms)
+        elif probe:
+            observed = False
+            allowed = prior_words
         else:
             observed = model.observe(message)
             allowed = prior_words
-        prediction = model.generate(message, allowed_seed=allowed)
+        prediction = model.generate(message, allowed_seed=allowed,
+                                    mutate_register=not probe)
     if structured and not correction:
         chosen = structured[0]
         prediction["text"] = chosen["text"]
@@ -409,7 +494,8 @@ def _native_synthesize(ctx, message: str, parsed: list[dict]) -> dict:
                     "category_error": 0.0, "source": chosen["source"],
                     "role": chosen["role"]},
         }] + prediction["considered"]
-    model.save(ctx)
+    if not probe:
+        model.save(ctx)
     learned = sum(1 for record in parsed
                   if isinstance(record.get("item"), dict)
                   and record["item"].get("kind") == "relation")
@@ -419,6 +505,8 @@ def _native_synthesize(ctx, message: str, parsed: list[dict]) -> dict:
         "generator": "temporal_mirror_lm/1",
         "response_templates": 0,
         "retrieval": 0,
+        "probe": bool(probe),
+        "state_mutated": not probe,
         "correction": bool(prediction.get("correction", correction)),
         "structured": bool(prediction.get("structured", False)),
         "rejected": prediction.get("rejected"),
@@ -453,6 +541,78 @@ def _native_synthesize(ctx, message: str, parsed: list[dict]) -> dict:
     }
 
 
+def _merge_chat_records(primary: list[dict] | None,
+                        secondary: list[dict] | None) -> list[dict]:
+    """Union reflection and deterministic-parser records without double-counting.
+
+    The provider reflection is richer, but it may omit a simple explicit
+    ``X is Y`` / ``X can Y`` relation. The deterministic parser is inspectable
+    and bounded; it supplies that missing evidence. Exact duplicate triples are
+    kept once, preferring the reflection record.
+    """
+    merged: list[dict] = []
+    seen: set[tuple[str, str, str, str]] = set()
+    for source in (primary or [], secondary or []):
+        for record in source:
+            item = record.get("item") if isinstance(record, dict) else None
+            if not isinstance(item, dict) or item.get("kind") != "relation":
+                continue
+            key = tuple(str(item.get(field) or "").strip().casefold()
+                        for field in ("subject", "predicate", "object"))
+            key += (str(item.get("polarity") or "neutral"),)
+            if not all(key[:3]) or key in seen:
+                continue
+            seen.add(key)
+            merged.append(record)
+    return merged
+
+
+def _layered_learning(ctx, message: str, session_id: str,
+                      records: list[dict] | None = None) -> dict:
+    """Feed one free-chat turn into the shared L0-L9 layered learner.
+
+    This is derived/experimental scratch state, not a canonical commit. It is
+    deliberately best-effort: a scratch or policy failure must not destroy the
+    conversational answer.
+    """
+    try:
+        from .layered_learning import coordinator_for_context
+        relations = []
+        for record in records or []:
+            item = record.get("item") if isinstance(record, dict) else None
+            if not isinstance(item, dict) or item.get("kind") != "relation":
+                continue
+            if not all(isinstance(item.get(key), str) and item.get(key).strip()
+                       for key in ("subject", "predicate", "object")):
+                continue
+            relations.append({
+                "subject": item["subject"], "predicate": item["predicate"],
+                "object": item["object"],
+            })
+        coordinator = coordinator_for_context(ctx)
+        result = coordinator.cycle(
+            message, source="free-chat:" + session_id[:80],
+            relations=relations)
+        observation = result["observation"]
+        return {
+            "schema": observation["schema"],
+            "turn": observation["turn"],
+            "layers": len(observation["layers"]),
+            "layer_names": [item["layer"] for item in observation["layers"]],
+            "scratch_records": observation["scratch"]["records"],
+            "relations": len(observation["relations"]),
+            "head_balance": observation["head_balance"],
+            "concept_saturation": observation["concept_saturation"],
+            "sync": result.get("sync"),
+            "canonical_commit": False,
+            "scope": "derived-plugin-scratch",
+        }
+    except Exception as exc:
+        return {"status": "layered_learning_failed",
+                "error": type(exc).__name__ + ": " + str(exc)[:1000],
+                "canonical_commit": False}
+
+
 def _append_native_scratch(ctx, session_id: str, message: str, parsed: list[dict],
                            response: str, learning: dict, synthesis: dict) -> dict:
     try:
@@ -477,55 +637,80 @@ def _append_native_scratch(ctx, session_id: str, message: str, parsed: list[dict
 
 
 def _native_chat(ctx, message: str, session_id: str, root: Path,
-                 history: list[dict], source_digest: str) -> dict:
+                 history: list[dict], source_digest: str,
+                 probe: bool = False) -> dict:
     """Native fallback: parse -> memory/native update -> scratch synthesis."""
     from .tools import _merge_relation_memory, _memory_store, memory_cross_resolution
 
+    try:
+        from . import session_context
+        session_receipt = session_context.status(ctx)
+    except Exception as exc:
+        session_receipt = {"loaded": False,
+                           "error": type(exc).__name__ + ": " + str(exc)[:500]}
     parsed = _native_parse(message, session_id, source_digest)
     surface_records = _surface_measurements(message, "", source_digest)
-    store = _memory_store(ctx)
-    surface_merge = store.merge(surface_records)
-    memory_merge = {"accepted": 0, "duplicates": 0}
-    try:
-        if parsed:
-            memory_merge = _merge_relation_memory(
-                ctx, parsed, train_only=False, reorganize=True).get("merge", memory_merge)
-    except Exception as exc:
-        memory_merge = {"accepted": 0, "duplicates": 0,
-                        "error": type(exc).__name__ + ": " + str(exc)[:500]}
-
-    try:
-        chat_learning = ctx.get_config("chat_learning", default=True)
-    except Exception:
-        chat_learning = True
-    if chat_learning:
-        try:
-            from .tools import ingest_conversation_relations
-            learning = ingest_conversation_relations(ctx, parsed)
-        except Exception as exc:
-            learning = {"status": "native_update_failed",
-                        "error": type(exc).__name__ + ": " + str(exc)[:500]}
+    if probe:
+        # Evaluation probes must not teach the student. Do not merge memory,
+        # write transcripts/scratch, update native topology or layered state.
+        surface_merge = {"accepted": 0, "duplicates": 0, "probe": True}
+        memory_merge = {"accepted": 0, "duplicates": 0, "probe": True}
+        learning = {"status": "probe_read_only"}
+        layered_learning = {"status": "probe_read_only"}
+        synthesis = _native_synthesize(ctx, message, parsed, probe=True)
+        response = synthesis["text"]
+        scratch = {"probe": True, "state_mutated": False}
+        cross_resolution = {"derived_hyperedges": 0,
+                            "merge": {"accepted": 0, "duplicates": 0},
+                            "error": None, "probe": True}
     else:
-        learning = {"status": "disabled"}
-    synthesis = _native_synthesize(ctx, message, parsed)
-    response = synthesis["text"]
-    scratch = _append_native_scratch(ctx, session_id, message, parsed,
-                                      response, learning, synthesis)
-    now = datetime.now(timezone.utc).isoformat()
-    path = root / "conversations" / (session_id + ".jsonl")
-    path.parent.mkdir(parents=True, exist_ok=True)
-    _append(path, {"role": "user", "content": message, "created_at": now,
-                   "source_sha256": hashlib.sha256(message.encode("utf-8")).hexdigest()})
-    _append(path, {"role": "assistant", "content": response, "created_at": now,
-                   "provider": "nanlm-native", "model": "temporal-mirror/1"})
-    cross_resolution = {"derived_hyperedges": 0,
-                        "merge": {"accepted": 0, "duplicates": 0}, "error": None}
-    try:
-        cross_resolution = memory_cross_resolution(ctx, limit=1000)
-    except Exception as exc:
-        cross_resolution["error"] = type(exc).__name__ + ": " + str(exc)[:500]
+        store = _memory_store(ctx)
+        surface_merge = store.merge(surface_records)
+        memory_merge = {"accepted": 0, "duplicates": 0}
+        try:
+            if parsed:
+                memory_merge = _merge_relation_memory(
+                    ctx, parsed, train_only=False, reorganize=True).get("merge", memory_merge)
+        except Exception as exc:
+            memory_merge = {"accepted": 0, "duplicates": 0,
+                            "error": type(exc).__name__ + ": " + str(exc)[:500]}
+
+        try:
+            chat_learning = ctx.get_config("chat_learning", default=True)
+        except Exception:
+            chat_learning = True
+        if chat_learning:
+            try:
+                from .tools import ingest_conversation_relations
+                learning = ingest_conversation_relations(ctx, parsed)
+            except Exception as exc:
+                learning = {"status": "native_update_failed",
+                            "error": type(exc).__name__ + ": " + str(exc)[:500]}
+        else:
+            learning = {"status": "disabled"}
+        layered_learning = (_layered_learning(ctx, message, session_id, parsed)
+                            if chat_learning else {"status": "disabled"})
+        synthesis = _native_synthesize(ctx, message, parsed)
+        response = synthesis["text"]
+        scratch = _append_native_scratch(ctx, session_id, message, parsed,
+                                          response, learning, synthesis)
+        now = datetime.now(timezone.utc).isoformat()
+        path = root / "conversations" / (session_id + ".jsonl")
+        path.parent.mkdir(parents=True, exist_ok=True)
+        _append(path, {"role": "user", "content": message, "created_at": now,
+                       "source_sha256": hashlib.sha256(message.encode("utf-8")).hexdigest()})
+        _append(path, {"role": "assistant", "content": response, "created_at": now,
+                       "provider": "nanlm-native", "model": "temporal-mirror/1"})
+        cross_resolution = {"derived_hyperedges": 0,
+                            "merge": {"accepted": 0, "duplicates": 0}, "error": None}
+        try:
+            cross_resolution = memory_cross_resolution(ctx, limit=1000)
+        except Exception as exc:
+            cross_resolution["error"] = type(exc).__name__ + ": " + str(exc)[:500]
     return {
         "session_id": session_id, "response": response,
+        "session_context": session_receipt,
+        "probe": bool(probe), "state_mutated": not probe,
         "clocked_mode": None, "clocked_scratch_id": scratch.get("scratch_id"),
         "provider": "nanlm-native", "model": "temporal-mirror/1",
         "source_sha256": source_digest, "history_messages": len(history) + 2,
@@ -542,6 +727,7 @@ def _native_chat(ctx, message: str, session_id: str, root: Path,
         },
         "cross_resolution_feedback": cross_resolution,
         "native_learning": learning,
+        "layered_learning": layered_learning,
         "native_synthesis": synthesis,
         "scratch": scratch,
         "memory_note": ("Native chat parsed the input, updated additive memory, "
@@ -552,7 +738,7 @@ def _native_chat(ctx, message: str, session_id: str, root: Path,
 
 def chat(ctx, message: str, session_id: str = "default", system_prompt: str = None,
          temperature: float = 0.7, max_tokens: int = 2048,
-         sources: list[dict] | None = None) -> dict:
+         sources: list[dict] | None = None, probe: bool = False) -> dict:
     """Open-ended conversation plus asynchronous-in-spirit best-effort reflection."""
     if not isinstance(message, str) or not message.strip():
         raise ValueError("message must be non-empty text")
@@ -575,7 +761,19 @@ def chat(ctx, message: str, session_id: str = "default", system_prompt: str = No
         "are already learned model weights. Explain uncertainty and distinguish hypotheses from facts.\n\n"
         + ARCHITECTURE_CONTEXT
     )
-    messages = [{"role": "system", "content": system_prompt or default_system}]
+    permanent_session = ""
+    session_receipt: dict = {"loaded": False}
+    try:
+        from . import session_context
+        permanent_session = session_context.attached_context(ctx, full=True)
+        session_receipt = session_context.status(ctx)
+    except Exception as exc:
+        session_receipt = {"loaded": False,
+                           "error": type(exc).__name__ + ": " + str(exc)[:500]}
+    # A caller-supplied system prompt may shape the task, but it cannot remove
+    # the permanent plugin-duration NANNET/WordNet contract.
+    messages = [{"role": "system", "content":
+                 (system_prompt or default_system) + permanent_session}]
     clocked_mode = None
     clocked_scratch_id = None
     if sources:
@@ -596,6 +794,7 @@ def chat(ctx, message: str, session_id: str = "default", system_prompt: str = No
     messages.extend(history)
     messages.append({"role": "user", "content": message})
     native_source_digest = hashlib.sha256(message.encode("utf-8")).hexdigest()
+    parsed_local = _native_parse(message, session_id, native_source_digest)
     try:
         chat_mode = str(ctx.get_config("chat_mode", default="native") or "native").strip().lower()
     except Exception:
@@ -603,25 +802,29 @@ def chat(ctx, message: str, session_id: str = "default", system_prompt: str = No
     if chat_mode not in {"native", "auto", "provider"}:
         chat_mode = "native"
     if chat_mode == "native":
-        return _native_chat(ctx, message, session_id, root, history, native_source_digest)
+        return _native_chat(ctx, message, session_id, root, history,
+                            native_source_digest, probe=probe)
     llm = getattr(ctx, "llm", None)
     if llm is None or not callable(getattr(llm, "complete", None)):
         if chat_mode == "provider":
             raise RuntimeError("chat_mode=provider requires a configured Hermes model provider")
-        return _native_chat(ctx, message, session_id, root, history, native_source_digest)
+        return _native_chat(ctx, message, session_id, root, history,
+                            native_source_digest, probe=probe)
     try:
         answer = llm.complete(
             messages=messages, temperature=float(temperature), max_tokens=max_tokens,
             timeout=180, purpose="nanlmind-hermes-chat",
         )
     except Exception as exc:
-        result = _native_chat(ctx, message, session_id, root, history, native_source_digest)
+        result = _native_chat(ctx, message, session_id, root, history,
+                              native_source_digest, probe=probe)
         result["provider_error"] = type(exc).__name__ + ": " + str(exc)[:500]
         result["reflection"]["provider_error"] = result["provider_error"]
         return result
     response_text = getattr(answer, "text", "")
     if not isinstance(response_text, str) or not response_text.strip():
-        result = _native_chat(ctx, message, session_id, root, history, native_source_digest)
+        result = _native_chat(ctx, message, session_id, root, history,
+                              native_source_digest, probe=probe)
         result["provider_error"] = "empty language-provider response"
         result["reflection"]["provider_error"] = result["provider_error"]
         return result
@@ -689,16 +892,22 @@ def chat(ctx, message: str, session_id: str = "default", system_prompt: str = No
         chat_learning = ctx.get_config("chat_learning", default=True)
     except Exception:
         chat_learning = True
+    learning_records = _merge_chat_records(
+        reflection.get("records", []), parsed_local)
     if chat_learning:
         try:
             from .tools import ingest_conversation_relations
-            native_learning = ingest_conversation_relations(ctx, reflection.get("records", []))
+            native_learning = ingest_conversation_relations(ctx, learning_records)
         except Exception as exc:
             native_learning = {"status": "native_update_failed",
                                "error": type(exc).__name__ + ": " + str(exc)[:1000]}
+    layered_learning = (_layered_learning(ctx, message, session_id,
+                                          learning_records)
+                        if chat_learning else {"status": "disabled"})
 
     return {
         "session_id": session_id, "response": response_text,
+        "session_context": session_receipt,
         "clocked_mode": clocked_mode,
         "clocked_scratch_id": clocked_scratch_id,
         "provider": getattr(answer, "provider", None), "model": getattr(answer, "model", None),
@@ -717,7 +926,8 @@ def chat(ctx, message: str, session_id: str = "default", system_prompt: str = No
         },
         "cross_resolution_feedback": cross_resolution,
         "native_learning": native_learning,
-        "memory_note": "Structured reflection and cross-resolution equations remain additive evidence. Native learning is reported separately and only counts when the 256-head runner commits head, mirror-pair and hyperedge updates.",
+        "layered_learning": layered_learning,
+        "memory_note": "Structured reflection, layered L0-L9 scratch and cross-resolution equations remain additive/derived evidence. Native learning is reported separately and only counts when the 256-head runner commits head, mirror-pair and hyperedge updates.",
     }
 
 

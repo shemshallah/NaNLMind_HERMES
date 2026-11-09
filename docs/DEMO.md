@@ -1,6 +1,6 @@
 # Demo guide
 
-Three reproducible scenarios. Start with the offline demo; add NANNET and
+Four reproducible scenarios. Start with the offline demo; add NANNET and
 CLOCKED when those services are available. Every command below is also covered
 by the test suite or the live smoke record in
 [HERMES_CATALOG_ADMISSION.md](HERMES_CATALOG_ADMISSION.md).
@@ -79,7 +79,9 @@ is also stored in `state_dir/phone_calls`.
 
 The NANNET authority must expose `GET /v1/issuer` and issue one-time pairing
 codes through `POST /v1/admin/pairing-codes` (operator credential). The issuer
-public key is the stable key that signs paired installation tokens.
+public key is the stable key that signs paired installation tokens. Local
+validation uses a loopback authority; the production Koyeb cutover is a
+separate deployment step and is not performed by the current tree.
 
 1. Read the authority issuer key:
 
@@ -154,11 +156,15 @@ head state.
 
 - [HERMES_DEMO.md](HERMES_DEMO.md): native chat, three-way call, native
   training, live CLOCKED, and live head-cortex output.
-- [DEMO_RESULTS.md](DEMO_RESULTS.md): 38/38 tool calls passed against a local
-  full-feature demo (real native binary, loopback NANNET authority, local
-  CLOCKED contract stubs).
-- [LIVE_SMOKE.md](LIVE_SMOKE.md): 11/11 checks passed against the single
-  deployed `nannet.apps.mistral.run` service, including head-cortex.
+- [DEMO_RESULTS.md](DEMO_RESULTS.md): historical local demo; 38/38 tool calls
+  passed across the then-registered 34 tools (real native binary, loopback
+  NANNET authority, local CLOCKED contract stubs).
+- [LIVE_SMOKE.md](LIVE_SMOKE.md): historical live smoke; 11/11 checks passed
+  against the deployed `nannet.apps.mistral.run` service, including
+  head-cortex. The current tree verifies local loopback pairing; production
+  Koyeb cutover is not performed.
+- `scripts/demo_run.py` contains 82 calls covering all 79 currently registered
+  tools, but no current 79-tool result report is recorded yet.
 
 Regenerate the local report with:
 
@@ -179,7 +185,7 @@ python scripts/live_smoke.py --nannet-url https://<authority> \
 | Area | Success signal |
 |---|---|
 | Manifest | `hermes plugins validate . --install-deps` passes |
-| Registration | `hermes plugins doctor . --ci` reports 33 tools, 0 hooks |
+| Registration | `hermes plugins doctor . --ci` reports 79 tools, 0 hooks |
 | Chat | reply plus transcript under `state_dir/transcripts` |
 | Training | Boolean gate 1,024/1,024 and a native run manifest |
 | NANNET | paired token valid, online scope authorization passes, revoke succeeds |

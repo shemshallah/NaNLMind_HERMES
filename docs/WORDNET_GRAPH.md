@@ -8,7 +8,11 @@ the synset participates in the concept graph.
 - lemmas: **117,953**
 - hypernym edges: **84,505**
 - definition-inheritance probes: **32**
-- HW4 route: `nan://HW4:BS0:MC0:SC0:GM0` via `HW4:0` (upstream `HW2:0`, NaN16DE)
+- Canonical HW4 route: `nan://GM0:SC0:MC0:BS0:0:HW4:0` via `HW4:0`
+  (upstream `HW2:0`, NANNET port `BS0:0`, NaN16DE).
+- Legacy compatibility envelope: `nan://HW4:BS0:MC0:SC0:GM0`. It must be
+  explicitly translated and is not a second authority. Historical snapshots in
+  this document may still show the legacy form.
 
 ## Hypernym paths (sample)
 

@@ -38,4 +38,19 @@ include = ["nanlmind_hermes*"]
 exclude = ["experiments*", "tests*"]
 
 [tool.setuptools.package-data]
-nanlmind_hermes = ["nan/*.nan"]
+nanlmind_hermes = [
+  "nan/*.nan",
+  "nan/*.nas",
+  "session_docs/*.md",
+  "mth/spec/*.json",
+  "mth/nan16/*.nas",
+  "mth/tests/*.nas",
+  "nan0s/*.md",
+  "nan0s/core/*.c",
+  "nan0s/core/*.h",
+  "nan0s/core/*.inc",
+  "nan0s/tools/*.c",
+  "nan0s/tools/*.awk",
+  "nan0s/src/tools/*.nas",
+  "nan0s/src/tests/*.nas",
+]

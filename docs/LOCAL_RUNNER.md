@@ -102,9 +102,10 @@ the remote merge/integration.
 - `docs/LONG_CHAT_DEMO.md`: logic training, local runner over a trained chart,
   20 exposure sentences, 15-turn conversation, held-out volcano session,
   three-way call with CLOCKED off.
-- `python -m unittest discover -s tests`: 272 tests, including chart mapping,
-  real-rail commits, boot-time genesis, trained-chart rebinding and the
-  temporal predictor.
+- `python -m unittest discover -s tests`: the current suite, including chart
+  mapping, real-rail commits, boot-time genesis, trained-chart rebinding and the
+  temporal predictor. The historical baseline at this document's writing was
+  272 tests.
 
 
 ## Crash-recoverable LOCAL chart snapshots (N16SNAP1)
