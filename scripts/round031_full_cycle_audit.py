@@ -2405,15 +2405,21 @@ def run_audit(
                 "report keeps a structured skip and does not claim a full-basis "
                 "measurement.")
         else:
+            kind = provider.get("kind")
             try:
-                full_basis = run_full_basis_synthetic_audit(
-                    provider.get("targets"),
-                    source=provider["source"],
-                )
-            except (FullCycleMemoryError, ValueError) as exc:
+                if kind == "resident":
+                    full_basis = run_resident_full_cycle_audit(
+                        source=provider["source"])
+                else:
+                    full_basis = run_full_basis_synthetic_audit(
+                        provider.get("targets"),
+                        source=provider["source"],
+                    )
+            except Exception as exc:  # noqa: BLE001 - optional audit boundary
                 full_basis = {
                     "label": SOURCE_SYNTHETIC_LABEL,
                     "status": "failed",
+                    "kind": kind,
                     "reason": str(exc),
                     "requested": True,
                     "source": provider.get("source"),
@@ -2426,6 +2432,7 @@ def run_audit(
                     "coefficients": None,
                     "maximum_abs_error": None,
                     "gauge_invariance_max_abs_error": None,
+                    "resident_gauge": None,
                     "audit_passed": False,
                 }
                 _add_check(
@@ -2449,8 +2456,10 @@ def run_audit(
                 )
                 notes.append(
                     "The synthetic full-basis audit used all 32,385 "
-                    "coefficients in a plain-Python memory; it is separate from "
-                    "the supplied native root and is not a native measurement.")
+                    "coefficients through the "
+                    f"{full_basis.get('kind', 'builtin')} provider; it is "
+                    "separate from the supplied native root and is not a "
+                    "native measurement.")
 
     all_passed = all(
         item["passed"] or item["skipped"] for item in details

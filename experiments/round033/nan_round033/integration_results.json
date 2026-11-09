@@ -1,0 +1,15 @@
+{
+  "episodes": 120,
+  "key_found": 118,
+  "native_exact_clean": 118,
+  "native_exact_after_gauge": 118,
+  "conventional_copy_exact": 118,
+  "raw_bytes_correct_after_gauge": 94,
+  "total_bytes": 2880,
+  "shifts": 8.0,
+  "key_found_fraction": 0.9833333333333333,
+  "native_exact_clean_fraction": 0.9833333333333333,
+  "native_exact_after_gauge_fraction": 0.9833333333333333,
+  "conventional_copy_exact_fraction": 0.9833333333333333,
+  "raw_byte_accuracy_after_gauge": 0.03263888888888889
+}

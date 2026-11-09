@@ -591,16 +591,34 @@ class MirrorRetrieval:
         return None
 
     def get_hash(self, source: int, relation: int) -> dict[str, Any] | None:
-        """Return the same fact through the exact ``(source, relation)`` map."""
+        """Return the newest fact through the exact ``(source, relation)`` map."""
         source = _require_uint64(source, "source")
         relation = _require_uint64(relation, "relation")
         self._stats["hash_lookups"] += 1
-        fact_id = self._exact.get((source, relation))
-        if fact_id is None:
+        fact_ids = self._exact.get((source, relation))
+        if not fact_ids:
             return None
-        fact = self._facts[fact_id]
+        fact = self._facts[fact_ids[-1]]
         assert fact is not None
         return self._fact_view(fact)
+
+    def get_all(self, source: int, relation: int, *,
+                limit: int | None = None) -> list[dict[str, Any]]:
+        """Return every fact for an exact key, newest first, bounded by limit."""
+        source = _require_uint64(source, "source")
+        relation = _require_uint64(relation, "relation")
+        if limit is None:
+            limit = self.max_neighbors
+        else:
+            limit = _require_bounded(limit, "limit", 1, self.max_neighbors)
+        facts: list[dict[str, Any]] = []
+        for fact_id in reversed(self._exact.get((source, relation), ())):
+            if len(facts) >= limit:
+                break
+            fact = self._facts[fact_id]
+            assert fact is not None
+            facts.append(self._fact_view(fact))
+        return facts
 
     # Convenient explicit name for the comparison baseline.
     get_comparator = get_hash
@@ -738,7 +756,7 @@ class MirrorRetrieval:
     def comparator_view(self) -> dict[str, Any]:
         """Describe the conventional comparator without a speed claim."""
         fact_count = len(self._facts) - 1
-        indexed = len(self._exact)
+        indexed = sum(len(ids) for ids in self._exact.values())
         return {
             "kind": "exact_hash_map",
             "key": "(source, relation)",
@@ -757,7 +775,8 @@ class MirrorRetrieval:
             "facts": len(self._facts) - 1,
             "capacity": self.capacity,
             "generation": self.generation,
-            "exact_index_size": len(self._exact),
+            "exact_index_size": sum(len(ids) for ids in self._exact.values()),
+            "exact_key_count": len(self._exact),
             "pair_anchors": len(self._pair_anchors),
             "stats": dict(self._stats),
             "bounds": {
@@ -813,7 +832,8 @@ class MirrorRetrieval:
             "anchor_count": len(self._postings),
             "anchors_truncated": len(anchors) < len(self._postings),
             "collision": collision,
-            "exact_index_size": len(self._exact),
+            "exact_index_size": sum(len(ids) for ids in self._exact.values()),
+            "exact_key_count": len(self._exact),
             "comparator": self.comparator_view(),
             "canonical_merge": False,
             "bounded": True,
@@ -870,7 +890,8 @@ class MirrorRetrieval:
                                 % fact_id)
             if _mirror_address(canonical) != fact.mirror_address:
                 problems.append("mirror address mismatch for fact %d" % fact_id)
-            if self._exact.get((fact.source, fact.relation)) != fact_id:
+            if fact_id not in self._exact.get(
+                    (fact.source, fact.relation), ()):
                 problems.append("exact comparator mismatch for fact %d"
                                 % fact_id)
             posting = self._postings.get(fact.pair_index, ())
@@ -880,9 +901,10 @@ class MirrorRetrieval:
             if fact_id not in outgoing:
                 problems.append("fact %d missing from outgoing index" % fact_id)
 
-        if len(self._exact) != fact_count:
+        exact_entries = sum(len(ids) for ids in self._exact.values())
+        if exact_entries != fact_count:
             problems.append("exact comparator size %d != fact count %d"
-                            % (len(self._exact), fact_count))
+                            % (exact_entries, fact_count))
         collision = self._collision_summary()
         if collision["posting_entries"] != fact_count:
             problems.append("posting entry count %d != fact count %d"
@@ -913,7 +935,8 @@ class MirrorRetrieval:
             "truncated": truncated,
             "bounded": True,
             "limit": limit,
-            "exact_index_size": len(self._exact),
+            "exact_index_size": sum(len(ids) for ids in self._exact.values()),
+            "exact_key_count": len(self._exact),
             "pair_anchors": len(self._pair_anchors),
             "posting_lists": collision["posting_lists"],
             "posting_entries": collision["posting_entries"],
@@ -1091,10 +1114,6 @@ def load_facts(path: Any, retrieval: MirrorRetrieval | None = None, *,
         digest = _normalize_digest(source_digest)
     if retrieval is None:
         retrieval = MirrorRetrieval(cells_or_fake, capacity=capacity)
-    if retrieval is not None and len(retrieval) >= retrieval.capacity:
-        raise MirrorBoundsError("retrieval has no fact capacity remaining",
-                                code="fact_capacity",
-                                details={"capacity": retrieval.capacity})
     fact_ids: list[int] = []
     rows_read = 0
     skipped = 0

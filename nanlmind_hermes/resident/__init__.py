@@ -68,6 +68,7 @@ __all__ = (
     "ScratchLayers", "SelfModificationGate", "FieldLearner",
     "FieldPersistence", "MTHHeadBridge", "CycleField", "NativeCycleRoot",
     "Round030Snapshot", "FullCycleMemory", "FullCycleTrainer",
+    "EpisodicGate", "CompositionMemory",
 )
 
 
@@ -118,4 +119,10 @@ def __getattr__(name):
     if name == "FullCycleTrainer":
         from .full_cycle_training import FullCycleTrainer
         return FullCycleTrainer
+    if name == "EpisodicGate":
+        from .episodic_gate import LogisticGate as EpisodicGate
+        return EpisodicGate
+    if name == "CompositionMemory":
+        from .composition_gate import CompositionMemory
+        return CompositionMemory
     raise AttributeError(name)

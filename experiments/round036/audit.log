@@ -1,0 +1,3 @@
+MODEL 17 0.5 0.0 1.0
+MODEL 29 1.0 1.0 1.0
+NATIVE {'root_size_bytes': 8388608, 'test_cases': 90, 'pristine_root_sha256': '38222e0bd0848941660bbfc87bd68de1249d3d6db047cf1fadfa9bce47e96773', 'cycle_exact_prompt_recovery': 1.0, 'raw_exact_prompt_recovery': 0.0, 'cycle_generation_unchanged': 1.0, 'raw_generation_unchanged': 0.0, 'cycle_semantic_accuracy': 1.0, 'raw_semantic_accuracy': 0.0, 'conventional_memory_prompt_recovery': 1.0, 'conventional_generation_unchanged': 1.0}

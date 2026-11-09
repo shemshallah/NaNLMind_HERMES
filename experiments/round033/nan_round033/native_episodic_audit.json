@@ -1,0 +1,7 @@
+{
+  "root_bytes": 8388608,
+  "stored_bytes": 288,
+  "clean_exact": true,
+  "after_gauge_exact": true,
+  "gauge_amplitude": 6.0
+}

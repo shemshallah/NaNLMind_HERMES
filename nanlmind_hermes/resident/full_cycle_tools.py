@@ -1877,15 +1877,28 @@ def _basis_meta(snapshot: Mapping[str, Any], *,
         count = _backend_int(count_raw, "basis_count", 0, FULL_BASIS_CYCLES)
     digest = _first_value(
         sources, ("basis_digest", "full_basis_digest", "cycle_digest"))
-    if digest is None and len(sources) == 1:
-        digest = _first_value(sources, ("digest",))
+    if digest is None:
+        digest = _first_value(sources, ("digest", "state_digest"))
     digest = _backend_digest(digest, "basis_digest")
     generation = _first_value(
         sources, ("basis_generation", "cycle_generation", "generation"))
     generation = _generation_from(generation, "basis_generation") \
         if generation is not None else None
     features_raw = _first_value(
-        sources, ("features", "feature_map", "cycles", "basis", "words"))
+        sources, ("features", "feature_map", "cycles", "basis", "words",
+                  "coefficients", "entries", "full_basis"))
+    if isinstance(features_raw, Mapping):
+        # A nested metadata object is not a feature map.  Look one level in
+        # for the actual entries before deciding to ignore it.
+        inner = _first_value(
+            [features_raw], ("words", "basis", "cycles", "coefficients",
+                             "entries", "features", "feature_map"))
+        if inner is not None:
+            features_raw = inner
+        elif any(key in features_raw for key in (
+                "count", "basis_count", "word_count", "digest",
+                "basis_digest", "generation", "root", "complete")):
+            features_raw = None
     entries: list[dict[str, int]] = []
     entries_error: str | None = None
     if features_raw is not None:
@@ -2391,7 +2404,7 @@ def write(params: Any, *, backend: Any) -> dict[str, Any]:
 
     basis_method = None
     word_method = _find_method(
-        backend, ("write_word", "set_word", "set_edge"))
+        backend, ("write_word", "set_word", "set_edge", "write", "set"))
     if index is not None:
         basis_method = _find_method(
             backend, ("write_basis", "set_basis", "write_cycle",
@@ -2986,7 +2999,15 @@ class FullCycleMemory:
         return FULL_BASIS_CYCLES
 
     def _word(self, first: int, second: int) -> int:
-        first, second, _root = _check_basis_pair(first, second, self.root)
+        first = _input_node(first, "i")
+        second = _input_node(second, "j")
+        if first == second:
+            raise FullCycleValidationError(
+                "a cycle edge requires two distinct heads")
+        if first == self.root or second == self.root:
+            # The star gauge fixes the root edges at zero; they are not
+            # independent full-basis coefficients.
+            return 0
         return self._words[basis_index(first, second, self.root)]
 
     def _advance(self) -> None:
@@ -3006,8 +3027,7 @@ class FullCycleMemory:
             "root": self.root,
             "generation": self._generation,
             "digest": self._digest,
-            "basis_count": FULL_BASIS_COEFFICIENTS
-            if "FULL_BASIS_COEFFICIENTS" in globals() else FULL_BASIS_CYCLES,
+            "basis_count": FULL_BASIS_CYCLES,
             "full_basis": {
                 "root": self.root,
                 "basis_count": FULL_BASIS_CYCLES,
@@ -3027,11 +3047,22 @@ class FullCycleMemory:
     def write_word(self, first: int, second: int, word: Any,
                    expected_generation: Any = None) -> dict[str, Any]:
         word_value = _input_word(word)
+        first = _input_node(first, "i")
+        second = _input_node(second, "j")
+        if first == second:
+            raise FullCycleValidationError(
+                "a cycle edge requires two distinct heads")
         if expected_generation is not None:
             expected = _input_generation(expected_generation)
             if expected != self._generation:
                 return {"accepted": False, "reasons": ["stale_generation"],
                         "generation": self._generation}
+        if first == self.root or second == self.root:
+            return {
+                "accepted": False,
+                "reasons": ["gauge_edge_not_in_basis"],
+                "generation": self._generation,
+            }
         index = basis_index(first, second, self.root)
         previous = self._generation
         self._words[index] = word_value
@@ -3059,10 +3090,12 @@ class FullCycleMemory:
             seed = int(hashlib.sha256(text_value.encode("utf-8"))
                        .hexdigest()[:16], 16)
             entries = []
+            seen: set[int] = set()
             for position in range(min(cap, FULL_BASIS_CYCLES)):
                 index = (seed + position * 7919) % FULL_BASIS_CYCLES
-                if index in {item["index"] for item in entries}:
+                if index in seen:
                     continue
+                seen.add(index)
                 pair = basis_pair(index, self.root)
                 entries.append({"index": index, "i": pair[0], "j": pair[1],
                                 "word": self._words[index]})
@@ -3155,6 +3188,33 @@ class FullCycleMemory:
 
 
 FullBasisMemory = FullCycleMemory
+FullCycleMemoryPersistence = FullCyclePersistence
+FullBasisPersistence = FullCyclePersistence
+
+# Additional constant spellings used by callers that describe the same bound
+# in different words.
+MAX_CYCLES = FULL_BASIS_CYCLES
+MAX_CYCLE_COUNT = FULL_BASIS_CYCLES
+MAX_BASIS = FULL_BASIS_CYCLES
+MAX_BASIS_COUNT = FULL_BASIS_CYCLES
+
+
+def save_full_basis(universe: Any, basis: Any, **kwargs: Any
+                    ) -> FullCycleReceipt:
+    """Convenience wrapper for ``FullCyclePersistence.save_full_basis``."""
+    return FullCyclePersistence(universe).save_full_basis(basis, **kwargs)
+
+
+def load_full_basis(universe: Any, version: Any = None, **kwargs: Any
+                    ) -> FullBasisRecord | None:
+    """Convenience wrapper for ``FullCyclePersistence.load_full_basis``."""
+    return FullCyclePersistence(universe).load_full_basis(
+        version, **kwargs)
+
+
+def full_basis_audit(universe: Any, **kwargs: Any) -> dict[str, Any]:
+    """Convenience wrapper for ``FullCyclePersistence.audit``."""
+    return FullCyclePersistence(universe).audit(**kwargs)
 
 
 __all__ = (
@@ -3177,7 +3237,10 @@ __all__ = (
     "FullCycleBoundsError", "FullCycleCorruptionError",
     "FullCyclePathError", "FullCycleSecretError", "FullCyclePointerError",
     "FullCycleReceipt", "FullBasisRecord", "FullCyclePersistence",
-    "FullCycleMemory", "FullBasisMemory", "full_basis_pairs", "basis_index",
+    "FullCycleMemory", "FullBasisMemory", "FullCycleMemoryPersistence",
+    "FullBasisPersistence", "MAX_CYCLES", "MAX_CYCLE_COUNT", "MAX_BASIS",
+    "MAX_BASIS_COUNT", "save_full_basis", "load_full_basis",
+    "full_basis_audit", "full_basis_pairs", "basis_index",
     "basis_pair", "status", "write", "predict", "train", "snapshot", "audit",
     "query", "handle", "HANDLERS", "build_handlers", "set_word",
     "set_cycle", "predict_cycles", "train_full_basis",

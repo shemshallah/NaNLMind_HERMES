@@ -1,0 +1,86 @@
+{
+  "in_distribution": {
+    "n": 300,
+    "valid_answer_rate": 1.0,
+    "first_samples": [
+      {
+        "prompt": " premise : e1 belongs to e2 . next : e0 belongs to e1 . question : what is e0 relative to e2 ?",
+        "expected": "e0 belongs to e2 .",
+        "generated": "e0 is classified as e2 ."
+      },
+      {
+        "prompt": " premise : e1 belongs to e2 . next : e0 belongs to e1 . next : e2 belongs to e3 . question : what is e0 relative to e3 ?",
+        "expected": "e0 is classified as e3 .",
+        "generated": "e0 is classified as e3 ."
+      },
+      {
+        "prompt": " premise : e1 is classified as e2 . next : e0 is classified as e1 . question : what is e0 relative to e2 ?",
+        "expected": "e0 belongs to e2 .",
+        "generated": "e0 is classified as e2 ."
+      }
+    ]
+  },
+  "contradiction_wording": {
+    "n": 300,
+    "valid_answer_rate": 0.0,
+    "first_samples": [
+      {
+        "prompt": " premise : e1 opposes e2 . next : e0 opposes e1 . question : what is e0 relative to e2 ?",
+        "expected": "the evidence is insufficient .",
+        "generated": "e0 is classified as e2 ."
+      },
+      {
+        "prompt": " premise : e1 opposes e2 . next : e0 opposes e1 . next : e2 opposes e3 . question : what is e0 relative to e3 ?",
+        "expected": "the evidence is insufficient .",
+        "generated": "e0 is classified as e3 ."
+      },
+      {
+        "prompt": " premise : e1 opposes e2 . next : e0 opposes e1 . question : what is e0 relative to e2 ?",
+        "expected": "the evidence is insufficient .",
+        "generated": "e0 is classified as e2 ."
+      }
+    ]
+  },
+  "unseen_paraphrase": {
+    "n": 300,
+    "valid_answer_rate": 1.0,
+    "first_samples": [
+      {
+        "prompt": " premise : e1 descends from e2 . next : e0 descends from e1 . question : what is e0 relative to e2 ?",
+        "expected": "e0 belongs to e2 .",
+        "generated": "e0 is classified as e2 ."
+      },
+      {
+        "prompt": " premise : e1 descends from e2 . next : e0 descends from e1 . next : e2 descends from e3 . question : what is e0 relative to e3 ?",
+        "expected": "e0 is classified as e3 .",
+        "generated": "e0 is classified as e3 ."
+      },
+      {
+        "prompt": " premise : e1 is a subclass of e2 . next : e0 is a subclass of e1 . question : what is e0 relative to e2 ?",
+        "expected": "e0 belongs to e2 .",
+        "generated": "e0 is classified as e2 ."
+      }
+    ]
+  },
+  "four_hop_extrapolation": {
+    "n": 150,
+    "valid_answer_rate": 0.0,
+    "first_samples": [
+      {
+        "prompt": " premise : e1 belongs to e2 . next : e0 belongs to e1 . next : e2 belongs to e3 . next : e3 belongs to e4 . question : what is e0 relative to e4 ?",
+        "expected": "e0 belongs to e4 .",
+        "generated": "the evidence is insufficient ."
+      },
+      {
+        "prompt": " premise : e0 is classified as e1 . next : e1 is classified as e2 . next : e2 is classified as e3 . next : e3 belongs to e4 . question : what is e0 relative to e4 ?",
+        "expected": "e0 belongs to e4 .",
+        "generated": "the evidence is insufficient ."
+      },
+      {
+        "prompt": " premise : e1 belongs to e2 . next : e2 belongs to e3 . next : e0 belongs to e1 . next : e3 belongs to e4 . question : what is e0 relative to e4 ?",
+        "expected": "e0 belongs to e4 .",
+        "generated": "the evidence is insufficient ."
+      }
+    ]
+  }
+}

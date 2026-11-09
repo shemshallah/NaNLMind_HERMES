@@ -1,0 +1,265 @@
+{
+  "semantic": [
+    {
+      "seed": 17,
+      "n": 2998,
+      "valid_positive_accuracy": 0.0,
+      "negative_abstention_accuracy": 1.0,
+      "semantic_accuracy": 0.5,
+      "exact_surface_match": 0.5,
+      "examples": [
+        {
+          "facts": [
+            "e1 belongs to e2 .",
+            "e0 belongs to e1 ."
+          ],
+          "generated": "the evidence is insufficient .",
+          "reference": "e0 belongs to e2 .",
+          "semantic_correct": false
+        },
+        {
+          "facts": [
+            "e1 belongs to e2 .",
+            "e0 belongs to e1 .",
+            "e2 belongs to e3 ."
+          ],
+          "generated": "the evidence is insufficient .",
+          "reference": "e0 is classified as e3 .",
+          "semantic_correct": false
+        },
+        {
+          "facts": [
+            "e0 is classified as e1 .",
+            "e3 is classified as e2 ."
+          ],
+          "generated": "the evidence is insufficient .",
+          "reference": "the evidence is insufficient .",
+          "semantic_correct": true
+        },
+        {
+          "facts": [
+            "e0 is classified as e1 .",
+            "e1 is classified as e2 .",
+            "e4 is classified as e3 ."
+          ],
+          "generated": "the evidence is insufficient .",
+          "reference": "the evidence is insufficient .",
+          "semantic_correct": true
+        },
+        {
+          "facts": [
+            "e1 is classified as e2 .",
+            "e0 is classified as e1 ."
+          ],
+          "generated": "the evidence is insufficient .",
+          "reference": "e0 belongs to e2 .",
+          "semantic_correct": false
+        },
+        {
+          "facts": [
+            "e0 is classified as e1 .",
+            "e1 is classified as e2 .",
+            "e2 is classified as e3 ."
+          ],
+          "generated": "the evidence is insufficient .",
+          "reference": "e0 is a type of e3 .",
+          "semantic_correct": false
+        },
+        {
+          "facts": [
+            "e0 belongs to e1 .",
+            "e3 belongs to e2 ."
+          ],
+          "generated": "the evidence is insufficient .",
+          "reference": "the evidence is insufficient .",
+          "semantic_correct": true
+        },
+        {
+          "facts": [
+            "e1 belongs to e2 .",
+            "e0 belongs to e1 .",
+            "e4 belongs to e3 ."
+          ],
+          "generated": "the evidence is insufficient .",
+          "reference": "the evidence is insufficient .",
+          "semantic_correct": true
+        },
+        {
+          "facts": [
+            "e0 is classified as e1 .",
+            "e1 is classified as e2 ."
+          ],
+          "generated": "the evidence is insufficient .",
+          "reference": "e0 is classified as e2 .",
+          "semantic_correct": false
+        },
+        {
+          "facts": [
+            "e1 belongs to e2 .",
+            "e2 belongs to e3 .",
+            "e0 belongs to e1 ."
+          ],
+          "generated": "the evidence is insufficient .",
+          "reference": "e0 is a type of e3 .",
+          "semantic_correct": false
+        },
+        {
+          "facts": [
+            "e0 is a type of e1 .",
+            "e3 is a type of e2 ."
+          ],
+          "generated": "the evidence is insufficient .",
+          "reference": "the evidence is insufficient .",
+          "semantic_correct": true
+        },
+        {
+          "facts": [
+            "e4 belongs to e3 .",
+            "e0 belongs to e1 .",
+            "e1 belongs to e2 ."
+          ],
+          "generated": "the evidence is insufficient .",
+          "reference": "the evidence is insufficient .",
+          "semantic_correct": true
+        }
+      ]
+    },
+    {
+      "seed": 29,
+      "n": 2998,
+      "valid_positive_accuracy": 1.0,
+      "negative_abstention_accuracy": 1.0,
+      "semantic_accuracy": 1.0,
+      "exact_surface_match": 0.6701134089392928,
+      "examples": [
+        {
+          "facts": [
+            "e1 belongs to e2 .",
+            "e0 belongs to e1 ."
+          ],
+          "generated": "e0 is classified as e2 .",
+          "reference": "e0 belongs to e2 .",
+          "semantic_correct": true
+        },
+        {
+          "facts": [
+            "e1 belongs to e2 .",
+            "e0 belongs to e1 .",
+            "e2 belongs to e3 ."
+          ],
+          "generated": "e0 is classified as e3 .",
+          "reference": "e0 is classified as e3 .",
+          "semantic_correct": true
+        },
+        {
+          "facts": [
+            "e0 is classified as e1 .",
+            "e3 is classified as e2 ."
+          ],
+          "generated": "the evidence is insufficient .",
+          "reference": "the evidence is insufficient .",
+          "semantic_correct": true
+        },
+        {
+          "facts": [
+            "e0 is classified as e1 .",
+            "e1 is classified as e2 .",
+            "e4 is classified as e3 ."
+          ],
+          "generated": "the evidence is insufficient .",
+          "reference": "the evidence is insufficient .",
+          "semantic_correct": true
+        },
+        {
+          "facts": [
+            "e1 is classified as e2 .",
+            "e0 is classified as e1 ."
+          ],
+          "generated": "e0 is classified as e2 .",
+          "reference": "e0 belongs to e2 .",
+          "semantic_correct": true
+        },
+        {
+          "facts": [
+            "e0 is classified as e1 .",
+            "e1 is classified as e2 .",
+            "e2 is classified as e3 ."
+          ],
+          "generated": "e0 is classified as e3 .",
+          "reference": "e0 is a type of e3 .",
+          "semantic_correct": true
+        },
+        {
+          "facts": [
+            "e0 belongs to e1 .",
+            "e3 belongs to e2 ."
+          ],
+          "generated": "the evidence is insufficient .",
+          "reference": "the evidence is insufficient .",
+          "semantic_correct": true
+        },
+        {
+          "facts": [
+            "e1 belongs to e2 .",
+            "e0 belongs to e1 .",
+            "e4 belongs to e3 ."
+          ],
+          "generated": "the evidence is insufficient .",
+          "reference": "the evidence is insufficient .",
+          "semantic_correct": true
+        },
+        {
+          "facts": [
+            "e0 is classified as e1 .",
+            "e1 is classified as e2 ."
+          ],
+          "generated": "e0 is classified as e2 .",
+          "reference": "e0 is classified as e2 .",
+          "semantic_correct": true
+        },
+        {
+          "facts": [
+            "e1 belongs to e2 .",
+            "e2 belongs to e3 .",
+            "e0 belongs to e1 ."
+          ],
+          "generated": "e0 is classified as e3 .",
+          "reference": "e0 is a type of e3 .",
+          "semantic_correct": true
+        },
+        {
+          "facts": [
+            "e0 is a type of e1 .",
+            "e3 is a type of e2 ."
+          ],
+          "generated": "the evidence is insufficient .",
+          "reference": "the evidence is insufficient .",
+          "semantic_correct": true
+        },
+        {
+          "facts": [
+            "e4 belongs to e3 .",
+            "e0 belongs to e1 .",
+            "e1 belongs to e2 ."
+          ],
+          "generated": "the evidence is insufficient .",
+          "reference": "the evidence is insufficient .",
+          "semantic_correct": true
+        }
+      ]
+    }
+  ],
+  "native": {
+    "root_size_bytes": 8388608,
+    "test_cases": 90,
+    "pristine_root_sha256": "38222e0bd0848941660bbfc87bd68de1249d3d6db047cf1fadfa9bce47e96773",
+    "cycle_exact_prompt_recovery": 1.0,
+    "raw_exact_prompt_recovery": 0.0,
+    "cycle_generation_unchanged": 1.0,
+    "raw_generation_unchanged": 0.0,
+    "cycle_semantic_accuracy": 1.0,
+    "raw_semantic_accuracy": 0.0,
+    "conventional_memory_prompt_recovery": 1.0,
+    "conventional_generation_unchanged": 1.0
+  }
+}

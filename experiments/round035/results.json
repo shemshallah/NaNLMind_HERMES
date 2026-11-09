@@ -1,0 +1,52 @@
+{
+  "source": "WordNet 3.1 data.noun in user-supplied archive",
+  "synsets": 82192,
+  "eligible_two_hop_child_disjoint_chains": 81564,
+  "examples_total": 6000,
+  "learned_token_level_mixture_gate": [
+    {
+      "seed": 17,
+      "test_accuracy": 1.0,
+      "test_binary_cross_entropy": 0.0008711571572348475,
+      "target_bits_per_byte_mixture": 0.001261323907882039,
+      "train_examples": 4200,
+      "validation_examples": 900,
+      "test_examples": 900
+    },
+    {
+      "seed": 29,
+      "test_accuracy": 1.0,
+      "test_binary_cross_entropy": 0.0008997628465294838,
+      "target_bits_per_byte_mixture": 0.001299273022164781,
+      "train_examples": 4200,
+      "validation_examples": 900,
+      "test_examples": 900
+    },
+    {
+      "seed": 41,
+      "test_accuracy": 1.0,
+      "test_binary_cross_entropy": 0.0010121844243258238,
+      "target_bits_per_byte_mixture": 0.0014652099236055365,
+      "train_examples": 4200,
+      "validation_examples": 900,
+      "test_examples": 900
+    }
+  ],
+  "native": {
+    "episodes": 80,
+    "cycle_composed_answers_correct": 80,
+    "raw_single_edge_answers_correct": 5,
+    "root_size_bytes": 8388608,
+    "native_pair_slots_used": 11200
+  },
+  "conventional_two_source_composition": {
+    "correct": 900,
+    "total": 900
+  },
+  "second_source_removed": {
+    "correct": 450,
+    "total": 900
+  },
+  "interpretation": "Template-and-pointer generative composition, not free-form fluent generation. Geometric advantage is gauge invariance; conventional invariant/indexed control ties.",
+  "runtime_seconds": 5.29
+}

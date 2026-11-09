@@ -1,0 +1,14 @@
+WordNet 81499 cases {'train': 17986, 'validation': 2998, 'test': 2998} vocab 28
+/mnt/data/nan_round036/train.py:131: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:836.)
+  hist.append({'step':step+1,'train_loss':float(loss),'validation_loss':vl});print(seed,step+1,round(float(loss),4),round(vl,4),flush=True)
+17 1 3.3214 3.2102
+17 49 0.3753 0.355
+17 97 0.2545 0.2238
+17 145 0.206 0.1894
+TEST 17 0.5 0.2064604942822361
+29 1 3.359 3.2523
+29 49 0.2908 0.3229
+29 97 0.1158 0.1049
+29 145 0.0972 0.0848
+TEST 29 0.6701134089392928 0.09347580301527836

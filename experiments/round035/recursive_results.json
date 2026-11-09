@@ -1,0 +1,49 @@
+{
+  "real_wordnet_three_hop_positives": 60,
+  "broken_path_negatives": 60,
+  "native_cycle_exact_answers": 120,
+  "positive_correct": 60,
+  "negative_abstentions": 60,
+  "raw_edge_exact_answers": 60,
+  "episodes": 120,
+  "slots_used": 28800,
+  "examples": [
+    {
+      "facts": [
+        [
+          "aura",
+          "symptom"
+        ],
+        [
+          "symptom",
+          "evidence"
+        ],
+        [
+          "evidence",
+          "information"
+        ]
+      ],
+      "generated": "aura is a kind of information.",
+      "expected": "aura is a kind of information."
+    },
+    {
+      "facts": [
+        [
+          "rocket firing",
+          "launching"
+        ],
+        [
+          "launching",
+          "propulsion"
+        ],
+        [
+          "trotting horse",
+          "racehorse"
+        ]
+      ],
+      "generated": "I do not have enough evidence.",
+      "expected": "I do not have enough evidence."
+    }
+  ],
+  "note": "A deterministic typed-path interpreter, not a trained 3-hop neural generalizer. Negative cases are constructed by replacing the third source edge."
+}
