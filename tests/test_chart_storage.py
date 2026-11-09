@@ -54,6 +54,34 @@ class ChartSnapshotTests(unittest.TestCase):
                 save_chart_snapshot(folder, chart.root_hash, chart.bytes, 2)
             self.assertEqual(save_chart_snapshot(folder, chart.root_hash, chart.bytes, 1), 2)
 
+    def test_two_valid_same_generation_slots_must_not_fork_single_chart(self):
+        # Both slots have intact headers and valid SHA-256 values, but are
+        # separate histories claiming the SAME durable generation.
+        import hashlib
+        from nanlmind_hermes.chart_storage import MAGIC, SLOT_NAMES
+        with tempfile.TemporaryDirectory() as temp:
+            folder = Path(temp)
+            chart = Chart8MiB.genesis()
+            original = bytes(chart.bytes)
+            self.assertEqual(save_chart_snapshot(folder, chart.root_hash, original, 0), 1)
+            fork = bytearray(original)
+            fork[OFF_EXTENSION + 2048] ^= 0x01
+            root = folder / "language" / "chart-checkpoints"
+            slot1 = root / SLOT_NAMES[1]
+            slot1.write_bytes(
+                HEADER.pack(MAGIC, 1, bytes.fromhex(chart.root_hash),
+                            hashlib.sha256(fork).digest()) + fork
+            )
+            with self.assertRaisesRegex(ChartStorageError, "ambiguous same-generation"):
+                load_chart_snapshot(folder, chart.root_hash)
+            with self.assertRaisesRegex(ChartStorageError, "ambiguous same-generation"):
+                save_chart_snapshot(folder, chart.root_hash, original, 1,
+                                    expected_page_sha256=hashlib.sha256(original).hexdigest())
+            # An identical duplicate of a valid generation is not a fork.
+            slot1.write_bytes((root / SLOT_NAMES[0]).read_bytes())
+            self.assertEqual(load_chart_snapshot(folder, chart.root_hash), (1, original))
+            self.assertEqual(save_chart_snapshot(folder, chart.root_hash, original, 1), 2)
+
     def test_refuse_invalid_header_and_stale_writer(self):
         with tempfile.TemporaryDirectory() as temp:
             folder = Path(temp)

@@ -27,6 +27,7 @@ was used.
 from __future__ import annotations
 
 import struct
+import threading
 from pathlib import Path
 
 from .chart_storage import load_chart_snapshot, save_chart_snapshot, ChartStorageError
@@ -144,6 +145,7 @@ class Chart8MiB:
         chart.bytes = bytearray(PAGE_BYTES)
         chart._dirty = True
         chart.snapshot_generation = 0
+        chart._checkpoint_page_sha256 = None
         chart._parents = {}
         header = chart.bytes
         header[0:8] = MAGIC_CHART
@@ -204,6 +206,7 @@ class Chart8MiB:
         self._parents: dict[int, int] = {}
         self._dirty = False
         self.snapshot_generation = 0
+        self._checkpoint_page_sha256 = None
 
     # -- assembly -------------------------------------------------------
     def _write_header(self, page: bytes) -> None:
@@ -382,6 +385,12 @@ def restore_local_chart(chart: Chart8MiB, state_dir: str | Path) -> int:
                 raise ChartError("snapshot changed immutable chart addressing")
         chart.bytes[:] = payload
         chart._dirty = False
+    # Record the exact SHA-verified durable page loaded from storage, not a
+    # later dirty in-memory page. Subsequent local checkpoints CAS against it.
+    import hashlib
+    chart._checkpoint_page_sha256 = (
+        hashlib.sha256(payload).hexdigest() if payload is not None else None
+    )
     chart.snapshot_generation = generation
     return generation
 
@@ -715,6 +724,7 @@ class HeadScratchRegister:
 
 
 _RUNNERS: dict[str, "LocalRunner"] = {}
+_RUNNERS_LOCK = threading.RLock()
 
 
 class LocalRunner:
@@ -739,12 +749,27 @@ class LocalRunner:
     def __init__(self, chart: Chart8MiB | None, register: TemporalRegister):
         self.chart = chart
         self.register = register
+        # Serialize the live chart's native bank rebase and ordinary writers.
+        # Durable N16SNAP1 CAS separately fences other processes.
+        self._write_lock = threading.RLock()
         self.heads = HeadScratchRegister(chart, register.state_dir)
         self.local_memory_bytes = PAGE_BYTES + (2 * REGISTER_BYTES if chart else 0)
 
     @classmethod
     def open(cls, ctx) -> "LocalRunner":
-        state_dir = Path(str(ctx.get_config("state_dir", "~/.local/share/nanlmind-hermes"))).expanduser()
+        # One process-level cache entry per state directory. A concurrent
+        # plugin startup must never instantiate two competing HERMES charts.
+        with _RUNNERS_LOCK:
+            return cls._open_serialized(ctx)
+
+    @classmethod
+    def _open_serialized(cls, ctx) -> "LocalRunner":
+        # Normalize directory aliases before cache lookup. Without resolve(),
+        # ./state and a symlink to that same deployment could instantiate
+        # competing live charts despite the one-cache global writer lock.
+        state_dir = Path(str(ctx.get_config(
+            "state_dir", "~/.local/share/nanlmind-hermes"
+        ))).expanduser().resolve()
         key = str(state_dir)
         runner = _RUNNERS.get(key)
         latest = None
@@ -761,43 +786,166 @@ class LocalRunner:
             runner = cls(chart, register)
             _RUNNERS[key] = runner
         elif latest is not None:
-            chart = load_chart(state_dir)
-            if chart is not None and runner.chart is not chart \
-                    and (runner.chart is None or runner.chart.root_hash != chart.root_hash):
-                restore_local_chart(chart, state_dir)
-                from .universe_root import attach_universe_root
-                attach_universe_root(chart)
-                runner.chart = chart
-                runner.register.chart = chart
-                runner.register.reason = "trained chart"
-                runner.register._refresh_from_rail()
-                runner.register._sync_extension()
-                runner.heads.chart = chart
-                runner.heads._write_chart()
-                runner.local_memory_bytes = PAGE_BYTES + 2 * REGISTER_BYTES
+            with runner._write_lock:
+                chart = load_chart(state_dir)
+                if chart is not None and runner.chart is not chart \
+                        and (runner.chart is None or runner.chart.root_hash != chart.root_hash):
+                    restore_local_chart(chart, state_dir)
+                    from .universe_root import attach_universe_root
+                    attach_universe_root(chart)
+                    runner.chart = chart
+                    runner.register.chart = chart
+                    runner.register.reason = "trained chart"
+                    runner.register._refresh_from_rail()
+                    runner.register._sync_extension()
+                    runner.heads.chart = chart
+                    runner.heads._write_chart()
+                    runner.local_memory_bytes = PAGE_BYTES + 2 * REGISTER_BYTES
         return runner
 
+    def commit_native_head_observation(self, *, coordinator, request,
+                                       lease_receipt, network_head: int) -> dict:
+        """Serialize authenticated native rebase against local chart writers."""
+        with self._write_lock:
+            return self._commit_native_head_observation_locked(
+                coordinator=coordinator, request=request,
+                lease_receipt=lease_receipt, network_head=network_head,
+            )
+
+    def _commit_native_head_observation_locked(self, *, coordinator, request,
+                                               lease_receipt, network_head: int) -> dict:
+        """Rebase one verified native NaN16 bank into THIS existing chart.
+
+        The router journal and HERMES N16SNAP1 writer must already be
+        deployment-owned, never assembled from an untrusted plugin request.
+        Preserve any pending temporal/MP/MTH edits in memory while replacing
+        ONLY the native bank's reserved byte region with its durable output.
+        This method does not allocate another chart or train a second model.
+        The runner serializes its ordinary in-process writers during handoff.
+        """
+        import hashlib
+        from .head_bank_transport import BANK_OFFSET, BANK_END, BANK_BYTES
+        from .native_head_checkpoint import (
+            NativeHeadCheckpointCoordinator,
+        )
+        if type(coordinator) is not NativeHeadCheckpointCoordinator:
+            raise ChartError("trusted native head checkpoint coordinator required")
+        if self.chart is None:
+            raise ChartError("local runner has no binary universe")
+        if (self.register.chart is not self.chart
+                or self.heads.chart is not self.chart):
+            raise ChartError("local runner heads and temporal rails are not bound")
+        if self.register.state_dir.resolve() != coordinator.fence._state_dir.resolve():
+            raise ChartError("native checkpoint belongs to another state directory")
+        if (type(request.chart_generation) is not int
+                or self.chart.root_hash != request.parent_root_sha256
+                or self.chart.snapshot_generation not in (
+                    request.chart_generation, request.chart_generation + 1
+                )):
+            raise ChartError("local runner checkpoint parent/generation mismatch")
+        current = bytes(self.chart.bytes[BANK_OFFSET:BANK_END])
+        if self.chart.snapshot_generation == request.chart_generation:
+            if hashlib.sha256(current).hexdigest() != request.bank_before_sha256:
+                raise ChartError("native head bank changed in cached local chart")
+        before_dirty = bool(self.chart._dirty)
+        # Only the durable router journal supplies the native result. The
+        # commit writes its own disk snapshot before we touch cached bytes.
+        committed = coordinator.commit(
+            request=request, lease_receipt=lease_receipt,
+            network_head=network_head,
+        )
+        next_generation = request.chart_generation + 1
+        if (committed.get("local_checkpoint_verified") is not True
+                or committed.get("chart_generation") != next_generation
+                or committed.get("canonical_training_committed") is not False):
+            raise ChartError("native checkpoint evidence is not locally verified")
+        generation, page = load_chart_snapshot(
+            self.register.state_dir, self.chart.root_hash,
+        )
+        if generation != next_generation or page is None:
+            raise ChartError("native checkpoint was superseded during local rebase")
+        new_bank = bytes(page[BANK_OFFSET:BANK_END])
+        if (len(new_bank) != BANK_BYTES
+                or hashlib.sha256(new_bank).hexdigest() != committed.get(
+                    "bank_after_sha256"
+                )):
+            raise ChartError("native checkpoint and retrieved bank disagree")
+        if self.chart.snapshot_generation == next_generation:
+            # Repeated dispatch: don't mutate the live object again.
+            if hashlib.sha256(current).hexdigest() != committed["bank_after_sha256"]:
+                raise ChartError("replay would replace a different cached native bank")
+            rebased = False
+        else:
+            # Preserve live edits to EVERY OTHER address, mirror pair, and
+            # temporal register. Do not replace the whole cached chart
+            # with the older disk page or lose uncheckpointed local work.
+            if hashlib.sha256(
+                self.chart.bytes[BANK_OFFSET:BANK_END]
+            ).hexdigest() != request.bank_before_sha256:
+                raise ChartError("native bank changed while checkpoint was committed")
+            self.chart.bytes[BANK_OFFSET:BANK_END] = new_bank
+            self.chart.snapshot_generation = generation
+            rebased = True
+        # If temporal/semantic changes were already dirty, they remain so;
+        # the next ordinary checkpoint must commit them using the NEW
+        # expected generation. Do not falsely mark everything clean.
+        # Native CAS has already published the exact verified page. Preserve
+        # its full-page digest as the baseline for a later ordinary HERMES
+        # checkpoint that will merge unrelated pending temporal/MP edits.
+        self.chart._checkpoint_page_sha256 = hashlib.sha256(page).hexdigest()
+        self.chart._dirty = before_dirty
+        return {
+            "schema": "nanlm.local-runner-native-head-rebase/1",
+            "head_bank_rebased": rebased,
+            "single_chart_object_preserved": True,
+            "chart_generation": self.chart.snapshot_generation,
+            "native_bank_sha256": committed["bank_after_sha256"],
+            "pending_nonbank_edits_preserved": before_dirty,
+            "local_checkpoint_verified": True,
+            "canonical_training_committed": False,
+            "nannet_merge_issued": False,
+        }
+
     def checkpoint(self) -> dict:
-        """Durably store local chart bytes without modifying canonical training."""
+        """Serialize ordinary full-page CAS against native in-process rebase."""
+        with self._write_lock:
+            return self._checkpoint_locked()
+
+    def _checkpoint_locked(self) -> dict:
+        """Durably store local chart bytes with full-page source CAS."""
+        import hashlib
         if self.chart is None:
             raise ChartError("no chart to checkpoint")
+        generation_before = self.chart.snapshot_generation
+        source_sha = getattr(self.chart, "_checkpoint_page_sha256", None)
+        if generation_before and source_sha is None:
+            raise ChartError("verified durable chart source digest missing")
+        # The cached chart can contain pending temporal/MP edits. Its bytes
+        # are NOT the expected old page; compare the last verified durable
+        # chart digest under the N16SNAP1 exclusive writer lock.
+        data = bytes(self.chart.bytes)
         generation = save_chart_snapshot(
-            self.register.state_dir, self.chart.root_hash, self.chart.bytes,
-            self.chart.snapshot_generation)
+            self.register.state_dir, self.chart.root_hash, data,
+            generation_before, expected_page_sha256=source_sha,
+        )
         self.chart.snapshot_generation = generation
+        self.chart._checkpoint_page_sha256 = hashlib.sha256(data).hexdigest()
         self.chart._dirty = False
         return {"kind": "unmerged-local-chart", "generation": generation,
                 "parent_root": self.chart.root_hash, "bytes": PAGE_BYTES,
                 "canonical_training_committed": False}
 
     def commit(self, head: int) -> int:
-        return self.register.commit(head)
+        with self._write_lock:
+            return self.register.commit(head)
 
     def plan(self, heads: list[int]) -> list[int]:
-        return [self.register.commit(head) for head in heads]
+        with self._write_lock:
+            return [self.register.commit(head) for head in heads]
 
     def organize(self, rows: list[dict], mapper=None) -> dict:
-        return self.heads.organize(rows, mapper)
+        with self._write_lock:
+            return self.heads.organize(rows, mapper)
 
     def status(self) -> dict:
         return {

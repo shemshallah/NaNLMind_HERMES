@@ -5,18 +5,24 @@ on:
       - 'nanlmind_hermes/chart_storage.py'
       - 'nanlmind_hermes/head_bank_transport.py'
       - 'nanlmind_hermes/native_head_fence.py'
+      - 'nanlmind_hermes/native_head_checkpoint.py'
       - 'nanlmind_hermes/universe_chart.py'
       - 'nanlmind_hermes/universe_root.py'
       - 'nanlmind_hermes/universe_pack.py'
+      - 'tests/test_native_head_checkpoint.py'
+      - 'tests/test_local_runner_native_rebase.py'
       - '.github/workflows/native-head-cross-repo.yml'
   pull_request:
     paths:
       - 'nanlmind_hermes/chart_storage.py'
       - 'nanlmind_hermes/head_bank_transport.py'
       - 'nanlmind_hermes/native_head_fence.py'
+      - 'nanlmind_hermes/native_head_checkpoint.py'
       - 'nanlmind_hermes/universe_chart.py'
       - 'nanlmind_hermes/universe_root.py'
       - 'nanlmind_hermes/universe_pack.py'
+      - 'tests/test_native_head_checkpoint.py'
+      - 'tests/test_local_runner_native_rebase.py'
       - '.github/workflows/native-head-cross-repo.yml'
   workflow_dispatch:
 permissions:
@@ -36,12 +42,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: shemshallah/NaNROUTER
-          ref: d5d85dd5b53148b7f21c7f957ed10e01e4ccaa26
+          ref: 738d715ff2f4001ec6702af22277802b83b1ccce
           path: router
       - uses: actions/checkout@v4
         with:
           repository: shemshallah/NaN0S
-          ref: 3b045ff48c8b862db290c3702789c43bde459048
+          ref: ddb6297a6c62d4bdee673ba3971129ec2dc73446
           path: nan0s
       - uses: actions/setup-python@v5
         with:
@@ -61,7 +67,7 @@ jobs:
             src/nannet/n16_head_worker.nas > "$GITHUB_WORKSPACE/nan0s/head.nan"
           test -s head.nan
           test -s head.labels
-      - name: Verify current HERMES chart against authenticated real NaN16 revisions
+      - name: Verify current HERMES chart against authenticated multi-head revisions and races
         working-directory: router
         env:
           PYTHONPATH: ${{ github.workspace }}/router:${{ github.workspace }}/hermes
