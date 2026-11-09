@@ -193,9 +193,11 @@ operation**. Do not rely on it for high-value credentials.
 This plugin's default state directory remains
 `~/.local/share/nanlmind-hermes`, not intrinsically profile-isolated.
 Configure a unique absolute `state_dir` for each Hermes profile to prevent
-cross-profile universe and credential-state sharing. Source corpus files may
-be read via configured training tools; supply only files you intend to expose
-to local native learning and evaluation. See
+cross-profile universe and credential-state sharing. For the model-visible
+`nanlm_train`, `nanlm_math_train` and `nanlm_evaluate` tools, a selected
+corpus path must resolve to a regular file under `state_dir/corpora`. External
+paths, traversal and symlinks escaping that tree are rejected. Import user-
+approved corpora there before calling those tools. See
 [Catalog admission](docs/HERMES_CATALOG_ADMISSION.md).
 
 ## Security boundaries
