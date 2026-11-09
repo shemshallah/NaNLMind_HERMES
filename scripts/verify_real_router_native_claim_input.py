@@ -22,7 +22,10 @@ from runner_riddle.nan_layer_graph import NanLayerGraph
 from runner_riddle.wave_store import WaveStore
 
 
-def main():
+def main(*, on_verified_graph=None):
+    """Build one real graph; optional trusted CI hook executes before DB closes."""
+    if on_verified_graph is not None and not callable(on_verified_graph):
+        raise TypeError("trusted graph handoff hook must be callable")
     chart = Chart8MiB.genesis()
     attach_universe_root(chart)
     before = bytes(chart.bytes)
@@ -121,6 +124,16 @@ def main():
         else:
             raise AssertionError("tampered history staged native words")
 
+        assert before == bytes(chart.bytes)
+        # The callback is a trusted local CI harness, not network input. It
+        # receives the SAME open MathStore, verifier, signed graph and packet.
+        # Normal callers retain the original packet-only behavior.
+        if on_verified_graph is not None:
+            on_verified_graph(
+                chart=chart, verifier=verifier, state_pages=state_pages,
+                history_pages=history_pages, sender_attestation=attestation,
+                router_public_key_hex=public_hex, math_store=store,
+                packet=packet, now=now)
         assert before == bytes(chart.bytes)
 
     print("PASS: real MC0DB candidate graph + retraction -> HERMES history "
