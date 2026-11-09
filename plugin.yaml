@@ -72,6 +72,8 @@ provides_tools:
   - nanlm_head_candidate
   - nanlm_head_candidate_evaluate
   - nanlm_head_learn_candidate
+provides_hooks:
+  - pre_tool_call
 config_schema:
   router_graph_sender_id:
     type: str
