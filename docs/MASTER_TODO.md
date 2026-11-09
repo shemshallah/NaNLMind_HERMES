@@ -51,7 +51,7 @@ for the round-specific items are in `ROUNDS_023_036_TODO.md` and
 | A-17 | Confirm no legacy branded filenames/strings remain | repository search for the retired label is empty | done |
 | A-18 | Confirm canonical merge stays disabled everywhere | all receipts/flags false | done |
 | A-19 | Merge all local feature branches into `main` without losing current integration | no unmerged local branch; conflicts documented | done locally |
-| A-20 | Decide whether remote PR branches are in scope; do not merge 104 stale remote refs blindly | explicit scope decision recorded | held |
+| A-20 | Decide whether remote PR branches are in scope; do not merge 104 stale remote refs blindly | scope decision: local branches merged; remote-tracking PR refs require individual review and were not mass-merged | decided |
 | A-21 | Commit final docs/tests and merge the remaining worktree delta into main | main contains latest commits; primary worktree clean | done |
 | A-22 | Publish branch/remote only after tests and scope decision | explicit operator approval | held |
 
