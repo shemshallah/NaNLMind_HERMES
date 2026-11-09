@@ -23,7 +23,7 @@ class FakeContext:
 class ManifestTests(unittest.TestCase):
     def test_declared_tools_match_registration(self):
         text = Path("plugin.yaml").read_text(encoding="utf-8")
-        block = text.split("provides_tools:", 1)[1].split("config_schema:", 1)[0]
+        block = text.split("provides_tools:", 1)[1].split("provides_hooks:", 1)[0]
         declared = set(re.findall(r"^  - (\S+)$", block, flags=re.MULTILINE))
         ctx = FakeContext()
         register(ctx)
