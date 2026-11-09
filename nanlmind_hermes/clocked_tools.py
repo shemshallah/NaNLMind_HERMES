@@ -22,6 +22,14 @@ def _setting(ctx, key, default=None):
         return default
 
 
+def _permanent_session(ctx) -> str:
+    try:
+        from .session_context import attached_context
+        return attached_context(ctx, full=False)
+    except Exception:
+        return ""
+
+
 def _scratch(ctx, scratch_id):
     root = Path(str(_setting(ctx, "state_dir", "~/.local/share/nanlmind-hermes"))).expanduser()
     return Scratch(root / "clocked_scratch", scratch_id)
@@ -78,6 +86,7 @@ def choose_clocked_mode(ctx, question, sources=None):
                     "EXTRACT for one ordinary source, MULTI_SOURCE for multiple sources "
                     "without a comparison request. Never request endpoints outside the "
                     "mode's fixed policy mapping."
+                    + _permanent_session(ctx)
                 )},
                 {"role": "user", "content": json.dumps({
                     "question": question, "sources": descriptors,
@@ -237,6 +246,7 @@ def clocked_synthesize(ctx, question, scratch_id="default", max_tokens=2048):
                 "Preserve source attribution, uncertainty, UNKNOWN and CONFLICT. "
                 "Do not treat CLOCKED output or a Boolean-head prediction as ground truth. "
                 "Do not invent citations, facts, or source agreement. State unresolved conflicts."
+                + _permanent_session(ctx)
             )},
             {"role": "user", "content": json.dumps({
                 "question": question, "evidence": evidence,
@@ -259,6 +269,7 @@ def clocked_synthesize(ctx, question, scratch_id="default", max_tokens=2048):
                 "directly supported by the evidence. Preserve uncertainty and conflicts; "
                 "if the head trace is UNKNOWN or abstains, do not force a binary conclusion. "
                 "Do not claim the answer was independently verified merely because it was processed."
+                + _permanent_session(ctx)
             )},
             {"role": "user", "content": json.dumps({
                 "question": question, "draft": draft,

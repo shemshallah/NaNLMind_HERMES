@@ -1,5 +1,5 @@
 name: nanlmind-hermes
-version: 1.4.0
+version: 1.5.0
 manifest_version: 2
 api_version: 1
 requires_hermes: ">=0.23.0"
@@ -9,12 +9,17 @@ homepage: https://github.com/shemshallah/NaNLMind_HERMES
 tags: [nanlmind, training, corpus, local-runner, nannet]
 provides_tools:
   - nanlm_status
+  - nanlm_session_context
   - nanlm_learning_cycle
   - nanlm_learning_status
   - nanlm_learning_sync
   - nanlm_wordnet_ingest
   - nanlm_scratch_register
   - nanlm_chart_storage
+  - nanlm_resident_status
+  - nanlm_resident_ingest
+  - nanlm_resident_query
+  - nanlm_head_field
   - nanlm_chat
   - nanlm_chat_history
   - nanlm_phone_call
@@ -27,6 +32,9 @@ provides_tools:
   - nanlm_hw_heartbeat
   - nanlm_hw_release
   - nanlm_hw_report
+  - nanlm_hw2_bind
+  - nanlm_hw2_status
+  - nanlm_hw2_report
   - nanlm_universe_status
   - nanlm_universe_open
   - nanlm_universe_resolve
@@ -36,6 +44,19 @@ provides_tools:
   - nanlm_universe_ack
   - nanlm_universe_inspect
   - nanlm_native_mth_u32
+  - nanlm_mth_catalog
+  - nanlm_mth_inspect
+  - nanlm_mth_runtime
+  - nanlm_mth_verify
+  - nanlm_mth_execute
+  - nanlm_mth_n16i_selftest
+  - nanlm_mth_dispatch
+  - nanlm_mth_hub
+  - nanlm_mth_tree
+  - nanlm_mth_leaf_create
+  - nanlm_mth_leaf_get
+  - nanlm_mth_pair
+  - nanlm_mth_leaf_verify
   - nanlm_chat_train
   - nanlm_tree_inspect
   - nanlm_tree_mutate
@@ -103,6 +124,18 @@ config_schema:
     type: bool
     default: false
     description: Automatically attempt conservative synchronization after each observation. Keep false until the promotion rules are accepted.
+  merge_enabled:
+    type: bool
+    default: false
+    description: Explicit operator option for local promotion/merge paths. Keep false until a generation-checked canonical merge gate exists; false returns merge_disabled and never promotes or merges.
+  resident_size_bytes:
+    type: int
+    default: 268435456
+    description: Sparse file budget for the one-file resident universe. Default 256 MiB; hard ceiling 1 GiB; never a 2 GiB overbootstrap copy.
+  resident_learning_enabled:
+    type: bool
+    default: true
+    description: Feed accepted free-chat exposure into the resident mirror-pair/leaf store. Probe reads never mutate it.
   wordnet_archive:
     type: str
     default: ""
@@ -115,6 +148,18 @@ config_schema:
     type: list
     default: []
     description: Local native executable argv, e.g. ["/path/to/NaNLMind/build/nanlm-universal"].
+  nan0s_root:
+    type: str
+    default: ""
+    description: Optional path to a NaN0S checkout. If empty, the plugin auto-detects a sibling/configured checkout or compiles its bundled portable C core.
+  nan0s_cc:
+    type: str
+    default: ""
+    description: Optional C compiler for the portable NaN0S core (default cc/gcc/clang autodetect).
+  nan0s_prefer_bundled:
+    type: bool
+    default: false
+    description: Prefer the plugin's bundled portable NaN0S source snapshot over an external checkout or prebuilt nan_cli.
   state_dir:
     type: str
     default: ~/.local/share/nanlmind-hermes

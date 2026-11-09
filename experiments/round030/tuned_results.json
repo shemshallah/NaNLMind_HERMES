@@ -1,0 +1,81 @@
+{
+  "results": [
+    {
+      "seed": 17,
+      "best_validation_loss": 2.1302621775087855,
+      "best_lr": 0.008,
+      "best_epochs": 45,
+      "cycle_test": {
+        "accuracy": 0.3892857142857143,
+        "cross_entropy": 2.2889914828315536
+      },
+      "shift_test": {
+        "accuracy": 0.3892857142857143,
+        "cross_entropy": 2.2889915531162615
+      },
+      "raw_shift_test": {
+        "accuracy": 0.055357142857142855,
+        "cross_entropy": 18.326408437724886
+      },
+      "max_logit_delta_single_shift": 1.9073486328125e-05,
+      "max_logit_delta_101_shifts": 0.0001735687255859375,
+      "native_root_bytes": 8388608,
+      "cycle_equals_same_real_linear": true
+    },
+    {
+      "seed": 29,
+      "best_validation_loss": 2.087614740283004,
+      "best_lr": 0.004,
+      "best_epochs": 140,
+      "cycle_test": {
+        "accuracy": 0.4392857142857143,
+        "cross_entropy": 2.124417603634685
+      },
+      "shift_test": {
+        "accuracy": 0.4392857142857143,
+        "cross_entropy": 2.1244176063229956
+      },
+      "raw_shift_test": {
+        "accuracy": 0.09285714285714286,
+        "cross_entropy": 18.328166366832402
+      },
+      "max_logit_delta_single_shift": 1.811981201171875e-05,
+      "max_logit_delta_101_shifts": 0.0002751350402832031,
+      "native_root_bytes": 8388608,
+      "cycle_equals_same_real_linear": true
+    },
+    {
+      "seed": 41,
+      "best_validation_loss": 1.8916767997558366,
+      "best_lr": 0.01,
+      "best_epochs": 90,
+      "cycle_test": {
+        "accuracy": 0.43392857142857144,
+        "cross_entropy": 1.933183896905836
+      },
+      "shift_test": {
+        "accuracy": 0.43392857142857144,
+        "cross_entropy": 1.933183925547579
+      },
+      "raw_shift_test": {
+        "accuracy": 0.09821428571428571,
+        "cross_entropy": 18.313064909839298
+      },
+      "max_logit_delta_single_shift": 2.86102294921875e-05,
+      "max_logit_delta_101_shifts": 0.0002841949462890625,
+      "native_root_bytes": 8388608,
+      "cycle_equals_same_real_linear": true
+    }
+  ],
+  "mean_accuracy": {
+    "cycle_test": 0.42083333333333334,
+    "shift_test": 0.42083333333333334,
+    "raw_shift_test": 0.08214285714285714
+  },
+  "limitations": [
+    "Gauge shifts are synthetically imposed, not observed from a natural corpus",
+    "24-dimensional text SVD encoder is external to C++ root",
+    "Conventional classifier with the same clean inputs remains a strong or better predictor",
+    "This model is a semantic classifier, not a generative language model"
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "17": {
+    "learned_raw_all_edges": {
+      "accuracy": 0.2743055555555556,
+      "ce": 2.562388780097927,
+      "best_step": 89,
+      "params": 5168
+    },
+    "cycle_same_gauge": {
+      "accuracy": 0.5355902777777778,
+      "ce": 1.5414280376412532,
+      "best_step": 81,
+      "params": 4176
+    }
+  },
+  "29": {
+    "learned_raw_all_edges": {
+      "accuracy": 0.2769097222222222,
+      "ce": 2.6251711711020516,
+      "best_step": 101,
+      "params": 5168
+    },
+    "cycle_same_gauge": {
+      "accuracy": 0.5347222222222222,
+      "ce": 1.6742970438759497,
+      "best_step": 72,
+      "params": 4176
+    }
+  },
+  "41": {
+    "learned_raw_all_edges": {
+      "accuracy": 0.2534722222222222,
+      "ce": 2.7734478447461646,
+      "best_step": 117,
+      "params": 5168
+    },
+    "cycle_same_gauge": {
+      "accuracy": 0.5104166666666666,
+      "ce": 1.7000411705669574,
+      "best_step": 65,
+      "params": 4176
+    }
+  }
+}

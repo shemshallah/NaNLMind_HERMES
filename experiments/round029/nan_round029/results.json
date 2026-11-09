@@ -1,0 +1,224 @@
+{
+  "17": {
+    "cycle": {
+      "accuracy": 0.5355902777777778,
+      "ce": 1.5414280210193196,
+      "best_step": 81,
+      "parameters": 4176,
+      "train_seconds": 1.48
+    },
+    "raw": {
+      "accuracy": 0.11024305555555555,
+      "ce": 11.788153343352905,
+      "best_step": 80,
+      "parameters": 4176,
+      "train_seconds": 0.47
+    },
+    "wrong_triangle": {
+      "accuracy": 0.1076388888888889,
+      "ce": 11.609873351365533,
+      "best_step": 80,
+      "parameters": 4176,
+      "train_seconds": 0.49
+    },
+    "correct_conventional": {
+      "accuracy": 0.5355902777777778,
+      "ce": 1.5414280210193196,
+      "best_step": 81,
+      "parameters": 4176,
+      "train_seconds": 0.73
+    },
+    "raw_clean": {
+      "accuracy": 0.5355902777777778,
+      "ce": 1.541428051899754,
+      "best_step": 81,
+      "parameters": 4176
+    },
+    "max_gauge_error": 2.3245811462402344e-06,
+    "max_cycle_reconstruction_error": 2.3245811462402344e-06,
+    "metadata": {
+      "train": 5376,
+      "val": 1152,
+      "test": 1152,
+      "feature_scale": 0.0434369258582592,
+      "train_synset_ids": [
+        "n00993728",
+        "n00794873",
+        "n00250854",
+        "n00396007"
+      ],
+      "test_synset_ids": [
+        "n00197251",
+        "n00283457",
+        "n00220723",
+        "n01247706"
+      ]
+    },
+    "classes": [
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      13,
+      14,
+      15,
+      17,
+      18,
+      19,
+      20,
+      21
+    ]
+  },
+  "29": {
+    "cycle": {
+      "accuracy": 0.5347222222222222,
+      "ce": 1.6742967565797704,
+      "best_step": 72,
+      "parameters": 4176,
+      "train_seconds": 0.42
+    },
+    "raw": {
+      "accuracy": 0.10850694444444445,
+      "ce": 11.695894308828603,
+      "best_step": 72,
+      "parameters": 4176,
+      "train_seconds": 0.4
+    },
+    "wrong_triangle": {
+      "accuracy": 0.1076388888888889,
+      "ce": 11.652485743526064,
+      "best_step": 72,
+      "parameters": 4176,
+      "train_seconds": 0.39
+    },
+    "correct_conventional": {
+      "accuracy": 0.5347222222222222,
+      "ce": 1.6742967565797704,
+      "best_step": 72,
+      "parameters": 4176,
+      "train_seconds": 0.42
+    },
+    "raw_clean": {
+      "accuracy": 0.5347222222222222,
+      "ce": 1.6742970432182471,
+      "best_step": 72,
+      "parameters": 4176
+    },
+    "max_gauge_error": 2.682209014892578e-06,
+    "max_cycle_reconstruction_error": 2.682209014892578e-06,
+    "metadata": {
+      "train": 5376,
+      "val": 1152,
+      "test": 1152,
+      "feature_scale": 0.042878732085227966,
+      "train_synset_ids": [
+        "n00213226",
+        "n00133980",
+        "n00467948",
+        "n01129177"
+      ],
+      "test_synset_ids": [
+        "n00707858",
+        "n00455419",
+        "n00599554",
+        "n00808282"
+      ]
+    },
+    "classes": [
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      13,
+      14,
+      15,
+      17,
+      18,
+      19,
+      20,
+      21
+    ]
+  },
+  "41": {
+    "cycle": {
+      "accuracy": 0.5104166666666666,
+      "ce": 1.7000412644372411,
+      "best_step": 65,
+      "parameters": 4176,
+      "train_seconds": 0.58
+    },
+    "raw": {
+      "accuracy": 0.11024305555555555,
+      "ce": 11.542233122605921,
+      "best_step": 66,
+      "parameters": 4176,
+      "train_seconds": 0.5
+    },
+    "wrong_triangle": {
+      "accuracy": 0.10590277777777778,
+      "ce": 11.627521543402032,
+      "best_step": 66,
+      "parameters": 4176,
+      "train_seconds": 0.5
+    },
+    "correct_conventional": {
+      "accuracy": 0.5104166666666666,
+      "ce": 1.7000412644372411,
+      "best_step": 65,
+      "parameters": 4176,
+      "train_seconds": 0.94
+    },
+    "raw_clean": {
+      "accuracy": 0.5104166666666666,
+      "ce": 1.7000412370732858,
+      "best_step": 65,
+      "parameters": 4176
+    },
+    "max_gauge_error": 2.562999725341797e-06,
+    "max_cycle_reconstruction_error": 2.562999725341797e-06,
+    "metadata": {
+      "train": 5376,
+      "val": 1152,
+      "test": 1152,
+      "feature_scale": 0.043388571590185165,
+      "train_synset_ids": [
+        "n00101257",
+        "n00808027",
+        "n00792008",
+        "n00148682"
+      ],
+      "test_synset_ids": [
+        "n00260235",
+        "n01294010",
+        "n00716196",
+        "n00110712"
+      ]
+    },
+    "classes": [
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      13,
+      14,
+      15,
+      17,
+      18,
+      19,
+      20,
+      21
+    ]
+  }
+}

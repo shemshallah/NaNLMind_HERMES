@@ -1,0 +1,136 @@
+{
+  "plain_17": {
+    "before": {
+      "wordnet": {
+        "n_bytes": 7061,
+        "bits_per_byte": 3.933235211683645,
+        "accuracy": 0.24415805126752585
+      },
+      "alice": {
+        "n_bytes": 324,
+        "bits_per_byte": 4.9310877205824255,
+        "accuracy": 0.24691358024691357
+      }
+    },
+    "after": {
+      "wordnet": {
+        "n_bytes": 7061,
+        "bits_per_byte": 3.8777942465957063,
+        "accuracy": 0.2512392012462824
+      },
+      "alice": {
+        "n_bytes": 324,
+        "bits_per_byte": 4.44884979438214,
+        "accuracy": 0.2623456790123457
+      }
+    },
+    "alice_test": {
+      "n_bytes": 288,
+      "bits_per_byte": 4.142075490362977,
+      "accuracy": 0.2951388888888889
+    }
+  },
+  "native_17": {
+    "before": {
+      "wordnet": {
+        "n_bytes": 7061,
+        "bits_per_byte": 4.039059875123104,
+        "accuracy": 0.22376433932870698
+      },
+      "alice": {
+        "n_bytes": 324,
+        "bits_per_byte": 5.038548799611496,
+        "accuracy": 0.2191358024691358
+      }
+    },
+    "after": {
+      "wordnet": {
+        "n_bytes": 7061,
+        "bits_per_byte": 3.9822674725567877,
+        "accuracy": 0.23721852428834442
+      },
+      "alice": {
+        "n_bytes": 324,
+        "bits_per_byte": 4.5514405285700645,
+        "accuracy": 0.25617283950617287
+      }
+    },
+    "alice_test": {
+      "n_bytes": 288,
+      "bits_per_byte": 4.2893775607127,
+      "accuracy": 0.2569444444444444
+    },
+    "alice_test_no_memory": {
+      "n_bytes": 288,
+      "bits_per_byte": 4.2784541399707,
+      "accuracy": 0.2569444444444444
+    }
+  },
+  "plain_29": {
+    "before": {
+      "wordnet": {
+        "n_bytes": 7061,
+        "bits_per_byte": 3.822254346545412,
+        "accuracy": 0.2544965302365104
+      },
+      "alice": {
+        "n_bytes": 324,
+        "bits_per_byte": 4.818695079381474,
+        "accuracy": 0.26851851851851855
+      }
+    },
+    "after": {
+      "wordnet": {
+        "n_bytes": 7061,
+        "bits_per_byte": 3.773572181457679,
+        "accuracy": 0.2707831751876505
+      },
+      "alice": {
+        "n_bytes": 324,
+        "bits_per_byte": 4.314665210257935,
+        "accuracy": 0.30246913580246915
+      }
+    },
+    "alice_test": {
+      "n_bytes": 288,
+      "bits_per_byte": 4.002998776928519,
+      "accuracy": 0.3090277777777778
+    }
+  },
+  "native_29": {
+    "before": {
+      "wordnet": {
+        "n_bytes": 7061,
+        "bits_per_byte": 3.8827460749363123,
+        "accuracy": 0.24274182127177454
+      },
+      "alice": {
+        "n_bytes": 324,
+        "bits_per_byte": 4.879380546339078,
+        "accuracy": 0.24074074074074073
+      }
+    },
+    "after": {
+      "wordnet": {
+        "n_bytes": 7061,
+        "bits_per_byte": 3.839194166401989,
+        "accuracy": 0.2668177311995468
+      },
+      "alice": {
+        "n_bytes": 324,
+        "bits_per_byte": 4.353183412943797,
+        "accuracy": 0.3055555555555556
+      }
+    },
+    "alice_test": {
+      "n_bytes": 288,
+      "bits_per_byte": 4.05789219943091,
+      "accuracy": 0.3055555555555556
+    },
+    "alice_test_no_memory": {
+      "n_bytes": 288,
+      "bits_per_byte": 4.058929216597247,
+      "accuracy": 0.2986111111111111
+    }
+  }
+}

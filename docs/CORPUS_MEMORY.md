@@ -65,4 +65,5 @@ are not probabilities and retrieval can return irrelevant passages.
 
 `tests/test_corpus_memory.py` covers recursive ingestion, exact deduplication,
 deterministic hashes, token-window chunking, split filtering, retrieval and
-save/load round trips. The suite contains 272 tests in total.
+save/load round trips. The historical baseline at this document's writing was
+272 tests; use the current suite for the live count.

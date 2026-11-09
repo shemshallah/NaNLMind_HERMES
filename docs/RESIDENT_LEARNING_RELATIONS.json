@@ -1,0 +1,831 @@
+{
+  "canonical_merge": {
+    "attempted": false,
+    "enabled": false
+  },
+  "checkpoint": {
+    "canonical_commit": false,
+    "digest": "82786994c686ae18318cfde6decbb493dccf9816b456b7643825ec524e7e32a4",
+    "directory": "/data/data/com.termux/files/usr/tmp/nanlm-resident-relations-v2/checkpoints",
+    "generation": 19709,
+    "manifest": {
+      "counts": {
+        "feature_capacity": 32768,
+        "features": 19602,
+        "heads": 256,
+        "hyperedges": 2522,
+        "leaf_capacity": 131072,
+        "leaves": 19858,
+        "occupied_pairs": 19677,
+        "pair_capacity": 32640,
+        "pair_cells": 32640,
+        "pairs": 32640,
+        "relation_capacity": 32768,
+        "relations": 2522
+      },
+      "digest": "82786994c686ae18318cfde6decbb493dccf9816b456b7643825ec524e7e32a4",
+      "files": [
+        {
+          "digest": "d5e6e9b52830ee6163858732c931e6735b6cb7bf6db71d0a3379aac298918ce9",
+          "path": "/data/data/com.termux/files/usr/tmp/nanlm-resident-relations-v2/resident/universe.nlmres",
+          "regions": [
+            {
+              "digest": "d5e6e9b52830ee6163858732c931e6735b6cb7bf6db71d0a3379aac298918ce9",
+              "length": 132055296,
+              "offset": 0
+            }
+          ],
+          "size": 268435456
+        }
+      ],
+      "generation": 19709,
+      "path": "/data/data/com.termux/files/usr/tmp/nanlm-resident-relations-v2/resident/universe.nlmres",
+      "schema": "nanlm.resident-checkpoint-manifest/1",
+      "sections": [
+        {
+          "digest": "",
+          "generation": 19709,
+          "offset": 0,
+          "section_id": 1,
+          "size": 65536,
+          "used": 65536
+        },
+        {
+          "digest": "",
+          "generation": 19709,
+          "offset": 65536,
+          "section_id": 2,
+          "size": 8388608,
+          "used": 8388608
+        },
+        {
+          "digest": "",
+          "generation": 19709,
+          "offset": 42008640,
+          "section_id": 3,
+          "size": 8192,
+          "used": 8192
+        },
+        {
+          "digest": "",
+          "generation": 19709,
+          "offset": 42016832,
+          "section_id": 4,
+          "size": 2088960,
+          "used": 2088960
+        },
+        {
+          "digest": "",
+          "generation": 19709,
+          "offset": 44105792,
+          "section_id": 5,
+          "size": 20971568,
+          "used": 20971568
+        },
+        {
+          "digest": "",
+          "generation": 19709,
+          "offset": 65077376,
+          "section_id": 6,
+          "size": 41615464,
+          "used": 41615464
+        },
+        {
+          "digest": "",
+          "generation": 19709,
+          "offset": 106692864,
+          "section_id": 7,
+          "size": 65536,
+          "used": 65536
+        },
+        {
+          "digest": "",
+          "generation": 19709,
+          "offset": 106758400,
+          "section_id": 8,
+          "size": 16777216,
+          "used": 16777216
+        },
+        {
+          "digest": "",
+          "generation": 19709,
+          "offset": 123535616,
+          "section_id": 9,
+          "size": 65536,
+          "used": 65536
+        },
+        {
+          "digest": "",
+          "generation": 19709,
+          "offset": 123601152,
+          "section_id": 10,
+          "size": 65536,
+          "used": 65536
+        },
+        {
+          "digest": "",
+          "generation": 19709,
+          "offset": 8454144,
+          "section_id": 11,
+          "size": 33554464,
+          "used": 33554464
+        },
+        {
+          "digest": "",
+          "generation": 19709,
+          "offset": 123666688,
+          "section_id": 12,
+          "size": 8388640,
+          "used": 8388640
+        }
+      ],
+      "state_digest": "82786994c686ae18318cfde6decbb493dccf9816b456b7643825ec524e7e32a4",
+      "universe_schema": "nanlm.resident-universe/1"
+    },
+    "manifest_digest": "17fc94fab78f644726a8ef0819ea686f986507c996baf8f86cb670c1c8d2f14b",
+    "path": "/data/data/com.termux/files/usr/tmp/nanlm-resident-relations-v2/checkpoints",
+    "schema": "nanlm.resident-universe-checkpoint/1",
+    "slot": 0,
+    "snapshot": {
+      "budget": {
+        "committed_bytes": 132055296,
+        "current_bytes": 268435456,
+        "default_bytes": 268435456,
+        "hard_limit_bytes": 1073741824
+      },
+      "counts": {
+        "feature_capacity": 32768,
+        "features": 19602,
+        "heads": 256,
+        "hyperedges": 2522,
+        "leaf_capacity": 131072,
+        "leaves": 19858,
+        "occupied_pairs": 19677,
+        "pair_capacity": 32640,
+        "pair_cells": 32640,
+        "pairs": 32640,
+        "relation_capacity": 32768,
+        "relations": 2522
+      },
+      "digest": "82786994c686ae18318cfde6decbb493dccf9816b456b7643825ec524e7e32a4",
+      "features": 19602,
+      "generation": 19709,
+      "hyperedges": 2522,
+      "leaves": 19858,
+      "occupied_pairs": 19677,
+      "pair_cells": 32640,
+      "pairs": 19677,
+      "path": "/data/data/com.termux/files/usr/tmp/nanlm-resident-relations-v2/resident/universe.nlmres",
+      "relations": 2522,
+      "schema": "nanlm.resident-universe/1",
+      "sections": {
+        "1": {
+          "digest": "",
+          "generation": 19709,
+          "offset": 0,
+          "size": 65536,
+          "used": 65536
+        },
+        "10": {
+          "digest": "",
+          "generation": 19709,
+          "offset": 123601152,
+          "size": 65536,
+          "used": 65536
+        },
+        "11": {
+          "digest": "",
+          "generation": 19709,
+          "offset": 8454144,
+          "size": 33554464,
+          "used": 33554464
+        },
+        "12": {
+          "digest": "",
+          "generation": 19709,
+          "offset": 123666688,
+          "size": 8388640,
+          "used": 8388640
+        },
+        "2": {
+          "digest": "",
+          "generation": 19709,
+          "offset": 65536,
+          "size": 8388608,
+          "used": 8388608
+        },
+        "3": {
+          "digest": "",
+          "generation": 19709,
+          "offset": 42008640,
+          "size": 8192,
+          "used": 8192
+        },
+        "4": {
+          "digest": "",
+          "generation": 19709,
+          "offset": 42016832,
+          "size": 2088960,
+          "used": 2088960
+        },
+        "5": {
+          "digest": "",
+          "generation": 19709,
+          "offset": 44105792,
+          "size": 20971568,
+          "used": 20971568
+        },
+        "6": {
+          "digest": "",
+          "generation": 19709,
+          "offset": 65077376,
+          "size": 41615464,
+          "used": 41615464
+        },
+        "7": {
+          "digest": "",
+          "generation": 19709,
+          "offset": 106692864,
+          "size": 65536,
+          "used": 65536
+        },
+        "8": {
+          "digest": "",
+          "generation": 19709,
+          "offset": 106758400,
+          "size": 16777216,
+          "used": 16777216
+        },
+        "9": {
+          "digest": "",
+          "generation": 19709,
+          "offset": 123535616,
+          "size": 65536,
+          "used": 65536
+        }
+      },
+      "size": 268435456,
+      "state_digest": "82786994c686ae18318cfde6decbb493dccf9816b456b7643825ec524e7e32a4"
+    }
+  },
+  "corpus": "experiments/corpus/trainable",
+  "epochs_requested": 1,
+  "epochs_run": 1,
+  "heldout_records": 500,
+  "passes": [
+    {
+      "heldout": {
+        "by_source": {
+          "bit_language252.jsonl": {
+            "hybrid": {
+              "mean_negative_log_likelihood": 5.838124,
+              "perplexity": 343.134884,
+              "tokens": 1280
+            },
+            "resident": {
+              "mean_negative_log_likelihood": 5.609789,
+              "perplexity": 273.086726,
+              "tokens": 1280
+            },
+            "temporal": {
+              "mean_negative_log_likelihood": 6.725434,
+              "perplexity": 833.333333,
+              "tokens": 1280
+            }
+          },
+          "curriculum.jsonl": {
+            "hybrid": {
+              "mean_negative_log_likelihood": 5.864656,
+              "perplexity": 352.361055,
+              "tokens": 467
+            },
+            "resident": {
+              "mean_negative_log_likelihood": 5.722272,
+              "perplexity": 305.598568,
+              "tokens": 467
+            },
+            "temporal": {
+              "mean_negative_log_likelihood": 6.725434,
+              "perplexity": 833.333333,
+              "tokens": 467
+            }
+          },
+          "emotions.jsonl": {
+            "hybrid": {
+              "mean_negative_log_likelihood": 5.824672,
+              "perplexity": 338.549973,
+              "tokens": 2181
+            },
+            "resident": {
+              "mean_negative_log_likelihood": 5.552761,
+              "perplexity": 257.94888,
+              "tokens": 2181
+            },
+            "temporal": {
+              "mean_negative_log_likelihood": 6.725434,
+              "perplexity": 833.333333,
+              "tokens": 2181
+            }
+          },
+          "hierarchy_curriculum.jsonl": {
+            "hybrid": {
+              "mean_negative_log_likelihood": 5.831732,
+              "perplexity": 340.948741,
+              "tokens": 6393
+            },
+            "resident": {
+              "mean_negative_log_likelihood": 5.582693,
+              "perplexity": 265.786518,
+              "tokens": 6393
+            },
+            "temporal": {
+              "mean_negative_log_likelihood": 6.725434,
+              "perplexity": 833.333333,
+              "tokens": 6393
+            }
+          },
+          "perspectives.jsonl": {
+            "hybrid": {
+              "mean_negative_log_likelihood": 5.847473,
+              "perplexity": 346.358039,
+              "tokens": 3094
+            },
+            "resident": {
+              "mean_negative_log_likelihood": 5.649425,
+              "perplexity": 284.128142,
+              "tokens": 3094
+            },
+            "temporal": {
+              "mean_negative_log_likelihood": 6.725434,
+              "perplexity": 833.333333,
+              "tokens": 3094
+            }
+          },
+          "self_cultivation.jsonl": {
+            "hybrid": {
+              "mean_negative_log_likelihood": 5.828063,
+              "perplexity": 339.700004,
+              "tokens": 1883
+            },
+            "resident": {
+              "mean_negative_log_likelihood": 5.567138,
+              "perplexity": 261.684078,
+              "tokens": 1883
+            },
+            "temporal": {
+              "mean_negative_log_likelihood": 6.725434,
+              "perplexity": 833.333333,
+              "tokens": 1883
+            }
+          },
+          "short_sentences.jsonl": {
+            "hybrid": {
+              "mean_negative_log_likelihood": 5.822883,
+              "perplexity": 337.944873,
+              "tokens": 383
+            },
+            "resident": {
+              "mean_negative_log_likelihood": 5.545177,
+              "perplexity": 256.0,
+              "tokens": 383
+            },
+            "temporal": {
+              "mean_negative_log_likelihood": 6.725434,
+              "perplexity": 833.333333,
+              "tokens": 383
+            }
+          },
+          "wordnet_active.jsonl": {
+            "hybrid": {
+              "mean_negative_log_likelihood": 5.822883,
+              "perplexity": 337.944873,
+              "tokens": 9
+            },
+            "resident": {
+              "mean_negative_log_likelihood": 5.545177,
+              "perplexity": 256.0,
+              "tokens": 9
+            },
+            "temporal": {
+              "mean_negative_log_likelihood": 6.725434,
+              "perplexity": 833.333333,
+              "tokens": 9
+            }
+          }
+        },
+        "channels": {
+          "hybrid": {
+            "mean_negative_log_likelihood": 5.834695,
+            "perplexity": 341.960308,
+            "tokens": 15690
+          },
+          "resident": {
+            "mean_negative_log_likelihood": 5.595253,
+            "perplexity": 269.14567,
+            "tokens": 15690
+          },
+          "temporal": {
+            "mean_negative_log_likelihood": 6.725434,
+            "perplexity": 833.333333,
+            "tokens": 15690
+          }
+        },
+        "records": 500
+      },
+      "pass": "before",
+      "seconds": 6.334
+    },
+    {
+      "heldout": {
+        "by_source": {
+          "bit_language252.jsonl": {
+            "hybrid": {
+              "mean_negative_log_likelihood": 5.409788,
+              "perplexity": 223.584234,
+              "tokens": 1280
+            },
+            "resident": {
+              "mean_negative_log_likelihood": 5.853287,
+              "perplexity": 348.377483,
+              "tokens": 1280
+            },
+            "temporal": {
+              "mean_negative_log_likelihood": 6.708223,
+              "perplexity": 819.113813,
+              "tokens": 1280
+            }
+          },
+          "curriculum.jsonl": {
+            "hybrid": {
+              "mean_negative_log_likelihood": 3.810168,
+              "perplexity": 45.15801,
+              "tokens": 467
+            },
+            "resident": {
+              "mean_negative_log_likelihood": 4.468917,
+              "perplexity": 87.262189,
+              "tokens": 467
+            },
+            "temporal": {
+              "mean_negative_log_likelihood": 3.579242,
+              "perplexity": 35.846366,
+              "tokens": 467
+            }
+          },
+          "emotions.jsonl": {
+            "hybrid": {
+              "mean_negative_log_likelihood": 1.807365,
+              "perplexity": 6.094365,
+              "tokens": 2181
+            },
+            "resident": {
+              "mean_negative_log_likelihood": 2.342642,
+              "perplexity": 10.408704,
+              "tokens": 2181
+            },
+            "temporal": {
+              "mean_negative_log_likelihood": 1.746625,
+              "perplexity": 5.735212,
+              "tokens": 2181
+            }
+          },
+          "hierarchy_curriculum.jsonl": {
+            "hybrid": {
+              "mean_negative_log_likelihood": 2.933347,
+              "perplexity": 18.790411,
+              "tokens": 6393
+            },
+            "resident": {
+              "mean_negative_log_likelihood": 3.876886,
+              "perplexity": 48.273635,
+              "tokens": 6393
+            },
+            "temporal": {
+              "mean_negative_log_likelihood": 3.349044,
+              "perplexity": 28.475498,
+              "tokens": 6393
+            }
+          },
+          "perspectives.jsonl": {
+            "hybrid": {
+              "mean_negative_log_likelihood": 1.44478,
+              "perplexity": 4.24092,
+              "tokens": 3094
+            },
+            "resident": {
+              "mean_negative_log_likelihood": 2.056861,
+              "perplexity": 7.821382,
+              "tokens": 3094
+            },
+            "temporal": {
+              "mean_negative_log_likelihood": 1.211083,
+              "perplexity": 3.35712,
+              "tokens": 3094
+            }
+          },
+          "self_cultivation.jsonl": {
+            "hybrid": {
+              "mean_negative_log_likelihood": 2.051588,
+              "perplexity": 7.780245,
+              "tokens": 1883
+            },
+            "resident": {
+              "mean_negative_log_likelihood": 3.348845,
+              "perplexity": 28.469832,
+              "tokens": 1883
+            },
+            "temporal": {
+              "mean_negative_log_likelihood": 1.544218,
+              "perplexity": 4.684306,
+              "tokens": 1883
+            }
+          },
+          "short_sentences.jsonl": {
+            "hybrid": {
+              "mean_negative_log_likelihood": 2.67786,
+              "perplexity": 14.553913,
+              "tokens": 383
+            },
+            "resident": {
+              "mean_negative_log_likelihood": 3.674525,
+              "perplexity": 39.42991,
+              "tokens": 383
+            },
+            "temporal": {
+              "mean_negative_log_likelihood": 2.170961,
+              "perplexity": 8.766705,
+              "tokens": 383
+            }
+          },
+          "wordnet_active.jsonl": {
+            "hybrid": {
+              "mean_negative_log_likelihood": 3.20417,
+              "perplexity": 24.635037,
+              "tokens": 9
+            },
+            "resident": {
+              "mean_negative_log_likelihood": 5.089498,
+              "perplexity": 162.308325,
+              "tokens": 9
+            },
+            "temporal": {
+              "mean_negative_log_likelihood": 2.99245,
+              "perplexity": 19.934454,
+              "tokens": 9
+            }
+          }
+        },
+        "channels": {
+          "hybrid": {
+            "mean_negative_log_likelihood": 2.599514,
+            "perplexity": 13.457194,
+            "tokens": 15690
+          },
+          "resident": {
+            "mean_negative_log_likelihood": 3.415958,
+            "perplexity": 30.446093,
+            "tokens": 15690
+          },
+          "temporal": {
+            "mean_negative_log_likelihood": 2.740033,
+            "perplexity": 15.487501,
+            "tokens": 15690
+          }
+        },
+        "records": 500
+      },
+      "learned": {
+        "generation": 19709,
+        "learned": 13655,
+        "skipped": 384
+      },
+      "pass": "epoch-1",
+      "seconds": 256.526
+    }
+  ],
+  "probe": [
+    {
+      "resident_probability": 0.18911446,
+      "score": 0.12294373,
+      "temporal_probability": 5.523e-05,
+      "word": "instead"
+    },
+    {
+      "resident_probability": 0.18911446,
+      "score": 0.12292985,
+      "temporal_probability": 1.558e-05,
+      "word": "correct"
+    },
+    {
+      "resident_probability": 0.18911446,
+      "score": 0.12292866,
+      "temporal_probability": 1.218e-05,
+      "word": "hum"
+    },
+    {
+      "resident_probability": 0.18911446,
+      "score": 0.12292698,
+      "temporal_probability": 7.37e-06,
+      "word": "domain"
+    },
+    {
+      "resident_probability": 0.18911446,
+      "score": 0.12292598,
+      "temporal_probability": 4.53e-06,
+      "word": "suddenly"
+    },
+    {
+      "resident_probability": 0.18911446,
+      "score": 0.12292539,
+      "temporal_probability": 2.84e-06,
+      "word": "raw"
+    },
+    {
+      "resident_probability": 0.18911446,
+      "score": 0.12292499,
+      "temporal_probability": 1.7e-06,
+      "word": "02383482"
+    },
+    {
+      "resident_probability": 0.18911446,
+      "score": 0.12292499,
+      "temporal_probability": 1.7e-06,
+      "word": "computers"
+    }
+  ],
+  "resident": {
+    "committed_bytes": 132055296,
+    "digest": "82786994c686ae18318cfde6decbb493dccf9816b456b7643825ec524e7e32a4",
+    "features": 19602,
+    "file_bytes": 268435456,
+    "generation": 19709,
+    "hyperedges": 2522,
+    "leaves": 19858,
+    "relations": 2522
+  },
+  "schema": "nanlm.resident-learning-run/1",
+  "seconds": 274.221,
+  "selected": {
+    "by_source": {
+      "bit_language252.jsonl": {
+        "hybrid": {
+          "mean_negative_log_likelihood": 5.409788,
+          "perplexity": 223.584234,
+          "tokens": 1280
+        },
+        "resident": {
+          "mean_negative_log_likelihood": 5.853287,
+          "perplexity": 348.377483,
+          "tokens": 1280
+        },
+        "temporal": {
+          "mean_negative_log_likelihood": 6.708223,
+          "perplexity": 819.113813,
+          "tokens": 1280
+        }
+      },
+      "curriculum.jsonl": {
+        "hybrid": {
+          "mean_negative_log_likelihood": 3.810168,
+          "perplexity": 45.15801,
+          "tokens": 467
+        },
+        "resident": {
+          "mean_negative_log_likelihood": 4.468917,
+          "perplexity": 87.262189,
+          "tokens": 467
+        },
+        "temporal": {
+          "mean_negative_log_likelihood": 3.579242,
+          "perplexity": 35.846366,
+          "tokens": 467
+        }
+      },
+      "emotions.jsonl": {
+        "hybrid": {
+          "mean_negative_log_likelihood": 1.807365,
+          "perplexity": 6.094365,
+          "tokens": 2181
+        },
+        "resident": {
+          "mean_negative_log_likelihood": 2.342642,
+          "perplexity": 10.408704,
+          "tokens": 2181
+        },
+        "temporal": {
+          "mean_negative_log_likelihood": 1.746625,
+          "perplexity": 5.735212,
+          "tokens": 2181
+        }
+      },
+      "hierarchy_curriculum.jsonl": {
+        "hybrid": {
+          "mean_negative_log_likelihood": 2.933347,
+          "perplexity": 18.790411,
+          "tokens": 6393
+        },
+        "resident": {
+          "mean_negative_log_likelihood": 3.876886,
+          "perplexity": 48.273635,
+          "tokens": 6393
+        },
+        "temporal": {
+          "mean_negative_log_likelihood": 3.349044,
+          "perplexity": 28.475498,
+          "tokens": 6393
+        }
+      },
+      "perspectives.jsonl": {
+        "hybrid": {
+          "mean_negative_log_likelihood": 1.44478,
+          "perplexity": 4.24092,
+          "tokens": 3094
+        },
+        "resident": {
+          "mean_negative_log_likelihood": 2.056861,
+          "perplexity": 7.821382,
+          "tokens": 3094
+        },
+        "temporal": {
+          "mean_negative_log_likelihood": 1.211083,
+          "perplexity": 3.35712,
+          "tokens": 3094
+        }
+      },
+      "self_cultivation.jsonl": {
+        "hybrid": {
+          "mean_negative_log_likelihood": 2.051588,
+          "perplexity": 7.780245,
+          "tokens": 1883
+        },
+        "resident": {
+          "mean_negative_log_likelihood": 3.348845,
+          "perplexity": 28.469832,
+          "tokens": 1883
+        },
+        "temporal": {
+          "mean_negative_log_likelihood": 1.544218,
+          "perplexity": 4.684306,
+          "tokens": 1883
+        }
+      },
+      "short_sentences.jsonl": {
+        "hybrid": {
+          "mean_negative_log_likelihood": 2.67786,
+          "perplexity": 14.553913,
+          "tokens": 383
+        },
+        "resident": {
+          "mean_negative_log_likelihood": 3.674525,
+          "perplexity": 39.42991,
+          "tokens": 383
+        },
+        "temporal": {
+          "mean_negative_log_likelihood": 2.170961,
+          "perplexity": 8.766705,
+          "tokens": 383
+        }
+      },
+      "wordnet_active.jsonl": {
+        "hybrid": {
+          "mean_negative_log_likelihood": 3.20417,
+          "perplexity": 24.635037,
+          "tokens": 9
+        },
+        "resident": {
+          "mean_negative_log_likelihood": 5.089498,
+          "perplexity": 162.308325,
+          "tokens": 9
+        },
+        "temporal": {
+          "mean_negative_log_likelihood": 2.99245,
+          "perplexity": 19.934454,
+          "tokens": 9
+        }
+      }
+    },
+    "channels": {
+      "hybrid": {
+        "mean_negative_log_likelihood": 2.599514,
+        "perplexity": 13.457194,
+        "tokens": 15690
+      },
+      "resident": {
+        "mean_negative_log_likelihood": 3.415958,
+        "perplexity": 30.446093,
+        "tokens": 15690
+      },
+      "temporal": {
+        "mean_negative_log_likelihood": 2.740033,
+        "perplexity": 15.487501,
+        "tokens": 15690
+      }
+    },
+    "records": 500
+  },
+  "selected_epoch": 1,
+  "state_dir": "/data/data/com.termux/files/usr/tmp/nanlm-resident-relations-v2",
+  "temporal_state": "/data/data/com.termux/files/usr/tmp/nanlm-resident-relations-v2/language/temporal_mirror.json",
+  "train_records": 14039,
+  "universe_path": "/data/data/com.termux/files/usr/tmp/nanlm-resident-relations-v2/resident/universe.nlmres"
+}

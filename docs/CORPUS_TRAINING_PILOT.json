@@ -1,0 +1,81 @@
+{
+  "before": {
+    "heldout": {
+      "mean_negative_log_likelihood": 13.815511,
+      "perplexity": 1000000.0,
+      "records": 100,
+      "sentences_scored": 100,
+      "tokens_scored": 4202
+    },
+    "model": {
+      "bigram_contexts": 0,
+      "exposed_sentences": 0,
+      "mirror_address_cells": 0,
+      "schema": "nanlm.temporal-mirror-lm/1",
+      "trigram_contexts": 0,
+      "vocabulary": 0
+    }
+  },
+  "boundaries": {
+    "canonical_commit": false,
+    "derived_local_state": true,
+    "merge": false,
+    "nannet_route": false,
+    "proof_claim": false
+  },
+  "corpus": "/storage/emulated/0/download/local-corpus/corpora",
+  "epochs": 2,
+  "epochs_run": [
+    {
+      "epoch": 1,
+      "heldout": {
+        "mean_negative_log_likelihood": 5.660861,
+        "perplexity": 287.396,
+        "records": 100,
+        "sentences_scored": 100,
+        "tokens_scored": 4202
+      },
+      "mean_nll_delta_from_before": -8.15465,
+      "model": {
+        "bigram_contexts": 11768,
+        "exposed_sentences": 7398,
+        "mirror_address_cells": 512,
+        "schema": "nanlm.temporal-mirror-lm/1",
+        "trigram_contexts": 35979,
+        "vocabulary": 11767
+      },
+      "observed": 7398,
+      "rejected": 154,
+      "seconds": 22.56,
+      "train_records": 7552
+    },
+    {
+      "epoch": 2,
+      "heldout": {
+        "mean_negative_log_likelihood": 5.682058,
+        "perplexity": 293.5528,
+        "records": 100,
+        "sentences_scored": 100,
+        "tokens_scored": 4202
+      },
+      "mean_nll_delta_from_before": -8.133453,
+      "model": {
+        "bigram_contexts": 11768,
+        "exposed_sentences": 7398,
+        "mirror_address_cells": 512,
+        "schema": "nanlm.temporal-mirror-lm/1",
+        "trigram_contexts": 35979,
+        "vocabulary": 11767
+      },
+      "observed": 7398,
+      "rejected": 154,
+      "seconds": 20.43,
+      "train_records": 7552
+    }
+  ],
+  "files": 9,
+  "heldout_records": 448,
+  "schema": "nanlm.local-corpus-corpus-training/1",
+  "state_dir": "/data/data/com.termux/files/usr/tmp/hyper-pilot",
+  "train_records": 7552
+}

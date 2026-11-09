@@ -6,7 +6,7 @@ from pathlib import Path
 
 
 class OptionalCryptoImportTests(unittest.TestCase):
-    def test_plugin_registers_without_crypto_and_protected_chat_fails_closed(self):
+    def test_plugin_registers_without_crypto_and_local_chat_is_unverified(self):
         code = r"""
 import importlib.abc
 import json
@@ -57,13 +57,19 @@ with tempfile.TemporaryDirectory() as tmp:
     assert "nanlm_auth_init" in ctx.tools
     status = json.loads(ctx.tools["nanlm_status"]({}))
     assert "mathematical_memory" in status
+    answer = json.loads(ctx.tools["nanlm_chat"](
+        {"message": "Try an open-ended experiment."}))
+    assert answer["authorization"]["local_only"] is True
+    assert answer["authorization"]["read"]["mode"] == "local-unverified"
+    assert answer["layered_learning"]["layers"] == 10
     try:
-        ctx.tools["nanlm_chat"]({"message": "Try an open-ended experiment."})
+        ctx.tools["nanlm_auth_init"]({})
     except (RuntimeError, ValueError) as exc:
-        assert "NANNET" in str(exc) or "secret" in str(exc).lower()
+        message = str(exc).lower()
+        assert "nannet_master_key" in message or "cryptography" in message or "secret" in message
     else:
-        raise AssertionError("protected chat must fail closed without configured NANNET pairing")
-    print("registered", len(ctx.tools), "tools; protected chat correctly failed closed")
+        raise AssertionError("protected NANNET identity must fail closed without a master secret")
+    print("registered", len(ctx.tools), "tools; local chat unverified; protected identity failed closed")
 """
         root = Path(__file__).resolve().parents[1]
         result = subprocess.run(

@@ -1,0 +1,1234 @@
+.org 0
+JMP @mth_weighted_v2_test_main
+.include "../nan16/mth_sparse_weighted_graph_laplacian_v2.nas"
+
+mth_weighted_v2_test_main:
+  MOVI r13,1
+  MOVI r1,@mth_weighted_v2_offsets
+  MOVI r2,@mth_weighted_v2_neighbors
+  MOVI r3,@mth_weighted_v2_weights_a
+  MOVI r4,@mth_weighted_v2_x
+  MOVI r5,@mth_weighted_v2_output
+  MOVI r6,6
+  MOVI r7,@mth_weighted_v2_scratch
+  CALL @mth_sparse_weighted_graph_laplacian_q16_16_i64_v2
+  CMP r1,r13
+  JMP[NE] @mth_weighted_v2_fail
+
+  ; Expected [-2,-7,-16,25] in signed I64 Q16.16.
+  MOVI r6,@mth_weighted_v2_output
+  LD r7,r6,0
+  MOVI r8,0
+  MOVHI r8,0xFFFE
+  CMP r7,r8
+  JMP[NE] @mth_weighted_v2_fail
+  LD r7,r6,1
+  MOVI r8,0xFFFF
+  MOVHI r8,0xFFFF
+  CMP r7,r8
+  JMP[NE] @mth_weighted_v2_fail
+  LD r7,r6,2
+  MOVI r8,0
+  MOVHI r8,0xFFF9
+  CMP r7,r8
+  JMP[NE] @mth_weighted_v2_fail
+  LD r7,r6,3
+  MOVI r8,0xFFFF
+  MOVHI r8,0xFFFF
+  CMP r7,r8
+  JMP[NE] @mth_weighted_v2_fail
+  LD r7,r6,4
+  MOVI r8,0
+  MOVHI r8,0xFFF0
+  CMP r7,r8
+  JMP[NE] @mth_weighted_v2_fail
+  LD r7,r6,5
+  MOVI r8,0xFFFF
+  MOVHI r8,0xFFFF
+  CMP r7,r8
+  JMP[NE] @mth_weighted_v2_fail
+  LD r7,r6,6
+  MOVI r8,0
+  MOVHI r8,0x0019
+  CMP r7,r8
+  JMP[NE] @mth_weighted_v2_fail
+  LD r7,r6,7
+  CMP r7,r0
+  JMP[NE] @mth_weighted_v2_fail
+
+  ; Second exact oracle: [-1,-20,11,10].
+  MOVI r1,@mth_weighted_v2_offsets
+  MOVI r2,@mth_weighted_v2_neighbors
+  MOVI r3,@mth_weighted_v2_weights_b
+  MOVI r4,@mth_weighted_v2_x
+  MOVI r5,@mth_weighted_v2_output
+  MOVI r6,6
+  MOVI r7,@mth_weighted_v2_scratch
+  CALL @mth_sparse_weighted_graph_laplacian_q16_16_i64_v2
+  CMP r1,r13
+  JMP[NE] @mth_weighted_v2_fail
+  MOVI r6,@mth_weighted_v2_output
+  LD r7,r6,0
+  MOVI r8,0
+  MOVHI r8,0xFFFF
+  CMP r7,r8
+  JMP[NE] @mth_weighted_v2_fail
+  LD r7,r6,1
+  MOVI r8,0xFFFF
+  MOVHI r8,0xFFFF
+  CMP r7,r8
+  JMP[NE] @mth_weighted_v2_fail
+  LD r7,r6,2
+  MOVI r8,0
+  MOVHI r8,0xFFEC
+  CMP r7,r8
+  JMP[NE] @mth_weighted_v2_fail
+  LD r7,r6,3
+  MOVI r8,0xFFFF
+  MOVHI r8,0xFFFF
+  CMP r7,r8
+  JMP[NE] @mth_weighted_v2_fail
+  LD r7,r6,4
+  MOVI r8,0
+  MOVHI r8,0x000B
+  CMP r7,r8
+  JMP[NE] @mth_weighted_v2_fail
+  LD r7,r6,5
+  CMP r7,r0
+  JMP[NE] @mth_weighted_v2_fail
+  LD r7,r6,6
+  MOVI r8,0
+  MOVHI r8,0x000A
+  CMP r7,r8
+  JMP[NE] @mth_weighted_v2_fail
+  LD r7,r6,7
+  CMP r7,r0
+  JMP[NE] @mth_weighted_v2_fail
+
+  ; Zero weight is invalid and must preserve the entire output page.
+  MOVI r6,@mth_weighted_v2_weights_a
+  ST r0,r6,0
+  MOVI r6,@mth_weighted_v2_output
+  MOVI r7,77
+  ST r7,r6,0
+  MOVI r1,@mth_weighted_v2_offsets
+  MOVI r2,@mth_weighted_v2_neighbors
+  MOVI r3,@mth_weighted_v2_weights_a
+  MOVI r4,@mth_weighted_v2_x
+  MOVI r5,@mth_weighted_v2_output
+  MOVI r6,6
+  MOVI r7,@mth_weighted_v2_scratch
+  CALL @mth_sparse_weighted_graph_laplacian_q16_16_i64_v2
+  MOVI r8,4
+  CMP r1,r8
+  JMP[NE] @mth_weighted_v2_fail
+  MOVI r6,@mth_weighted_v2_output
+  LD r7,r6,0
+  MOVI r8,77
+  CMP r7,r8
+  JMP[NE] @mth_weighted_v2_fail
+
+  MOVI r1,@mth_weighted_v2_pass
+  CALL @mth_weighted_v2_puts
+  HALT
+
+mth_weighted_v2_fail:
+  MOVI r1,@mth_weighted_v2_bad
+  CALL @mth_weighted_v2_puts
+  HALT
+
+mth_weighted_v2_puts:
+  MOVI r4,255
+mth_weighted_v2_puts_word:
+  LD r2,r1,0
+  MOVI r3,4
+mth_weighted_v2_puts_byte:
+  BOOL.8 r5,r2,r4
+  CMP r5,r0
+  RET[EQ]
+  PUTC r5
+  SHR r2,r2,8
+  SUB r3,r3,r13
+  JMP[NE] @mth_weighted_v2_puts_byte
+  ADD r1,r1,r13
+  JMP @mth_weighted_v2_puts_word
+
+.org 512
+mth_weighted_v2_offsets:
+.word 0
+.word 1
+.word 3
+.word 5
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.word 6
+.org 1024
+mth_weighted_v2_neighbors:
+.word 1
+.word 0
+.word 2
+.word 1
+.word 3
+.word 2
+.org 1040
+mth_weighted_v2_weights_a:
+.word 2
+.word 2
+.word 3
+.word 3
+.word 5
+.word 5
+.org 1056
+mth_weighted_v2_weights_b:
+.word 1
+.word 1
+.word 7
+.word 7
+.word 2
+.word 2
+.org 1072
+mth_weighted_v2_x:
+.word 0
+.word 65536
+.word 262144
+.word 589824
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.org 2048
+mth_weighted_v2_output:
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.word 77
+.org 3072
+mth_weighted_v2_scratch:
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.org 3104
+mth_weighted_v2_pass:
+.str "MTH WEIGHTED CSR LAPLACIAN V2 PASS\n"
+mth_weighted_v2_bad:
+.str "MTH WEIGHTED CSR LAPLACIAN V2 FAIL\n"
+

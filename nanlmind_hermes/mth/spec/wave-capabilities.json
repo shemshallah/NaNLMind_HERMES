@@ -1,0 +1,1323 @@
+{
+  "bundled_from": {
+    "manifest": "spec/wave-capabilities.json",
+    "note": "Paths rewritten for the plugin bundle; kernels are architecture-neutral NaN16 source.",
+    "repository": "shemshallah/NaNROUTER",
+    "source_trees": [
+      "mth/nan16",
+      "mth/tests"
+    ]
+  },
+  "generated_by": "manual R10 promotion ledger",
+  "kernels": [
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_k256_laplacian_test.nas",
+      "kernel_id": "mth.k256.laplacian.u16",
+      "marker": "MTH K256 LAPLACIAN PASS",
+      "precision": "u16->i32",
+      "shape": [
+        256
+      ],
+      "source": "nan16/mth_k256_laplacian.nas",
+      "status": "native_verified",
+      "steps": 5391,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_k256_pair_space_v1_test.nas",
+      "kernel_id": "mth.k256.pair_space.q16.16",
+      "marker": "MTH K256 PAIR SPACE V1 PASS",
+      "precision": "q16.16",
+      "shape": [
+        256,
+        256
+      ],
+      "source": "nan16/mth_k256_pair_space_v1.nas",
+      "status": "native_verified",
+      "steps": 2300711,
+      "workspace_words": 528
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_k255_laplacian_test.nas",
+      "kernel_id": "mth.k255.laplacian.u16",
+      "marker": "MTH K255 LAPLACIAN PASS",
+      "precision": "u16->i32",
+      "shape": [
+        255
+      ],
+      "source": "nan16/mth_k255_laplacian.nas",
+      "status": "native_verified",
+      "steps": 5881,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_ring255_laplacian_test.nas",
+      "kernel_id": "mth.ring255.laplacian.f32",
+      "marker": "MTH RING255 LAPLACIAN PASS",
+      "precision": "float32",
+      "shape": [
+        255
+      ],
+      "source": "nan16/mth_ring255_laplacian.nas",
+      "status": "native_verified",
+      "steps": 12485,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_ring255_port_test.nas",
+      "kernel_id": "mth.ring255.port.f32",
+      "marker": "MTH RING255 PORT ASSEMBLE PASS",
+      "precision": "float32",
+      "shape": [
+        255,
+        1,
+        256
+      ],
+      "source": "nan16/mth_ring255_port.nas",
+      "status": "native_verified",
+      "steps": 3353,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_ring_wave_energy_test.nas",
+      "kernel_id": "mth.ring256.wave_energy.f32",
+      "marker": "MTH RING WAVE ENERGY PASS",
+      "precision": "float32",
+      "shape": [
+        256
+      ],
+      "source": "nan16/mth_ring256_laplacian.nas",
+      "status": "native_verified",
+      "steps": 86374,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_ring256_laplacian_test.nas",
+      "kernel_id": "mth.ring256.laplacian.f32",
+      "marker": "MTH RING256 LAPLACIAN PASS",
+      "precision": "float32",
+      "shape": [
+        256
+      ],
+      "source": "nan16/mth_ring256_laplacian.nas",
+      "status": "native_verified",
+      "steps": 19736,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_sparse_graph_laplacian_test.nas",
+      "kernel_id": "mth.sparse.laplacian.q16.16",
+      "marker": "MTH SPARSE GRAPH LAPLACIAN PASS",
+      "precision": "q16.16",
+      "shape": [
+        256
+      ],
+      "source": "nan16/mth_sparse_graph_laplacian.nas",
+      "status": "native_verified",
+      "steps": 20743,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_sparse_weighted_graph_laplacian_v2_test.nas",
+      "kernel_id": "mth.weighted_sparse.laplacian.q16.16",
+      "marker": "MTH WEIGHTED CSR LAPLACIAN V2 PASS",
+      "precision": "q16.16",
+      "shape": [
+        256
+      ],
+      "source": "nan16/mth_sparse_weighted_graph_laplacian_v2.nas",
+      "status": "native_verified",
+      "steps": 41253,
+      "workspace_words": 16
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_graph_energy_weighted_u8_q32_32_test.nas",
+      "kernel_id": "mth.graph.energy.q32.32",
+      "marker": "MTH WEIGHTED GRAPH ENERGY PASS",
+      "precision": "q32.32",
+      "shape": [
+        1
+      ],
+      "source": "nan16/mth_graph_energy_weighted_u8_q32_32.nas",
+      "status": "native_verified",
+      "steps": 60569,
+      "workspace_words": 16
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_graph_components_256_test.nas",
+      "kernel_id": "mth.graph.components.256",
+      "marker": "MTH GRAPH COMPONENTS PASS",
+      "precision": "u32",
+      "shape": [
+        256
+      ],
+      "source": "nan16/mth_graph_components_256.nas",
+      "status": "native_verified",
+      "steps": 29931,
+      "workspace_words": 256
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_graph_degree_test.nas",
+      "kernel_id": "mth.graph.degree.256.u32",
+      "marker": "MTH GRAPH DEGREE 256 PASS",
+      "precision": "u32",
+      "shape": [
+        256
+      ],
+      "source": "nan16/mth_graph_degree.nas",
+      "status": "native_verified",
+      "steps": 48117,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_graph_pattern_test.nas",
+      "kernel_id": "mth.graph.pattern.256.u32",
+      "marker": "MTH GRAPH PATTERN 256 PASS",
+      "precision": "u32",
+      "shape": [
+        256
+      ],
+      "source": "nan16/mth_graph_pattern.nas",
+      "status": "native_verified",
+      "steps": 56063,
+      "workspace_words": 512
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_graph_filter_test.nas",
+      "kernel_id": "mth.graph.filter.poly2.q16.16",
+      "marker": "MTH GRAPH FILTER Q16.16 PASS",
+      "precision": "q16.16",
+      "shape": [
+        256
+      ],
+      "source": "nan16/mth_graph_filter.nas",
+      "status": "native_verified",
+      "steps": 621536,
+      "workspace_words": 528
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_graph_fold_test.nas",
+      "kernel_id": "mth.graph.fold.f32",
+      "marker": "MTH GRAPH FOLD VECTOR PASS",
+      "precision": "float32",
+      "shape": [
+        256,
+        128
+      ],
+      "source": "nan16/mth_graph_fold.nas",
+      "status": "native_verified",
+      "steps": 9281,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_centrosymmetry_128_test.nas",
+      "kernel_id": "mth.centrosymmetry.128.f32",
+      "marker": "MTH CENTROSYMMETRY 128 PASS",
+      "precision": "float32",
+      "shape": [
+        128,
+        128
+      ],
+      "source": "nan16/mth_centrosymmetry_128.nas",
+      "status": "native_verified",
+      "steps": 676252,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_centrosymmetry_block16_test.nas",
+      "kernel_id": "mth.centrosymmetry256.block16.f32",
+      "marker": "MTH CENTROSYMMETRY BLOCK16 PASS",
+      "precision": "float32",
+      "shape": [
+        16,
+        256
+      ],
+      "source": "nan16/mth_centrosymmetry_block16.nas",
+      "status": "native_verified",
+      "steps": 337623,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_centrosymmetry255_block15_test.nas",
+      "kernel_id": "mth.centrosymmetry255.block15.f32",
+      "marker": "MTH CENTROSYMMETRY 255 BLOCK15 PASS",
+      "precision": "float32",
+      "shape": [
+        15,
+        255
+      ],
+      "source": "nan16/mth_centrosymmetry255_block15.nas",
+      "status": "native_verified",
+      "steps": 653687,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_dot256_test.nas",
+      "kernel_id": "mth.vector.dot256.f32",
+      "marker": "MTH DOT256 PASS",
+      "precision": "float32",
+      "shape": [
+        256
+      ],
+      "source": "nan16/mth_dot256_f32.nas",
+      "status": "native_verified",
+      "steps": 9144,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_norm256_test.nas",
+      "kernel_id": "mth.vector.norm256.f32",
+      "marker": "MTH NORM256 PASS",
+      "precision": "float32",
+      "shape": [
+        256
+      ],
+      "source": "nan16/mth_norm256_f32.nas",
+      "status": "native_verified",
+      "steps": 6842,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_axpy256_test.nas",
+      "kernel_id": "mth.vector.axpy256.f32",
+      "marker": "MTH AXPY256 PASS",
+      "precision": "float32",
+      "shape": [
+        256
+      ],
+      "source": "nan16/mth_axpy256_f32.nas",
+      "status": "native_verified",
+      "steps": 8389,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_cosine256_test.nas",
+      "kernel_id": "mth.vector.cosine256.f32",
+      "marker": "MTH COSINE256 PASS",
+      "precision": "float32",
+      "shape": [
+        256
+      ],
+      "source": "nan16/mth_cosine256_f32.nas",
+      "status": "native_verified",
+      "steps": 17189,
+      "workspace_words": 4
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_graph_void_test.nas",
+      "kernel_id": "mth.graph.void.f32",
+      "marker": "MTH GRAPH VOID POTENTIAL PASS",
+      "precision": "float32",
+      "shape": [
+        256
+      ],
+      "source": "nan16/mth_graph_void.nas",
+      "status": "native_verified",
+      "steps": 20623,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_graph_wave_test.nas",
+      "kernel_id": "mth.graph.wave_step.f32",
+      "marker": "MTH GRAPH WAVE STEP PASS",
+      "precision": "float32",
+      "shape": [
+        256
+      ],
+      "source": "nan16/mth_graph_wave.nas",
+      "status": "native_verified",
+      "steps": 65088,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_graph_step_energy_256_test.nas",
+      "kernel_id": "mth.graph.step_energy.256.f32",
+      "marker": "MTH GRAPH STEP ENERGY PASS",
+      "precision": "float32",
+      "shape": [
+        256
+      ],
+      "source": "nan16/mth_graph_step_energy_256.nas",
+      "status": "native_verified",
+      "steps": 7956,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_harmonic_wave_energy_test.nas",
+      "kernel_id": "mth.harmonic.wave_energy.f32",
+      "marker": "MTH HARMONIC WAVE ENERGY PASS",
+      "precision": "float32",
+      "shape": [
+        256
+      ],
+      "source": "nan16/mth_harmonic_accel_256.nas",
+      "status": "native_verified",
+      "steps": 53877,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_harmonic_damped_energy_test.nas",
+      "kernel_id": "mth.harmonic.damped_energy.f32",
+      "marker": "MTH HARMONIC DAMPED ENERGY PASS",
+      "precision": "float32",
+      "shape": [
+        256
+      ],
+      "source": "nan16/mth_harmonic_accel_256.nas",
+      "status": "native_verified",
+      "steps": 53890,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_matvec128_test.nas",
+      "kernel_id": "mth.matvec.128.f32",
+      "marker": "MTH MATVEC128 PASS",
+      "precision": "float32",
+      "shape": [
+        128,
+        128
+      ],
+      "source": "nan16/mth_matvec128_f32.nas",
+      "status": "native_verified",
+      "steps": 249914,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_matvec256_block16_test.nas",
+      "kernel_id": "mth.matvec256.block16.f32",
+      "marker": "MTH MATVEC256 BLOCK16 PASS",
+      "precision": "float32",
+      "shape": [
+        16,
+        256
+      ],
+      "source": "nan16/mth_matvec256_block16.nas",
+      "status": "native_verified",
+      "steps": 148561,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_matvec256_full_test.nas",
+      "kernel_id": "mth.matvec256.full.f32",
+      "marker": "MTH MATVEC256 FULL PASS",
+      "precision": "float32",
+      "shape": [
+        256,
+        256
+      ],
+      "source": "nan16/mth_matvec256_full.nas",
+      "status": "native_verified",
+      "steps": 2978362,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_power_iter128_test.nas",
+      "kernel_id": "mth.power_iter.128.f32",
+      "marker": "MTH POWER_ITER128 PASS",
+      "precision": "float32",
+      "shape": [
+        128,
+        128
+      ],
+      "source": "nan16/mth_power_iter128.nas",
+      "status": "native_verified",
+      "steps": 758847,
+      "workspace_words": 7
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_svd_top128_test.nas",
+      "kernel_id": "mth.svd.top128.f32",
+      "marker": "MTH SVD TOP128 PASS",
+      "precision": "float32",
+      "shape": [
+        128,
+        128
+      ],
+      "source": "nan16/mth_svd_top128.nas",
+      "status": "native_verified",
+      "steps": 1311632,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_svd_top256_test.nas",
+      "kernel_id": "mth.svd.top256.f32",
+      "marker": "MTH SVD TOP256 PASS",
+      "precision": "float32",
+      "shape": [
+        256,
+        256
+      ],
+      "source": "nan16/mth_svd_top256.nas",
+      "status": "native_verified",
+      "steps": 11002235,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_adapter_residual_128_test.nas",
+      "kernel_id": "mth.adapter.residual.128.f32",
+      "marker": "MTH ADAPTER RESIDUAL 128 PASS",
+      "precision": "float32",
+      "shape": [
+        128
+      ],
+      "source": "nan16/mth_adapter_residual_128.nas",
+      "status": "native_verified",
+      "steps": 420587,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_adapter_residual_256_block16_test.nas",
+      "kernel_id": "mth.adapter.residual.256.block16.f32",
+      "marker": "MTH ADAPTER RESIDUAL 256 BLOCK16 PASS",
+      "precision": "float32",
+      "shape": [
+        16,
+        256
+      ],
+      "source": "nan16/mth_adapter_residual_256_block16.nas",
+      "status": "native_verified",
+      "steps": 113055,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_phase_coherence_128_test.nas",
+      "kernel_id": "mth.phase.coherence.128.f32",
+      "marker": "MTH PHASE COHERENCE 128 PASS",
+      "precision": "float32",
+      "shape": [
+        128
+      ],
+      "source": "nan16/mth_phase_coherence_128.nas",
+      "status": "native_verified",
+      "steps": 11381,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_two_level_spectrum_test.nas",
+      "kernel_id": "mth.two_level.spectrum.f32",
+      "marker": "MTH TWO LEVEL SPECTRUM PASS",
+      "precision": "float32",
+      "shape": [
+        2
+      ],
+      "source": "nan16/mth_two_level_spectrum.nas",
+      "status": "native_verified",
+      "steps": 390,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_encode_decode_test.nas",
+      "kernel_id": "mth.decode.128_256.f32",
+      "marker": "MTH ENCODE DECODE PASS",
+      "precision": "float32",
+      "shape": [
+        256,
+        128
+      ],
+      "source": "nan16/mth_decode128_256.nas",
+      "status": "native_verified",
+      "steps": 996358,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_encode_decode_test.nas",
+      "kernel_id": "mth.encode.256_128.f32",
+      "marker": "MTH ENCODE DECODE PASS",
+      "precision": "float32",
+      "shape": [
+        128,
+        256
+      ],
+      "source": "nan16/mth_encode256_128.nas",
+      "status": "native_verified",
+      "steps": 996358,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_encode_decode256_test.nas",
+      "kernel_id": "mth.decode.256.full.f32",
+      "marker": "MTH ENCODE DECODE 256 PASS",
+      "precision": "float32",
+      "shape": [
+        256,
+        256
+      ],
+      "source": "nan16/mth_decode256_full.nas",
+      "status": "native_verified",
+      "steps": 1655853,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_encode_decode256_test.nas",
+      "kernel_id": "mth.encode.256.full.f32",
+      "marker": "MTH ENCODE DECODE 256 PASS",
+      "precision": "float32",
+      "shape": [
+        256,
+        256
+      ],
+      "source": "nan16/mth_encode256_full.nas",
+      "status": "native_verified",
+      "steps": 1655853,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_graph_pair_test.nas",
+      "kernel_id": "mth.graph.pair.full.128.f32",
+      "marker": "MTH GRAPH PAIR FULL 128 PASS",
+      "precision": "float32",
+      "shape": [
+        128,
+        128
+      ],
+      "source": "nan16/mth_graph_pair.nas",
+      "status": "native_verified",
+      "steps": 68195822,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_graph_pair_rank1_128_test.nas",
+      "kernel_id": "mth.graph.pair.rank1.128.f32",
+      "marker": "MTH GRAPH PAIR RANK1 128 PASS",
+      "precision": "float32",
+      "shape": [
+        128,
+        128
+      ],
+      "source": "nan16/mth_graph_pair_rank1_128.nas",
+      "status": "native_verified",
+      "steps": 252060,
+      "workspace_words": 256
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_lowrank_add_128_test.nas",
+      "kernel_id": "mth.lowrank.add.128.f32",
+      "marker": "MTH LOWRANK ADD 128 PASS",
+      "precision": "float32",
+      "shape": [
+        128,
+        128
+      ],
+      "source": "nan16/mth_lowrank_add_128.nas",
+      "status": "native_verified",
+      "steps": 1056470,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_graph_dft256_test.nas",
+      "kernel_id": "mth.graph.dft256.f32",
+      "marker": "MTH GRAPH DFT256 PASS",
+      "precision": "float32",
+      "shape": [
+        256
+      ],
+      "source": "nan16/mth_graph_dft256.nas",
+      "status": "native_verified",
+      "steps": 8958287,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_graph_dft255_test.nas",
+      "kernel_id": "mth.graph.dft255.f32",
+      "marker": "MTH GRAPH DFT255 PASS",
+      "precision": "float32",
+      "shape": [
+        255
+      ],
+      "source": "nan16/mth_graph_dft255.nas",
+      "status": "native_verified",
+      "steps": 6666266,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_graph_couple_128_test.nas",
+      "kernel_id": "mth.graph.couple128.f32",
+      "marker": "MTH GRAPH COUPLE 128 PASS",
+      "precision": "float32",
+      "shape": [
+        128
+      ],
+      "source": "nan16/mth_graph_couple_128.nas",
+      "status": "native_verified",
+      "steps": 8637,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_graph_transmission_128_test.nas",
+      "kernel_id": "mth.graph.transmission.128.f32",
+      "marker": "MTH GRAPH TRANSMISSION 128 PASS",
+      "precision": "float32",
+      "shape": [
+        128
+      ],
+      "source": "nan16/mth_graph_transmission_128.nas",
+      "status": "native_verified",
+      "steps": 7147,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_graph_pair_tile16_f32_test.nas",
+      "kernel_id": "mth.graph.pair.tile16.f32",
+      "marker": "MTH PAIR TILE16 F32 PASS",
+      "precision": "float32",
+      "shape": [
+        256,
+        256
+      ],
+      "source": "nan16/mth_graph_pair_tile16_f32.nas",
+      "status": "native_verified",
+      "steps": 4643414,
+      "workspace_words": 73990
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_graph_pair_tile16_k16_f32_test.nas",
+      "kernel_id": "mth.graph.pair.tile16.k16.f32",
+      "marker": "MTH PAIR TILE16 K16 ACCUM PASS",
+      "precision": "float32",
+      "shape": [
+        256,
+        256
+      ],
+      "source": "nan16/mth_graph_pair_tile16_k16_f32.nas",
+      "status": "native_verified",
+      "steps": 283436,
+      "workspace_words": 1542
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_jahs_gate_test.nas",
+      "kernel_id": "mth.jahs.gate.u64",
+      "marker": "MTH JAHS GATE PASS",
+      "precision": "u32",
+      "shape": [
+        1
+      ],
+      "source": "nan16/mth_jahs_gate.nas",
+      "status": "native_verified",
+      "steps": 201,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_adapter_residual_256_full_test.nas",
+      "kernel_id": "mth.adapter.residual.256.full.f32",
+      "marker": "MTH ADAPTER RESIDUAL 256 FULL PASS",
+      "precision": "float32",
+      "shape": [
+        256,
+        256
+      ],
+      "source": "nan16/mth_adapter_residual_256_full.nas",
+      "status": "native_verified",
+      "steps": 2839172,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_avoided_crossing_sweep_test.nas",
+      "kernel_id": "mth.graph.avoided_crossing_sweep.f32",
+      "marker": "MTH AVOIDED CROSSING SWEEP PASS",
+      "precision": "float32",
+      "shape": [
+        256
+      ],
+      "source": "nan16/mth_avoided_crossing_sweep.nas",
+      "status": "native_verified",
+      "steps": 11651,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_centrosymmetry_255_full_test.nas",
+      "kernel_id": "mth.centrosymmetry255.full.f32",
+      "marker": "MTH CENTROSYMMETRY 255 FULL PASS",
+      "precision": "float32",
+      "shape": [
+        255,
+        255
+      ],
+      "source": "nan16/mth_centrosymmetry_255_full.nas",
+      "status": "native_verified",
+      "steps": 2700726,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_svd_top2_256_test.nas",
+      "kernel_id": "mth.svd.top2.256.f32",
+      "marker": "MTH SVD TOP2 256 PASS",
+      "precision": "float32",
+      "shape": [
+        256,
+        256
+      ],
+      "source": "nan16/mth_svd_top2_256.nas",
+      "status": "native_verified",
+      "steps": 40216927,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_topk_256_test.nas",
+      "kernel_id": "mth.topk.256.f32",
+      "marker": "MTH TOPK 256 PASS",
+      "precision": "float32",
+      "shape": [
+        256
+      ],
+      "source": "nan16/mth_topk_256.nas",
+      "status": "native_verified",
+      "steps": 1158106,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_drive_source_256_test.nas",
+      "kernel_id": "mth.drive.source.256.f32",
+      "marker": "MTH DRIVE SOURCE 256 PASS",
+      "precision": "float32",
+      "shape": [
+        256
+      ],
+      "source": "nan16/mth_drive_source_256.nas",
+      "status": "native_verified",
+      "steps": 13092,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_cfl_guard_256_test.nas",
+      "kernel_id": "mth.cfl.guard.256.f32",
+      "marker": "MTH CFL GUARD 256 PASS",
+      "precision": "float32",
+      "shape": [
+        256,
+        256
+      ],
+      "source": "nan16/mth_cfl_guard_256.nas",
+      "status": "native_verified",
+      "steps": 2639509,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_radial_tridiagonal_test.nas",
+      "kernel_id": "mth.radial.tridiagonal.256.f32",
+      "marker": "MTH RADIAL TRIDIAGONAL PASS",
+      "precision": "float32",
+      "shape": [
+        256
+      ],
+      "source": "nan16/mth_radial_tridiagonal.nas",
+      "status": "native_verified",
+      "steps": 42518,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_colored_noise_256_test.nas",
+      "kernel_id": "mth.noise.colored.256.f32",
+      "marker": "MTH COLORED NOISE 256 PASS",
+      "precision": "float32",
+      "shape": [
+        256
+      ],
+      "source": "nan16/mth_colored_noise_256.nas",
+      "status": "native_verified",
+      "steps": 72318,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_lanczos_256_test.nas",
+      "kernel_id": "mth.lanczos.topk.256.f32",
+      "marker": "MTH LANCZOS 256 PASS",
+      "precision": "float32",
+      "shape": [
+        256,
+        256
+      ],
+      "source": "nan16/mth_lanczos_256.nas",
+      "status": "native_verified",
+      "steps": 133628629,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_graph_pair_tile16_k16_driver_f32_test.nas",
+      "kernel_id": "mth.graph.pair.tile16.k16.driver.f32",
+      "marker": "MTH PAIR K16 DRIVER PASS",
+      "precision": "float32",
+      "shape": [
+        16,
+        16
+      ],
+      "source": "nan16/mth_graph_pair_tile16_k16_driver_f32.nas",
+      "status": "native_verified",
+      "steps": 4449894,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_reachability_256_test.nas",
+      "kernel_id": "mth.reachability.256.f32",
+      "marker": "MTH REACHABILITY 256 PASS",
+      "precision": "float32",
+      "shape": [
+        256,
+        256
+      ],
+      "source": "nan16/mth_reachability_256.nas",
+      "status": "native_verified",
+      "steps": 2489116,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_radial_energy_test.nas",
+      "kernel_id": "mth.radial.energy.256.f32",
+      "marker": "MTH RADIAL ENERGY PASS",
+      "precision": "float32",
+      "shape": [
+        256
+      ],
+      "source": "nan16/mth_radial_energy.nas",
+      "status": "native_verified",
+      "steps": 61373,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_preflight_gate_test.nas",
+      "kernel_id": "mth.preflight.gate.u32",
+      "marker": "MTH PREFLIGHT GATE PASS",
+      "precision": "u32",
+      "shape": [
+        1
+      ],
+      "source": "nan16/mth_preflight_gate.nas",
+      "status": "native_verified",
+      "steps": 336,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_admission_test.nas",
+      "kernel_id": "mth.admission.u32",
+      "marker": "MTH COMPOSED ADMISSION PASS",
+      "precision": "u32",
+      "shape": [
+        1
+      ],
+      "source": "nan16/mth_admission.nas",
+      "status": "native_verified",
+      "steps": 931,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_bool2_test.nas",
+      "kernel_id": "mth.bool.all",
+      "marker": "MTH BOOL2 ALL 16 PASS",
+      "precision": "bool",
+      "shape": [
+        16
+      ],
+      "source": "nan16/mth_bool.nas",
+      "status": "native_verified",
+      "steps": 458,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_bitwise_test.nas",
+      "kernel_id": "mth.bitwise.u32",
+      "marker": "MTH BITWISE/COMPARE PASS",
+      "precision": "u32",
+      "shape": [
+        32
+      ],
+      "source": "nan16/mth_bitwise.nas",
+      "status": "native_verified",
+      "steps": 312,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_integer_test.nas",
+      "kernel_id": "mth.integer.checked.i32",
+      "marker": "MTH INT32 CHECKED PASS",
+      "precision": "i32",
+      "shape": [
+        32
+      ],
+      "source": "nan16/mth_integer.nas",
+      "status": "native_verified",
+      "steps": 245,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_shift_test.nas",
+      "kernel_id": "mth.shift.u32",
+      "marker": "MTH SHIFT PASS",
+      "precision": "u32",
+      "shape": [
+        32
+      ],
+      "source": "nan16/mth_shift.nas",
+      "status": "native_verified",
+      "steps": 338,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_multiply_test.nas",
+      "kernel_id": "mth.multiply.wide.u32",
+      "marker": "MTH MUL WIDE PASS",
+      "precision": "u32->u64",
+      "shape": [
+        64
+      ],
+      "source": "nan16/mth_multiply.nas",
+      "status": "native_verified",
+      "steps": 1578,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_divide_test.nas",
+      "kernel_id": "mth.divmod.u32",
+      "marker": "MTH DIVMOD PASS",
+      "precision": "u32",
+      "shape": [
+        64
+      ],
+      "source": "nan16/mth_divide.nas",
+      "status": "native_verified",
+      "steps": 2062,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_stage0_test.nas",
+      "kernel_id": "mth.stage0.word_layout.u32",
+      "marker": "MTH STAGE0 PASS",
+      "precision": "u32",
+      "shape": [
+        16
+      ],
+      "source": "nan16/mth_core.nas",
+      "status": "native_verified",
+      "steps": 1161,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_double_endian_test.nas",
+      "kernel_id": "mth.double_endian.pair.u32",
+      "marker": "MTH DOUBLE-ENDIAN REENTRANT PASS",
+      "precision": "u32",
+      "shape": [
+        2
+      ],
+      "source": "nan16/mth_double_endian.nas",
+      "status": "native_verified",
+      "steps": 545,
+      "workspace_words": 3
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_vector_test.nas",
+      "kernel_id": "mth.vector.span_add.checked.u32",
+      "marker": "MTH U32 VECTOR ADD PASS",
+      "precision": "u32",
+      "shape": [
+        32
+      ],
+      "source": "nan16/mth_vector.nas",
+      "status": "native_verified",
+      "steps": 381,
+      "workspace_words": 3
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_preflight_test.nas",
+      "kernel_id": "mth.preflight.typed.u32",
+      "marker": "MTH TYPED PREFLIGHT PASS",
+      "precision": "u32",
+      "shape": [
+        1
+      ],
+      "source": "nan16/mth_preflight.nas",
+      "status": "native_verified",
+      "steps": 2780,
+      "workspace_words": 39
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_linker_preflight_test.nas",
+      "kernel_id": "mth.execute.native_dispatch.f32",
+      "marker": "MTH NATIVE DISPATCH PASS",
+      "precision": "float32",
+      "shape": [
+        256
+      ],
+      "source": "nan16/mth_execute.nas",
+      "status": "native_verified",
+      "steps": 16047,
+      "workspace_words": 57
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_ring_wave_energy_test.nas",
+      "kernel_id": "mth.negate256.f32",
+      "marker": "MTH RING WAVE ENERGY PASS",
+      "precision": "float32",
+      "shape": [
+        256
+      ],
+      "source": "nan16/mth_negate256_f32.nas",
+      "status": "native_verified",
+      "steps": 86374,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_vector_add256_f32_test.nas",
+      "kernel_id": "mth.vector.add256.f32",
+      "marker": "MTH VECTOR ADD256 F32 PASS",
+      "precision": "float32",
+      "shape": [
+        256
+      ],
+      "source": "nan16/mth_vector_add256_f32.nas",
+      "status": "native_verified",
+      "steps": 10436,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_vector_sub256_f32_test.nas",
+      "kernel_id": "mth.vector.sub256.f32",
+      "marker": "MTH VECTOR SUB256 F32 PASS",
+      "precision": "float32",
+      "shape": [
+        256
+      ],
+      "source": "nan16/mth_vector_sub256_f32.nas",
+      "status": "native_verified",
+      "steps": 10484,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_vector_mean256_f32_test.nas",
+      "kernel_id": "mth.vector.mean256.f32",
+      "marker": "MTH VECTOR MEAN256 F32 PASS",
+      "precision": "float32",
+      "shape": [
+        1
+      ],
+      "source": "nan16/mth_vector_mean256_f32.nas",
+      "status": "native_verified",
+      "steps": 15969,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_vector_abs256_f32_test.nas",
+      "kernel_id": "mth.vector.abs256.f32",
+      "marker": "MTH VECTOR ABS256 PASS",
+      "precision": "float32",
+      "shape": [
+        256
+      ],
+      "source": "nan16/mth_vector_abs256_f32.nas",
+      "status": "native_verified",
+      "steps": 5328,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_vector_relu256_f32_test.nas",
+      "kernel_id": "mth.vector.relu256.f32",
+      "marker": "MTH VECTOR RELU256 PASS",
+      "precision": "float32",
+      "shape": [
+        256
+      ],
+      "source": "nan16/mth_vector_relu256_f32.nas",
+      "status": "native_verified",
+      "steps": 6615,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_graph_laplacian_csr_test.nas",
+      "kernel_id": "mth.graph.laplacian.csr.q16.16",
+      "marker": "MTH GRAPH LAPLACIAN CSR PASS",
+      "precision": "q16.16",
+      "shape": [
+        256
+      ],
+      "source": "nan16/mth_graph_laplacian_csr.nas",
+      "status": "native_verified",
+      "steps": 197118,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_rss_contract_test.nas",
+      "kernel_id": "mth.rss.contract.u32",
+      "marker": "MTH RSS CONTRACT PASS",
+      "precision": "u32",
+      "shape": [
+        16
+      ],
+      "source": "nan16/mth_rss_contract.nas",
+      "status": "native_verified",
+      "steps": 6504,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_matrix_transpose256_f32_test.nas",
+      "kernel_id": "mth.matrix.transpose256.f32",
+      "marker": "MTH MATRIX TRANSPOSE256 F32 PASS",
+      "precision": "float32",
+      "shape": [
+        256,
+        256
+      ],
+      "source": "nan16/mth_matrix_transpose256_f32.nas",
+      "status": "native_verified",
+      "steps": 3290464,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_vector_argmax256_f32_test.nas",
+      "kernel_id": "mth.vector.argmax256.f32",
+      "marker": "MTH VECTOR ARGMAX256 F32 PASS",
+      "precision": "float32",
+      "shape": [
+        256
+      ],
+      "source": "nan16/mth_vector_argmax256_f32.nas",
+      "status": "native_verified",
+      "steps": 62218,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_vector_argmin256_f32_test.nas",
+      "kernel_id": "mth.vector.argmin256.f32",
+      "marker": "MTH VECTOR ARGMIN256 F32 PASS",
+      "precision": "float32",
+      "shape": [
+        256
+      ],
+      "source": "nan16/mth_vector_argmin256_f32.nas",
+      "status": "native_verified",
+      "steps": 61708,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_vector_scale256_f32_test.nas",
+      "kernel_id": "mth.vector.scale256.f32",
+      "marker": "MTH VECTOR SCALE256 F32 PASS",
+      "precision": "float32",
+      "shape": [
+        256
+      ],
+      "source": "nan16/mth_vector_scale256_f32.nas",
+      "status": "native_verified",
+      "steps": 82168,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_matrix_diagonal256_f32_test.nas",
+      "kernel_id": "mth.matrix.diagonal256.f32",
+      "marker": "MTH MATRIX DIAGONAL256 F32 PASS",
+      "precision": "float32",
+      "shape": [
+        256,
+        256
+      ],
+      "source": "nan16/mth_matrix_diagonal256_f32.nas",
+      "status": "native_verified",
+      "steps": 9865,
+      "workspace_words": 0
+    },
+    {
+      "ci_verified": true,
+      "fixture": "tests/mth_matrix_add256_f32_test.nas",
+      "kernel_id": "mth.matrix.add256.f32",
+      "marker": "MTH MATRIX ADD256 F32 PASS",
+      "precision": "float32",
+      "shape": [
+        256,
+        256
+      ],
+      "source": "nan16/mth_matrix_add256_f32.nas",
+      "status": "native_verified",
+      "steps": 2500024,
+      "workspace_words": 0
+    }
+  ],
+  "notes": "Source and fixture digests are computed at registration time; this file records the contract and local evidence, not a claim that every kernel is CI-verified.",
+  "schema": "nanrouter.wave-capabilities.v1"
+}

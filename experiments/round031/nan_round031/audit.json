@@ -1,0 +1,16 @@
+{
+  "native": {
+    "reads": 10000,
+    "mean_read_ms": 0.006859622000047238,
+    "gauge_max_diff": 1.2293457984924316e-06,
+    "mirror_audit": true,
+    "snapshot_max_diff": 0.0
+  },
+  "wordnet": {
+    "synsets": 117570,
+    "two_hop_candidates": 87655,
+    "two_hop_proofs_checked": 1500,
+    "all_chain_edges_verified": true,
+    "direct_edge_only_hits": 0
+  }
+}

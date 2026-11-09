@@ -1,0 +1,9 @@
+{
+  "queries": 1000,
+  "distractor_facts": 512,
+  "short_context_correct": 0,
+  "pair_index_conceptual_correct": 1000,
+  "hash_index_correct": 1000,
+  "evaluation_ms": 157.8239210011816,
+  "note": "A controlled retrieval benchmark. The pair-address result corresponds to an exact indexed lookup and does not demonstrate neural language generation."
+}

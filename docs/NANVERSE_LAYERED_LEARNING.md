@@ -1,7 +1,9 @@
 # NaNVerse layered learning, 1 GiB scratch and HW5 runner ring
 
 This is the HERMES-side learning loop over the one HW0::BS0 universe. It is
-derived/experimental state until a separate canonical merge gate accepts it.
+derived/experimental state until a separate canonical merge gate accepts it;
+canonical merge is disabled (`merge_enabled` and `canonical_merge_enabled`
+default false).
 
 ## Data flow
 
@@ -74,10 +76,16 @@ and typed relations through `DictionaryUniverse`, emits `defined_as`,
 pages. The HW4 interface remains:
 
 ```text
-nan://HW4:BS0:MC0:SC0:GM0   (legacy-compatible HW4 route)
-HW4:0                        (link)
-HW2:0                        (HERMES upstream)
+nan://GM0:SC0:MC0:BS0:0:HW4:0   (canonical HW4 route)
+nan://HW4:BS0:MC0:SC0:GM0       (legacy compatibility envelope only)
+HW4:0                            (link)
+HW2:0                            (HERMES upstream)
 ```
+
+Free chat now performs one layered observation per turn automatically when
+`chat_learning` is enabled. Explicit results are returned in
+`layered_learning`; provider/native answers are never treated as canonical or
+independently verified.
 
 ## Promotion policy
 
@@ -93,8 +101,10 @@ The default policy is deliberately conservative:
 | automatic synchronization | false |
 
 `nanlm_learning_cycle` observes and writes scratch. `nanlm_learning_sync` with
-`approved=true` is the only path that promotes candidates into the local
-`HeadScratchRegister`. A promotion report is appended to
+`approved=true` is the explicit promotion path into the local
+`HeadScratchRegister`; `nanlm_learning_cycle` and `nanlm_wordnet_ingest` also
+accept `approved=true`, so callers must keep that gate closed unless promotion
+is intended. A promotion report is appended to
 `state_dir/language/layered_learning_sync.jsonl`.
 
 These rules are a starting point, not a claim that the truth-maintenance
@@ -107,13 +117,14 @@ The six `nanrouter-runner-0..5` repositories are identical hot standbys. They
 are the internal BSR0..BSR5 members of MC0:0 and do **not** receive individual
 HW addresses. The ring as a whole is **HW5:0**.
 
-The Koyeb portal provides:
+The intended Koyeb portal provides:
 
 - an atomic, strictly monotone `nanclock_tick`;
 - one active lease with epoch and expiry;
 - a bounded checkpoint containing the exact HW5:0 fabric inbox.
 
-On handoff, the next slot restores the checkpoint and continues. See
+On handoff, the next slot restores the checkpoint and continues. Production
+Koyeb cutover is not performed in the current tree. See
 `NaNLMind/runner/runner_ring_authority.py` and
 `NaNROUTER/docs/POINT_FABRIC.md`.
 

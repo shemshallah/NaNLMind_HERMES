@@ -1,0 +1,211 @@
+{
+  "counts": {
+    "train": 1800,
+    "val": 1800,
+    "test": 1800
+  },
+  "runs": {
+    "plain_17": {
+      "best_step": 100,
+      "validation": [
+        {
+          "step": 1,
+          "n_bytes": 7061,
+          "bits_per_byte": 7.985695434048409,
+          "accuracy": 0.016145021951564933
+        },
+        {
+          "step": 25,
+          "n_bytes": 7061,
+          "bits_per_byte": 4.444941528947409,
+          "accuracy": 0.16201671151394986
+        },
+        {
+          "step": 50,
+          "n_bytes": 7061,
+          "bits_per_byte": 4.198499636648464,
+          "accuracy": 0.19388188641835435
+        },
+        {
+          "step": 75,
+          "n_bytes": 7061,
+          "bits_per_byte": 4.068431099224677,
+          "accuracy": 0.23792663928622007
+        },
+        {
+          "step": 100,
+          "n_bytes": 7061,
+          "bits_per_byte": 3.933235211683645,
+          "accuracy": 0.24415805126752585
+        }
+      ],
+      "test": {
+        "n_bytes": 13200,
+        "bits_per_byte": 3.8946724630734084,
+        "accuracy": 0.25666666666666665
+      },
+      "params": 40752
+    },
+    "native_17": {
+      "best_step": 100,
+      "validation": [
+        {
+          "step": 1,
+          "n_bytes": 7061,
+          "bits_per_byte": 7.986646313337764,
+          "accuracy": 0.0160033989519898
+        },
+        {
+          "step": 25,
+          "n_bytes": 7061,
+          "bits_per_byte": 4.619852634431169,
+          "accuracy": 0.15097011754708964
+        },
+        {
+          "step": 50,
+          "n_bytes": 7061,
+          "bits_per_byte": 4.251537537088504,
+          "accuracy": 0.18510126044469621
+        },
+        {
+          "step": 75,
+          "n_bytes": 7061,
+          "bits_per_byte": 4.162958013494621,
+          "accuracy": 0.19345701741962895
+        },
+        {
+          "step": 100,
+          "n_bytes": 7061,
+          "bits_per_byte": 4.039059875123104,
+          "accuracy": 0.22376433932870698
+        }
+      ],
+      "test": {
+        "n_bytes": 13200,
+        "bits_per_byte": 4.007561834657775,
+        "accuracy": 0.2296969696969697
+      },
+      "params": 40496,
+      "gauge_test": {
+        "before": {
+          "n_bytes": 7319,
+          "bits_per_byte": 4.018051796906695,
+          "accuracy": 0.22585052602814593
+        },
+        "after": {
+          "n_bytes": 7319,
+          "bits_per_byte": 4.018051817960999,
+          "accuracy": 0.22585052602814593
+        },
+        "max_weight_diff": 7.988419383764267e-07,
+        "audit": true
+      },
+      "memory_disabled": {
+        "n_bytes": 7319,
+        "bits_per_byte": 4.061406929163623,
+        "accuracy": 0.23459489001229678
+      }
+    },
+    "plain_29": {
+      "best_step": 100,
+      "validation": [
+        {
+          "step": 1,
+          "n_bytes": 7061,
+          "bits_per_byte": 7.9630025930905735,
+          "accuracy": 0.002974082991077751
+        },
+        {
+          "step": 25,
+          "n_bytes": 7061,
+          "bits_per_byte": 4.487005503503947,
+          "accuracy": 0.17702874946891375
+        },
+        {
+          "step": 50,
+          "n_bytes": 7061,
+          "bits_per_byte": 4.137743620537782,
+          "accuracy": 0.2013879053958363
+        },
+        {
+          "step": 75,
+          "n_bytes": 7061,
+          "bits_per_byte": 3.9660969206484973,
+          "accuracy": 0.23452768729641693
+        },
+        {
+          "step": 100,
+          "n_bytes": 7061,
+          "bits_per_byte": 3.822254346545412,
+          "accuracy": 0.2544965302365104
+        }
+      ],
+      "test": {
+        "n_bytes": 13200,
+        "bits_per_byte": 3.7829323637814896,
+        "accuracy": 0.26651515151515154
+      },
+      "params": 40752
+    },
+    "native_29": {
+      "best_step": 100,
+      "validation": [
+        {
+          "step": 1,
+          "n_bytes": 7061,
+          "bits_per_byte": 7.963828476139466,
+          "accuracy": 0.002974082991077751
+        },
+        {
+          "step": 25,
+          "n_bytes": 7061,
+          "bits_per_byte": 4.7683716066473245,
+          "accuracy": 0.1397819005806543
+        },
+        {
+          "step": 50,
+          "n_bytes": 7061,
+          "bits_per_byte": 4.191848609390092,
+          "accuracy": 0.21540858235377425
+        },
+        {
+          "step": 75,
+          "n_bytes": 7061,
+          "bits_per_byte": 4.033298362302342,
+          "accuracy": 0.23835150828494547
+        },
+        {
+          "step": 100,
+          "n_bytes": 7061,
+          "bits_per_byte": 3.8827460749363123,
+          "accuracy": 0.24274182127177454
+        }
+      ],
+      "test": {
+        "n_bytes": 13200,
+        "bits_per_byte": 3.847606375431593,
+        "accuracy": 0.2562121212121212
+      },
+      "params": 40496,
+      "gauge_test": {
+        "before": {
+          "n_bytes": 7319,
+          "bits_per_byte": 3.857175830846966,
+          "accuracy": 0.25645579997267387
+        },
+        "after": {
+          "n_bytes": 7319,
+          "bits_per_byte": 3.8571758857385454,
+          "accuracy": 0.25645579997267387
+        },
+        "max_weight_diff": 7.192138582468033e-07,
+        "audit": true
+      },
+      "memory_disabled": {
+        "n_bytes": 7319,
+        "bits_per_byte": 3.928569746730655,
+        "accuracy": 0.2718950676321902
+      }
+    }
+  }
+}

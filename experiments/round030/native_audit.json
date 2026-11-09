@@ -1,0 +1,11 @@
+{
+  "root_bytes": 8388608,
+  "native_gradient_max_abs_error": 1.862645149230957e-09,
+  "gauge_weight_max_abs_error": 4.1653402149677277e-07,
+  "mirror_antisymmetry": true,
+  "snapshot_bitwise_restore": true,
+  "predictions": 1000,
+  "ctypes_wall_ms": 7.735439000498445,
+  "memory_wordnet_predictor_is_native": true,
+  "text_encoder_is_external": true
+}

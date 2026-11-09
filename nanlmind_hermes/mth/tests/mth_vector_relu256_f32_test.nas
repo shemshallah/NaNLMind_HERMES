@@ -1,0 +1,575 @@
+; MTH vector ReLU fixture — NaN16 only.
+.org 0
+JMP @mth_vec_relu_main
+.include "../nan16/mth_vector_relu256_f32.nas"
+
+mth_vec_relu_main:
+  MOVI r13,1
+  MOVI r8,@mth_relu_in
+  MOVI r9,@mth_relu_out
+  ADD r1,r8,r0
+  ADD r2,r9,r0
+  CALL @mth_vector_relu256_f32
+  MOVI r7,1
+  CMP r1,r7
+  JMP[NE] @mth_relu_fail
+  MOVI r3,0
+mth_relu_check:
+  ADD r5,r8,r3
+  LD r6,r5,0
+  SHR r7,r6,31
+  CMP r7,r0
+  JMP[EQ] @mth_relu_expected_ready
+  MOVI r6,0
+mth_relu_expected_ready:
+  ADD r5,r9,r3
+  LD r5,r5,0
+  CMP r5,r6
+  JMP[NE] @mth_relu_fail
+  ADD r3,r3,r13
+  MOVI r7,256
+  CMP r3,r7
+  JMP[LT] @mth_relu_check
+  MOVI r1,@mth_relu_pass
+  CALL @mth_relu_puts
+  HALT
+
+mth_relu_fail:
+  MOVI r1,@mth_relu_bad
+  CALL @mth_relu_puts
+  HALT
+
+mth_relu_puts:
+  MOVI r4,255
+mth_relu_puts_word:
+  LD r2,r1,0
+  MOVI r3,4
+mth_relu_puts_byte:
+  BOOL.8 r5,r2,r4
+  CMP r5,r0
+  RET[EQ]
+  PUTC r5
+  SHR r2,r2,8
+  SUB r3,r3,r13
+  JMP[NE] @mth_relu_puts_byte
+  ADD r1,r1,r13
+  JMP @mth_relu_puts_word
+
+mth_relu_in:
+.word 0x3F800000
+.word 0xBF800000
+.word 0x00000000
+.word 0x80000000
+.word 0x7FC00000
+.word 0xFFC00000
+.word 0x3F000000
+.word 0xBF000000
+.word 0x3F800000
+.word 0xBF800000
+.word 0x00000000
+.word 0x80000000
+.word 0x7FC00000
+.word 0xFFC00000
+.word 0x3F000000
+.word 0xBF000000
+.word 0x3F800000
+.word 0xBF800000
+.word 0x00000000
+.word 0x80000000
+.word 0x7FC00000
+.word 0xFFC00000
+.word 0x3F000000
+.word 0xBF000000
+.word 0x3F800000
+.word 0xBF800000
+.word 0x00000000
+.word 0x80000000
+.word 0x7FC00000
+.word 0xFFC00000
+.word 0x3F000000
+.word 0xBF000000
+.word 0x3F800000
+.word 0xBF800000
+.word 0x00000000
+.word 0x80000000
+.word 0x7FC00000
+.word 0xFFC00000
+.word 0x3F000000
+.word 0xBF000000
+.word 0x3F800000
+.word 0xBF800000
+.word 0x00000000
+.word 0x80000000
+.word 0x7FC00000
+.word 0xFFC00000
+.word 0x3F000000
+.word 0xBF000000
+.word 0x3F800000
+.word 0xBF800000
+.word 0x00000000
+.word 0x80000000
+.word 0x7FC00000
+.word 0xFFC00000
+.word 0x3F000000
+.word 0xBF000000
+.word 0x3F800000
+.word 0xBF800000
+.word 0x00000000
+.word 0x80000000
+.word 0x7FC00000
+.word 0xFFC00000
+.word 0x3F000000
+.word 0xBF000000
+.word 0x3F800000
+.word 0xBF800000
+.word 0x00000000
+.word 0x80000000
+.word 0x7FC00000
+.word 0xFFC00000
+.word 0x3F000000
+.word 0xBF000000
+.word 0x3F800000
+.word 0xBF800000
+.word 0x00000000
+.word 0x80000000
+.word 0x7FC00000
+.word 0xFFC00000
+.word 0x3F000000
+.word 0xBF000000
+.word 0x3F800000
+.word 0xBF800000
+.word 0x00000000
+.word 0x80000000
+.word 0x7FC00000
+.word 0xFFC00000
+.word 0x3F000000
+.word 0xBF000000
+.word 0x3F800000
+.word 0xBF800000
+.word 0x00000000
+.word 0x80000000
+.word 0x7FC00000
+.word 0xFFC00000
+.word 0x3F000000
+.word 0xBF000000
+.word 0x3F800000
+.word 0xBF800000
+.word 0x00000000
+.word 0x80000000
+.word 0x7FC00000
+.word 0xFFC00000
+.word 0x3F000000
+.word 0xBF000000
+.word 0x3F800000
+.word 0xBF800000
+.word 0x00000000
+.word 0x80000000
+.word 0x7FC00000
+.word 0xFFC00000
+.word 0x3F000000
+.word 0xBF000000
+.word 0x3F800000
+.word 0xBF800000
+.word 0x00000000
+.word 0x80000000
+.word 0x7FC00000
+.word 0xFFC00000
+.word 0x3F000000
+.word 0xBF000000
+.word 0x3F800000
+.word 0xBF800000
+.word 0x00000000
+.word 0x80000000
+.word 0x7FC00000
+.word 0xFFC00000
+.word 0x3F000000
+.word 0xBF000000
+.word 0x3F800000
+.word 0xBF800000
+.word 0x00000000
+.word 0x80000000
+.word 0x7FC00000
+.word 0xFFC00000
+.word 0x3F000000
+.word 0xBF000000
+.word 0x3F800000
+.word 0xBF800000
+.word 0x00000000
+.word 0x80000000
+.word 0x7FC00000
+.word 0xFFC00000
+.word 0x3F000000
+.word 0xBF000000
+.word 0x3F800000
+.word 0xBF800000
+.word 0x00000000
+.word 0x80000000
+.word 0x7FC00000
+.word 0xFFC00000
+.word 0x3F000000
+.word 0xBF000000
+.word 0x3F800000
+.word 0xBF800000
+.word 0x00000000
+.word 0x80000000
+.word 0x7FC00000
+.word 0xFFC00000
+.word 0x3F000000
+.word 0xBF000000
+.word 0x3F800000
+.word 0xBF800000
+.word 0x00000000
+.word 0x80000000
+.word 0x7FC00000
+.word 0xFFC00000
+.word 0x3F000000
+.word 0xBF000000
+.word 0x3F800000
+.word 0xBF800000
+.word 0x00000000
+.word 0x80000000
+.word 0x7FC00000
+.word 0xFFC00000
+.word 0x3F000000
+.word 0xBF000000
+.word 0x3F800000
+.word 0xBF800000
+.word 0x00000000
+.word 0x80000000
+.word 0x7FC00000
+.word 0xFFC00000
+.word 0x3F000000
+.word 0xBF000000
+.word 0x3F800000
+.word 0xBF800000
+.word 0x00000000
+.word 0x80000000
+.word 0x7FC00000
+.word 0xFFC00000
+.word 0x3F000000
+.word 0xBF000000
+.word 0x3F800000
+.word 0xBF800000
+.word 0x00000000
+.word 0x80000000
+.word 0x7FC00000
+.word 0xFFC00000
+.word 0x3F000000
+.word 0xBF000000
+.word 0x3F800000
+.word 0xBF800000
+.word 0x00000000
+.word 0x80000000
+.word 0x7FC00000
+.word 0xFFC00000
+.word 0x3F000000
+.word 0xBF000000
+.word 0x3F800000
+.word 0xBF800000
+.word 0x00000000
+.word 0x80000000
+.word 0x7FC00000
+.word 0xFFC00000
+.word 0x3F000000
+.word 0xBF000000
+.word 0x3F800000
+.word 0xBF800000
+.word 0x00000000
+.word 0x80000000
+.word 0x7FC00000
+.word 0xFFC00000
+.word 0x3F000000
+.word 0xBF000000
+.word 0x3F800000
+.word 0xBF800000
+.word 0x00000000
+.word 0x80000000
+.word 0x7FC00000
+.word 0xFFC00000
+.word 0x3F000000
+.word 0xBF000000
+.word 0x3F800000
+.word 0xBF800000
+.word 0x00000000
+.word 0x80000000
+.word 0x7FC00000
+.word 0xFFC00000
+.word 0x3F000000
+.word 0xBF000000
+.word 0x3F800000
+.word 0xBF800000
+.word 0x00000000
+.word 0x80000000
+.word 0x7FC00000
+.word 0xFFC00000
+.word 0x3F000000
+.word 0xBF000000
+.word 0x3F800000
+.word 0xBF800000
+.word 0x00000000
+.word 0x80000000
+.word 0x7FC00000
+.word 0xFFC00000
+.word 0x3F000000
+.word 0xBF000000
+mth_relu_out:
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+.word 0
+mth_relu_pass:
+.str "MTH VECTOR RELU256 PASS\n"
+mth_relu_bad:
+.str "MTH VECTOR RELU256 FAIL\n"

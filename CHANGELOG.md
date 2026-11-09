@@ -1,5 +1,89 @@
 # Changelog
 
+## 1.5.0 — 2026-11-08
+
+- Added seven permanent plugin-duration session documents (NANNET architecture,
+  NANNET routing, WordNet HW4:0, free-chat learning, MTH universal runtime and
+  permanent instructions), loaded at registration, hashed, persisted as a
+  session manifest, and injected into chat/reflection/curriculum/CLOCKED/
+  synthesis calls. User system prompts cannot remove them.
+- Added explicit `local-unverified` authority mode when NANNET is not
+  configured. A configured NANNET authority still requires a paired token and
+  fails closed. Local chat/training no longer requires a NANNET account.
+- Free chat now feeds every turn into the shared L0-L9/255-head/paged-scratch
+  learner (best effort) and returns a layered-learning receipt. Deterministic
+  `X is Y` / `X can Y` relations supplement provider reflection without
+  double-counting.
+- Canonicalised the WordNet route to
+  `nan://GM0:SC0:MC0:BS0:0:HW4:0`; the HW-first form is compatibility only.
+- Added the 91-kernel MTH catalog, all kernel/fixture sources, a portable
+  NaN0S C-core source snapshot, architecture/compiler autodetection, cached
+  native CLI build, native fixture verification, the four admitted float32
+  vector operand dispatchers, and the N16I differential self-test.
+- Added generic N16 dispatch: `nanlm_mth_dispatch` relocates an assembled
+  guest image to a host base and runs it under N16I with a bounded step budget,
+  exact serial/output receipt and no typed-ABI overclaim.
+- Mapped all 91 MTH kernels into one immutable function leaf each under 44
+  family hubs, with source/fixture digests, operator/data/WordNet links, hub
+  ancestry audits and NaN-executable image verification. Added
+  `docs/MTH_FUNCTION_TREE.md` and its generator.
+- Added immutable data leaves with real NaN16 executable images, vector/scalar/
+  matrix/relation hubs, a WordNet HW4 vector link, constraints/identities, and
+  constrained `left::right` pairing. Illegal/unknown pairings deny without
+  creating or executing a leaf; valid native pairings create a new hash leaf
+  and preserve input leaves.
+- Added `nanlm_session_context`, `nanlm_mth_catalog`, `nanlm_mth_inspect`,
+  `nanlm_mth_runtime`, `nanlm_mth_verify`, `nanlm_mth_execute`,
+  `nanlm_mth_n16i_selftest`, `nanlm_mth_dispatch`, `nanlm_mth_hub`,
+  `nanlm_mth_leaf_create`, `nanlm_mth_leaf_get`, `nanlm_mth_pair` and
+  `nanlm_mth_leaf_verify`, `nanlm_mth_tree`, `nanlm_hw2_bind`,
+  `nanlm_hw2_status` and `nanlm_hw2_report`.
+- Added the one-file resident universe (`nanlmind_hermes/resident/universe.py`)
+  with checked headers, payload arena, 256-head/32,640-pair cells, leaf tree,
+  typed relations/hyperedges, quantized resonance rows, a state-chain journal,
+  bounded export/intake and dual-slot checkpoint publication. Default file
+  budget 256 MiB; hard ceiling 1 GiB; no 2 GiB overbootstrap copy.
+- Added the 256-head Boolean field/self-modification stack:
+  `head_boolean_field.py`, resident `head_field.py`, per-head L0-L9
+  `scratch_layers.py`, the scratch-first `selfmod_gate.py`, `field_learning.py`,
+  `field_persistence.py`, `field_tools.py`, `mth_head_bridge.py` and the
+  independent/coupled head benchmark. Every main write requires Boolean-base
+  preservation, explicit approval and generation CAS; free chat activates many
+  heads and writes scratch layers first.
+- Added `nanlm_resident_status`, `nanlm_resident_ingest`,
+  `nanlm_resident_query` and `nanlm_head_field` (79 tools total). Accepted
+  free-chat exposure feeds the resident pair/leaf store and activates the
+  independent 256-head field when `resident_learning_enabled` is true; probe
+  reads remain read-only. `nanlm_head_field` stages proposals in per-head
+  scratch layers and requires approval plus generation CAS for a main write.
+- Added stratified corpus training, deep multi-epoch training, per-source
+  held-out metrics, a resident learning loop and generation evaluation. The
+  corrected mixed-corpus epoch-1 result is NLL **2.514** / perplexity
+  **12.354**; later raw-count passes are discarded by early stop.
+- Added the resident candidate export/validation/intake path with generation
+  compare-and-swap. Canonical merge remains disabled (`merge_enabled=false`).
+- Added live Gemma architecture review and free-chat smoke scripts, the
+  architecture-gap ledger, and the MTH universal-runtime documentation.
+- Added a live, open-ended Gemma tool-learning harness that starts a loopback
+  NANNET authority, pairs the installation with `universe:read` and
+  `training:execute`, keeps canonical merge/promotion disabled, executes real
+  plugin tools through model tool calls, and writes a transcript/report.
+  Initial test: 12/12 calls, 9 tools, 0 failures.
+- Ran the journaled 3-session Gemma training series over the unified pipeline:
+  15/15 tool calls, 0 failures, 12 distinct tools, 100% required-task coverage;
+  before/after quiz **76.1% -> 100.0% (+23.9)** after carrying the measured
+  session journal into later sessions and the after-quiz; system state grew
+  turns 0->2, scratch 0->20, concepts 0->30, pairs 0->339, leaves 144->148.
+  Results: `docs/GEMMA_TRAINING_SERIES_RESULTS.md`. The earlier non-journaled
+  run was flat and is retained only as the diagnostic.
+- Diagnosed the flat before/after quiz as an isolated-after-quiz bug: the same
+  six-question quiz scored 76.1% before, 76.1% without session experience, and
+  **100.0%** with the observed session journal in context. See
+  `docs/GEMMA_JOURNAL_QUIZ_PROBE.md`.
+- Test suite: the full suite passes in Termux and in Alpine/proot with
+  `build-base` + `gawk`; the Alpine run is recorded in
+  `docs/ALPINE_PROOT_TESTING.md`.
+
 ## Unreleased
 
 - Added a 1 GiB logical paged scratch register space (128 x 8 MiB, sparse),
@@ -16,7 +100,7 @@
   0.7033, cycle projection 0.6953 and the no-state control 0.6847; no
   cycle-specific advantage is claimed.
 - Documented the Round 020 corpus-training tie and the next joint-state
-  experiment. Test suite: 272 tests.
+  experiment. Historical test suite at that time: 272 tests.
 
 ## 1.3.2 — 2026-11-07
 

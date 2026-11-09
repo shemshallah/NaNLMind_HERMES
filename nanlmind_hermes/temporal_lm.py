@@ -480,7 +480,8 @@ class TemporalMirrorLM:
 
     def generate(self, query: str, beam: int = 4, max_tokens: int = 16,
                  temperature: float = 0.0,
-                 allowed_seed: set[str] | None = None) -> dict:
+                 allowed_seed: set[str] | None = None,
+                 mutate_register: bool = True) -> dict:
         raw_seed = [token for token in tokens(query)
                     if token not in STOP and token not in END and token != BOS]
         seed = [token for token in raw_seed
@@ -572,7 +573,7 @@ class TemporalMirrorLM:
         self.last_query = str(query)
         self.last_reply = text
         frames = 0
-        if self.register is not None:
+        if self.register is not None and mutate_register:
             for word in used_words:
                 if word in PUNCT:
                     continue

@@ -254,7 +254,8 @@ def main(argv=None):
         "chat_learning": True,
     }
     code = authority.create_pairing_code(
-        ["universe:read", "training:execute", "corpus:write"], ttl_seconds=600)["pairing_code"]
+        ["universe:read", "training:execute", "corpus:write", "hermes:lease"],
+        ttl_seconds=600, role="admin")["pairing_code"]
     wordnet_path = root / "demo-wordnet.zip"
     with zipfile.ZipFile(wordnet_path, "w") as archive:
         archive.writestr(
@@ -332,6 +333,10 @@ def main(argv=None):
             call("nanlm_hw_report", {"report_type": "network_error",
                                      "summary": "Offline deterministic demo"})
             call("nanlm_hw_release")
+        call("nanlm_hw2_bind", {"consent": True})
+        call("nanlm_hw2_status", {"remote": True})
+        call("nanlm_hw2_report", {"report_type": "network_error",
+                                  "summary": "Fixed HW2 demo report"})
 
         # Deterministic independent-universe *router receipt* fixture.
         # These calls exercise the real Hermes tool handlers and local
@@ -438,7 +443,33 @@ def main(argv=None):
             call("nanlm_universe_release", {"alias": "demo"})
 
         call("nanlm_status")
+        call("nanlm_session_context", {"document": "nannet-routing"})
         call("nanlm_chart_storage", {"action": "inspect"})
+
+        # Universal native MTH catalog/runtime and bounded execution.
+        call("nanlm_mth_catalog", {"limit": 3})
+        call("nanlm_mth_inspect", {"kernel_id": "mth.vector.dot256.f32"})
+        call("nanlm_mth_runtime", {"build": True})
+        call("nanlm_mth_verify", {"kernel_id": "mth.k256.laplacian.u16"})
+        call("nanlm_mth_execute", {
+            "kernel_id": "mth.vector.add256.f32",
+            "x": [2.0] * 256, "y": [3.0] * 256})
+        call("nanlm_mth_n16i_selftest", {})
+        call("nanlm_mth_dispatch", {"kernel_id": "mth.k256.laplacian.u16"})
+        call("nanlm_mth_hub", {})
+        call("nanlm_mth_tree", {"action": "map"})
+        call("nanlm_mth_tree", {"action": "audit"})
+        call("nanlm_mth_leaf_create", {
+            "kind": "vector", "payload": {"values": [2.0] * 256},
+            "alias": "demo-vector-1"})
+        call("nanlm_mth_leaf_create", {
+            "kind": "vector", "payload": {"values": [3.0] * 256},
+            "alias": "demo-vector-2"})
+        call("nanlm_mth_pair", {
+            "left": "demo-vector-1", "right": "demo-vector-2",
+            "operator": "add", "alias": "demo-vector-sum"})
+        call("nanlm_mth_leaf_get", {"leaf_id": "demo-vector-1"})
+        call("nanlm_mth_leaf_verify", {"leaf_id": "demo-vector-1"})
 
         # Chat and transcripts.
         call("nanlm_tree_inspect", {})

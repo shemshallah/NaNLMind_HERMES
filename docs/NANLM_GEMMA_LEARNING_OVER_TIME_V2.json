@@ -1,0 +1,3619 @@
+{
+  "baseline": {
+    "hit_rate": 0.0,
+    "hit_vector": "00000000000000",
+    "metrics": {
+      "concept_saturation": {
+        "average_degree": 0.0,
+        "concepts": 0,
+        "density": 0.0,
+        "max_degree": 0,
+        "occupied_pairs": 0,
+        "pair_cells": 32640,
+        "roles": {},
+        "schema": "nanlm.concept-matrix/1",
+        "statements": 0,
+        "top_concepts": [],
+        "top_pairs": []
+      },
+      "dictionary_hw4": null,
+      "head_balance": {
+        "active_heads": 0,
+        "coverage": 0.0,
+        "max_share": 0.0,
+        "mean_weight": 0.0,
+        "min_weight": 0.0
+      },
+      "rows": 0,
+      "scratch_records": 0,
+      "turns": 0
+    },
+    "probe_state_changed": false,
+    "probe_state_digest_after": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "probe_state_digest_before": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "probes": [
+      {
+        "expected": [
+          "water"
+        ],
+        "heads_active": null,
+        "hit": false,
+        "layers": null,
+        "native_learning_status": "probe_read_only",
+        "provider": "nanlm-native",
+        "question": "What is a river?",
+        "relations": null,
+        "response": "River.",
+        "scratch_records": null,
+        "structured": false
+      },
+      {
+        "expected": [
+          "blue"
+        ],
+        "heads_active": null,
+        "hit": false,
+        "layers": null,
+        "native_learning_status": "probe_read_only",
+        "provider": "nanlm-native",
+        "question": "What color is the sky?",
+        "relations": null,
+        "response": "Color sky color sky color sky color sky color sky color sky color sky color sky.",
+        "scratch_records": null,
+        "structured": false
+      },
+      {
+        "expected": [
+          "green"
+        ],
+        "heads_active": null,
+        "hit": false,
+        "layers": null,
+        "native_learning_status": "probe_read_only",
+        "provider": "nanlm-native",
+        "question": "What color is grass?",
+        "relations": null,
+        "response": "Color grass color grass color grass color grass color grass color grass color grass color.",
+        "scratch_records": null,
+        "structured": false
+      },
+      {
+        "expected": [
+          "bark"
+        ],
+        "heads_active": null,
+        "hit": false,
+        "layers": null,
+        "native_learning_status": "probe_read_only",
+        "provider": "nanlm-native",
+        "question": "What do dogs do?",
+        "relations": null,
+        "response": "Dogs.",
+        "scratch_records": null,
+        "structured": false
+      },
+      {
+        "expected": [
+          "meow"
+        ],
+        "heads_active": null,
+        "hit": false,
+        "layers": null,
+        "native_learning_status": "probe_read_only",
+        "provider": "nanlm-native",
+        "question": "What do cats do?",
+        "relations": null,
+        "response": "Cats.",
+        "scratch_records": null,
+        "structured": false
+      },
+      {
+        "expected": [
+          "fly"
+        ],
+        "heads_active": null,
+        "hit": false,
+        "layers": null,
+        "native_learning_status": "probe_read_only",
+        "provider": "nanlm-native",
+        "question": "What do birds do?",
+        "relations": null,
+        "response": "Birds.",
+        "scratch_records": null,
+        "structured": false
+      },
+      {
+        "expected": [
+          "animal"
+        ],
+        "heads_active": null,
+        "hit": false,
+        "layers": null,
+        "native_learning_status": "probe_read_only",
+        "provider": "nanlm-native",
+        "question": "What is a cat?",
+        "relations": null,
+        "response": "Cat.",
+        "scratch_records": null,
+        "structured": false
+      },
+      {
+        "expected": [
+          "ice",
+          "frozen"
+        ],
+        "heads_active": null,
+        "hit": false,
+        "layers": null,
+        "native_learning_status": "probe_read_only",
+        "provider": "nanlm-native",
+        "question": "What happens when water freezes?",
+        "relations": null,
+        "response": "Happens freezes water happens freezes water happens freezes water happens freezes water happens water freezes happens water freezes water happens freezes water happens freezes water happens freezes.",
+        "scratch_records": null,
+        "structured": false
+      },
+      {
+        "expected": [
+          "frozen",
+          "water"
+        ],
+        "heads_active": null,
+        "hit": false,
+        "layers": null,
+        "native_learning_status": "probe_read_only",
+        "provider": "nanlm-native",
+        "question": "What is ice?",
+        "relations": null,
+        "response": "Ice.",
+        "scratch_records": null,
+        "structured": false
+      },
+      {
+        "expected": [
+          "purple"
+        ],
+        "heads_active": null,
+        "hit": false,
+        "layers": null,
+        "native_learning_status": "probe_read_only",
+        "provider": "nanlm-native",
+        "question": "What do red and blue make?",
+        "relations": null,
+        "response": "Blue red make blue red make blue red make blue red make blue red make blue red make blue red make blue red make blue red make blue red.",
+        "scratch_records": null,
+        "structured": false
+      },
+      {
+        "expected": [
+          "green"
+        ],
+        "heads_active": null,
+        "hit": false,
+        "layers": null,
+        "native_learning_status": "probe_read_only",
+        "provider": "nanlm-native",
+        "question": "What do yellow and blue make?",
+        "relations": null,
+        "response": "Yellow make blue yellow make blue yellow make blue yellow make blue yellow make blue yellow make blue yellow make blue yellow make blue yellow make blue yellow make.",
+        "scratch_records": null,
+        "structured": false
+      },
+      {
+        "expected": [
+          "hot",
+          "light",
+          "star"
+        ],
+        "heads_active": null,
+        "hit": false,
+        "layers": null,
+        "native_learning_status": "probe_read_only",
+        "provider": "nanlm-native",
+        "question": "What is the sun?",
+        "relations": null,
+        "response": "Sun.",
+        "scratch_records": null,
+        "structured": false
+      },
+      {
+        "expected": [
+          "square"
+        ],
+        "heads_active": null,
+        "hit": false,
+        "layers": null,
+        "native_learning_status": "probe_read_only",
+        "provider": "nanlm-native",
+        "question": "What shape has four sides?",
+        "relations": null,
+        "response": "Shape four sides shape has sides shape has four shape has four sides has four sides shape four sides has four sides has shape sides has shape four has.",
+        "scratch_records": null,
+        "structured": false
+      },
+      {
+        "expected": [
+          "round"
+        ],
+        "heads_active": null,
+        "hit": false,
+        "layers": null,
+        "native_learning_status": "probe_read_only",
+        "provider": "nanlm-native",
+        "question": "What is a circle?",
+        "relations": null,
+        "response": "Circle.",
+        "scratch_records": null,
+        "structured": false
+      }
+    ],
+    "structured_hit_vector": "00000000000000"
+  },
+  "boundaries": {
+    "canonical_commit": false,
+    "gemma_is_teacher_only": true,
+    "local_native_student": true,
+    "nannet_configured": false,
+    "proof_claim": false
+  },
+  "model": "gemma4:31b-cloud",
+  "probes": [
+    {
+      "expected": [
+        "water"
+      ],
+      "question": "What is a river?"
+    },
+    {
+      "expected": [
+        "blue"
+      ],
+      "question": "What color is the sky?"
+    },
+    {
+      "expected": [
+        "green"
+      ],
+      "question": "What color is grass?"
+    },
+    {
+      "expected": [
+        "bark"
+      ],
+      "question": "What do dogs do?"
+    },
+    {
+      "expected": [
+        "meow"
+      ],
+      "question": "What do cats do?"
+    },
+    {
+      "expected": [
+        "fly"
+      ],
+      "question": "What do birds do?"
+    },
+    {
+      "expected": [
+        "animal"
+      ],
+      "question": "What is a cat?"
+    },
+    {
+      "expected": [
+        "ice",
+        "frozen"
+      ],
+      "question": "What happens when water freezes?"
+    },
+    {
+      "expected": [
+        "frozen",
+        "water"
+      ],
+      "question": "What is ice?"
+    },
+    {
+      "expected": [
+        "purple"
+      ],
+      "question": "What do red and blue make?"
+    },
+    {
+      "expected": [
+        "green"
+      ],
+      "question": "What do yellow and blue make?"
+    },
+    {
+      "expected": [
+        "hot",
+        "light",
+        "star"
+      ],
+      "question": "What is the sun?"
+    },
+    {
+      "expected": [
+        "square"
+      ],
+      "question": "What shape has four sides?"
+    },
+    {
+      "expected": [
+        "round"
+      ],
+      "question": "What is a circle?"
+    }
+  ],
+  "rounds": [
+    {
+      "delta_from_baseline": 0.42857142857142855,
+      "flips_from_previous": [
+        {
+          "after": "hit",
+          "before": "miss",
+          "index": 0,
+          "question": "What is a river?"
+        },
+        {
+          "after": "hit",
+          "before": "miss",
+          "index": 1,
+          "question": "What color is the sky?"
+        },
+        {
+          "after": "hit",
+          "before": "miss",
+          "index": 2,
+          "question": "What color is grass?"
+        },
+        {
+          "after": "hit",
+          "before": "miss",
+          "index": 3,
+          "question": "What do dogs do?"
+        },
+        {
+          "after": "hit",
+          "before": "miss",
+          "index": 4,
+          "question": "What do cats do?"
+        },
+        {
+          "after": "hit",
+          "before": "miss",
+          "index": 8,
+          "question": "What is ice?"
+        }
+      ],
+      "hit_rate": 0.42857142857142855,
+      "hit_vector": "11111000100000",
+      "metrics": {
+        "concept_saturation": {
+          "average_degree": 1.91,
+          "concepts": 22,
+          "density": 0.000705,
+          "max_degree": 7,
+          "occupied_pairs": 23,
+          "pair_cells": 32640,
+          "roles": {
+            "can": 2,
+            "has": 1,
+            "is": 7
+          },
+          "schema": "nanlm.concept-matrix/1",
+          "statements": 22,
+          "top_concepts": [
+            {
+              "concept": "water",
+              "degree": 7
+            },
+            {
+              "concept": "has",
+              "degree": 3
+            },
+            {
+              "concept": "ability",
+              "degree": 3
+            },
+            {
+              "concept": "flow",
+              "degree": 3
+            },
+            {
+              "concept": "animals",
+              "degree": 3
+            },
+            {
+              "concept": "river",
+              "degree": 2
+            },
+            {
+              "concept": "consists",
+              "degree": 2
+            },
+            {
+              "concept": "rivers",
+              "degree": 2
+            },
+            {
+              "concept": "transport",
+              "degree": 2
+            },
+            {
+              "concept": "cats",
+              "degree": 2
+            },
+            {
+              "concept": "dogs",
+              "degree": 2
+            },
+            {
+              "concept": "sky",
+              "degree": 1
+            }
+          ],
+          "top_pairs": [
+            {
+              "pair": [
+                "has",
+                "water"
+              ],
+              "roles": {},
+              "weight": 1.0
+            },
+            {
+              "pair": [
+                "ability",
+                "has"
+              ],
+              "roles": {},
+              "weight": 1.0
+            },
+            {
+              "pair": [
+                "ability",
+                "flow"
+              ],
+              "roles": {},
+              "weight": 1.0
+            },
+            {
+              "pair": [
+                "blue",
+                "sky"
+              ],
+              "roles": {},
+              "weight": 1.0
+            },
+            {
+              "pair": [
+                "grass",
+                "green"
+              ],
+              "roles": {
+                "is": 1
+              },
+              "weight": 1.0
+            },
+            {
+              "pair": [
+                "fire",
+                "red"
+              ],
+              "roles": {
+                "is": 1
+              },
+              "weight": 1.0
+            },
+            {
+              "pair": [
+                "snow",
+                "white"
+              ],
+              "roles": {
+                "is": 1
+              },
+              "weight": 1.0
+            },
+            {
+              "pair": [
+                "animals",
+                "cats"
+              ],
+              "roles": {
+                "is": 1
+              },
+              "weight": 1.0
+            },
+            {
+              "pair": [
+                "animals",
+                "dogs"
+              ],
+              "roles": {
+                "is": 1
+              },
+              "weight": 1.0
+            },
+            {
+              "pair": [
+                "animals",
+                "birds"
+              ],
+              "roles": {
+                "is": 1
+              },
+              "weight": 1.0
+            },
+            {
+              "pair": [
+                "cats",
+                "meow"
+              ],
+              "roles": {
+                "can": 1
+              },
+              "weight": 1.0
+            },
+            {
+              "pair": [
+                "bark",
+                "dogs"
+              ],
+              "roles": {
+                "can": 1
+              },
+              "weight": 1.0
+            }
+          ]
+        },
+        "dictionary_hw4": null,
+        "head_balance": {
+          "active_heads": 255,
+          "coverage": 1.0,
+          "max_share": 0.008628,
+          "mean_weight": 0.235782,
+          "min_weight": 0.069615,
+          "observations": 120
+        },
+        "rows": 10,
+        "scratch_records": 120,
+        "turns": 12
+      },
+      "probe_state_changed": false,
+      "probe_state_digest_after": "aec14d3afe539fb0faa2843646ddd9ac65518c6a84273b9b6dd0d0b9e637203e",
+      "probe_state_digest_before": "aec14d3afe539fb0faa2843646ddd9ac65518c6a84273b9b6dd0d0b9e637203e",
+      "probes": [
+        {
+          "expected": [
+            "water"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What is a river?",
+          "relations": null,
+          "response": "River consists of water has the ability to flow.",
+          "scratch_records": null,
+          "structured": false
+        },
+        {
+          "expected": [
+            "blue"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What color is the sky?",
+          "relations": null,
+          "response": "Sky is blue.",
+          "scratch_records": null,
+          "structured": false
+        },
+        {
+          "expected": [
+            "green"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What color is grass?",
+          "relations": null,
+          "response": "Grass is green water has the ability to flow.",
+          "scratch_records": null,
+          "structured": false
+        },
+        {
+          "expected": [
+            "bark"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What do dogs do?",
+          "relations": null,
+          "response": "Dogs can bark.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "meow"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What do cats do?",
+          "relations": null,
+          "response": "Cats can meow.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "fly"
+          ],
+          "heads_active": null,
+          "hit": false,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What do birds do?",
+          "relations": null,
+          "response": "Birds are animals.",
+          "scratch_records": null,
+          "structured": false
+        },
+        {
+          "expected": [
+            "animal"
+          ],
+          "heads_active": null,
+          "hit": false,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What is a cat?",
+          "relations": null,
+          "response": "Cat water has the ability to flow.",
+          "scratch_records": null,
+          "structured": false
+        },
+        {
+          "expected": [
+            "ice",
+            "frozen"
+          ],
+          "heads_active": null,
+          "hit": false,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What happens when water freezes?",
+          "relations": null,
+          "response": "Water has the ability to flow. Happens water has the ability to flow. Freezes water has the ability to flow.",
+          "scratch_records": null,
+          "structured": false
+        },
+        {
+          "expected": [
+            "frozen",
+            "water"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What is ice?",
+          "relations": null,
+          "response": "Ice water has the ability to flow.",
+          "scratch_records": null,
+          "structured": false
+        },
+        {
+          "expected": [
+            "purple"
+          ],
+          "heads_active": null,
+          "hit": false,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What do red and blue make?",
+          "relations": null,
+          "response": "Blue water has the ability to flow.",
+          "scratch_records": null,
+          "structured": false
+        },
+        {
+          "expected": [
+            "green"
+          ],
+          "heads_active": null,
+          "hit": false,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What do yellow and blue make?",
+          "relations": null,
+          "response": "Yellow water has the ability to flow.",
+          "scratch_records": null,
+          "structured": false
+        },
+        {
+          "expected": [
+            "hot",
+            "light",
+            "star"
+          ],
+          "heads_active": null,
+          "hit": false,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What is the sun?",
+          "relations": null,
+          "response": "Sun water has the ability to flow.",
+          "scratch_records": null,
+          "structured": false
+        },
+        {
+          "expected": [
+            "square"
+          ],
+          "heads_active": null,
+          "hit": false,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What shape has four sides?",
+          "relations": null,
+          "response": "Has the ability to flow.",
+          "scratch_records": null,
+          "structured": false
+        },
+        {
+          "expected": [
+            "round"
+          ],
+          "heads_active": null,
+          "hit": false,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What is a circle?",
+          "relations": null,
+          "response": "Circle water has the ability to flow.",
+          "scratch_records": null,
+          "structured": false
+        }
+      ],
+      "round": 1,
+      "statements": [
+        "A river consists of water.",
+        "Water has the ability to flow.",
+        "Rivers transport water.",
+        "The sky is blue.",
+        "Grass is green.",
+        "Fire is red.",
+        "Snow is white.",
+        "Cats are animals.",
+        "Dogs are animals.",
+        "Birds are animals.",
+        "Cats meow.",
+        "Dogs bark."
+      ],
+      "structured_hit_rate": 0.14285714285714285,
+      "structured_hit_vector": "00011000000000",
+      "teacher_model": "gemma4:31b",
+      "teacher_reasoning": "Introducing foundational categories, colors, and basic causal relationships as per target facts.",
+      "teaching": [
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 0,
+          "response": "River consists of water.",
+          "statement": "A river consists of water."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Water has the ability to flow.",
+          "statement": "Water has the ability to flow."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 0,
+          "response": "Water has the ability to flow a river consists of water.",
+          "statement": "Rivers transport water."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Sky is blue.",
+          "statement": "The sky is blue."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Grass is green.",
+          "statement": "Grass is green."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Fire is red.",
+          "statement": "Fire is red."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Snow is white.",
+          "statement": "Snow is white."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Cats are animals.",
+          "statement": "Cats are animals."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Animals water has the ability to flow.",
+          "statement": "Dogs are animals."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Animals water has the sky is blue.",
+          "statement": "Birds are animals."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Cats are animals water has the ability to flow.",
+          "statement": "Cats meow."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Dogs are animals.",
+          "statement": "Dogs bark."
+        }
+      ]
+    },
+    {
+      "delta_from_baseline": 0.8571428571428571,
+      "flips_from_previous": [
+        {
+          "after": "hit",
+          "before": "miss",
+          "index": 5,
+          "question": "What do birds do?"
+        },
+        {
+          "after": "hit",
+          "before": "miss",
+          "index": 6,
+          "question": "What is a cat?"
+        },
+        {
+          "after": "hit",
+          "before": "miss",
+          "index": 9,
+          "question": "What do red and blue make?"
+        },
+        {
+          "after": "hit",
+          "before": "miss",
+          "index": 10,
+          "question": "What do yellow and blue make?"
+        },
+        {
+          "after": "hit",
+          "before": "miss",
+          "index": 11,
+          "question": "What is the sun?"
+        },
+        {
+          "after": "hit",
+          "before": "miss",
+          "index": 12,
+          "question": "What shape has four sides?"
+        }
+      ],
+      "hit_rate": 0.8571428571428571,
+      "hit_vector": "11111110111110",
+      "metrics": {
+        "concept_saturation": {
+          "average_degree": 3.28,
+          "concepts": 47,
+          "density": 0.002757,
+          "max_degree": 12,
+          "occupied_pairs": 90,
+          "pair_cells": 32640,
+          "roles": {
+            "can": 2,
+            "causes": 4,
+            "has": 3,
+            "is": 13
+          },
+          "schema": "nanlm.concept-matrix/1",
+          "statements": 46,
+          "top_concepts": [
+            {
+              "concept": "water",
+              "degree": 12
+            },
+            {
+              "concept": "causes",
+              "degree": 11
+            },
+            {
+              "concept": "has",
+              "degree": 8
+            },
+            {
+              "concept": "blue",
+              "degree": 8
+            },
+            {
+              "concept": "mixed",
+              "degree": 7
+            },
+            {
+              "concept": "ability",
+              "degree": 6
+            },
+            {
+              "concept": "green",
+              "degree": 6
+            },
+            {
+              "concept": "red",
+              "degree": 6
+            },
+            {
+              "concept": "makes",
+              "degree": 6
+            },
+            {
+              "concept": "birds",
+              "degree": 5
+            },
+            {
+              "concept": "purple",
+              "degree": 5
+            },
+            {
+              "concept": "yellow",
+              "degree": 5
+            }
+          ],
+          "top_pairs": [
+            {
+              "pair": [
+                "blue",
+                "mixed"
+              ],
+              "roles": {},
+              "weight": 2.0
+            },
+            {
+              "pair": [
+                "ability",
+                "has"
+              ],
+              "roles": {},
+              "weight": 1.5
+            },
+            {
+              "pair": [
+                "has",
+                "water"
+              ],
+              "roles": {},
+              "weight": 1.0
+            },
+            {
+              "pair": [
+                "ability",
+                "flow"
+              ],
+              "roles": {},
+              "weight": 1.0
+            },
+            {
+              "pair": [
+                "blue",
+                "sky"
+              ],
+              "roles": {},
+              "weight": 1.0
+            },
+            {
+              "pair": [
+                "grass",
+                "green"
+              ],
+              "roles": {
+                "is": 1
+              },
+              "weight": 1.0
+            },
+            {
+              "pair": [
+                "fire",
+                "red"
+              ],
+              "roles": {
+                "is": 1
+              },
+              "weight": 1.0
+            },
+            {
+              "pair": [
+                "snow",
+                "white"
+              ],
+              "roles": {
+                "is": 1
+              },
+              "weight": 1.0
+            },
+            {
+              "pair": [
+                "animals",
+                "cats"
+              ],
+              "roles": {
+                "is": 1
+              },
+              "weight": 1.0
+            },
+            {
+              "pair": [
+                "animals",
+                "dogs"
+              ],
+              "roles": {
+                "is": 1
+              },
+              "weight": 1.0
+            },
+            {
+              "pair": [
+                "animals",
+                "birds"
+              ],
+              "roles": {
+                "is": 1
+              },
+              "weight": 1.0
+            },
+            {
+              "pair": [
+                "cats",
+                "meow"
+              ],
+              "roles": {
+                "can": 1
+              },
+              "weight": 1.0
+            }
+          ]
+        },
+        "dictionary_hw4": null,
+        "head_balance": {
+          "active_heads": 255,
+          "coverage": 1.0,
+          "max_share": 0.006892,
+          "mean_weight": 0.454601,
+          "min_weight": 0.186891,
+          "observations": 240
+        },
+        "rows": 22,
+        "scratch_records": 240,
+        "turns": 24
+      },
+      "probe_state_changed": false,
+      "probe_state_digest_after": "4225e908b8d4694c9376aeaa280f915651cc1c0736167dd1d9ffcf368ae46fd4",
+      "probe_state_digest_before": "4225e908b8d4694c9376aeaa280f915651cc1c0736167dd1d9ffcf368ae46fd4",
+      "probes": [
+        {
+          "expected": [
+            "water"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What is a river?",
+          "relations": null,
+          "response": "River consists of water.",
+          "scratch_records": null,
+          "structured": false
+        },
+        {
+          "expected": [
+            "blue"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What color is the sky?",
+          "relations": null,
+          "response": "Sky is blue makes purple.",
+          "scratch_records": null,
+          "structured": false
+        },
+        {
+          "expected": [
+            "green"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What color is grass?",
+          "relations": null,
+          "response": "Grass is green.",
+          "scratch_records": null,
+          "structured": false
+        },
+        {
+          "expected": [
+            "bark"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What do dogs do?",
+          "relations": null,
+          "response": "Dogs can bark.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "meow"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What do cats do?",
+          "relations": null,
+          "response": "Cats can meow.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "fly"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What do birds do?",
+          "relations": null,
+          "response": "Birds can fly.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "animal"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What is a cat?",
+          "relations": null,
+          "response": "A cat is an animal.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "ice",
+            "frozen"
+          ],
+          "heads_active": null,
+          "hit": false,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What happens when water freezes?",
+          "relations": null,
+          "response": "Cold causes water to freeze.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "frozen",
+            "water"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What is ice?",
+          "relations": null,
+          "response": "Ice the sun creates light is an animal a river consists of water.",
+          "scratch_records": null,
+          "structured": false
+        },
+        {
+          "expected": [
+            "purple"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What do red and blue make?",
+          "relations": null,
+          "response": "Red mixed with blue makes purple.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "green"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What do yellow and blue make?",
+          "relations": null,
+          "response": "Yellow mixed with blue makes green.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "hot",
+            "light",
+            "star"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What is the sun?",
+          "relations": null,
+          "response": "The sun causes light.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "square"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What shape has four sides?",
+          "relations": null,
+          "response": "A square has four sides.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "round"
+          ],
+          "heads_active": null,
+          "hit": false,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What is a circle?",
+          "relations": null,
+          "response": "Circle the sun creates light.",
+          "scratch_records": null,
+          "structured": false
+        }
+      ],
+      "round": 2,
+      "statements": [
+        "A cat is an animal.",
+        "A bird is an animal.",
+        "Birds have the ability to fly.",
+        "Cold causes water to freeze.",
+        "Frozen water is ice.",
+        "Red mixed with blue makes purple.",
+        "Yellow mixed with blue makes green.",
+        "The sun is hot.",
+        "The sun creates light.",
+        "A square has four sides.",
+        "Circles are round.",
+        "The earth is a planet."
+      ],
+      "structured_hit_rate": 0.5714285714285714,
+      "structured_hit_vector": "00011110011110",
+      "teacher_model": "gemma4:31b",
+      "teacher_reasoning": "The learner failed on animal categories, bird actions, temperature effects, color mixing, solar properties, and geometry. I am providing explicit, short statements to reinforce these specific gaps using varied phrasing.",
+      "teaching": [
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Cat is an animal.",
+          "statement": "A cat is an animal."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Animal a river consists of water has the ability to flow.",
+          "statement": "A bird is an animal."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Birds have the ability to fly.",
+          "statement": "Birds have the ability to fly."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Water has the ability to flow.",
+          "statement": "Cold causes water to freeze."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Water has the ability to fly.",
+          "statement": "Frozen water is ice."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Red mixed with blue makes purple.",
+          "statement": "Red mixed with blue makes purple."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Mixed with blue makes green.",
+          "statement": "Yellow mixed with blue makes green."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Sun is hot.",
+          "statement": "The sun is hot."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Sun creates light.",
+          "statement": "The sun creates light."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Has the ability to fly.",
+          "statement": "A square has four sides."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Circles are round.",
+          "statement": "Circles are round."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Earth is a planet.",
+          "statement": "The earth is a planet."
+        }
+      ]
+    },
+    {
+      "delta_from_baseline": 1.0,
+      "flips_from_previous": [
+        {
+          "after": "hit",
+          "before": "miss",
+          "index": 7,
+          "question": "What happens when water freezes?"
+        },
+        {
+          "after": "hit",
+          "before": "miss",
+          "index": 13,
+          "question": "What is a circle?"
+        }
+      ],
+      "hit_rate": 1.0,
+      "hit_vector": "11111111111111",
+      "metrics": {
+        "concept_saturation": {
+          "average_degree": 3.28,
+          "concepts": 53,
+          "density": 0.003125,
+          "max_degree": 14,
+          "occupied_pairs": 102,
+          "pair_cells": 32640,
+          "roles": {
+            "can": 2,
+            "causes": 7,
+            "has": 4,
+            "is": 21
+          },
+          "schema": "nanlm.concept-matrix/1",
+          "statements": 70,
+          "top_concepts": [
+            {
+              "concept": "causes",
+              "degree": 14
+            },
+            {
+              "concept": "water",
+              "degree": 12
+            },
+            {
+              "concept": "has",
+              "degree": 8
+            },
+            {
+              "concept": "blue",
+              "degree": 8
+            },
+            {
+              "concept": "mixed",
+              "degree": 7
+            },
+            {
+              "concept": "ability",
+              "degree": 6
+            },
+            {
+              "concept": "green",
+              "degree": 6
+            },
+            {
+              "concept": "red",
+              "degree": 6
+            },
+            {
+              "concept": "makes",
+              "degree": 6
+            },
+            {
+              "concept": "birds",
+              "degree": 5
+            },
+            {
+              "concept": "purple",
+              "degree": 5
+            },
+            {
+              "concept": "yellow",
+              "degree": 5
+            }
+          ],
+          "top_pairs": [
+            {
+              "pair": [
+                "frozen",
+                "water"
+              ],
+              "roles": {},
+              "weight": 3.0
+            },
+            {
+              "pair": [
+                "ice",
+                "water"
+              ],
+              "roles": {},
+              "weight": 3.0
+            },
+            {
+              "pair": [
+                "fire",
+                "red"
+              ],
+              "roles": {
+                "is": 2
+              },
+              "weight": 2.0
+            },
+            {
+              "pair": [
+                "snow",
+                "white"
+              ],
+              "roles": {
+                "is": 2
+              },
+              "weight": 2.0
+            },
+            {
+              "pair": [
+                "causes",
+                "cold"
+              ],
+              "roles": {},
+              "weight": 2.0
+            },
+            {
+              "pair": [
+                "blue",
+                "mixed"
+              ],
+              "roles": {},
+              "weight": 2.0
+            },
+            {
+              "pair": [
+                "hot",
+                "sun"
+              ],
+              "roles": {},
+              "weight": 2.0
+            },
+            {
+              "pair": [
+                "has",
+                "square"
+              ],
+              "roles": {},
+              "weight": 2.0
+            },
+            {
+              "pair": [
+                "four",
+                "has"
+              ],
+              "roles": {},
+              "weight": 2.0
+            },
+            {
+              "pair": [
+                "four",
+                "sides"
+              ],
+              "roles": {},
+              "weight": 2.0
+            },
+            {
+              "pair": [
+                "circles",
+                "round"
+              ],
+              "roles": {
+                "is": 2
+              },
+              "weight": 2.0
+            },
+            {
+              "pair": [
+                "earth",
+                "planet"
+              ],
+              "roles": {},
+              "weight": 2.0
+            }
+          ]
+        },
+        "dictionary_hw4": null,
+        "head_balance": {
+          "active_heads": 255,
+          "coverage": 1.0,
+          "max_share": 0.006947,
+          "mean_weight": 0.67933,
+          "min_weight": 0.308496,
+          "observations": 360
+        },
+        "rows": 34,
+        "scratch_records": 360,
+        "turns": 36
+      },
+      "probe_state_changed": false,
+      "probe_state_digest_after": "2696b820076ce80c11b298a8d9e43a460bdfbf91de3bdd5694075361c5c1e96d",
+      "probe_state_digest_before": "2696b820076ce80c11b298a8d9e43a460bdfbf91de3bdd5694075361c5c1e96d",
+      "probes": [
+        {
+          "expected": [
+            "water"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What is a river?",
+          "relations": null,
+          "response": "River consists of water.",
+          "scratch_records": null,
+          "structured": false
+        },
+        {
+          "expected": [
+            "blue"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What color is the sky?",
+          "relations": null,
+          "response": "Sky is blue makes purple.",
+          "scratch_records": null,
+          "structured": false
+        },
+        {
+          "expected": [
+            "green"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What color is grass?",
+          "relations": null,
+          "response": "Grass is green.",
+          "scratch_records": null,
+          "structured": false
+        },
+        {
+          "expected": [
+            "bark"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What do dogs do?",
+          "relations": null,
+          "response": "Dogs can bark.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "meow"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What do cats do?",
+          "relations": null,
+          "response": "Cats can meow.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "fly"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What do birds do?",
+          "relations": null,
+          "response": "Birds can fly.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "animal"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What is a cat?",
+          "relations": null,
+          "response": "A cat is an animal.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "ice",
+            "frozen"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What happens when water freezes?",
+          "relations": null,
+          "response": "Ice is water that is frozen.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "frozen",
+            "water"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What is ice?",
+          "relations": null,
+          "response": "Ice is water that is frozen.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "purple"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What do red and blue make?",
+          "relations": null,
+          "response": "Red mixed with blue makes purple.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "green"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What do yellow and blue make?",
+          "relations": null,
+          "response": "Yellow mixed with blue makes green.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "hot",
+            "light",
+            "star"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What is the sun?",
+          "relations": null,
+          "response": "The sun causes light.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "square"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What shape has four sides?",
+          "relations": null,
+          "response": "A square has four sides.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "round"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What is a circle?",
+          "relations": null,
+          "response": "A circle is a round shape.",
+          "scratch_records": null,
+          "structured": true
+        }
+      ],
+      "round": 3,
+      "statements": [
+        "Cold causes freezing.",
+        "Frozen water is ice.",
+        "Ice is water that is frozen.",
+        "A circle is a round shape.",
+        "Circles are round.",
+        "Heat causes melting.",
+        "The sun is hot.",
+        "The sun produces light.",
+        "The earth is a planet.",
+        "A square has four sides.",
+        "Fire is red.",
+        "Snow is white."
+      ],
+      "structured_hit_rate": 0.7857142857142857,
+      "structured_hit_vector": "00011111111111",
+      "teacher_model": "gemma4:31b",
+      "teacher_reasoning": "The learner struggled with the definition of ice, the effect of freezing, and the properties of a circle. I will reinforce these specific facts using varied phrasing and clear causal chains while maintaining simple, explicit statements.",
+      "teaching": [
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Cold causes water to freeze.",
+          "statement": "Cold causes freezing."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Frozen water is ice.",
+          "statement": "Frozen water is ice."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Ice is water that is frozen.",
+          "statement": "Ice is water that is frozen."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Round shape the ability to flow.",
+          "statement": "A circle is a round shape."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Circles are round shape.",
+          "statement": "Circles are round."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Causes water to freeze.",
+          "statement": "Heat causes melting."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Sun is hot.",
+          "statement": "The sun is hot."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Sun produces light.",
+          "statement": "The sun produces light."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Earth is a planet.",
+          "statement": "The earth is a planet."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Square has four sides.",
+          "statement": "A square has four sides."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Fire is red mixed with blue makes green.",
+          "statement": "Fire is red."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Snow is white.",
+          "statement": "Snow is white."
+        }
+      ]
+    },
+    {
+      "delta_from_baseline": 1.0,
+      "flips_from_previous": [],
+      "hit_rate": 1.0,
+      "hit_vector": "11111111111111",
+      "metrics": {
+        "concept_saturation": {
+          "average_degree": 3.26,
+          "concepts": 54,
+          "density": 0.003217,
+          "max_degree": 14,
+          "occupied_pairs": 105,
+          "pair_cells": 32640,
+          "roles": {
+            "can": 2,
+            "causes": 10,
+            "has": 4,
+            "is": 30
+          },
+          "schema": "nanlm.concept-matrix/1",
+          "statements": 94,
+          "top_concepts": [
+            {
+              "concept": "causes",
+              "degree": 14
+            },
+            {
+              "concept": "water",
+              "degree": 12
+            },
+            {
+              "concept": "has",
+              "degree": 8
+            },
+            {
+              "concept": "blue",
+              "degree": 8
+            },
+            {
+              "concept": "mixed",
+              "degree": 7
+            },
+            {
+              "concept": "ability",
+              "degree": 6
+            },
+            {
+              "concept": "green",
+              "degree": 6
+            },
+            {
+              "concept": "red",
+              "degree": 6
+            },
+            {
+              "concept": "makes",
+              "degree": 6
+            },
+            {
+              "concept": "birds",
+              "degree": 5
+            },
+            {
+              "concept": "purple",
+              "degree": 5
+            },
+            {
+              "concept": "yellow",
+              "degree": 5
+            }
+          ],
+          "top_pairs": [
+            {
+              "pair": [
+                "frozen",
+                "water"
+              ],
+              "roles": {},
+              "weight": 4.0
+            },
+            {
+              "pair": [
+                "ice",
+                "water"
+              ],
+              "roles": {},
+              "weight": 3.67
+            },
+            {
+              "pair": [
+                "fire",
+                "red"
+              ],
+              "roles": {
+                "is": 3
+              },
+              "weight": 3.0
+            },
+            {
+              "pair": [
+                "snow",
+                "white"
+              ],
+              "roles": {
+                "is": 3
+              },
+              "weight": 3.0
+            },
+            {
+              "pair": [
+                "causes",
+                "cold"
+              ],
+              "roles": {},
+              "weight": 3.0
+            },
+            {
+              "pair": [
+                "frozen",
+                "ice"
+              ],
+              "roles": {},
+              "weight": 3.0
+            },
+            {
+              "pair": [
+                "hot",
+                "sun"
+              ],
+              "roles": {},
+              "weight": 3.0
+            },
+            {
+              "pair": [
+                "earth",
+                "planet"
+              ],
+              "roles": {},
+              "weight": 3.0
+            },
+            {
+              "pair": [
+                "blue",
+                "sky"
+              ],
+              "roles": {},
+              "weight": 2.0
+            },
+            {
+              "pair": [
+                "animal",
+                "bird"
+              ],
+              "roles": {},
+              "weight": 2.0
+            },
+            {
+              "pair": [
+                "blue",
+                "mixed"
+              ],
+              "roles": {},
+              "weight": 2.0
+            },
+            {
+              "pair": [
+                "causes",
+                "sun"
+              ],
+              "roles": {},
+              "weight": 2.0
+            }
+          ]
+        },
+        "dictionary_hw4": null,
+        "head_balance": {
+          "active_heads": 255,
+          "coverage": 1.0,
+          "max_share": 0.006707,
+          "mean_weight": 0.913324,
+          "min_weight": 0.377289,
+          "observations": 480
+        },
+        "rows": 46,
+        "scratch_records": 480,
+        "turns": 48
+      },
+      "probe_state_changed": true,
+      "probe_state_digest_after": "95267111da6bf064d97f96183d92bdd1a7d212d8d0a8593fad823ea3503d90ce",
+      "probe_state_digest_before": "8d4c17da5ad5b0528b4ba012cc280a61aaa82f5e43d75afb36d1111e50e07876",
+      "probes": [
+        {
+          "expected": [
+            "water"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What is a river?",
+          "relations": null,
+          "response": "River consists of water.",
+          "scratch_records": null,
+          "structured": false
+        },
+        {
+          "expected": [
+            "blue"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What color is the sky?",
+          "relations": null,
+          "response": "Sky is blue makes purple.",
+          "scratch_records": null,
+          "structured": false
+        },
+        {
+          "expected": [
+            "green"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What color is grass?",
+          "relations": null,
+          "response": "Grass is green.",
+          "scratch_records": null,
+          "structured": false
+        },
+        {
+          "expected": [
+            "bark"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What do dogs do?",
+          "relations": null,
+          "response": "Dogs can bark.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "meow"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What do cats do?",
+          "relations": null,
+          "response": "Cats can meow.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "fly"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What do birds do?",
+          "relations": null,
+          "response": "Birds can fly.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "animal"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What is a cat?",
+          "relations": null,
+          "response": "A cat is an animal.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "ice",
+            "frozen"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What happens when water freezes?",
+          "relations": null,
+          "response": "Ice is water that is frozen.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "frozen",
+            "water"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What is ice?",
+          "relations": null,
+          "response": "Ice is water that is frozen.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "purple"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What do red and blue make?",
+          "relations": null,
+          "response": "Red mixed with blue makes purple.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "green"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What do yellow and blue make?",
+          "relations": null,
+          "response": "Yellow mixed with blue makes green.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "hot",
+            "light",
+            "star"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What is the sun?",
+          "relations": null,
+          "response": "The sun causes light.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "square"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What shape has four sides?",
+          "relations": null,
+          "response": "A square has four sides.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "round"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What is a circle?",
+          "relations": null,
+          "response": "A circle is a round shape.",
+          "scratch_records": null,
+          "structured": true
+        }
+      ],
+      "round": 4,
+      "statements": [
+        "The sky is blue.",
+        "Fire is red.",
+        "Snow is white.",
+        "A dog is an animal.",
+        "A bird is an animal.",
+        "Heat causes melting.",
+        "Cold causes freezing.",
+        "Ice is frozen water.",
+        "The sun is hot.",
+        "The sun causes light.",
+        "The earth is a planet.",
+        "A circle is round."
+      ],
+      "structured_hit_rate": 0.7857142857142857,
+      "structured_hit_vector": "00011111111111",
+      "teacher_model": "gemma4:31b",
+      "teacher_reasoning": "The learner has a high hit rate but showed a slight confusion in the 'sky is blue' response. I will reinforce color facts, strengthen the causal links for heat/cold, and solidify category memberships for animals and planets.",
+      "teaching": [
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Sky is blue.",
+          "statement": "The sky is blue."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Fire is red mixed with blue makes purple.",
+          "statement": "Fire is red."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Snow is water that is frozen water has the ability to fly.",
+          "statement": "Snow is white."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Animal the ability to flow.",
+          "statement": "A dog is an animal."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Bird is an animal.",
+          "statement": "A bird is an animal."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Heat causes melting.",
+          "statement": "Heat causes melting."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Cold causes water to freeze.",
+          "statement": "Cold causes freezing."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Ice is water that is frozen water has the ability to flow.",
+          "statement": "Ice is frozen water."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Sun is hot.",
+          "statement": "The sun is hot."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Sun causes light.",
+          "statement": "The sun causes light."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Earth is a planet.",
+          "statement": "The earth is a planet."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Circle is a round shape.",
+          "statement": "A circle is round."
+        }
+      ]
+    },
+    {
+      "delta_from_baseline": 1.0,
+      "flips_from_previous": [],
+      "hit_rate": 1.0,
+      "hit_vector": "11111111111111",
+      "metrics": {
+        "concept_saturation": {
+          "average_degree": 3.27,
+          "concepts": 55,
+          "density": 0.003278,
+          "max_degree": 14,
+          "occupied_pairs": 107,
+          "pair_cells": 32640,
+          "roles": {
+            "can": 3,
+            "causes": 12,
+            "has": 4,
+            "is": 38
+          },
+          "schema": "nanlm.concept-matrix/1",
+          "statements": 117,
+          "top_concepts": [
+            {
+              "concept": "causes",
+              "degree": 14
+            },
+            {
+              "concept": "water",
+              "degree": 13
+            },
+            {
+              "concept": "has",
+              "degree": 8
+            },
+            {
+              "concept": "blue",
+              "degree": 8
+            },
+            {
+              "concept": "mixed",
+              "degree": 7
+            },
+            {
+              "concept": "ability",
+              "degree": 6
+            },
+            {
+              "concept": "green",
+              "degree": 6
+            },
+            {
+              "concept": "red",
+              "degree": 6
+            },
+            {
+              "concept": "makes",
+              "degree": 6
+            },
+            {
+              "concept": "birds",
+              "degree": 5
+            },
+            {
+              "concept": "purple",
+              "degree": 5
+            },
+            {
+              "concept": "yellow",
+              "degree": 5
+            }
+          ],
+          "top_pairs": [
+            {
+              "pair": [
+                "frozen",
+                "water"
+              ],
+              "roles": {},
+              "weight": 5.0
+            },
+            {
+              "pair": [
+                "ice",
+                "water"
+              ],
+              "roles": {},
+              "weight": 4.33
+            },
+            {
+              "pair": [
+                "fire",
+                "red"
+              ],
+              "roles": {
+                "is": 4
+              },
+              "weight": 4.0
+            },
+            {
+              "pair": [
+                "snow",
+                "white"
+              ],
+              "roles": {
+                "is": 4
+              },
+              "weight": 4.0
+            },
+            {
+              "pair": [
+                "causes",
+                "cold"
+              ],
+              "roles": {},
+              "weight": 4.0
+            },
+            {
+              "pair": [
+                "frozen",
+                "ice"
+              ],
+              "roles": {},
+              "weight": 4.0
+            },
+            {
+              "pair": [
+                "hot",
+                "sun"
+              ],
+              "roles": {},
+              "weight": 4.0
+            },
+            {
+              "pair": [
+                "earth",
+                "planet"
+              ],
+              "roles": {},
+              "weight": 4.0
+            },
+            {
+              "pair": [
+                "blue",
+                "sky"
+              ],
+              "roles": {},
+              "weight": 3.0
+            },
+            {
+              "pair": [
+                "animal",
+                "bird"
+              ],
+              "roles": {},
+              "weight": 3.0
+            },
+            {
+              "pair": [
+                "causes",
+                "freezing"
+              ],
+              "roles": {},
+              "weight": 3.0
+            },
+            {
+              "pair": [
+                "causes",
+                "heat"
+              ],
+              "roles": {},
+              "weight": 3.0
+            }
+          ]
+        },
+        "dictionary_hw4": null,
+        "head_balance": {
+          "active_heads": 255,
+          "coverage": 1.0,
+          "max_share": 0.007121,
+          "mean_weight": 1.148296,
+          "min_weight": 0.459317,
+          "observations": 600
+        },
+        "rows": 57,
+        "scratch_records": 600,
+        "turns": 60
+      },
+      "probe_state_changed": false,
+      "probe_state_digest_after": "439f5ec6ee8bd6f602587d0328de6a58fe97e76a5b1b9ffe4a01b2814dbc1ba5",
+      "probe_state_digest_before": "439f5ec6ee8bd6f602587d0328de6a58fe97e76a5b1b9ffe4a01b2814dbc1ba5",
+      "probes": [
+        {
+          "expected": [
+            "water"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What is a river?",
+          "relations": null,
+          "response": "River consists of water.",
+          "scratch_records": null,
+          "structured": false
+        },
+        {
+          "expected": [
+            "blue"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What color is the sky?",
+          "relations": null,
+          "response": "Sky is blue makes purple.",
+          "scratch_records": null,
+          "structured": false
+        },
+        {
+          "expected": [
+            "green"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What color is grass?",
+          "relations": null,
+          "response": "Grass is green.",
+          "scratch_records": null,
+          "structured": false
+        },
+        {
+          "expected": [
+            "bark"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What do dogs do?",
+          "relations": null,
+          "response": "Dogs can bark.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "meow"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What do cats do?",
+          "relations": null,
+          "response": "Cats can meow.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "fly"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What do birds do?",
+          "relations": null,
+          "response": "Birds can fly.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "animal"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What is a cat?",
+          "relations": null,
+          "response": "A cat is an animal.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "ice",
+            "frozen"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What happens when water freezes?",
+          "relations": null,
+          "response": "Ice is water that is frozen.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "frozen",
+            "water"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What is ice?",
+          "relations": null,
+          "response": "Ice is water that is frozen.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "purple"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What do red and blue make?",
+          "relations": null,
+          "response": "Red mixed with blue makes purple.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "green"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What do yellow and blue make?",
+          "relations": null,
+          "response": "Yellow mixed with blue makes green.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "hot",
+            "light",
+            "star"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What is the sun?",
+          "relations": null,
+          "response": "The sun causes light.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "square"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What shape has four sides?",
+          "relations": null,
+          "response": "A square has four sides.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "round"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What is a circle?",
+          "relations": null,
+          "response": "A circle is a round shape.",
+          "scratch_records": null,
+          "structured": true
+        }
+      ],
+      "round": 5,
+      "statements": [
+        "The sky is blue.",
+        "Fire is red.",
+        "Snow is white.",
+        "Heat causes melting.",
+        "Cold causes freezing.",
+        "Ice is frozen water.",
+        "A dog is an animal.",
+        "A bird is an animal.",
+        "The sun is hot.",
+        "The earth is a planet.",
+        "Water can flow.",
+        "Rivers carry water."
+      ],
+      "structured_hit_rate": 0.7857142857142857,
+      "structured_hit_vector": "00011111111111",
+      "teacher_model": "gemma4:31b",
+      "teacher_reasoning": "The learner has a high hit rate, but the response 'Sky is blue makes purple' suggests a temporal overlap or confusion between color facts. I will reinforce the distinct colors of the sky, fire, and snow, and strengthen the causal links for heat and cold while reinforcing animal categories.",
+      "teaching": [
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Sky is blue.",
+          "statement": "The sky is blue."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Fire is red mixed with blue makes green.",
+          "statement": "Fire is red."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Snow is white.",
+          "statement": "Snow is white."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Heat causes melting.",
+          "statement": "Heat causes melting."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Cold causes water to freeze.",
+          "statement": "Cold causes freezing."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Ice is water that is frozen water has the ability to flow.",
+          "statement": "Ice is frozen water."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Dog is an animal.",
+          "statement": "A dog is an animal."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Bird is an animal.",
+          "statement": "A bird is an animal."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Sun is hot.",
+          "statement": "The sun is hot."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Earth is a planet.",
+          "statement": "The earth is a planet."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Water has the ability to flow.",
+          "statement": "Water can flow."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 0,
+          "response": "Rivers transport water.",
+          "statement": "Rivers carry water."
+        }
+      ]
+    },
+    {
+      "delta_from_baseline": 1.0,
+      "flips_from_previous": [],
+      "hit_rate": 1.0,
+      "hit_vector": "11111111111111",
+      "metrics": {
+        "concept_saturation": {
+          "average_degree": 3.59,
+          "concepts": 58,
+          "density": 0.003768,
+          "max_degree": 16,
+          "occupied_pairs": 123,
+          "pair_cells": 32640,
+          "roles": {
+            "can": 3,
+            "causes": 14,
+            "has": 4,
+            "is": 47
+          },
+          "schema": "nanlm.concept-matrix/1",
+          "statements": 140,
+          "top_concepts": [
+            {
+              "concept": "causes",
+              "degree": 16
+            },
+            {
+              "concept": "water",
+              "degree": 14
+            },
+            {
+              "concept": "makes",
+              "degree": 11
+            },
+            {
+              "concept": "has",
+              "degree": 8
+            },
+            {
+              "concept": "blue",
+              "degree": 8
+            },
+            {
+              "concept": "mixed",
+              "degree": 7
+            },
+            {
+              "concept": "ability",
+              "degree": 6
+            },
+            {
+              "concept": "green",
+              "degree": 6
+            },
+            {
+              "concept": "red",
+              "degree": 6
+            },
+            {
+              "concept": "cold",
+              "degree": 6
+            },
+            {
+              "concept": "things",
+              "degree": 6
+            },
+            {
+              "concept": "birds",
+              "degree": 5
+            }
+          ],
+          "top_pairs": [
+            {
+              "pair": [
+                "frozen",
+                "water"
+              ],
+              "roles": {},
+              "weight": 6.0
+            },
+            {
+              "pair": [
+                "fire",
+                "red"
+              ],
+              "roles": {
+                "is": 5
+              },
+              "weight": 5.0
+            },
+            {
+              "pair": [
+                "snow",
+                "white"
+              ],
+              "roles": {
+                "is": 5
+              },
+              "weight": 5.0
+            },
+            {
+              "pair": [
+                "frozen",
+                "ice"
+              ],
+              "roles": {},
+              "weight": 5.0
+            },
+            {
+              "pair": [
+                "hot",
+                "sun"
+              ],
+              "roles": {},
+              "weight": 5.0
+            },
+            {
+              "pair": [
+                "earth",
+                "planet"
+              ],
+              "roles": {},
+              "weight": 5.0
+            },
+            {
+              "pair": [
+                "ice",
+                "water"
+              ],
+              "roles": {},
+              "weight": 5.0
+            },
+            {
+              "pair": [
+                "causes",
+                "cold"
+              ],
+              "roles": {},
+              "weight": 4.5
+            },
+            {
+              "pair": [
+                "blue",
+                "sky"
+              ],
+              "roles": {},
+              "weight": 4.0
+            },
+            {
+              "pair": [
+                "animal",
+                "bird"
+              ],
+              "roles": {},
+              "weight": 4.0
+            },
+            {
+              "pair": [
+                "causes",
+                "heat"
+              ],
+              "roles": {},
+              "weight": 3.5
+            },
+            {
+              "pair": [
+                "causes",
+                "freezing"
+              ],
+              "roles": {},
+              "weight": 3.0
+            }
+          ]
+        },
+        "dictionary_hw4": null,
+        "head_balance": {
+          "active_heads": 255,
+          "coverage": 1.0,
+          "max_share": 0.007473,
+          "mean_weight": 1.38005,
+          "min_weight": 0.564289,
+          "observations": 720
+        },
+        "rows": 68,
+        "scratch_records": 720,
+        "turns": 72
+      },
+      "probe_state_changed": false,
+      "probe_state_digest_after": "a2e9efceb877a4e76d7ad7aeb5a2774f51f2aadc6ad218554ca7a2f4cc5bc269",
+      "probe_state_digest_before": "a2e9efceb877a4e76d7ad7aeb5a2774f51f2aadc6ad218554ca7a2f4cc5bc269",
+      "probes": [
+        {
+          "expected": [
+            "water"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What is a river?",
+          "relations": null,
+          "response": "River consists of water.",
+          "scratch_records": null,
+          "structured": false
+        },
+        {
+          "expected": [
+            "blue"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What color is the sky?",
+          "relations": null,
+          "response": "Sky is blue.",
+          "scratch_records": null,
+          "structured": false
+        },
+        {
+          "expected": [
+            "green"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What color is grass?",
+          "relations": null,
+          "response": "Grass is green.",
+          "scratch_records": null,
+          "structured": false
+        },
+        {
+          "expected": [
+            "bark"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What do dogs do?",
+          "relations": null,
+          "response": "Dogs can bark.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "meow"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What do cats do?",
+          "relations": null,
+          "response": "Cats can meow.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "fly"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What do birds do?",
+          "relations": null,
+          "response": "Birds can fly.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "animal"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What is a cat?",
+          "relations": null,
+          "response": "A cat is an animal.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "ice",
+            "frozen"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What happens when water freezes?",
+          "relations": null,
+          "response": "Ice is water that is frozen.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "frozen",
+            "water"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What is ice?",
+          "relations": null,
+          "response": "Ice is water that is frozen.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "purple"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What do red and blue make?",
+          "relations": null,
+          "response": "Red mixed with blue makes purple.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "green"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What do yellow and blue make?",
+          "relations": null,
+          "response": "Yellow mixed with blue makes green.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "hot",
+            "light",
+            "star"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What is the sun?",
+          "relations": null,
+          "response": "The sun causes light.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "square"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What shape has four sides?",
+          "relations": null,
+          "response": "A square has four sides.",
+          "scratch_records": null,
+          "structured": true
+        },
+        {
+          "expected": [
+            "round"
+          ],
+          "heads_active": null,
+          "hit": true,
+          "layers": null,
+          "native_learning_status": "probe_read_only",
+          "provider": "nanlm-native",
+          "question": "What is a circle?",
+          "relations": null,
+          "response": "A circle is a round shape.",
+          "scratch_records": null,
+          "structured": true
+        }
+      ],
+      "round": 6,
+      "statements": [
+        "The sky is blue.",
+        "Fire is red.",
+        "Snow is white.",
+        "The sun is hot.",
+        "Heat makes things melt.",
+        "Cold makes things freeze.",
+        "Ice is frozen water.",
+        "The earth is a planet.",
+        "A dog is an animal.",
+        "A bird is an animal.",
+        "A cat is an animal.",
+        "Water flows in rivers."
+      ],
+      "structured_hit_rate": 0.7857142857142857,
+      "structured_hit_vector": "00011111111111",
+      "teacher_model": "gemma4:31b",
+      "teacher_reasoning": "The learner has a good grasp of most facts, but the response 'Sky is blue makes purple' suggests a potential interference between color facts. I will reinforce distinct color associations, clarify the sun's properties, and strengthen the causal links between temperature and state changes.",
+      "teaching": [
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Sky is blue.",
+          "statement": "The sky is blue."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Fire is red mixed with blue makes green.",
+          "statement": "Fire is red."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Snow is white.",
+          "statement": "Snow is white."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Sun produces light.",
+          "statement": "The sun is hot."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Heat makes things melt.",
+          "statement": "Heat makes things melt."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Cold makes things freeze.",
+          "statement": "Cold makes things freeze."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Ice is water that is frozen water has the ability to flow.",
+          "statement": "Ice is frozen water."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Earth is a planet.",
+          "statement": "The earth is a planet."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Dog is an animal.",
+          "statement": "A dog is an animal."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Bird is an animal.",
+          "statement": "A bird is an animal."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 1,
+          "response": "Cat is an animal.",
+          "statement": "A cat is an animal."
+        },
+        {
+          "layers": 10,
+          "native_learning_status": "native_update_failed",
+          "provider": "nanlm-native",
+          "relations": 0,
+          "response": "Water has the ability to flow.",
+          "statement": "Water flows in rivers."
+        }
+      ]
+    }
+  ],
+  "rounds_requested": 6,
+  "schema": "nanlm.gemma-learning-over-time/1",
+  "state_dir": "/data/data/com.termux/files/usr/tmp/nanlm-train-v2",
+  "target_facts": [
+    "A river is water. Water can flow. Rivers carry water.",
+    "The sky is blue. Grass is green. Fire is red. Snow is white.",
+    "A cat is an animal. A dog is an animal. A bird is an animal.",
+    "Cats meow. Dogs bark. Birds fly.",
+    "Heat causes melting. Cold causes freezing. Ice is frozen water.",
+    "Red and blue make purple. Yellow and blue make green.",
+    "The sun is hot. The sun causes light. The earth is a planet.",
+    "A square has four sides. A circle is round."
+  ]
+}
