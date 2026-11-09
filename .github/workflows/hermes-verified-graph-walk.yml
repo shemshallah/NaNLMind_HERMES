@@ -6,6 +6,8 @@ on:
       - 'nanlmind_hermes/router_graph_history.py'
       - 'nanlmind_hermes/router_graph_page.py'
       - 'tests/test_router_graph_walk.py'
+      - 'tests/test_router_graph_walk_tool.py'
+      - 'nanlmind_hermes/__init__.py'
       - 'tests/test_router_graph_history.py'
       - 'scripts/verify_real_router_graph_walk.py'
       - '.github/workflows/hermes-verified-graph-walk.yml'
@@ -15,6 +17,8 @@ on:
       - 'nanlmind_hermes/router_graph_history.py'
       - 'nanlmind_hermes/router_graph_page.py'
       - 'tests/test_router_graph_walk.py'
+      - 'tests/test_router_graph_walk_tool.py'
+      - 'nanlmind_hermes/__init__.py'
       - 'tests/test_router_graph_history.py'
       - 'scripts/verify_real_router_graph_walk.py'
       - '.github/workflows/hermes-verified-graph-walk.yml'
@@ -37,6 +41,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_router_graph_history.py' -v
       - name: Verify candidate graph walk and adversarial bounds
         run: python -m unittest discover -s tests -p 'test_router_graph_walk.py' -v
+      - name: Verify authenticated protected navigation tool
+        run: python -m unittest discover -s tests -p 'test_router_graph_walk_tool.py' -v
       - name: Check out real NaNROUTER graph provider
         uses: actions/checkout@v4
         with:

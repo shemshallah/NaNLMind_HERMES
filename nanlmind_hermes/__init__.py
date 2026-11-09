@@ -183,6 +183,59 @@ def register(ctx):
             )
         return result
 
+    def handle_router_graph_walk(params, **kwargs):
+        """Read-only bounded graph navigation gated by full chart/history replay.
+
+        Optional signature authentication reuses the operator-pinned router
+        identity, never caller-provided trust material. No head, chart or
+        graph write is exposed by this tool.
+        """
+        _require_scope("universe:read")
+        from .router_graph_history import RouterGraphHistoryVerifier
+        from .router_graph_page import RouterGraphPageError
+        from .router_graph_walk import verified_candidate_walk
+        from .universe_chart import LocalRunner
+        pages = params["pages"]
+        history_pages = params["history_pages"]
+        if (type(pages) is not list or not 1 <= len(pages) <= 128
+                or type(history_pages) is not list
+                or not 1 <= len(history_pages) <= 128):
+            raise RouterGraphPageError(
+                "complete bounded state and history pages required")
+        verifier = RouterGraphHistoryVerifier(LocalRunner.open(ctx).chart)
+        for page in pages:
+            verifier.add_state_page(page)
+        if not verifier.status()["state_verified"]:
+            raise RouterGraphPageError("incomplete graph state")
+        for page in history_pages:
+            verifier.add_history_page(page)
+        if not verifier.status()["history_verified"]:
+            raise RouterGraphPageError("incomplete graph history")
+        attestation = params.get("attestation")
+        auth = None
+        if attestation is not None:
+            from .router_graph_attestation import verify_graph_sender_attestation
+            auth = verify_graph_sender_attestation(
+                verifier, attestation,
+                expected_router_id=ctx.get_config(
+                    "router_graph_sender_id", default=""),
+                expected_key_id=ctx.get_config(
+                    "router_graph_sender_key_id", default=""),
+                public_key_hex=ctx.get_config(
+                    "router_graph_sender_public_key_hex", default=""))
+        result = verified_candidate_walk(
+            verifier, pages, start=params["start"],
+            target=params.get("target"), layer=params.get("layer"),
+            relation=params.get("relation"),
+            max_hops=params.get("max_hops", 4),
+            max_nodes=params.get("max_nodes", 256),
+            max_edges=params.get("max_edges", 1024))
+        if auth is not None:
+            result["sender_authenticated"] = auth["sender_authenticated"]
+            result["attestation_sha256"] = auth["attestation_sha256"]
+            result["nonce_replay_protected"] = False
+        return result
+
     def handle_self_modify(params, **kwargs):
         _require_scope("training:execute")
         engine = _self_modification(ctx)
@@ -571,6 +624,24 @@ def register(ctx):
                             "items": {"type": "object"}},
           "attestation": {"type": "object"}},
          ["pages"], handle_router_graph_verify),
+        ("nanlm_router_graph_walk",
+         "Read-only bounded candidate paths across verified NaNROUTER L0-L9 state and complete revision history in the ONE HERMES chart. Optional pinned Ed25519 sender authentication; no evidence truth, MTH execution or learning authority.",
+         {"pages": {"type": "array", "minItems": 1, "maxItems": 128,
+                    "items": {"type": "object"}},
+          "history_pages": {"type": "array", "minItems": 1, "maxItems": 128,
+                            "items": {"type": "object"}},
+          "start": {"type": "integer", "minimum": 0, "maximum": 32895},
+          "target": {"type": "integer", "minimum": 0, "maximum": 32895},
+          "layer": {"type": "integer", "minimum": 0, "maximum": 9},
+          "relation": {"type": "string", "enum": [
+              "isa", "part_of", "defines", "supports", "refutes",
+              "equivalent", "transforms", "causes", "depends_on",
+              "similar", "contradicts", "observes", "routes_to"]},
+          "max_hops": {"type": "integer", "minimum": 0, "maximum": 8},
+          "max_nodes": {"type": "integer", "minimum": 1, "maximum": 1024},
+          "max_edges": {"type": "integer", "minimum": 1, "maximum": 12800},
+          "attestation": {"type": "object"}},
+         ["pages", "history_pages", "start"], handle_router_graph_walk),
         ("nanlm_self_modify", "Boolean-gated self-modification of scratch leaves and MP relations: propose a relation, version a leaf, promote under the local approval gate, or inspect status.",
          {"action": {"type": "string", "enum": ["status", "relation", "leaf", "promote"]},
           "relation": {"type": "object"},
