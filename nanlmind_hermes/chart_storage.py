@@ -190,9 +190,12 @@ def load_chart_snapshot(state_dir: str | Path, root_hash: str):
     A damaged pair never silently resets the chart to genesis.
     A checkpoint for another canonical root is never applied.
     """
-    folder = _root(state_dir)
-    entry = _candidates(folder, _parent(root_hash))
-    return (entry[0], entry[2]) if entry else (0, None)
+    parent = _parent(root_hash)
+    with _opened_folder(state_dir, create=False) as folder_fd:
+        if folder_fd is None:
+            return (0, None)
+        entry = _candidates(folder_fd, parent)
+        return (entry[0], entry[2]) if entry else (0, None)
 
 
 def load_chart_snapshot_pair(state_dir: str | Path, root_hash: str,
@@ -208,19 +211,20 @@ def load_chart_snapshot_pair(state_dir: str | Path, root_hash: str,
     if type(prior_generation) is not int or prior_generation < 1:
         raise ChartStorageError("prior chart generation must be positive")
     parent = _parent(root_hash)
-    folder = _root(state_dir)
-    current = _candidates(folder, parent)
-    if current is None or current[0] != prior_generation + 1:
-        raise ChartStorageError("exact next-generation snapshot unavailable")
-    prior_path = folder / SLOT_NAMES[current[1] ^ 1]
-    try:
-        prior = _read(prior_path)
-    except (ValueError, OSError, struct.error) as exc:
-        raise ChartStorageError("adjacent prior snapshot is corrupt") from exc
-    if (prior is None or prior[0] != prior_generation
-            or prior[1] != parent):
-        raise ChartStorageError("adjacent parent-bound prior snapshot unavailable")
-    return prior[2], current[2]
+    with _opened_folder(state_dir, create=False) as folder_fd:
+        if folder_fd is None:
+            raise ChartStorageError("exact next-generation snapshot unavailable")
+        current = _candidates(folder_fd, parent)
+        if current is None or current[0] != prior_generation + 1:
+            raise ChartStorageError("exact next-generation snapshot unavailable")
+        try:
+            prior = _read_at(folder_fd, SLOT_NAMES[current[1] ^ 1])
+        except (ValueError, OSError, struct.error) as exc:
+            raise ChartStorageError("adjacent prior snapshot is corrupt") from exc
+        if (prior is None or prior[0] != prior_generation
+                or prior[1] != parent):
+            raise ChartStorageError("adjacent parent-bound prior snapshot unavailable")
+        return prior[2], current[2]
 
 
 def save_chart_snapshot(state_dir: str | Path, root_hash: str,
