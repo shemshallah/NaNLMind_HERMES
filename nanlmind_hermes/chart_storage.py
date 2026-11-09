@@ -28,7 +28,24 @@ class ChartStorageError(ValueError):
 
 
 def _root(state_dir: str | Path) -> Path:
-    return Path(state_dir).expanduser() / "language" / "chart-checkpoints"
+    """Resolve the fixed checkpoint location without accepting child aliases.
+
+    The caller (LocalRunner / SnapshotHeadBankFence) pins its trusted physical
+    state home, but a *nested* language/ or chart-checkpoints/ symlink could
+    still redirect a later read/write to another, individually SHA-valid
+    N16SNAP1 chart. Reject pre-existing aliases or non-directory nodes
+    before reading, creating or replacing a slot. This is not a substitute
+    for exclusive host filesystem ownership or a cross-process lease.
+    """
+    base = Path(state_dir).expanduser()
+    language = base / "language"
+    folder = language / "chart-checkpoints"
+    for component in (language, folder):
+        if component.is_symlink():
+            raise ChartStorageError("checkpoint directory components cannot be symlinks")
+        if component.exists() and not component.is_dir():
+            raise ChartStorageError("checkpoint directory component is not a directory")
+    return folder
 
 
 def _parent(root_hash: str) -> bytes:
