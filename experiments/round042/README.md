@@ -13,14 +13,14 @@ steps, 6 NANNET-P generations.
 | Metric | Value |
 |---|---:|
 | Parameters | 1,084,110 |
-| Held-out test | 3.6009 bits/byte |
-| Held-out perplexity | 12.134 |
-| Next-byte top-1 | 26.97% |
-| Relation probe | 1,041 / 2,292 (45.42%) |
+| Held-out test | 3.6009 / 3.5858 bits/byte (seeds 17 / 29) |
+| Held-out perplexity | 12.134 / 12.007 |
+| Next-byte top-1 | 26.97% / 27.68% |
+| Relation probe | 45.42% / 44.42% |
 | Gauge argmax agreement | 100% |
 | Max cycle phase error | 1.19e-6 |
 | NANNET-P accepted | 1 (head_k 6 → 4) |
-| Matched byte Transformer | 3.7377 bpb / 13.34 ppl / 24.05% top-1 (1.22M params, 55 s) |
+| Matched byte Transformer | 3.7377 / 3.7329 / 3.7234 bpb across seeds 17/29/43 (1.22M params, ~55 s) |
 
 Ablations and the honest limits are in `docs/NANLM_42_TRIGON.md`. Free samples
 are malformed; the model is not fluent.

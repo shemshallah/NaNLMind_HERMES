@@ -397,11 +397,16 @@ d_model 80, 10 layers, 4 attention heads, byte vocabulary 259).
 | Router parameters | 11,296 |
 | Byte vocabulary | 259 |
 | Train / val / test records | 24,989 / 1,499 / 1,499 |
-| Best validation bpb | 3.6889 |
-| Held-out test bpb | **3.6009** |
-| Held-out test perplexity | **12.134** |
-| Held-out next-byte top-1 | **26.97%** |
-| Evaluation tokens | 4,483 |
+| Best validation bpb | 3.6889 (seed 17) / 3.6599 (seed 29) |
+| Held-out test bpb | **3.6009** (17) / **3.5858** (29) |
+| Held-out test perplexity | **12.134** (17) / **12.007** (29) |
+| Held-out next-byte top-1 | **26.97%** (17) / **27.68%** (29) |
+| Evaluation tokens | 4,483 per seed |
+
+Seed 43 was interrupted during final evaluation after its LM training had
+completed; its best validation bpb was 3.9029 and its resumed test bpb was
+3.8336. It is recorded but not used in the headline. The relation-task
+checkpoint for seed 43 was not retained, so its relation score is not reported.
 
 This is a real byte-level autoregressive language model: it samples its own
 next byte, not a stored definition. It is **not fluent**; see §8.
@@ -413,10 +418,13 @@ Same corpus, split, token budget, context (48), batch (8), optimizer family
 learned positions, 10 layers, 4 heads, d_model 96, no cycle field, no
 trigonometric rotor bank, no 256-head interface and no NANNET-P.
 
-| Model | Parameters | Wall time | Test bpb | Test ppl | Top-1 |
-|---|---:|---:|---:|---:|---:|
-| TRIGON-9 | 1,084,110 | 651 s | **3.6009** | **12.134** | **26.97%** |
-| byte Transformer | 1,217,731 | 55 s | 3.7377 | 13.340 | 24.05% |
+| Model | Seed | Parameters | Wall time | Test bpb | Test ppl | Top-1 |
+|---|---:|---:|---:|---:|---:|---:|
+| TRIGON-9 | 17 | 1,084,110 | 651 s | **3.6009** | **12.134** | **26.97%** |
+| TRIGON-9 | 29 | 1,084,110 | 582 s | **3.5858** | **12.007** | **27.68%** |
+| byte Transformer | 17 | 1,217,731 | 55 s | 3.7377 | 13.340 | 24.05% |
+| byte Transformer | 29 | 1,217,731 | 53 s | 3.7329 | 13.296 | 23.67% |
+| byte Transformer | 43 | 1,217,731 | 56 s | 3.7234 | 13.209 | 24.65% |
 
 TRIGON-9 is better on this internal split with fewer parameters, but it uses
 about 12× the wall time because the sparse cycle field and trigonometric
@@ -426,12 +434,12 @@ gap; that is an open gate (T-09).
 
 ### 6.2 Typed relation probe
 
-| Metric | Value |
-|---|---:|
-| Test correct | 1,041 / 2,292 |
-| Accuracy | **45.42%** |
-| Chance (4 balanced classes) | 25% |
-| Test split | source synsets held out by hash |
+| Metric | Seed 17 | Seed 29 |
+|---|---:|---:|
+| Test correct | 1,041 / 2,292 | 1,018 / 2,292 |
+| Accuracy | **45.42%** | **44.42%** |
+| Chance (4 balanced classes) | 25% | 25% |
+| Test split | source synsets held out by hash | same |
 
 The probe writes a content phase into the shared cycle field and reads it back.
 It is a controlled relation benchmark, not open-domain extraction. Hypernym vs
@@ -466,6 +474,10 @@ slice; only the named component is disabled.
 | no SO(3) holonomy | 3.5868 | **−0.0099** | holonomy is slightly negative on byte LM at this budget |
 | no head readout | 3.5983 | +0.0016 | heads carry a small amount of next-token information |
 | no copy | 3.5978 | +0.0011 | copy channel has a small positive effect |
+
+Seed 29 shows the same direction for memory and trig: no memory 3.6185,
+no trig 3.5951, full 3.5903. Holonomy again helps the ablation slightly
+(no holonomy 3.5676). The effect sizes are small and seed-dependent.
 
 **Honest reading:** the memory/head/copy channels are measurably used but small.
 The trig/holonomy paths are not yet earning their compute on the byte-language
@@ -546,8 +558,8 @@ R039's fluency problem is not solved by this run.
 - **Holonomy is currently neutral/negative on byte LM.** It is retained for
   order-sensitive composition and must be evaluated on a task that rewards
   order, not hidden behind the LM number.
-- **Single seed for the full run.** The order probe has three seeds; the LM run
-  is seed 17. Multi-seed LM replication is open.
+- **Two complete LM seeds, one interrupted.** Seeds 17 and 29 completed; seed
+  43 was interrupted during final evaluation. The order probe has three seeds.
 - **Snapshot/transaction semantics** from R040 are not yet ported to the
   reference cycle field. The model is experimental, not crash-safe.
 - **No Android ARM energy/RSS claim.** The reference run is host Termux.

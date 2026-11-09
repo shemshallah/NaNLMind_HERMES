@@ -1,0 +1,97 @@
+{
+  "schema": "nanlm.trigon9-control/1",
+  "control": "byte Transformer, no cycle/trig/heads/NANNET-P",
+  "config": {
+    "data": "/data/data/com.termux/files/home/NaNLMind_HERMES/experiments/round042/data/wordnet_hw4.jsonl.gz",
+    "steps": 120,
+    "batch": 8,
+    "context": 48,
+    "d_model": 96,
+    "seed": 43,
+    "out": "/data/data/com.termux/files/usr/tmp/opencode/base43"
+  },
+  "corpus": {
+    "route": "nan://GM0:SC0:MC0:BS0:0:HW0:0::HW4:0",
+    "source": "/data/data/com.termux/files/home/NaNLMind_HERMES/experiments/round042/data/wordnet_hw4.jsonl.gz",
+    "records": 82192,
+    "splits": {
+      "train": 65643,
+      "val": 7381,
+      "test": 9168
+    },
+    "relations": {
+      "train": 2800,
+      "val": 2285,
+      "test": 2292
+    },
+    "digest": "6789ab5f0442af70931fd72cfaca71c411627a0a072ee960617a04119bd77f07",
+    "live_nannet_route": false,
+    "canonical_merge": false
+  },
+  "parameters": 1217731,
+  "best_val_bpb": 3.768597702474463,
+  "test": {
+    "tokens": 4483,
+    "nats_per_token": 2.5808948497274424,
+    "bits_per_token": 3.7234442007576476,
+    "perplexity": 13.208952900563993,
+    "top1": 0.24648672763774257
+  },
+  "history": [
+    {
+      "step": 1,
+      "loss": 5.826305866241455,
+      "tokens": 2345,
+      "nats_per_token": 5.127822348913913,
+      "bits_per_token": 7.397883873337698,
+      "perplexity": 168.649458196935,
+      "top1": 0.06567164179104477
+    },
+    {
+      "step": 25,
+      "loss": 2.9194490909576416,
+      "tokens": 2345,
+      "nats_per_token": 2.969533540445096,
+      "bits_per_token": 4.284131312553586,
+      "perplexity": 19.482829524132395,
+      "top1": 0.19061833688699362
+    },
+    {
+      "step": 50,
+      "loss": 2.7886135578155518,
+      "tokens": 2345,
+      "nats_per_token": 2.73642005513726,
+      "bits_per_token": 3.9478196433356287,
+      "perplexity": 15.431641665926453,
+      "top1": 0.22899786780383796
+    },
+    {
+      "step": 75,
+      "loss": 2.5685184001922607,
+      "tokens": 2345,
+      "nats_per_token": 2.6715619898554106,
+      "bits_per_token": 3.8542492341918524,
+      "perplexity": 14.462541902777044,
+      "top1": 0.22473347547974415
+    },
+    {
+      "step": 100,
+      "loss": 2.479212760925293,
+      "tokens": 2345,
+      "nats_per_token": 2.6210343545942165,
+      "bits_per_token": 3.7813532653726813,
+      "perplexity": 13.749938544259837,
+      "top1": 0.23113006396588487
+    },
+    {
+      "step": 120,
+      "loss": 2.531296730041504,
+      "tokens": 2345,
+      "nats_per_token": 2.6121928721348615,
+      "bits_per_token": 3.768597702474463,
+      "perplexity": 13.628904552215225,
+      "top1": 0.2345415778251599
+    }
+  ],
+  "seconds": 55.9799542427063
+}
