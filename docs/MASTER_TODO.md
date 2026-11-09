@@ -48,7 +48,7 @@ for the round-specific items are in `ROUNDS_023_036_TODO.md` and
 | A-14 | Add `Round033/034/035/036` docs to the index and MANIFEST | paths present; package build includes archives | done |
 | A-15 | Re-run packaging tests after new binary/checkpoint archives | sdist/wheel counts; no missing assets | queued |
 | A-16 | Re-run Alpine/proot suite | full suite passes there | queued |
-| A-17 | Confirm no `hyperllm` filenames/strings remain | `grep -ri hyperllm` empty | done |
+| A-17 | Confirm no legacy branded filenames/strings remain | repository search for the retired label is empty | done |
 | A-18 | Confirm canonical merge stays disabled everywhere | all receipts/flags false | done |
 | A-19 | Merge all local feature branches into `main` without losing current integration | no unmerged local branch; conflicts documented | done locally |
 | A-20 | Decide whether remote PR branches are in scope; do not merge 104 stale remote refs blindly | explicit scope decision recorded | held |
