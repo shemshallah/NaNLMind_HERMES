@@ -40,11 +40,31 @@ def _command(command: Sequence[str]) -> list[str]:
     return list(command)
 
 
+def _native_process_environment() -> dict[str, str]:
+    """Explicit minimal environment: never leak unrelated Hermes provider keys.
+
+    The native CLI has no documented mandatory NANLM_* environment inputs.
+    Supply any future native-only options through a separately reviewed,
+    exact-name allowlist rather than forwarding a NANLM_* wildcard.
+    """
+    env = {
+        "PATH": os.getenv("PATH") or os.defpath,
+        "HOME": os.getenv("HOME") or str(Path.home()),
+        "LANG": os.getenv("LANG") or "C.UTF-8",
+    }
+    for name in ("LC_ALL", "TMPDIR"):
+        value = os.getenv(name)
+        if value:
+            env[name] = value
+    return env
+
+
 def _run(argv: list[str], timeout: float) -> dict:
     started = time.monotonic()
     try:
         proc = subprocess.Popen(argv, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                                text=True, encoding="utf-8", errors="replace")
+                                text=True, encoding="utf-8", errors="replace",
+                                env=_native_process_environment())
     except OSError as exc:
         raise RunnerError(f"cannot start local native runner: {exc}") from exc
     try:

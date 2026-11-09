@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.5.1 — 2026-11-08 (catalog-review security maintenance)
+
+- Isolate `nanlm-universal` subprocesses from Hermes provider and service
+  credentials via explicit PATH/HOME/LANG and optional LC_ALL/TMPDIR, instead
+  of inheriting the whole host environment.
+- Register Hermes `pre_tool_call` human approval for the four sensitive
+  CLOCKED/candidate tools; require review of stored plan digest, remove
+  model-controlled `approved` from their tool schemas and reject invalid
+  approval inputs. Slash-command `--approved` remains explicitly typed.
+- Add poisoned-environment, forged-plan and approval-registration regression
+  checks; refresh the 64-tool/1-hook catalog capability declaration and
+  installer/security documentation.
+- Constrain model-tool corpus paths under the configured corpus directory
+  and reject traversals/symlinks out of it; per-profile state-directory
+  isolation still requires separate explicit configuration. Recommend the audited optional `[auth]` backend.
+
 ## Unreleased
 
 - Mounted the NaNROUTER mirror topology in HERMES: 256 fixed heads, 32,640

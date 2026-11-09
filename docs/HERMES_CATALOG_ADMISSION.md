@@ -1,8 +1,16 @@
-# Hermes catalog admission checklist
+# Hermes catalog admission checklist — v1.5.1
 
 This checklist tracks the official Hermes plugin catalog submission requirements
 for this repository. It distinguishes checks that this plugin repository can
 prove from steps that only the upstream catalog maintainer can complete.
+
+## Current status (November 8, 2026)
+
+The old catalog PR is still open and has **CHANGES_REQUESTED**. HERMES v1.5.1
+remediates the two explicit blockers on the source branch; the merged SHA,
+new upstream pin and final human review are pending until their checks pass.
+Historical tests and smoke results below belong to their original tested
+versions and are not automatic release validation.
 
 ## Plugin-repository checks
 
@@ -27,9 +35,9 @@ prove from steps that only the upstream catalog maintainer can complete.
 
 ## Validation record
 
-### Plugin checks
+### Historical plugin checks (v1.3.2; do not imply current release coverage)
 
-- Plugin version: **1.3.2** in `plugin.yaml` and `pyproject.toml`; license
+- Historical plugin version: **1.3.2**; proposed resubmission version **1.5.1** in `plugin.yaml` and `pyproject.toml`; license
   **Apache-2.0** in both.
 - Unit/integration suite: **272 tests passed** locally and in CI on Python
   3.10, 3.11 and 3.12 (816 successful test executions).
@@ -38,7 +46,7 @@ prove from steps that only the upstream catalog maintainer can complete.
   tool/hook/middleware parity, collision scan, security scan and no-core-override
   checks pass.
 - Hermes Plugin Doctor `hermes plugins doctor . --ci`: **PASS**. Runtime
-  discovery, manifest parsing, import and registration pass; **34 tools, 0 hooks**.
+  discovery, manifest parsing, import and registration pass; **34 tools, 0 hooks (v1.3.2 historical)**; current 1.5.1 declares **64 tools, 1 pre_tool_call hook**.
 - Release package: wheel and sdist build; Twine metadata checks pass; required
   plugin source/docs are present in the sdist; both distributions install and
   import; SHA-256 checksums generate and verify.
@@ -73,23 +81,35 @@ resulting artifacts are recorded in the release notes.
 
 | Requirement | Status | Required action |
 |---|---|---|
-| Maintainer-reviewed PR to `NousResearch/hermes-agent` | READY | Submit `plugin-catalog/nanlmind-hermes.yaml` after this plugin PR is accepted. |
-| Exact 40-character source SHA pin | READY | Pin the reviewed release tag commit; never a branch or short SHA. |
+| Maintainer-reviewed PR to `NousResearch/hermes-agent` | OPEN / CHANGES REQUESTED | Existing [#150755](https://github.com/NousResearch/hermes-agent/pull/150755) requires current source pin and responses to the native-environment + approval-hook review. Do not open a duplicate catalog PR. |
+| Exact 40-character source SHA pin | PENDING | After the HERMES security-fix PR merges and green release CI completes, pin the exact merged 1.5.1 commit in the existing upstream PR. |
 | Owner/maintainer-curated submission | READY | Submit from `shemshallah`, the repository owner. |
-| `capabilities:` declaration matches tools and environment variables | READY | Use the capability block below; it matches `plugin.yaml` and `register(ctx)`. |
-| Scanner warnings reviewed | READY | Keep `hermes plugins validate` clean; review any caution-level warnings. |
+| `capabilities:` declaration matches tools and environment variables | PREPARED | Update upstream entry to 64 tools, `pre_tool_call` hook and 3 declared secrets; the new pin must match `register(ctx)`. |
+| Scanner warnings reviewed | IN CI | Validate v1.5.1 at the final pin and review warnings from the Hermes scanner, especially subprocess and credential interactions. |
 | Human review and merge | PENDING | Requires upstream maintainer review; this repository cannot self-approve catalog admission. |
 
-## Prepared upstream catalog capability block
+## Prepared upstream catalog capability block (v1.5.1)
 
-Use this capability declaration in
-`NousResearch/hermes-agent/plugin-catalog/nanlmind-hermes.yaml`. Keep it
-synchronized with `plugin.yaml` and `register(ctx)` at the pinned SHA.
+Copy the exact capabilities below into the **existing** upstream PR
+[#150755](https://github.com/NousResearch/hermes-agent/pull/150755), keeping
+the plugin owner, reviewed commit and declared secrets consistent.
 
 ```yaml
 capabilities:
   provides_tools:
     - nanlm_status
+    - nanlm_learning_cycle
+    - nanlm_learning_status
+    - nanlm_learning_sync
+    - nanlm_wordnet_ingest
+    - nanlm_scratch_register
+    - nanlm_mirror_topology
+    - nanlm_router_graph_verify
+    - nanlm_router_graph_walk
+    - nanlm_self_modify
+    - nanlm_mth_tools
+    - nanlm_teacher_teach
+    - nanlm_chart_storage
     - nanlm_chat
     - nanlm_chat_history
     - nanlm_phone_call
@@ -97,6 +117,24 @@ capabilities:
     - nanlm_auth_status
     - nanlm_auth_pair
     - nanlm_auth_revoke
+    - nanlm_hw_register
+    - nanlm_hw_status
+    - nanlm_hw_heartbeat
+    - nanlm_hw_release
+    - nanlm_hw_report
+    - nanlm_universe_status
+    - nanlm_universe_open
+    - nanlm_universe_resolve
+    - nanlm_universe_renew
+    - nanlm_universe_release
+    - nanlm_universe_dispatch
+    - nanlm_universe_ack
+    - nanlm_universe_inspect
+    - nanlm_native_mth_u32
+    - nanlm_chat_train
+    - nanlm_tree_inspect
+    - nanlm_tree_mutate
+    - nanlm_tree_audit
     - nanlm_generate_curriculum
     - nanlm_curriculum_experiment
     - nanlm_logic_session
@@ -123,7 +161,8 @@ capabilities:
     - nanlm_head_candidate
     - nanlm_head_candidate_evaluate
     - nanlm_head_learn_candidate
-  provides_hooks: []
+  provides_hooks:
+    - pre_tool_call
   provides_middleware: []
   requires_env:
     - CLOCKED_GATEWAY_TOKEN
@@ -131,8 +170,47 @@ capabilities:
     - NANNET_MASTER_KEY
 ```
 
-The upstream entry must also set `name: nanlmind-hermes`,
+The upstream entry must set `name: nanlmind-hermes`,
 `repo: https://github.com/shemshallah/NaNLMind_HERMES`,
-`requires_hermes: ">=0.23.0"`, `version: "1.3.2"`, `maintainer: shemshallah`,
-`tier: community`, `category: tools`, and a full 40-character SHA for the
-reviewed release commit.
+`requires_hermes: ">=0.23.0"`, `version: "1.5.1"`,
+`maintainer: shemshallah`, `tier: community`, `category: tools`,
+and the **full 40-character merge SHA of this release**. Do not pin a branch
+or an unmerged PR head. Human catalog maintainer review and merge remain separate.
+
+## Reviewer findings and exact repairs
+
+At the earlier 1.2.3 pin, upstream reviewer `teknium1` requested:
+
+1. Prevent native `nanlm-universal` from inheriting Hermes provider credentials.
+   The native `_run` now uses only explicitly allowlisted
+   `PATH`, `HOME`, `LANG`, and optional `LC_ALL`/`TMPDIR`.
+   A regression test poisons the parent environment with provider and
+   secret-scope token values, then captures `Popen(env=...)`.
+2. Replace model-supplied `approved=true` for the four sensitive CLOCKED/
+   candidate tools with the actual Hermes human approval mechanism.
+   `catalog_approval.py` registers `pre_tool_call`; it validates the
+   locally stored CLOCKED plan and SHA, returns `action: approve` with safe
+   plan summary and stable `nanlmind:<tool>` rule key. The four model-tool
+   schemas no longer have an `approved` field. The separate typed slash
+   `/nanlm clocked ... --approved` path remains explicitly user-invoked.
+   A denied, timed-out or unavailable Hermes gate does not dispatch the tool.
+
+Reviewer recommendations: **model-selected corpus paths are now restricted**
+to files beneath the configured `state_dir/corpora`, with symlink and traversal
+escapes rejected. The `state_dir` default is still not automatically
+profile-aware: operators must set a distinct absolute directory for each
+Hermes profile. The optional `[auth]` crypto backend is recommended because
+the dependency-free fallback is not audited for constant-time behavior.
+The path guard is a tool-level boundary; trusted direct Python APIs retain
+their explicitly supplied filesystem paths.
+
+## Current cross-repository evidence
+
+The 24-repository NaN source audit is maintained in
+[NaNLMind docs](https://github.com/shemshallah/NaNLMind/blob/main/docs/CROSS_REPOSITORY_DRIFT_AUDIT.md).
+It checks NaN0S↔Android guest/core byte parity, NaNLMind↔HERMES NaN16DE
+codec parity, all six CPU workflow slot identities and all six router
+standby sources. This is source drift evidence, **not** peer authentication,
+live checkpoint identity, native learning admission or independent proof.
+HERMES's graph-history and native receipt CI provides additional genuine
+NaN16 execution evidence but does not authorize canonical learning.
