@@ -8,6 +8,7 @@ SHA-256 digest and canonical parent root bind every slot to its source.
 """
 from __future__ import annotations
 
+from contextlib import contextmanager
 import fcntl
 import hashlib
 import os
@@ -48,6 +49,56 @@ def _root(state_dir: str | Path) -> Path:
     return folder
 
 
+@contextmanager
+def _opened_folder(state_dir: str | Path, *, create: bool):
+    """Open the fixed checkpoint chain with O_NOFOLLOW at *each* level.
+
+    All subsequent slot, lock, rename and fsync operations use the opened
+    chart-checkpoints directory fd, never a re-resolved path. This prevents
+    replacing language/ or chart-checkpoints/ with aliases between a path
+    validation and a native checkpoint operation.
+    """
+    base = Path(state_dir).expanduser()
+    # Preserve the existing precise rejection of pre-existing aliases while
+    # descriptor-relative O_NOFOLLOW closes the post-check redirect window.
+    _root(base)
+    flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW
+    opened = []
+    try:
+        if create:
+            base.mkdir(parents=True, exist_ok=True, mode=0o700)
+        try:
+            parent_fd = os.open(base, flags)
+        except FileNotFoundError:
+            if not create:
+                yield None
+                return
+            raise
+        opened.append(parent_fd)
+        for name in ("language", "chart-checkpoints"):
+            try:
+                child_fd = os.open(name, flags, dir_fd=parent_fd)
+            except FileNotFoundError:
+                if not create:
+                    yield None
+                    return
+                try:
+                    os.mkdir(name, mode=0o700, dir_fd=parent_fd)
+                except FileExistsError:
+                    pass
+                child_fd = os.open(name, flags, dir_fd=parent_fd)
+            opened.append(child_fd)
+            parent_fd = child_fd
+        if create:
+            os.fchmod(parent_fd, 0o700)
+        yield parent_fd
+    except OSError as exc:
+        raise ChartStorageError("checkpoint directory descriptor could not be opened") from exc
+    finally:
+        for fd in reversed(opened):
+            os.close(fd)
+
+
 def _parent(root_hash: str) -> bytes:
     if type(root_hash) is not str or len(root_hash) != 64:
         raise ChartStorageError("invalid canonical parent root")
@@ -69,14 +120,25 @@ def _validate_chart(page: bytes) -> None:
         raise ChartStorageError("invalid NaN16 chart head count")
 
 
-def _read(path: Path):
-    if not path.exists() and not path.is_symlink():
+def _read_at(folder_fd: int, name: str):
+    """Open a snapshot exactly once, refusing symlinks and nonregular nodes.
+
+    fstat/read share one descriptor: swapping the filename after validation
+    cannot cause the reader to verify a different object's bytes.
+    """
+    flags = os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK
+    try:
+        fd = os.open(name, flags, dir_fd=folder_fd)
+    except FileNotFoundError:
         return None
-    if path.is_symlink() or not path.is_file():
-        raise ChartStorageError("snapshot slot is not a regular file")
-    if path.stat().st_size != HEADER.size + PAGE_BYTES:
-        raise ChartStorageError("snapshot slot length mismatch")
-    with path.open("rb") as stream:
+    except OSError as exc:
+        raise ChartStorageError("snapshot slot cannot be opened without following links") from exc
+    with os.fdopen(fd, "rb") as stream:
+        info = os.fstat(stream.fileno())
+        if not stat.S_ISREG(info.st_mode):
+            raise ChartStorageError("snapshot slot is not a regular file")
+        if info.st_size != HEADER.size + PAGE_BYTES:
+            raise ChartStorageError("snapshot slot length mismatch")
         head = stream.read(HEADER.size)
         body = stream.read(PAGE_BYTES)
         if stream.read(1):
@@ -90,13 +152,13 @@ def _read(path: Path):
     return (generation, root, body)
 
 
-def _candidates(folder: Path, parent: bytes):
+
+def _candidates(folder_fd: int, parent: bytes):
     valid = []
     corrupt = []
     for slot, name in enumerate(SLOT_NAMES):
-        path = folder / name
         try:
-            record = _read(path)
+            record = _read_at(folder_fd, name)
             if record is not None and record[1] == parent:
                 valid.append((record[0], slot, record[2]))
         except (OSError, ValueError, struct.error) as exc:
