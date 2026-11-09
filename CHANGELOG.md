@@ -35,6 +35,18 @@
   a cross-process canonical CAS.
 
 
+## Unreleased — NaN0S ISA and dependency unification
+
+- Added `FEXP` (0x46), `FTANH` (0x47) and `FLOG` (0x48) to the single NaNVM
+  ISA, the portable NaN0S C core, the raw-NaN N16I interpreter and the raw
+  assembler. Native/N16I differential gate passes.
+- Added the raw two-token QKV/softmax/MLP forward primitive
+  `src/tests/micro_block.nas`.
+- Made `nanlmind_hermes/nan0s` an exact pinned snapshot of canonical
+  `shemshallah/NaN0S`; `SOURCE.json`, `scripts/sync_nan0s.py`,
+  `tests/test_nan0s_sync.py` and `docs/NAN0S_DEPENDENCY.md` detect drift.
+  HERMES no longer prefers its bundled copy over a canonical checkout.
+
 ## 1.5.1 — 2026-11-08 (catalog-review security maintenance)
 
 - Isolate `nanlm-universal` subprocesses from Hermes provider and service
