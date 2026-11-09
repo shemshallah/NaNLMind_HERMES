@@ -34,6 +34,13 @@ identity/authorization boundary and CLOCKED is an evidence service.
   privacy, injection, and synthesis. Multi-source results are written to an
   append-only scratch journal; source text is not sent during planning, and
   execution requires explicit approval.
+- **Recursive geometry** — rounds 023–036 are implemented or explicitly
+  audited in the resident layer: 256 mirror heads, 32,640 pair cells, the full
+  32,385 root-cycle basis, raw NaN payload lanes, typed recursive hyperedges,
+  native cycle snapshots, sparse retrieval, episodic copy/abstain gating and
+  two-/three-source composition. See
+  [MASTER_TODO.md](docs/MASTER_TODO.md) / [ROUNDS_023_036_TODO.md](docs/ROUNDS_023_036_TODO.md); the neural encoder/decoder
+  prototypes remain external artifacts where noted.
 - **Resident universe** — one bounded sparse memory-mapped file per local
   state directory, holding 256 heads, 32,640 mirror-pair cells, stable leaf
   trees, typed relations/hyperedges, 256-D superposition rows and a chained

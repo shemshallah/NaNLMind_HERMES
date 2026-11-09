@@ -1,7 +1,8 @@
 # Rounds 023–036: total integration TODO
 
 Status: **deep audit of the supplied research archives and the NaNLMind_HERMES
-implementation**, 2026-11-08. `done` means code exists and targeted tests pass.
+implementation**, 2026-11-08. The authoritative ordered task list, including
+the held dynamic-conceptual track, is [MASTER_TODO.md](MASTER_TODO.md). `done` means code exists and targeted tests pass.
 `partial` means the mathematical/execution core is implemented but an external
 neural prototype or training corpus is still not end-to-end. `open` means it is
 not yet implemented and must not be claimed as working.

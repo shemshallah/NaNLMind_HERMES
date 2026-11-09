@@ -39,6 +39,13 @@
   `nanlm_mth_leaf_create`, `nanlm_mth_leaf_get`, `nanlm_mth_pair` and
   `nanlm_mth_leaf_verify`, `nanlm_mth_tree`, `nanlm_hw2_bind`,
   `nanlm_hw2_status` and `nanlm_hw2_report`.
+- Integrated rounds 023–036 into the resident layer: raw NaN payload geometry,
+  the full 32,385-cycle basis, native cycle snapshots/training bridges, sparse
+  mirror postings, recursive typed hyperedges, episodic copy/abstain gating,
+  two-/three-source composition and contradiction-aware abstention. Added
+  `docs/ROUNDS_023_036_TODO.md` with measured/artifact/open status for every
+  item. Neural seq2seq checkpoints remain external artifacts and are not
+  claimed as reimplemented.
 - Added the one-file resident universe (`nanlmind_hermes/resident/universe.py`)
   with checked headers, payload arena, 256-head/32,640-pair cells, leaf tree,
   typed relations/hyperedges, quantized resonance rows, a state-chain journal,

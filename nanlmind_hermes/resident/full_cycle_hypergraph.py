@@ -912,7 +912,10 @@ def _default_stores(nodes: int = DEFAULT_NODES,
     edge_capacity = full + extra if capacity is None else int(capacity)
     edge_capacity = max(1, edge_capacity)
     relation_capacity = edge_capacity + extra
-    chain_capacity = _next_power_of_two(max(16, relation_capacity * 6 + 1))
+    # Cycle relations add one unique subject and (usually) one unique object
+    # key.  Two chain slots per relation leave headroom for concept/link edges
+    # while keeping the default resident section substantially smaller.
+    chain_capacity = _next_power_of_two(max(16, relation_capacity * 2 + 32))
     cycle_edges = min(full, edge_capacity)
     arena_bytes = _align8(cycle_edges * 9 * (VALUE_BYTES + 1)
                           + extra * 16 * (VALUE_BYTES + 1))
@@ -1040,6 +1043,7 @@ class FullCycleHypergraph:
     CYCLE_COUNT = FULL_CYCLE_COUNT
     DIMENSION = FULL_CYCLE_COUNT
     BASIS_SIZE = FULL_CYCLE_COUNT
+    SCHEMA = SCHEMA
 
     def __init__(self, universe_or_stores: Any = None, *,
                  relations: Any = None, leaves: Any = None, cells: Any = None,
@@ -1562,8 +1566,20 @@ class FullCycleHypergraph:
 
     # -- capacity, append and commit ------------------------------------
     def _check_capacity(self, *, hyperedges: int = 1, relations: int = 1,
-                        members: int = 0, leaf: bool = False) -> None:
+                        members: int = 0, leaf: bool = False,
+                        chains: int | None = None) -> None:
         status = self._relation_status()
+        if chains is None:
+            chains = relations * 2
+        chain_used = status.get("chain_used")
+        chain_capacity = status.get("chain_capacity")
+        if isinstance(chain_used, int) and isinstance(chain_capacity, int) \
+                and chain_used + chains > chain_capacity:
+            raise FullCycleBoundsError(
+                "relation chain table capacity exhausted",
+                code="chain_capacity",
+                details={"used": chain_used, "required": chains,
+                         "capacity": chain_capacity})
         hyperedge_count = status.get("hyperedges")
         hyperedge_capacity = status.get("hyperedge_capacity")
         if isinstance(hyperedge_count, int) and isinstance(
@@ -2212,6 +2228,10 @@ class FullCycleHypergraph:
                          parent_id: bytes | None, parsed: dict[str, Any], *,
                          status: str, created: bool, duplicate: bool,
                          source_mismatch: bool = False) -> dict[str, Any]:
+        leaf = self._find_leaf(leaf_id)
+        digest = _field_any(leaf, ("payload_digest", "digest"))
+        if isinstance(digest, (bytes, bytearray, memoryview)):
+            digest = bytes(digest).hex()
         return {
             "status": status,
             "created": created,
@@ -2220,6 +2240,7 @@ class FullCycleHypergraph:
             "kind": "concept",
             "concept_id": leaf_id.hex(),
             "leaf_id": leaf_id.hex(),
+            "payload_digest": digest,
             "parent_concept_id": None if parent_id is None
             else parent_id.hex(),
             "hyperedge_id": edge_id.hex(),
@@ -3204,15 +3225,17 @@ class FullCycleHypergraph:
                     members.extend(parent["members"])
                     cycle_ids.extend(parent["cycle_ids"])
                     concept_ids.extend(parent["concept_ids"])
+            leaf_digest = _field_any(leaf, ("payload_digest", "digest"))
+            if isinstance(leaf_digest, (bytes, bytearray, memoryview)):
+                leaf_digest = bytes(leaf_digest).hex()
             return TypedMembers(
                 members, owner="concept", kind="concept",
                 concept_id=concept_ref.hex(), ref=concept_ref.hex(),
-                hyperedge_id=edge_id.hex(),
+                leaf_id=concept_ref.hex(), hyperedge_id=edge_id.hex(),
                 source_digest=None if parsed["source_digest"] is None
                 else parsed["source_digest"].hex(),
                 value=parsed["value"],
-                payload_digest=None if parsed["payload_digest"] is None
-                else parsed["payload_digest"].hex(),
+                payload_digest=leaf_digest,
                 pair_refs=parsed["pair_refs"], heads=parsed["heads"],
                 cycle_ids=list(dict.fromkeys(cycle_ids)),
                 concept_ids=[item.hex() for item in
@@ -3556,6 +3579,8 @@ class FullCycleHypergraph:
                         if parsed["payload_digest"] is None
                         else parsed["payload_digest"].hex(),
                         "hyperedge_id": parsed["hyperedge_id_hex"],
+                        "leaf_id": cycle_leaf_id(
+                            cycle, self.nodes, self.root).hex(),
                         "pair_refs": parsed["pair_refs"],
                         "heads": parsed["heads"],
                         "member_count": len(parsed["members"]),
@@ -3606,6 +3631,13 @@ class FullCycleHypergraph:
                             if self._find_leaf(member_id) is None:
                                 add_problem("dangling concept leaf for %s"
                                             % member_id.hex())
+                            else:
+                                try:
+                                    self._concept_ancestors(member_id)
+                                except FullCycleParentCycleError as exc:
+                                    add_problem(
+                                        "concept parent chain for %s: %s"
+                                        % (member_id.hex(), exc))
                     if parsed["source_digest"] in (None, ZERO_ID):
                         add_problem("missing provenance for concept edge %s"
                                     % parsed["hyperedge_id_hex"])
@@ -3875,6 +3907,12 @@ class FullCycleHypergraph:
                                     self._hyperedge_count()))
 
 
+# Compatibility spellings with the single-cycle resident layer.
+CycleMembers = TypedMembers
+CycleNeighbors = FullCycleNeighbors
+CycleComposition = Composition
+
+
 __all__ = (
     "SCHEMA", "DEFAULT_NODES", "MAX_NODES", "DEFAULT_ROOT",
     "DEFAULT_EXTRA_EDGES", "DEFAULT_CONCEPT_CAPACITY",
@@ -3894,7 +3932,8 @@ __all__ = (
     "CycleHypergraphError", "CycleBoundsError", "CycleProvenanceError",
     "CycleConflictError", "CycleCorruptionError", "CycleNotFound",
     "CycleDenied", "TypedMembers", "FullCycleNeighbors",
-    "Composition", "root_cycle_count", "normalize_cycle",
+    "Composition", "CycleMembers", "CycleNeighbors", "CycleComposition",
+    "root_cycle_count", "normalize_cycle",
     "normalize_root_cycle", "cycle_id", "cycle_leaf_id",
     "cycle_hyperedge_id", "cycle_relation_id", "cycle_edges",
     "pair_reference", "cycle_index", "pair_from_index", "cycle_from_index",
