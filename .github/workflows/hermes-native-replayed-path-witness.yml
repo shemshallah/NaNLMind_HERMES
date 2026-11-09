@@ -1,0 +1,61 @@
+name: hermes-native-replayed-path-witness
+on:
+  pull_request:
+    paths:
+      - 'scripts/verify_real_router_native_path_witness.py'
+      - '.github/workflows/hermes-native-replayed-path-witness.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/verify_real_router_native_path_witness.py'
+      - '.github/workflows/hermes-native-replayed-path-witness.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  real-native-multihop:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.10', '3.12']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Checkout merged router native path witness
+        uses: actions/checkout@v4
+        with:
+          repository: shemshallah/NaNROUTER
+          ref: 177303268494dd26a062aa9132b01d05958f851d
+          path: router
+      - name: Checkout merged NaN0S native guest VM
+        uses: actions/checkout@v4
+        with:
+          repository: shemshallah/NaN0S
+          ref: 24b358403226fa5bb5b5d108960f03cd9e32536b
+          path: nan0s
+      - name: Verify real graph and generate the proposed guest witness
+        env:
+          PYTHONPATH: .:router
+        run: python scripts/verify_real_router_native_path_witness.py
+      - name: Build native NaN16 VM
+        run: make -s -C nan0s/aarch64/android nan_cli
+      - name: Assemble real guest fixture and native witness kernel
+        run: |
+          mkdir -p build/native-path
+          awk -f nan0s/tools/nmk.awk -v CMD=emit \
+            router/mth/tests/hermes_real_graph_path_witness_test.nas \
+            > build/native-path/replayed-path.nan
+      - name: Execute native guest with contested masks and atomic rejection
+        run: |
+          nan0s/aarch64/android/nan_cli \
+            --img build/native-path/replayed-path.nan \
+            --steps 10000000 --serial \
+            > build/native-path/replayed-path.out \
+            2> build/native-path/replayed-path.err
+          cat build/native-path/replayed-path.out
+          cat build/native-path/replayed-path.err
+          grep -q '^HERMES REAL MC0DB PATH WITNESS PASS' build/native-path/replayed-path.out
+          ! grep -q '^HERMES REAL MC0DB PATH WITNESS FAIL' build/native-path/replayed-path.out
