@@ -55,6 +55,7 @@ for the round-specific items are in `ROUNDS_023_036_TODO.md` and
 | A-20 | Decide whether remote PR branches are in scope; do not merge 104 stale remote refs blindly | scope decision: local branches merged; remote-tracking PR refs require individual review and were not mass-merged | decided |
 | A-21 | Commit final docs/tests and merge the remaining worktree delta into main | main contains latest commits; primary worktree clean on `main` | done |
 | A-22 | Publish branch/remote only after tests and scope decision | unified `main` pushed; 56 stale merged/closed remote branches deleted; only `origin/main` remains | done |
+| A-23 | Audit every PR against the unified system, not just its closed state | 58 PRs: 56/56 merge commits in `main`, 422/422 changed paths retained, all tests included; 2 closed PRs superseded by merged #4/current tests; evidence in `docs/PR_INTEGRATION_AUDIT.md` | done |
 
 ### A-note on the branch merge
 
