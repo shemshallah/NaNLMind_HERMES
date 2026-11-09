@@ -34,6 +34,13 @@ identity/authorization boundary and CLOCKED is an evidence service.
   privacy, injection, and synthesis. Multi-source results are written to an
   append-only scratch journal; source text is not sent during planning, and
   execution requires explicit approval.
+- **Round 038/040 architecture inputs** — order-sensitive SO(2)/SO(3)
+  transport and holonomy trace algebra are in `resident/rotation_holonomy.py`;
+  dynamic write/query/snapshot value is recorded in
+  [ROUND040_DYNAMIC_MEMORY.md](docs/ROUND040_DYNAMIC_MEMORY.md) and
+  [ROUND038_ROTATION_HOLONOMY.md](docs/ROUND038_ROTATION_HOLONOMY.md). The
+  neural checkpoints and dynamic resident session remain explicit TODO items,
+  not silently claimed as implemented.
 - **Recursive geometry** — rounds 023–036 are implemented or explicitly
   audited in the resident layer: 256 mirror heads, 32,640 pair cells, the full
   32,385 root-cycle basis, raw NaN payload lanes, typed recursive hyperedges,

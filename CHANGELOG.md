@@ -38,6 +38,11 @@
   `nanlm_mth_leaf_create`, `nanlm_mth_leaf_get`, `nanlm_mth_pair` and
   `nanlm_mth_leaf_verify`, `nanlm_mth_tree`, `nanlm_hw2_bind`,
   `nanlm_hw2_status` and `nanlm_hw2_report`.
+- Added Round 038 order/holonomy algebra (`rotation_holonomy.py`) and added
+  Round 038/040 architecture inputs to the master TODO: SO(2)/SO(3) order
+  sensitivity, conjugation-invariant trace, dynamic fact writes, add/ask
+  session, root+metadata snapshot and retention after writes. The neural
+  checkpoints and dynamic session remain explicitly open.
 - Integrated rounds 023–036 into the resident layer: raw NaN payload geometry,
   the full 32,385-cycle basis, native cycle snapshots/training bridges, sparse
   mirror postings, recursive typed hyperedges, episodic copy/abstain gating,
