@@ -32,7 +32,7 @@ for the round-specific items are in `ROUNDS_023_036_TODO.md` and
 
 | ID | Task | Acceptance | State |
 |---|---|---|---|
-| A-01 | Finish the full test-suite run and record exact counts/failures | 1,447 tests, 1 skipped, OK on Termux | done |
+| A-01 | Finish the full test-suite run and record exact counts/failures | 1,451 tests, 1 skipped, OK on Termux (611 s) | done |
 | A-02 | Re-run the targeted resident/field/cycle/retrieval groups after the latest agent merges | 178+ targeted tests pass; native full-cycle 7/7 | done |
 | A-03 | Verify full-cycle modules use all 32,385 coefficients and reject 256-only writes | 32,385/32,385; truncation denied | done |
 | A-04 | Verify full-cycle tools persist/reopen all 32,385 words | count/digest equal after reopen | done |
